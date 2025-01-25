@@ -48,7 +48,7 @@ public class Data2DColumnCreateController extends BaseBranchController {
     @Override
     public void okAction() {
         try {
-            Data2DColumn column = columnEditController.pickValues();
+            Data2DColumn column = columnEditController.pickValues(true);
             if (column == null) {
                 return;
             }

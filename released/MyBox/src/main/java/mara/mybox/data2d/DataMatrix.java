@@ -65,7 +65,7 @@ public class DataMatrix extends Data2D {
 
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
-        return tableData2DDefinition.queryID(conn, d2did);
+        return tableData2DDefinition.queryID(conn, dataID);
     }
 
     @Override
@@ -90,15 +90,15 @@ public class DataMatrix extends Data2D {
         }
         endRowOfCurrentPage = startRowOfCurrentPage;
         List<List<String>> rows = new ArrayList<>();
-        if (d2did >= 0 && rowsNumber > 0 && colsNumber > 0) {
+        if (dataID >= 0 && rowsNumber > 0 && colsNumber > 0) {
             double[][] matrix = new double[(int) rowsNumber][(int) colsNumber];
             try (PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
-                query.setLong(1, d2did);
+                query.setLong(1, dataID);
                 ResultSet results = query.executeQuery();
                 while (results.next()) {
                     Data2DCell cell = tableData2DCell.readData(results);
-                    if (cell.getCol() < colsNumber && cell.getRow() < rowsNumber) {
-                        matrix[(int) cell.getRow()][(int) cell.getCol()] = toDouble(cell.getValue());
+                    if (cell.getColumnID() < colsNumber && cell.getRowID() < rowsNumber) {
+                        matrix[(int) cell.getRowID()][(int) cell.getColumnID()] = toDouble(cell.getValue());
                     }
                 }
                 rows = toTableData(matrix);
@@ -117,7 +117,7 @@ public class DataMatrix extends Data2D {
 
     @Override
     public long savePageData(FxTask task) {
-        rowsNumber = save(null, this, columns, tableRows());
+        rowsNumber = save(null, this, columns, pageData());
         return rowsNumber;
     }
 
@@ -149,7 +149,7 @@ public class DataMatrix extends Data2D {
         }
         double[][] data = new double[(int) rowsNumber][(int) colsNumber];
         for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = tableRow(r);
+            List<String> row = dataRow(r);
             for (int c = 0; c < row.size(); c++) {
                 data[r][c] = toDouble(row.get(c));
             }
@@ -189,7 +189,7 @@ public class DataMatrix extends Data2D {
         long count = -1;
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
-            clear.setLong(1, d2did);
+            clear.setLong(1, dataID);
             count = clear.executeUpdate();
 
             conn.commit();
@@ -235,12 +235,12 @@ public class DataMatrix extends Data2D {
             matrix.setColsNumber(cols.size());
             matrix.setRowsNumber(rows.size());
             Data2D.saveAttributes(conn, matrix, cols);
-            long did = matrix.getD2did();
-            if (did < 0) {
+            long dataid = matrix.getDataID();
+            if (dataid < 0) {
                 return -2;
             }
             try (PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
-                clear.setLong(1, did);
+                clear.setLong(1, dataid);
                 clear.executeUpdate();
             } catch (Exception e) {
                 if (task != null) {
@@ -258,8 +258,8 @@ public class DataMatrix extends Data2D {
                     if (d == 0 || DoubleTools.invalidDouble(d)) {
                         continue;
                     }
-                    Data2DCell cell = Data2DCell.create().setD2did(did)
-                            .setRow(r).setCol(c).setValue(d + "");
+                    Data2DCell cell = Data2DCell.create().setDataID(dataid)
+                            .setRowID(r).setColumnID(c).setValue(d + "");
                     tableData2DCell.insertData(conn, cell);
                 }
                 num++;

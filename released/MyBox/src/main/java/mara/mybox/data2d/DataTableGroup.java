@@ -1026,7 +1026,7 @@ public class DataTableGroup {
                     if (targetData == null) {
                         String tableName = null;
                         if (targetType == TargetType.Table) {
-                            tableName = DerbyBase.appendIdentifier(originalData.dataName(),
+                            tableName = DerbyBase.appendIdentifier(originalData.getName(),
                                     "_" + groupType + "_" + DateTools.nowString3());
                         }
                         targetData = Data2DTableTools.createTable(task, conn,
@@ -1056,7 +1056,7 @@ public class DataTableGroup {
                             value = DoubleTools.scaleString(value + "", invalidAs, scale);
                         }
                         data2DRow.setValue(finalColumn.getColumnName(),
-                                finalColumn.fromString(value == null ? null : value + ""));
+                                finalColumn.fromString(value == null ? null : value + "", invalidAs));
                     }
                     if (tableTarget.setInsertStatement(conn, insert, data2DRow)) {
                         insert.addBatch();
@@ -1074,7 +1074,7 @@ public class DataTableGroup {
                 case MultipleFiles:
                     if (csvPrinter == null) {
                         targetFile = new DataFileCSV();
-                        String fname = originalData.dataName() + "_" + parameterName;
+                        String fname = originalData.getName() + "_" + parameterName;
                         if (targetType == TargetType.MultipleFiles) {
                             fname += "_" + parameterValueForFilename;
                         }
@@ -1138,7 +1138,7 @@ public class DataTableGroup {
     private void writeCurrentCSV() {
         try {
             if (csvFile != null && csvFile.exists()) {
-                targetFile.setDataName(originalData.dataName() + "_" + parameterName
+                targetFile.setDataName(originalData.getName() + "_" + parameterName
                         + (targetType == TargetType.MultipleFiles ? "_" + parameterValueForFilename : ""))
                         .setRowsNumber(count)
                         .setComments(dataComments);
@@ -1180,7 +1180,7 @@ public class DataTableGroup {
                         insert.executeBatch();
                         conn.commit();
                         insert.close();
-                        targetData.setDataName(originalData.dataName() + "_" + parameterName)
+                        targetData.setDataName(originalData.getName() + "_" + parameterName)
                                 .setRowsNumber(count).setScale(scale);
                         Data2D.saveAttributes(conn, targetData, targetData.getColumns());
                         if (task != null) {

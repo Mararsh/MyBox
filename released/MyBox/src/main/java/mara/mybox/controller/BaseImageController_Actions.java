@@ -17,19 +17,19 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import mara.mybox.bufferedimage.ImageFileInformation;
+import mara.mybox.image.data.ImageFileInformation;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.image.ImageViewTools;
+import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Fxmls;
@@ -514,7 +514,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         }
         File srcFile = sourceFile;
         if (srcFile == null) {
-            targetFile = chooseSaveFile();
+            targetFile = saveCurrentFile();
             if (targetFile == null) {
                 return;
             }

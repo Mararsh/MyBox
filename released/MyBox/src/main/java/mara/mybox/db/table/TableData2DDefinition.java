@@ -294,14 +294,22 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition writeTable(Connection conn, DataTable table) {
+    public DataTable writeTable(Connection conn, DataTable table) {
         if (conn == null || table == null) {
             return null;
         }
-        if (queryTable(conn, table.getSheet(), table.getType()) != null) {
-            return updateData(conn, table);
-        } else {
-            return insertData(conn, table);
+        try {
+            Data2DDefinition def = table.queryDefinition(conn);
+            if (def != null) {
+                table.setDataID(def.getDataID());
+                def = updateData(conn, table);
+            } else {
+                def = insertData(conn, table);
+            }
+            return def != null ? (DataTable) def : null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

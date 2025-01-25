@@ -36,6 +36,7 @@ public class Data2DColumnEditController extends BaseChildController {
             nameLabel.setText((columnsController.data2D == null ? ""
                     : (message("Data") + ": " + columnsController.data2D.displayName() + " "))
                     + message("Column") + ": " + (index + 1));
+            selectButton.setDisable(columnEditController.isTableExistedColumn);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -44,13 +45,14 @@ public class Data2DColumnEditController extends BaseChildController {
 
     protected void load(Data2DColumn column) {
         columnEditController.loadColumn(column);
+        selectButton.setDisable(columnEditController.isTableExistedColumn);
     }
 
     @FXML
     @Override
     public void okAction() {
         try {
-            Data2DColumn column = columnEditController.pickValues();
+            Data2DColumn column = columnEditController.pickValues(true);
             if (column == null) {
                 return;
             }
@@ -81,7 +83,7 @@ public class Data2DColumnEditController extends BaseChildController {
     @FXML
     @Override
     public void saveAction() {
-        Data2DColumn column = columnEditController.pickValues();
+        Data2DColumn column = columnEditController.pickValues(true);
         if (column == null) {
             return;
         }

@@ -426,6 +426,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
                     nodeTagsTable.setAll(conn, nodeid,
                             tagsController.selectedItems());
                     conn.commit();
+
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -437,7 +438,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             @Override
             protected void whenSucceeded() {
                 if (treeRunning()) {
-                    treeController.updateNode(parentNode, savedNode);
+                    treeController.nodeSaved(parentNode, savedNode);
                     treeController.popSaved();
                 } else {
                     DataTreeController c = DataTreeController.open(nodeTable, savedNode);

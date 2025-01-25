@@ -22,6 +22,7 @@ public class TableNodeSQL extends BaseNodeTable {
         dataName = message("SQL");
         dataFxml = Fxmls.ControlDataSQLFxml;
         examplesFileName = "SQL";
+        majorColumnName = "statement";
         nodeExecutable = true;
         defineColumns();
     }

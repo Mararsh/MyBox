@@ -21,7 +21,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.IconTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -108,6 +108,7 @@ public class WebAddressController extends BaseWebViewController {
                     conn.setAutoCommit(false);
 
                     TableStringValues.add(conn, "WebAddressHistories", address);
+                    conn.commit();
 
                     WebHistory his = new WebHistory();
                     his.setAddress(address);

@@ -14,8 +14,8 @@ import mara.mybox.value.AppValues;
  */
 public class LongTools {
 
-    public static boolean invalidLong(long value) {
-        return value == AppValues.InvalidLong;
+    public static boolean invalidLong(Long value) {
+        return value == null || value == AppValues.InvalidLong;
     }
 
     public static int compare(String s1, String s2, boolean desc) {
@@ -40,6 +40,13 @@ public class LongTools {
         int sign = nonNegative ? 1 : r.nextInt(2);
         long l = r.nextLong(max);
         return sign == 1 ? l : -l;
+    }
+
+    public static String format(long v, String format, int scale) {
+        if (invalidLong(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
     }
 
     public static long[] sortArray(long[] numbers) {

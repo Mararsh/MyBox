@@ -79,6 +79,8 @@ public class ImageOptionsController extends BaseChildController {
     public void initControls() {
         try {
             super.initControls();
+            baseName = "ImageOptions";
+
             initViewOptions();
             initRenderOptions();
 

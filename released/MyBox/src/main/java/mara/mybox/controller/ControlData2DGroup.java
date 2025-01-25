@@ -21,6 +21,7 @@ import mara.mybox.data2d.DataTableGroup.GroupType;
 import mara.mybox.data2d.DataTableGroup.TimeType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -242,9 +243,12 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
                     valid = false;
                 }
                 if (!expressionController.checkExpression(taskController.isAllPages())) {
-                    alertError(message("Invalid") + ": " + message("RowExpression") + "\n"
-                            + expressionController.error);
-                    valid = false;
+                    if (!PopTools.askSure(getTitle(),
+                            message("RowExpressionLooksInvalid") + ": \n"
+                            + expressionController.error,
+                            message("SureContinue"))) {
+                        valid = false;
+                    }
                 }
 
             } else if (rowsRangeRadio.isSelected()) {

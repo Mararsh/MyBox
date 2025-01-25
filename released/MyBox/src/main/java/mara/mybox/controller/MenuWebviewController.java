@@ -70,7 +70,7 @@ public class MenuWebviewController extends MenuController {
         }
     }
 
-    public void setElement(ControlWebView webViewController, Element element, double x, double y) {
+    public void setParameters(ControlWebView webViewController, Element element) {
         try {
             if (webViewController == null) {
                 return;
@@ -101,7 +101,8 @@ public class MenuWebviewController extends MenuController {
                     webViewController.setEditable(editableCheck.isSelected());
                 }
             });
-            super.setParameters(webViewController, webView, x, y);
+            Robot robot = new Robot();
+            super.setParameters(webViewController, webView, robot.getMouseX() + 10, robot.getMouseY() + 10);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -238,6 +239,7 @@ public class MenuWebviewController extends MenuController {
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -245,6 +247,7 @@ public class MenuWebviewController extends MenuController {
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event event) {
         if (webViewController == null) {
             return;
@@ -342,7 +345,7 @@ public class MenuWebviewController extends MenuController {
     /*
         static methods
      */
-    public static MenuWebviewController webviewMenu(ControlWebView parent, Element element) {
+    public static MenuWebviewController webviewMenu(ControlWebView parent) {
         try {
             if (parent == null) {
                 return null;
@@ -363,8 +366,6 @@ public class MenuWebviewController extends MenuController {
             }
             MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
                     parent, Fxmls.MenuWebviewFxml);
-            Robot robot = new Robot();
-            controller.setElement(parent, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -372,12 +373,10 @@ public class MenuWebviewController extends MenuController {
         }
     }
 
-    public static MenuWebviewController webviewMenu(BaseController parent, WebView webView) {
+    public static MenuWebviewController webviewMenu(ControlWebView parent, Element element) {
         try {
-            MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
-                    parent, Fxmls.MenuWebviewFxml);
-            Robot robot = new Robot();
-            controller.setParameters(parent, null, robot.getMouseX() + 10, robot.getMouseY() + 10);
+            MenuWebviewController controller = webviewMenu(parent);
+            controller.setParameters(parent, element);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

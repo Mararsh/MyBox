@@ -22,6 +22,7 @@ public class TableNodeJavaScript extends BaseNodeTable {
         dataName = message("JavaScript");
         dataFxml = Fxmls.ControlDataJavaScriptFxml;
         examplesFileName = "JavaScript";
+        majorColumnName = "script";
         nodeExecutable = true;
         defineColumns();
     }

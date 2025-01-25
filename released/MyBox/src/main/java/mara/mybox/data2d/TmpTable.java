@@ -86,7 +86,7 @@ public class TmpTable extends DataTable {
             return false;
         }
         if (targetName == null) {
-            targetName = sourceData.dataName();
+            targetName = sourceData.getName();
         }
         try (Connection conn = DerbyBase.getConnection()) {
             List<Data2DColumn> sourceColumns = sourceData.getColumns();
@@ -170,7 +170,7 @@ public class TmpTable extends DataTable {
             columns = dataTable.getColumns();
             colsNumber = columns.size();
             tableData2D = dataTable.getTableData2D();
-            dataName = dataTable.dataName();
+            dataName = dataTable.getName();
             if (importData) {
                 importData(conn);
             }

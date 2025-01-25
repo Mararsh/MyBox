@@ -58,8 +58,8 @@ public class ControlData2DRowExpression extends ControlDataRowExpression {
         if (script == null || script.isBlank()) {
             return true;
         }
+        TableStringValues.add(baseName + "Histories", script.trim());
         if (calculator.validateExpression(data2D, script, allPages)) {
-            TableStringValues.add(baseName + "Histories", script.trim());
             return true;
         } else {
             error = calculator.getError();

@@ -188,7 +188,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     protected void outputHtml(String html) {
-        webViewController.loadContents(html);
+        webViewController.loadContent(html);
     }
 
     protected String jsBody() {

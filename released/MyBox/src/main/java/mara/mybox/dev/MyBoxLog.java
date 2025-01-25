@@ -4,7 +4,6 @@ import java.util.Date;
 import javafx.application.Platform;
 import mara.mybox.controller.MyBoxLogViewerController;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -154,36 +153,21 @@ public class MyBoxLog extends BaseData {
         if ("log_type".equals(column.getColumnName())) {
             return Languages.message(data.getLogType().name());
         }
-        return BaseDataTools.displayColumnBase(data, column, value);
+        return column.formatValue(value);
     }
 
     public static short logType(LogType logType) {
         if (logType == null) {
-            return 3;
+            return (short) LogType.Info.ordinal();
         }
-        switch (logType) {
-            case Console:
-                return 0;
-            case Error:
-                return 1;
-            case Debug:
-                return 2;
-            case Info:
-            default:
-                return 3;
-        }
+        return (short) logType.ordinal();
     }
 
     public static LogType logType(short logType) {
-        switch (logType) {
-            case 0:
-                return LogType.Console;
-            case 1:
-                return LogType.Error;
-            case 2:
-                return LogType.Debug;
-            default:
-                return LogType.Info;
+        try {
+            return LogType.values()[logType];
+        } catch (Exception e) {
+            return LogType.Info;
         }
     }
 

@@ -107,6 +107,12 @@ public class VisitHistory extends BaseData {
             int[] types = {FileType.DataFile, FileType.CSV, FileType.Excel, FileType.Text};
             return types;
 
+        } else if (fileType == FileType.Text) {
+            int[] types = {FileType.Text, FileType.CSV,
+                FileType.JSON, FileType.XML, FileType.Markdown,
+                FileType.Html, FileType.SVG, FileType.Javascript};
+            return types;
+
         } else {
             return null;
         }

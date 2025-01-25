@@ -13,9 +13,9 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -173,7 +173,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
 
     @FXML
     public void exportAction() {
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
+        final File file = chooseFile(defaultTargetPath(),
                 exportName, FileFilters.TextExtensionFilter);
         if (file == null) {
             return;

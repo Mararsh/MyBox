@@ -35,7 +35,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.cell.TableComboBoxCell;
 import mara.mybox.fxml.cell.TableDataBooleanDisplayCell;
 import mara.mybox.fxml.cell.TableDataBooleanEditCell;
 import mara.mybox.fxml.cell.TableDataColorEditCell;
@@ -43,6 +42,7 @@ import mara.mybox.fxml.cell.TableDataCoordinateEditCell;
 import mara.mybox.fxml.cell.TableDataDateEditCell;
 import mara.mybox.fxml.cell.TableDataDisplayCell;
 import mara.mybox.fxml.cell.TableDataEditCell;
+import mara.mybox.fxml.cell.TableDataEnumCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -254,8 +254,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             return;
         }
         if (data2D != null) {
+            isSettingValues = true;
             data2D.setPageData(tableData);
             data2D.setTableChanged(changed);
+            isSettingValues = false;
         }
         updateStatus();
     }
@@ -307,11 +309,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
                 if (tableColumn.isEditable()) {
 
-                    if (type == ColumnType.Enumeration) {
-                        tableColumn.setCellFactory(TableComboBoxCell.create(this, dataColumn, dataColumn.enumValues(), 12, false));
-
-                    } else if (type == ColumnType.EnumerationEditable) {
-                        tableColumn.setCellFactory(TableComboBoxCell.create(this, dataColumn, dataColumn.enumValues(), 12, true));
+                    if (type == ColumnType.Enumeration
+                            || type == ColumnType.EnumeratedShort
+                            || type == ColumnType.EnumerationEditable) {
+                        tableColumn.setCellFactory(TableDataEnumCell.create(this, dataColumn, dataColumn.enumNames(), 12));
 
                     } else if (type == ColumnType.Boolean) {
                         tableColumn.setCellFactory(TableDataBooleanEditCell.create(this, dataColumn, colIndex));
@@ -342,7 +343,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                                 return;
                             }
                             List<String> row = tableData.get(rowIndex);
-                            row.set(colIndex, e.getNewValue());
+                            row.set(colIndex, dataColumn.formatValue(e.getNewValue()));
                             tableData.set(rowIndex, row);
                         }
                     });
@@ -423,9 +424,11 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     public void postLoadedTableData() {
         super.postLoadedTableData();
         if (data2D != null) {
+            isSettingValues = true;
             sourceFile = data2D.getFile();
             data2D.setPageData(tableData);
             data2D.stopTask();
+            isSettingValues = false;
         }
     }
 

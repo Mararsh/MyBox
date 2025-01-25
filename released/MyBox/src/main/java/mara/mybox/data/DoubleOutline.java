@@ -1,7 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.image.BufferedImage;
-import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.image.data.ImageScope;
 
 /**
  * @Author Mara

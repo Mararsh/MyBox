@@ -106,9 +106,7 @@ public abstract class Data2DWriter {
                     return;
                 }
                 if (formatValues) {
-                    value = column.format(value, -1, invalidAs);
-                } else {
-                    value = column.trimValue(value, invalidAs);
+                    value = column.formatString(value, invalidAs);
                 }
                 printRow.add(value);
             }

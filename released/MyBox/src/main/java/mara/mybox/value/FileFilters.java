@@ -64,7 +64,7 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> ImagesExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp",
-                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon"));
+                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon", "*.webp"));
         }
     };
 
@@ -108,14 +108,19 @@ public class FileFilters {
             add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
         }
     };
-    public static List<FileChooser.ExtensionFilter> wbmpExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+    public static List<FileChooser.ExtensionFilter> WbmpExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
         }
     };
-    public static List<FileChooser.ExtensionFilter> icoExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+    public static List<FileChooser.ExtensionFilter> IcoExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("ico", "*.ico", "*.icon"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> WebpExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("webp", "*.webp"));
         }
     };
 
@@ -126,20 +131,22 @@ public class FileFilters {
             addAll(JpgExtensionFilter);
             addAll(TiffExtensionFilter);
             addAll(GifExtensionFilter);
-            addAll(icoExtensionFilter);
+            addAll(IcoExtensionFilter);
+            addAll(WebpExtensionFilter);
             addAll(BmpExtensionFilter);
             addAll(PcxExtensionFilter);
             addAll(PnmExtensionFilter);
-            addAll(wbmpExtensionFilter);
+            addAll(WbmpExtensionFilter);
         }
     };
 
     public static List<FileChooser.ExtensionFilter> AlphaImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("images", "*.png", "*.tif", "*.tiff", "*.ico", "*.icon"));
+            add(new FileChooser.ExtensionFilter("images", "*.png", "*.tif", "*.tiff", "*.ico", "*.icon", "*.webp"));
             addAll(PngExtensionFilter);
             addAll(TiffExtensionFilter);
-            addAll(icoExtensionFilter);
+            addAll(IcoExtensionFilter);
+            addAll(WebpExtensionFilter);
         }
     };
     public static List<FileChooser.ExtensionFilter> NoAlphaImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
@@ -150,7 +157,7 @@ public class FileFilters {
             addAll(BmpExtensionFilter);
             addAll(PcxExtensionFilter);
             addAll(PnmExtensionFilter);
-            addAll(wbmpExtensionFilter);
+            addAll(WbmpExtensionFilter);
         }
     };
 
@@ -384,7 +391,8 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> ImagesListExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("*", "*.png", "*.jpg", "*.jpeg", "*.bmp",
-                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon", "*.pdf", "*.ppt", "*.pptx"));
+                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon", "*.webp",
+                    "*.pdf", "*.ppt", "*.pptx"));
             addAll(ImageExtensionFilter);
             addAll(PdfExtensionFilter);
             addAll(PPTSExtensionFilter);
@@ -408,7 +416,9 @@ public class FileFilters {
                 return GifExtensionFilter;
             case "ico":
             case "icon":
-                return icoExtensionFilter;
+                return IcoExtensionFilter;
+            case "webp":
+                return WebpExtensionFilter;
             case "bmp":
                 return BmpExtensionFilter;
             case "pcx":
@@ -416,7 +426,7 @@ public class FileFilters {
             case "pnm":
                 return PnmExtensionFilter;
             case "wbmp":
-                return wbmpExtensionFilter;
+                return WbmpExtensionFilter;
             default:
                 return ImageExtensionFilter;
         }

@@ -363,7 +363,7 @@ public class WebBrowserController extends BaseController {
         if (pos >= 0) {
             dname = (pos < dname.length() - 1) ? dname.substring(pos + 1) : "";
         }
-        File dnFile = chooseSaveFile(VisitHistory.FileType.All, dname);
+        File dnFile = saveCurrentFile(VisitHistory.FileType.All, dname);
         if (dnFile == null) {
             return;
         }

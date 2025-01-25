@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
-import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;

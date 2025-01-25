@@ -9,15 +9,15 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class Data2DCell extends BaseData {
 
-    protected long dceid, d2did;
-    protected long col, row;
+    protected long cellID, dataID;
+    protected long columnID, rowID;
     protected String value;
 
     private void init() {
-        dceid = -1;
-        d2did = -1;
-        col = -1;
-        row = -1;
+        cellID = -1;
+        dataID = -1;
+        columnID = -1;
+        rowID = -1;
         value = null;
     }
 
@@ -48,7 +48,7 @@ public class Data2DCell extends BaseData {
     }
 
     public static boolean valid(Data2DCell data) {
-        return data != null && data.getCol() >= 0 && data.getRow() >= 0;
+        return data != null && data.getColumnID() >= 0 && data.getRowID() >= 0;
     }
 
     public static boolean setValue(Data2DCell data, String column, Object value) {
@@ -58,16 +58,16 @@ public class Data2DCell extends BaseData {
         try {
             switch (column) {
                 case "dceid":
-                    data.setDceid(value == null ? -1 : (long) value);
+                    data.setCellID(value == null ? -1 : (long) value);
                     return true;
                 case "dcdid":
-                    data.setD2did(value == null ? -1 : (long) value);
+                    data.setDataID(value == null ? -1 : (long) value);
                     return true;
                 case "col":
-                    data.setCol(value == null ? 3 : (long) value);
+                    data.setColumnID(value == null ? 3 : (long) value);
                     return true;
                 case "row":
-                    data.setRow(value == null ? 3 : (long) value);
+                    data.setRowID(value == null ? 3 : (long) value);
                     return true;
                 case "value":
                     data.setValue(value == null ? null : (String) value);
@@ -87,13 +87,13 @@ public class Data2DCell extends BaseData {
         try {
             switch (column) {
                 case "dceid":
-                    return data.getDceid();
+                    return data.getCellID();
                 case "dcdid":
-                    return data.getD2did();
+                    return data.getDataID();
                 case "row":
-                    return data.getRow();
+                    return data.getRowID();
                 case "col":
-                    return data.getCol();
+                    return data.getColumnID();
                 case "value":
                     return data.getValue();
             }
@@ -106,21 +106,21 @@ public class Data2DCell extends BaseData {
     /*
         get/set
      */
-    public long getDceid() {
-        return dceid;
+    public long getCellID() {
+        return cellID;
     }
 
-    public Data2DCell setDceid(long dceid) {
-        this.dceid = dceid;
+    public Data2DCell setCellID(long dceid) {
+        this.cellID = dceid;
         return this;
     }
 
-    public long getD2did() {
-        return d2did;
+    public long getDataID() {
+        return dataID;
     }
 
-    public Data2DCell setD2did(long d2did) {
-        this.d2did = d2did;
+    public Data2DCell setDataID(long dataid) {
+        this.dataID = dataid;
         return this;
     }
 
@@ -133,21 +133,21 @@ public class Data2DCell extends BaseData {
         return this;
     }
 
-    public long getCol() {
-        return col;
+    public long getColumnID() {
+        return columnID;
     }
 
-    public Data2DCell setCol(long col) {
-        this.col = col;
+    public Data2DCell setColumnID(long col) {
+        this.columnID = col;
         return this;
     }
 
-    public long getRow() {
-        return row;
+    public long getRowID() {
+        return rowID;
     }
 
-    public Data2DCell setRow(long row) {
-        this.row = row;
+    public Data2DCell setRowID(long row) {
+        this.rowID = row;
         return this;
     }
 

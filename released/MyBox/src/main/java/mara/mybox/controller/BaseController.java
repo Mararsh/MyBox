@@ -67,34 +67,42 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
     }
 
     public void setParent(BaseController parent, StageType stageType) {
-        this.parentController = parent;
-        this.stageType = stageType;
-        myStage = getMyStage();
-        if (stageType == null || myStage == null) {
-            return;
-        }
-        switch (stageType) {
-            case Branch: {
-                if (parent == null) {
-                    return;
-                }
-                parent.getMyWindow().setOnHiding(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent event) {
-                        closeStage();
+        try {
+            this.parentController = parent;
+            this.stageType = stageType;
+            myStage = getMyStage();
+            if (stageType == null || myStage == null) {
+                return;
+            }
+            switch (stageType) {
+                case Branch: {
+                    setAlwaysTop(true, false);
+                    if (parent == null) {
+                        return;
                     }
-                });
-                parent.getMyStage().setFullScreen(false);
-                setAlwaysTop(true, false);
-                break;
-            }
-            case Pop: {
-                setAlwaysTop(true, false);
-                if (parent != null) {
-                    parent.getMyStage().setFullScreen(false);
+                    if (parent.getMyWindow() != null) {
+                        parent.getMyWindow().setOnHiding(new EventHandler<WindowEvent>() {
+                            @Override
+                            public void handle(WindowEvent event) {
+                                closeStage();
+                            }
+                        });
+                    }
+                    if (parent.getMyStage() != null) {
+                        parent.getMyStage().setFullScreen(false);
+                    }
+                    break;
                 }
-                break;
+                case Pop: {
+                    setAlwaysTop(true, false);
+                    if (parent != null && parent.getMyStage() != null) {
+                        parent.getMyStage().setFullScreen(false);
+                    }
+                    break;
+                }
             }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

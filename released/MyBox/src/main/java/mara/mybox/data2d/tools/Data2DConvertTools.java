@@ -62,7 +62,7 @@ public class Data2DConvertTools {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File txtFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.dataName(), null, "txt");
+        File txtFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.getName(), null, "txt");
         if (FileCopyTools.copyFile(csvFile, txtFile)) {
             DataFileText targetData = new DataFileText();
             targetData.cloneDataAttributes(csvData);
@@ -118,7 +118,7 @@ public class Data2DConvertTools {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File tcsvFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.dataName(), null, "csv");
+        File tcsvFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.getName(), null, "csv");
         if (FileCopyTools.copyFile(csvFile, tcsvFile)) {
             DataFileCSV targetData = new DataFileCSV();
             targetData.cloneDataAttributes(csvData);
@@ -141,7 +141,7 @@ public class Data2DConvertTools {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File excelFile = csvData.tmpFile(csvData.dataName(), null, "xlsx");
+        File excelFile = csvData.tmpFile(csvData.getName(), null, "xlsx");
         boolean targetHasHeader = false;
         int tcolsNumber = 0;
         int trowsNumber = 0;
@@ -312,7 +312,7 @@ public class Data2DConvertTools {
             referColumns.add(new Data2DColumn("data", ColumnDefinition.ColumnType.Double));
             DataTable dataTable = Data2DTableTools.createTable(task, conn,
                     TmpTable.tmpTableName(), referColumns, null, sourceData.getComments(), null, true);
-            dataTable.setDataName(sourceData.dataName());
+            dataTable.setDataName(sourceData.getName());
             dataTable.cloneValueAttributes(sourceData);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();

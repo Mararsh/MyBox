@@ -37,14 +37,14 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fximage.FxColorTools.color2css;
-import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
+import static mara.mybox.fxml.image.FxColorTools.color2css;
+import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -132,7 +132,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             super.initControls();
 
             palettesController.setParameter(this, true);
-            colorsController.setParameter(this);
+            colorsController.setManager(this);
 
             palettesController.renamedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -474,7 +474,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 filename += "_" + message("All");
             }
         }
-        final File file = chooseSaveFile(FileType.CSV, filename + ".csv");
+        final File file = saveCurrentFile(FileType.CSV, filename + ".csv");
         if (file == null) {
             return;
         }

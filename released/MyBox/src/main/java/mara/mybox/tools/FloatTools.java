@@ -16,8 +16,9 @@ import mara.mybox.value.AppValues;
  */
 public class FloatTools {
 
-    public static boolean invalidFloat(float value) {
-        return Float.isNaN(value)
+    public static boolean invalidFloat(Float value) {
+        return value == null
+                || Float.isNaN(value)
                 || Float.isInfinite(value)
                 || value == AppValues.InvalidFloat;
     }
@@ -130,6 +131,13 @@ public class FloatTools {
         int sign = nonNegative ? 1 : r.nextInt(2);
         float f = r.nextFloat(max);
         return sign == 1 ? f : -f;
+    }
+
+    public static String format(float v, String format, int scale) {
+        if (invalidFloat(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
     }
 
     public static float[] sortArray(float[] numbers) {

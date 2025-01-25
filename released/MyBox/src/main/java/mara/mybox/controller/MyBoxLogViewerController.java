@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Window;
-import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
@@ -107,14 +106,14 @@ public class MyBoxLogViewerController extends HtmlTableController {
 
     public void addLog(MyBoxLog myboxLog) {
         body = (body != null ? body : "")
-                + "</br><hr></br>\n" + BaseDataTools.htmlData(logTable, myboxLog);
+                + "</br><hr></br>\n" + logTable.htmlTable(myboxLog).div();
         loadBody(body);
     }
 
     public void setLogs(List<MyBoxLog> logs) {
         body = "";
         for (MyBoxLog log : logs) {
-            body += "</br><hr></br>\n" + BaseDataTools.htmlData(logTable, log);
+            body += "</br><hr></br>\n" + logTable.htmlTable(log).div();
         }
         loadBody(body);
     }

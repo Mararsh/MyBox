@@ -10,6 +10,7 @@ import javax.script.ScriptEngineManager;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.value.Languages.message;
 import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -105,7 +106,8 @@ public class ExpressionCalculator {
     public String info() {
         String info = "expression: " + expression;
         for (String variable : variableValues.keySet()) {
-            info += "\n" + variable + ": " + variableValues.get(variable);
+            Object o = variableValues.get(variable);
+            info += "\nvariable:" + variable + "  type:" + o.getClass() + " value:" + o;
         }
         info += "\nresult: " + result;
         info += "\nerror: " + error;
@@ -128,11 +130,13 @@ public class ExpressionCalculator {
             }
             expression = script;
             int index = 1, rowSize = rowValues.size();
-            String value;
+            String name, stringValue;
+            Object value;
             for (int i = 0; i < data2D.columnsNumber(); i++) {
                 Data2DColumn column = data2D.getColumns().get(i);
-                String name = column.getColumnName();
-                value = i < rowSize ? rowValues.get(i) : null;
+                name = column.getColumnName();
+                stringValue = i < rowSize ? rowValues.get(i) : null;
+                value = column.fromString(stringValue, ColumnDefinition.InvalidAs.Use);
                 String placeholder = "#{" + name + "}";
                 String placeholderQuoted = "'" + placeholder + "'";
                 String variableName = VariablePrefix + index++;

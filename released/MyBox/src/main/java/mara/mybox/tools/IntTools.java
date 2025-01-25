@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -14,6 +15,10 @@ import java.util.Random;
  * @License Apache License Version 2.0
  */
 public class IntTools {
+
+    public static boolean invalidInt(Integer value) {
+        return value == null || value == AppValues.InvalidInteger;
+    }
 
     public static int compare(String s1, String s2, boolean desc) {
         float f1, f2;
@@ -41,6 +46,13 @@ public class IntTools {
         int sign = nonNegative ? 1 : r.nextInt(2);
         int i = r.nextInt(max);
         return sign == 1 ? i : -i;
+    }
+
+    public static String format(int v, String format, int scale) {
+        if (invalidInt(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
     }
 
     public static int[] sortArray(int[] numbers) {

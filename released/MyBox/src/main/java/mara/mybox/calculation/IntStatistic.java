@@ -2,6 +2,7 @@ package mara.mybox.calculation;
 
 import java.util.HashMap;
 import java.util.Map;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.value.AppValues;
 
@@ -110,7 +111,7 @@ public class IntStatistic {
 
     public static double mean(int[] values) {
         if (values == null || values.length == 0) {
-            return AppValues.InvalidInteger;
+            return AppValues.InvalidDouble;
         }
         return sum(values) * 1d / values.length;
     }
@@ -157,6 +158,9 @@ public class IntStatistic {
             return AppValues.InvalidDouble;
         }
         double mean = mean(values);
+        if (DoubleTools.invalidDouble(mean)) {
+            return AppValues.InvalidDouble;
+        }
         return variance(values, mean);
     }
 

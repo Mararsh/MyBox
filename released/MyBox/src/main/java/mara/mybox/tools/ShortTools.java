@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -12,6 +13,10 @@ import java.util.Random;
  * @License Apache License Version 2.0
  */
 public class ShortTools {
+
+    public static boolean invalidShort(Short value) {
+        return value == null || value == AppValues.InvalidShort;
+    }
 
     // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {
@@ -51,6 +56,13 @@ public class ShortTools {
     public static short random(short max) {
         Random r = new Random();
         return (short) r.nextInt(max);
+    }
+
+    public static String format(short v, String format, int scale) {
+        if (invalidShort(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
     }
 
     public static short[] sortArray(short[] numbers) {

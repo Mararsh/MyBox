@@ -18,9 +18,9 @@ import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.JsonTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
@@ -36,12 +36,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     public static final long RootID = 1l;
     public static final String NodeFields = "nodeid,title,order_number,update_time,parentid";
 
-    protected String treeName, dataName, dataFxml, examplesFileName;
-    protected boolean nodeExecutable;
+    public String treeName, dataName, dataFxml, examplesFileName, majorColumnName;
+    public boolean nodeExecutable;
 
     public BaseNodeTable() {
         idColumnName = "nodeid";
-        orderColumns = "order_number,nodeid ASC";
+        orderColumns = "order_number ASC,nodeid ASC";
         nodeExecutable = false;
     }
 
@@ -58,11 +58,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return this;
     }
 
+    @Override
     public String label(String name) {
         if (name == null || name.isBlank()) {
             return name;
         }
-        switch (name) {
+        switch (name.toLowerCase()) {
             case "nodeid":
                 return message("NodeID");
             case "title":
@@ -72,7 +73,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             case "parentid":
                 return message("ParentID");
             case "update_time":
-                return message("Update_Time");
+                return message("UpdateTime");
         }
         return name;
     }
@@ -188,6 +189,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 return new TableNodeRowExpression();
             case "DataColumn":
                 return new TableNodeDataColumn();
+            case "GeographyCode":
+                return new TableNodeGeographyCode();
         }
         return null;
     }
@@ -287,7 +290,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return -1;
         }
         if (nodeid == RootID) {
-            return deleteDecentants(conn, nodeid);
+            return createRoot(conn) != null ? 1 : -3;
         }
         String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -618,6 +621,19 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return names;
     }
 
+    public String valuesHtml(DataNode node) {
+        if (node == null) {
+            return null;
+        }
+        String title = "<P align=\"center\">" + node.getTitle() + "</p>";
+        String html = valuesHtml(null, null, null, node);
+        if (html == null) {
+            return title;
+        } else {
+            return title + "<BR>" + html;
+        }
+    }
+
     public String valuesHtml(FxTask task, Connection conn,
             BaseController controller, DataNode node) {
         if (node == null) {
@@ -628,9 +644,9 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         StringTable table = new StringTable();
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
-            String value = column.toString(values.get(name));
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
+            String value = displayValue(column, values.get(name));
             if (value == null || value.isBlank()) {
                 continue;
             }
@@ -646,12 +662,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public String escapeXML(String column, String value) {
-        return value;
-    }
-
-    public String valuesXml(FxTask task, Connection conn,
-            BaseController controller, String prefix, DataNode node) {
+    public String valuesXml(String prefix, DataNode node, boolean format) {
         if (node == null) {
             return null;
         }
@@ -661,25 +672,29 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
         String prefix2 = prefix + Indent;
         String xml = "";
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
             Object value = values.get(name);
             if (value == null) {
                 continue;
             }
-            String escapeXML = escapeXML(name, column.toString(value));
-            if (escapeXML == null || escapeXML.isBlank()) {
+            String sValue = exportValue(column, value, format);
+            if (sValue == null || sValue.isBlank()) {
                 continue;
             }
-            xml += prefix + "<" + name + ">\n";
-            xml += prefix2 + "<![CDATA[" + escapeXML + "]]>\n";
-            xml += prefix + "</" + name + ">\n";
+            if (column.isDBStringType()) {
+                xml += prefix + "<" + name + ">\n";
+                xml += prefix2 + "<![CDATA[" + sValue + "]]>\n";
+                xml += prefix + "</" + name + ">\n";
+            } else {
+                xml += prefix + "<" + name + ">"
+                        + sValue + "</" + name + ">\n";
+            }
         }
         return xml;
     }
 
-    public String valuesJson(FxTask task, Connection conn,
-            BaseController controller, String prefix, DataNode node) {
+    public String valuesJson(String prefix, DataNode node, boolean format) {
         if (node == null) {
             return null;
         }
@@ -688,27 +703,31 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         String json = "";
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
             Object value = values.get(name);
             if (value == null) {
+                continue;
+            }
+            String sValue = exportValue(column, value, format);
+            if (sValue == null || sValue.isBlank()) {
                 continue;
             }
             if (!json.isBlank()) {
                 json += ",\n";
             }
             json += prefix + "\"" + label(name) + "\": "
-                    + JsonTools.encode(column.toString(value));
+                    + JsonTools.encode(sValue);
         }
         return json;
     }
 
     public String valuesString(DataNode node) {
-        return valuesJson(null, null, null, "", node);
+        return valuesJson("", node, true);
     }
 
     // Node should be queried with all fields
-    public String nodeHtml(FxTask task, Connection conn, BaseController controller,
+    public String valuesHtml(FxTask task, Connection conn, BaseController controller,
             DataNode node, String hierarchyNumber, int indent) {
         try {
             if (conn == null || node == null) {
@@ -760,6 +779,79 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
     }
+
+    // Node should be queried with all fields
+    public String valuesText(DataNode node) {
+        if (node == null) {
+            return null;
+        }
+        String s = message("Title") + ": " + node.getTitle();
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return s;
+        }
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
+            String value = displayValue(column, values.get(name));
+            if (value == null || value.isBlank()) {
+                continue;
+            }
+            s += "\n" + label(name) + ": " + value;
+
+        }
+        return s;
+    }
+
+    public String makeHierarchyNumber(Connection conn, DataNode node) {
+        if (node == null || node.getNodeid() == node.getParentid()) {
+            return "";
+        }
+        String h = "";
+        DataNode parent = query(conn, node.getParentid());
+        DataNode child = node;
+        long parentid, childid;
+        while (parent != null) {
+            parentid = parent.getNodeid();
+            childid = child.getNodeid();
+            String sql = "SELECT nodeid FROM " + tableName
+                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
+            int index = -1;
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setLong(1, parentid);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results != null && results.next()) {
+                        index++;
+                        long itemid = results.getLong("nodeid");
+                        if (itemid == childid) {
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                    return null;
+                }
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+                return null;
+            }
+            if (index < 0) {
+                return "";
+            }
+            h = "." + (index + 1) + h;
+            child = parent;
+            parent = query(conn, child.getParentid());
+        }
+        if (h.startsWith(".")) {
+            h = h.substring(1, h.length());
+        }
+        node.setHierarchyNumber(h);
+        return h;
+    }
+
+    public Object majorValue(DataNode node) {
+        return getValue(node, majorColumnName);
+    }
+
 
     /*
         get/set

@@ -13,7 +13,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;

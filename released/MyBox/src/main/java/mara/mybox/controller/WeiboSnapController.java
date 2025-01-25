@@ -809,14 +809,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
-        miaoCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboMiao"));
-        miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "WeiboMiao", newValue);
-            }
-        });
-
         openPathCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboOpenPath"));
         openPathCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override

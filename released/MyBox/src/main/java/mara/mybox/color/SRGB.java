@@ -5,9 +5,9 @@ import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import static mara.mybox.color.AppleRGB.XYZtoAppleRGB;
 import static mara.mybox.color.RGBColorSpace.linearSRGB;
-import mara.mybox.fximage.FxColorTools;
-import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.bufferedimage.ImageColorSpace;
+import mara.mybox.fxml.image.FxColorTools;
+import mara.mybox.image.tools.ColorConvertTools;
+import mara.mybox.image.data.ImageColorSpace;
 import mara.mybox.tools.DoubleMatrixTools;
 
 /**

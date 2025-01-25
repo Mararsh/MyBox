@@ -18,16 +18,16 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageConverterController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageConverterController">
     <children>
-        <FlowPane fx:id="saveFramesPane" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+        <FlowPane fx:id="saveFramesPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
             <children>
-                <RadioButton fx:id="saveAllFramesRadio" mnemonicParsing="false" onAction="#saveAllFramesSelected" selected="true" text="%AllFrames">
+                <RadioButton fx:id="saveAllFramesRadio" minHeight="-Infinity" mnemonicParsing="false" onAction="#saveAllFramesSelected" selected="true" text="%AllFrames" wrapText="true">
                     <toggleGroup>
                         <ToggleGroup fx:id="framesSaveGroup" />
                     </toggleGroup>
                 </RadioButton>
-                <RadioButton fx:id="saveCurrentFramesRadio" mnemonicParsing="false" onAction="#saveCurrentFramesSelected" text="%CurrentFrame" toggleGroup="$framesSaveGroup" />
+                <RadioButton fx:id="saveCurrentFramesRadio" minHeight="-Infinity" mnemonicParsing="false" onAction="#saveCurrentFramesSelected" text="%CurrentFrame" toggleGroup="$framesSaveGroup" wrapText="true" />
             </children>
         </FlowPane>
         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
@@ -35,16 +35,16 @@ License:    Apache License Version 2.0
                 <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" />
             </content>
         </ScrollPane>
-        <FlowPane hgap="2.0" vgap="2.0">
+        <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
             <children>
-                <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
+                <RadioButton fx:id="saveLoadRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs" wrapText="true">
                     <toggleGroup>
                         <ToggleGroup fx:id="saveAsGroup" />
                     </toggleGroup>
                 </RadioButton>
-                <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
-                <RadioButton fx:id="saveEditRadio" mnemonicParsing="false" text="%EditAfterSaveAs" toggleGroup="$saveAsGroup" />
-                <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
+                <RadioButton fx:id="saveOpenRadio" minHeight="-Infinity" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" wrapText="true" />
+                <RadioButton fx:id="saveEditRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EditAfterSaveAs" toggleGroup="$saveAsGroup" wrapText="true" />
+                <RadioButton fx:id="saveJustRadio" minHeight="-Infinity" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" wrapText="true" />
             </children>
         </FlowPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">

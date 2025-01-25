@@ -145,7 +145,7 @@ public class DataTableGroupStatistic {
                 valuesColumns.add(new Data2DColumn(message("Group") + "_" + message(type.name()),
                         ColumnType.Double, 150));
             }
-            String dname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Statistic"));
+            String dname = DerbyBase.appendIdentifier(groupResults.getName(), "_" + message("Statistic"));
             statisticData = Data2DTableTools.createTable(task, conn, dname, valuesColumns);
             statisticData.setDataName(dname).setScale(scale);
             tableStatistic = statisticData.getTableData2D();
@@ -181,7 +181,7 @@ public class DataTableGroupStatistic {
                 c.setColumnName(name);
                 groupColumns.add(c);
             }
-            String gname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Group"));
+            String gname = DerbyBase.appendIdentifier(groupResults.getName(), "_" + message("Group"));
             groupData = Data2DTableTools.createTable(task, conn, gname, groupColumns);
             tableGroup = groupData.getTableData2D();
 

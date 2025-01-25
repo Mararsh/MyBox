@@ -19,11 +19,11 @@ import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -324,7 +324,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     }
 
     @FXML
-    public void manageAction() {
+    public void treeAction() {
         DataTreeController.open(null, false, nodeTable);
     }
 

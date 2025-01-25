@@ -4,43 +4,82 @@
     </head>
     <body contenteditable="false" style="width: 900px; margin:0 auto;">
         <h1>Development Logs</h1>
-  <p>2024-12-24 v6.8.2</p>
-  <ul>
-   <li>Improve: 
-    <ul>
-     <li>Redesign and implement “Information Tree”: 
-      <ul>
-       <li>Define different database tables for each type of trees.</li>
-       <li>Refine interfaces.</li>
-       <li>New export formats: Tree XML, Tree JSON, List CSV.</li>
-       <li>Import format is changed as Tree XML.</li>
-       <li>Order numbers of nodes can be set.</li>
-       <li>Tree “Data Column” replaces tree “Data Definition”.</li>
-       <li>Tree “Row Expression” replaces tree “Row Filter”.</li>
-      </ul></li>
-     <li>Data Manufacture: 
-      <ul>
-       <li>Option “Reject invalid value when edit” replaces “Validate data when edit”.</li>
-       <li>Option “Reject invalid value when save” replaces “Validate data when save”.</li>
-       <li>When edit data cell, pop text area when value length is large.</li>
-       <li>When edit data cell, display invalid values in abnormal color.</li>
-       <li>“Set Value”: Validate data before write and prompt useful information. And provide options to handle invalid values.</li>
-      </ul></li>
-     <li>Major interfaces of functions are changed as scroll panes.</li>
-     <li>Enhance “Make Documents”.</li>
-    </ul></li>
-   <li>Upgrade to: JDK 23 + javaFX 24. </li>
-   <li>Remove: Memory parameters for reading PDF file.</li>
-   <li>Solved problems: 
-    <ul>
-     <li>“Set Values” and “Delete as Conditions” fail for all pages of database table.</li>
-     <li>Prompt of temporary file should not be popped when close matix or database table.</li>
-     <li>“Shortcuts omit Control/Alt” does not work.</li>
-     <li>Some shortcuts do not work in some interfaces.</li>
-     <li>Stack overflow may happen when task fails.</li>
-    </ul></li>
-  </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.2">Closed requirements/bugs in this version</a></p>
+        <p>2025-1-27 v6.8.3</p>
+        <ul>
+            <li>Add: 
+                <ul>
+                    <li>Read/write WebP image.</li>
+                    <li>Data column type “Enumerated Short”: Data are displayed as String while saved as Short.<br>
+                        Its benefit is saved storage while its disadvantage is lost independence and need other data to explain its values.</li>
+                </ul></li>
+            <li>Improve: 
+                <ul>
+                    <li>Data Manufacture: 
+                        <ul>
+                            <li>Remove “Handle invalid value” from column definition. Operations handle invalid values as their judgement and logic.</li>
+                            <li>Clear how apply or remove “format” when read, display, edit, save, export, or convert data.</li>
+                        </ul></li>
+                    <li>Data Tree: 
+                        <ul>
+                            <li>Change “Geography Code” as data tree.</li>
+                            <li>Option to apply data format when export.</li>
+                            <li>Locate node by title/id/time/value in tree.</li>
+                        </ul></li>
+                </ul></li>
+            <li>Solved problems: 
+                <ul>
+                    <li>Tree: Values are lost after save/move/rename/reorder node.</li>
+                    <li>After migrated to 6.8.1 or 6.8.2, <a target=_blank href="https://github.com/Mararsh/MyBox/issues/1979">“Data Manufacture” loads existed data incorrectly</a>.</li>
+                    <li>Data Manufacture: Updates are not saved if focus is not out in “CSV” mode。</li>
+                    <li>“Set Values” of Data Manufacture may write wrong values.</li>
+                    <li>Data should be converted as their types when row expression binds variables.</li>
+                    <li>When change image size, interface works abnormally after user inputs wrong value of width/height.</li>
+                    <li>Values of XYZ and Adobe CMYK are displayed wrongly in html of single color.</li>
+                    <li>“FFmpeg information” and “FFmpeg media information” do not work.</li>
+                    <li>In pop window, may fail to pop window.</li>
+                    <li>In many interfaces, when save as file, the selected path does not work.</li>
+                    <li>When open interface “Image Options” independently, some controls are not initialized.</li>
+                </ul></li>
+        </ul>
+        <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3">Closed requirements/bugs in this version</a></p>
+        <p>Happy Chinese New Year!</p>
+        <p>2024-12-24 v6.8.2</p>
+        <ul>
+            <li>Improve: 
+                <ul>
+                    <li>Redesign and implement “Information Tree”: 
+                        <ul>
+                            <li>Define different database tables for each type of trees.</li>
+                            <li>Refine interfaces.</li>
+                            <li>New export formats: Tree XML, Tree JSON, List CSV.</li>
+                            <li>Import format is changed as Tree XML.</li>
+                            <li>Order numbers of nodes can be set.</li>
+                            <li>Tree “Data Column” replaces tree “Data Definition”.</li>
+                            <li>Tree “Row Expression” replaces tree “Row Filter”.</li>
+                        </ul></li>
+                    <li>Data Manufacture: 
+                        <ul>
+                            <li>Option “Reject invalid value when edit” replaces “Validate data when edit”.</li>
+                            <li>Option “Reject invalid value when save” replaces “Validate data when save”.</li>
+                            <li>When edit data cell, pop text area when value length is large.</li>
+                            <li>When edit data cell, display invalid values in abnormal color.</li>
+                            <li>“Set Value”: Validate data before write and prompt useful information. And provide options to handle invalid values.</li>
+                        </ul></li>
+                    <li>Major interfaces of functions are changed as scroll panes.</li>
+                    <li>Enhance “Make Documents”.</li>
+                </ul></li>
+            <li>Upgrade to: JDK 23 + javaFX 24. </li>
+            <li>Remove: Memory parameters for reading PDF file.</li>
+            <li>Solved problems: 
+                <ul>
+                    <li>“Set Values” and “Delete as Conditions” fail for all pages of database table.</li>
+                    <li>Prompt of temporary file should not be popped when close matix or database table.</li>
+                    <li>“Shortcuts omit Control/Alt” does not work.</li>
+                    <li>Some shortcuts do not work in some interfaces.</li>
+                    <li>Stack overflow may happen when task fails.</li>
+                </ul></li>
+        </ul>
+        <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.2">Closed requirements/bugs in this version</a></p>
         <p>2024-5-18 v6.8.1</p>
         <ul>
             <li>Add: 
@@ -695,7 +734,7 @@
         <p>2021-2-11 v6.3.9</p>
         <ul>
             <li>Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Clear security attributes of PDF file.</li>
-            <li>Solved problems. Always go back to page 1 after CSV/Excel file is saved. Fail to unarchive file. Non-english entries of zip file are messed.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9">Closed requirements/bugs in this version</a><br> Happy Spring Festival! Best wishes in Year of the Ox!</li>
+            <li>Solved problems. Always go back to page 1 after CSV/Excel file is saved. Fail to unarchive file. Non-english entries of zip file are messed.<br> <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9">Closed requirements/bugs in this version</a><br> Happy Chinese New Year! Best wishes in Year of the Ox!</li>
         </ul>
         <p>2021-1-27 v6.3.8</p>
         <ul>

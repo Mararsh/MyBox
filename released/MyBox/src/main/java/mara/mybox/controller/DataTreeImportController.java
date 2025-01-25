@@ -156,25 +156,6 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
     }
 
-    public DataNode saveNode(Connection conn, DataNode node) {
-        try {
-            if (createRadio.isSelected()) {
-                return nodeTable.insertData(conn, node);
-            }
-            DataNode existed = nodeTable.find(conn, node.getParentid(), node.getTitle());
-            if (existed == null) {
-                return nodeTable.insertData(conn, node);
-            }
-            if (skipRadio.isSelected()) {
-                return node;
-            }
-            return nodeTable.updateData(conn, existed);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     class DataTreeParser extends DefaultHandler {
 
         protected Connection conn;
@@ -288,7 +269,8 @@ public class DataTreeImportController extends BaseBatchFileController {
                         break;
                     default:
                         if (columnNames.contains(qName)) {
-                            dataNode.setValue(qName, s);
+                            dataNode.setValue(qName,
+                                    nodeTable.importValue(nodeTable.column(qName), s));
 //                            if (isLogsVerbose()) {
 //                                showLogs(qName + "=" + s);
 //                            }
@@ -299,6 +281,25 @@ public class DataTreeImportController extends BaseBatchFileController {
                 }
             } catch (Exception e) {
                 showLogs(e.toString());
+            }
+        }
+
+        public DataNode saveNode(Connection conn, DataNode node) {
+            try {
+                if (createRadio.isSelected()) {
+                    return nodeTable.insertData(conn, node);
+                }
+                DataNode existed = nodeTable.find(conn, node.getParentid(), node.getTitle());
+                if (existed == null) {
+                    return nodeTable.insertData(conn, node);
+                }
+                if (skipRadio.isSelected()) {
+                    return node;
+                }
+                return nodeTable.updateData(conn, existed);
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+                return null;
             }
         }
 
@@ -366,6 +367,11 @@ public class DataTreeImportController extends BaseBatchFileController {
     @FXML
     public void aboutTreeInformation() {
         openHtml(HelpTools.aboutTreeInformation());
+    }
+
+    @Override
+    public boolean needStageVisitHistory() {
+        return false;
     }
 
 }

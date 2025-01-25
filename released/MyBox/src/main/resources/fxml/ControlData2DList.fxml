@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BaseData2DListController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BaseData2DListController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -93,9 +93,9 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="d2didColumn" text="%ID" />
+                                        <TableColumn fx:id="dataIdColumn" text="%ID" />
                                         <TableColumn fx:id="typeColumn" text="%Type" />
-                                        <TableColumn fx:id="nameColumn" prefWidth="120.0" text="%Name" />
+                                        <TableColumn fx:id="titleColumn" prefWidth="120.0" text="%Title" />
                                         <TableColumn fx:id="rowsColumn" prefWidth="60.0" text="%RowsNumber" />
                                         <TableColumn fx:id="colsColumn" prefWidth="60.0" text="%ColumnsNumber" />
                                         <TableColumn fx:id="fileColumn" prefWidth="160.0" text="%File" />

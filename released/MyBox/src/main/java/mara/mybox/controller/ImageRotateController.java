@@ -8,7 +8,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;

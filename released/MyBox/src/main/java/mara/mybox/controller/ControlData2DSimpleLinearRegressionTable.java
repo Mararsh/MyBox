@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView {
+public class ControlData2DSimpleLinearRegressionTable extends BaseData2DLoadController {
 
     protected BaseData2DRegressionController regressController;
     protected TableColumn sortColumn;
@@ -115,8 +115,8 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
             popError(message("NoData"));
             return;
         }
-        Data2DManufactureController.openData(data2D.dataName(),
-                data2D.getColumns(), data2D.tableRows());
+        Data2DManufactureController.openData(data2D.getName(),
+                data2D.getColumns(), data2D.pageData());
     }
 
     @FXML

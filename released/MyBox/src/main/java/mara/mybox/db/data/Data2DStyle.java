@@ -14,15 +14,15 @@ public class Data2DStyle extends BaseData {
     public static final String ColumnSeparator = "::";
 
     protected Data2DDefinition data2DDefinition;
-    protected long d2sid, d2id;
+    protected long styleID, dataID;
     protected long rowStart, rowEnd; // 0-based, exlcuded
     protected String title, columns, filter, fontColor, bgColor, fontSize, moreStyle;
     protected boolean matchFalse, abnoramlValues, bold;
     protected float sequence;
 
     private void init() {
-        d2sid = -1;
-        d2id = -1;
+        styleID = -1;
+        dataID = -1;
         title = null;
         rowStart = -1;
         rowEnd = -1;
@@ -74,8 +74,8 @@ public class Data2DStyle extends BaseData {
                 return;
             }
             data2DDefinition = style.data2DDefinition;
-            d2sid = style.d2sid;
-            d2id = style.d2id;
+            styleID = style.styleID;
+            dataID = style.dataID;
             title = style.title;
             rowStart = style.rowStart;
             rowEnd = style.rowEnd;
@@ -122,7 +122,7 @@ public class Data2DStyle extends BaseData {
     }
 
     public static boolean valid(Data2DStyle data) {
-        return data != null && data.getD2id() >= 0;
+        return data != null && data.getDataID() >= 0;
     }
 
     public static boolean setValue(Data2DStyle data, String column, Object value) {
@@ -132,10 +132,10 @@ public class Data2DStyle extends BaseData {
         try {
             switch (column) {
                 case "d2sid":
-                    data.setD2sid(value == null ? -1 : (long) value);
+                    data.setStyleID(value == null ? -1 : (long) value);
                     return true;
                 case "d2id":
-                    data.setD2id(value == null ? -1 : (long) value);
+                    data.setDataID(value == null ? -1 : (long) value);
                     return true;
                 case "title":
                     data.setTitle(value == null ? null : (String) value);
@@ -190,9 +190,9 @@ public class Data2DStyle extends BaseData {
         try {
             switch (column) {
                 case "d2sid":
-                    return data.getD2sid();
+                    return data.getStyleID();
                 case "d2id":
-                    return data.getD2id();
+                    return data.getDataID();
                 case "title":
                     return data.getTitle();
                 case "rowStart":
@@ -241,21 +241,21 @@ public class Data2DStyle extends BaseData {
     /*
         get/set
      */
-    public long getD2sid() {
-        return d2sid;
+    public long getStyleID() {
+        return styleID;
     }
 
-    public Data2DStyle setD2sid(long d2sid) {
-        this.d2sid = d2sid;
+    public Data2DStyle setStyleID(long d2sid) {
+        this.styleID = d2sid;
         return this;
     }
 
-    public long getD2id() {
-        return d2id;
+    public long getDataID() {
+        return dataID;
     }
 
-    public Data2DStyle setD2id(long d2id) {
-        this.d2id = d2id;
+    public Data2DStyle setDataID(long d2id) {
+        this.dataID = d2id;
         return this;
     }
 

@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.ColorConvertTools;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;

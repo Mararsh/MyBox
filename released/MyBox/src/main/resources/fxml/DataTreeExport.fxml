@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
-                                            <Label text="%Format" />
+                                            <Label text="%FileFormat" />
                               <Button fx:id="selectAllFormatButton" mnemonicParsing="false" onAction="#selectAllFormatAction">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -88,6 +88,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <CheckBox fx:id="dataFormatCheck" mnemonicParsing="false" text="%ApplyDataFormat" />
                            </children>
                            <VBox.margin>
                               <Insets top="10.0" />

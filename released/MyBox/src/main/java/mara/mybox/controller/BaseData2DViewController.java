@@ -22,13 +22,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -42,7 +39,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     protected FxTask loadTask;
     protected String delimiterName;
-    protected WebEngine webEngine;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -55,7 +51,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @FXML
     protected TextArea textsArea, csvArea;
     @FXML
-    protected WebView webView;
+    protected ControlWebView webViewController;
     @FXML
     protected Label columnsLabel;
     @FXML
@@ -98,9 +94,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             toolbar.getChildren().remove(leftPaneControl);
             refreshStyle(mainAreaBox);
 
-            webEngine = webView.getEngine();
-            webView.setCache(false);
-            webEngine.setJavaScriptEnabled(true);
+            webViewController.setParent(this);
 
             wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -219,8 +213,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             isSettingValues = true;
             buttonsPane.getChildren().clear();
             pageBox.getChildren().clear();
-            webEngine.getLoadWorker().cancel();
-            webEngine.loadContent("");
+            webViewController.loadContent("");
             textsArea.clear();
             tableView.setItems(null);
             if (csvRadio != null) {
@@ -275,8 +268,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (pop) {
                 popError(message("NoData"));
             } else {
-                webEngine.getLoadWorker().cancel();
-                webEngine.loadContent("");
+                webViewController.loadContent("");
             }
             return;
         }
@@ -309,8 +301,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 if (pop) {
                     HtmlPopController.openHtml(myController, html);
                 } else {
-                    webEngine.getLoadWorker().cancel();
-                    webEngine.loadContent(html);
+                    webViewController.loadContent(html);
                 }
             }
 
@@ -481,7 +472,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @FXML
     public void editHtml() {
         if (htmlRadio.isSelected()) {
-            HtmlEditorController.openHtml(WebViewTools.getHtml(webEngine));
+            HtmlEditorController.openHtml(webViewController.currentHtml());
         }
     }
 
@@ -523,7 +514,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             if (htmlRadio.isSelected()) {
-                MenuWebviewController.webviewMenu(this, webView);
+                MenuWebviewController.webviewMenu(webViewController);
                 return true;
 
             } else if (tableRadio.isSelected()) {
@@ -556,7 +547,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             if (htmlRadio.isSelected()) {
-                HtmlPopController.openWebView(this, webView);
+                HtmlPopController.openWebView(this, webViewController.webView);
                 return true;
 
             } else if (tableRadio.isSelected()) {

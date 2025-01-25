@@ -5,8 +5,6 @@
  */
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,7 +12,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
-import mara.mybox.value.UserConfig;
 
 /**
  * FXML Controller class
@@ -31,33 +28,6 @@ public class OperationController extends BaseController {
     protected ProgressBar progressBar, fileProgressBar;
     @FXML
     protected Label progressValue, fileProgressValue;
-    @FXML
-    protected CheckBox miaoCheck, openCheck;
-
-    @Override
-    public void initControls() {
-
-        super.initControls();
-
-        miaoCheck.setSelected(UserConfig.getBoolean(baseName + "Miao", true));
-        miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "Miao", newValue);
-
-            }
-        });
-
-        openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenWhenComplete", true));
-        openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean(baseName + "OpenWhenComplete", newValue);
-
-            }
-        });
-
-    }
 
     public void deleteOpenControls() {
         openCheck.setSelected(false);

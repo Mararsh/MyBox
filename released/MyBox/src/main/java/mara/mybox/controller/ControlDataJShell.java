@@ -232,7 +232,7 @@ public class ControlDataJShell extends BaseDataValuesController {
         Platform.runLater(() -> {
             outputs += msg + "<br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
-            webViewController.loadContents(html);
+            webViewController.loadContent(html);
         });
         Platform.requestNextPulse();
     }

@@ -9,43 +9,45 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2024-12-24 v6.8.2</p>
+  <p>2025-1-27 v6.8.3</p>
   <ul>
+   <li>Add: 
+    <ul>
+     <li>Read/write WebP image.</li>
+     <li>Data column type “Enumerated Short”: Data are displayed as String while saved as Short.<br>
+       Its benefit is saved storage while its disadvantage is lost independence and need other data to explain its values.</li>
+    </ul></li>
    <li>Improve: 
     <ul>
-     <li>Redesign and implement “Information Tree”: 
-      <ul>
-       <li>Define different database tables for each type of trees.</li>
-       <li>Refine interfaces.</li>
-       <li>New export formats: Tree XML, Tree JSON, List CSV.</li>
-       <li>Import format is changed as Tree XML.</li>
-       <li>Order numbers of nodes can be set.</li>
-       <li>Tree “Data Column” replaces tree “Data Definition”.</li>
-       <li>Tree “Row Expression” replaces tree “Row Filter”.</li>
-      </ul></li>
      <li>Data Manufacture: 
       <ul>
-       <li>Option “Reject invalid value when edit” replaces “Validate data when edit”.</li>
-       <li>Option “Reject invalid value when save” replaces “Validate data when save”.</li>
-       <li>When edit data cell, pop text area when value length is large.</li>
-       <li>When edit data cell, display invalid values in abnormal color.</li>
-       <li>“Set Value”: Validate data before write and prompt useful information. And provide options to handle invalid values.</li>
+       <li>Remove “Handle invalid value” from column definition. Operations handle invalid values as their judgement and logic.</li>
+       <li>Clear how apply or remove “format” when read, display, edit, save, export, or convert data.</li>
       </ul></li>
-     <li>Major interfaces of functions are changed as scroll panes.</li>
-     <li>Enhance “Make Documents”.</li>
+     <li>Data Tree: 
+      <ul>
+       <li>Change “Geography Code” as data tree.</li>
+       <li>Option to apply data format when export.</li>
+       <li>Locate node by title/id/time/value in tree.</li>
+      </ul></li>
     </ul></li>
-   <li>Upgrade to: JDK 23 + javaFX 24.</li>
-   <li>Remove: Memory parameters for reading PDF file.</li>
    <li>Solved problems: 
     <ul>
-     <li>“Set Values” and “Delete as Conditions” fail for all pages of database table.</li>
-     <li>Prompt of temporary file should not be popped when close matix or database table.</li>
-     <li>“Shortcuts omit Control/Alt” does not work.</li>
-     <li>Some shortcuts do not work in some interfaces.</li>
-     <li>Stack overflow may happen when task fails.</li>
+     <li>Tree: Values are lost after save/move/rename/reorder node.</li>
+     <li>After migrated to 6.8.1 or 6.8.2, <a target=_blank href="https://github.com/Mararsh/MyBox/issues/1979">“Data Manufacture” loads existed data incorrectly</a>.</li>
+     <li>Data Manufacture: Updates are not saved if focus is not out in “CSV” mode。</li>
+     <li>“Set Values” of Data Manufacture may write wrong values.</li>
+     <li>Data should be converted as their types when row expression binds variables.</li>
+     <li>When change image size, interface works abnormally after user inputs wrong value of width/height.</li>
+     <li>Values of XYZ and Adobe CMYK are displayed wrongly in html of single color.</li>
+     <li>“FFmpeg information” and “FFmpeg media information” do not work.</li>
+     <li>In pop window, may fail to pop window.</li>
+     <li>In many interfaces, when save as file, the selected path does not work.</li>
+     <li>When open interface “Image Options” independently, some controls are not initialized.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.2">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3">Closed requirements/bugs in this version</a></p>
+  <p>Happy Chinese New Year!</p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -68,7 +70,7 @@
    <tbody>
     <tr>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip">MyBox-src.zip</a></td>
-     <td>80M-</td>
+     <td>120M-</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf">pdf</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps_en.html">html</a></td>
     </tr>
@@ -89,19 +91,19 @@
     <tr>
      <td>win10 x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip">MyBox-win-x64.zip</a></td>
-     <td>280MB-</td>
+     <td>360MB-</td>
      <td>MyBox.exe</td>
     </tr>
     <tr>
      <td>CentOS 7 x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz">MyBox-CentOS7-x64.tar.gz</a></td>
-     <td>320MB-</td>
+     <td>360MB-</td>
      <td>MyBox</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg">MyBox-mac.dmg</a></td>
-     <td>300MB-</td>
+     <td>360MB-</td>
      <td>MyBox.app</td>
     </tr>
    </tbody>
@@ -123,19 +125,19 @@
     <tr>
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
-     <td>240MB-</td>
+     <td>280MB-</td>
      <td>Java 23 or higher</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
-     <td>240MB-</td>
+     <td>280MB-</td>
      <td>Java 23 or higher</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz">MyBox-mac.jar.gz</a></td>
-     <td>240MB-</td>
+     <td>280MB-</td>
      <td>Java 23 or higher</td>
     </tr>
    </tbody>
@@ -444,8 +446,8 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -479,8 +481,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -535,29 +537,29 @@
     </tr>
     <tr>
      <td>Software Testing - Test Environment</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Base Functions’ Verification List</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Compatibility Testing</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Detailed Testing</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html">html</a></td>
     </tr>
@@ -577,8 +579,8 @@
     </tr>
     <tr>
      <td>About - Data in Two-dimensional Storage Structure</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html">html</a></td>
     </tr>
@@ -716,6 +718,13 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Data_Column_zh.html">html</a></td>
     </tr>
     <tr>
+     <td>Examples - Geography Code</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Geography_Code_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Geography_Code_zh.html">html</a></td>
+    </tr>
+    <tr>
      <td>Palette - Default Colors</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
@@ -745,8 +754,8 @@
     </tr>
     <tr>
      <td>Palette - Colors from colorhexa.com</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_all_zh.html">all</a></td>
     </tr>
@@ -815,8 +824,8 @@
     </tr>
     <tr>
      <td>Stories of Images</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
@@ -1023,7 +1032,7 @@
     <tr>
      <td>China National Bureau of Statistics</td>
      <td>Data</td>
-     <td><a target=_blank href="http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/">http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/</a></td>
+     <td><a target=_blank href="https://data.stats.gov.cn/">https://data.stats.gov.cn/</a></td>
     </tr>
     <tr>
      <td>JHU</td>
@@ -1038,7 +1047,7 @@
     <tr>
      <td>Book</td>
      <td>Materials</td>
-     <td><a target=_blank href="https://book.douban.com/subject/3894923/">https://book.douban.com/subject/3894923/</a></td>
+     <td>ISBN:978-7-5330-2773-5</td>
     </tr>
     <tr>
      <td>National Geomatics Center of China</td>
@@ -1083,12 +1092,7 @@
     <tr>
      <td>Book</td>
      <td>Materials</td>
-     <td><a target=_blank href="https://book.douban.com/subject/10465940/">https://book.douban.com/subject/10465940/</a></td>
-    </tr>
-    <tr>
-     <td>sfds</td>
-     <td>Handwriting</td>
-     <td><a target=_blank href="https://sfzd.hwcha.com">https://sfzd.hwcha.com</a></td>
+     <td>ISBN:978-7-03-0307290-0</td>
     </tr>
     <tr>
      <td>PaginatedPdfTable</td>
@@ -1159,6 +1163,16 @@
      <td>miguelemosreverte</td>
      <td>SVG</td>
      <td><a target=_blank href="https://github.com/miguelemosreverte/imagetracerjava">https://github.com/miguelemosreverte/imagetracerjava</a></td>
+    </tr>
+    <tr>
+     <td>webp-imageio</td>
+     <td>WebP</td>
+     <td><a target=_blank href="https://github.com/sejda-pdf/webp-imageio">https://github.com/sejda-pdf/webp-imageio</a></td>
+    </tr>
+    <tr>
+     <td>Book</td>
+     <td>Materials</td>
+     <td>ISBN:7-5305-231 7-1</td>
     </tr>
    </tbody>
   </table>

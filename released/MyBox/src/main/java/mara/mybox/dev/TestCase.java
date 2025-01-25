@@ -178,8 +178,8 @@ public class TestCase {
             cases.add(new TestCase(index++, message("MatrixUnaryCalculation"), Fxmls.MatrixUnaryCalculationFxml));
             cases.add(new TestCase(index++, message("MatricesBinaryCalculation"), Fxmls.MatricesBinaryCalculationFxml));
             cases.add(new TestCase(index++, message("DatabaseTable"), Fxmls.DataTablesFxml));
-            cases.add(new TestCase(index++, message("RowFilter"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("Data2DDefinition"), Fxmls.DataTreeFxml));
+            cases.add(new TestCase(index++, message("RowExpression"), Fxmls.DataTreeFxml));
+            cases.add(new TestCase(index++, message("DataColumn"), Fxmls.DataTreeFxml));
             cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DataTreeFxml));
             cases.add(new TestCase(index++, message("MathFunction"), Fxmls.DataTreeFxml));
             cases.add(new TestCase(index++, message("JShell"), Fxmls.DataTreeFxml));

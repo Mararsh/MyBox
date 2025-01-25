@@ -387,7 +387,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
             if (styleFilter == null || styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
                 return null;
             }
-            List<String> tableRow = pageRow(tableRowIndex);
+            List<String> tableRow = pageRow(tableRowIndex, false);
             if (tableRow == null || tableRow.size() < 1) {
                 return null;
             }

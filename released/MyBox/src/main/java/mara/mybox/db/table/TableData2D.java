@@ -53,7 +53,7 @@ public class TableData2D extends BaseTable<Data2DRow> {
         try {
             TableData2D table = new TableData2D();
             table.readDefinitionFromDB(tableName);
-            return table.html();
+            return table.definitionHtml();
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;

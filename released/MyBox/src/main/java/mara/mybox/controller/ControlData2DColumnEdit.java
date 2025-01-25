@@ -25,14 +25,11 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
-import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
@@ -48,6 +45,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
     protected BaseData2DColumnsController columnsController;
     protected int columnIndex;
+    protected boolean isTableExistedColumn;
 
     @FXML
     protected TextField nameInput, defaultInput, lengthInput, widthInput, scaleInput, formatInput, centuryInput;
@@ -55,9 +53,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, enumEditableRadio,
-            colorRadio, clobRadio, skipInvalidRadio, zeroInvalidRadio, emptyInvalidRadio,
-            nullInvalidRadio, useInvalidRadio;
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio,
+            enumRadio, enumEditableRadio, enumShortRadio,
+            colorRadio, clobRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -69,9 +67,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected HBox formatBox;
     @FXML
-    protected FlowPane typesPane, fixPane, centuryPane, invalidPane;
+    protected FlowPane typesPane, fixPane, centuryPane;
     @FXML
-    protected Label lengthLabel;
+    protected Label lengthLabel, enumLabel;
 
     @Override
     public void setControlsStyle() {
@@ -113,7 +111,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             this.columnsController = controller;
             columnIndex = -1;
 
-            rightTipsView.setVisible(columnsController.data2D != null && columnsController.data2D.isTable());
+            rightTipsView.setVisible(columnsController.isTable());
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -138,11 +136,19 @@ public class ControlData2DColumnEdit extends BaseChildController {
             optionsBox.getChildren().clear();
             defaultInput.clear();
             formatInput.clear();
+            enumLabel.setText(null);
             fixYearCheck.setSelected(false);
-            useInvalidRadio.setSelected(true);
 
-            if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
+            if (enumRadio.isSelected()
+                    || enumEditableRadio.isSelected()
+                    || enumShortRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
+                if (enumShortRadio.isSelected()) {
+                    enumLabel.setText(message("EnumShortComments"));
+
+                } else {
+                    enumLabel.setText(message("EnumInputComments"));
+                }
 
             } else if (datetimeRadio.isSelected()) {
                 optionsBox.getChildren().addAll(formatBox, fixPane);
@@ -160,14 +166,13 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
                 formatInput.setText(message("GroupInThousands"));
-                zeroInvalidRadio.setSelected(true);
 
             }
 
             if (clobRadio.isSelected()) {
                 lengthInput.setText("2G");
                 lengthInput.setDisable(true);
-                lengthLabel.setText("(<= 2G)");
+                lengthLabel.setText("");
             } else {
                 lengthInput.setText("32672");
                 lengthInput.setDisable(false);
@@ -188,7 +193,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else {
                 loadNull();
             }
-            if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
+            if (columnsController.isMatrix()) {
                 typesPane.setDisable(true);
                 doubleRadio.setSelected(true);
             }
@@ -245,6 +250,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 case EnumerationEditable:
                     enumEditableRadio.setSelected(true);
                     break;
+                case EnumeratedShort:
+                    enumShortRadio.setSelected(true);
+                    break;
                 case Longitude:
                     longitudeRadio.setSelected(true);
                     break;
@@ -273,7 +281,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
             enumInput.clear();
             String format = column.getFormat();
             if (format != null) {
-                if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
+                if (enumRadio.isSelected()
+                        || enumEditableRadio.isSelected()
+                        || enumShortRadio.isSelected()) {
                     enumInput.setText(format);
 
                 } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
@@ -293,49 +303,25 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
             colorController.setColor(column.getColor());
 
-            InvalidAs invalidAs = column.getInvalidAs();
-
-            if (null == invalidAs) {
-                useInvalidRadio.setSelected(true);
-            } else {
-                switch (invalidAs) {
-                    case Skip:
-                        skipInvalidRadio.setSelected(true);
-                        break;
-                    case Empty:
-                        emptyInvalidRadio.setSelected(true);
-                        break;
-                    case Zero:
-                        zeroInvalidRadio.setSelected(true);
-                        break;
-                    case Null:
-                        nullInvalidRadio.setSelected(true);
-                        break;
-                    default:
-                        useInvalidRadio.setSelected(true);
-                        break;
-                }
-            }
-
-            boolean canNotChange = columnsController != null
+            isTableExistedColumn = columnsController != null
                     && columnsController.data2D != null
                     && columnsController.data2D.isTable()
                     && columnsController.data2D.getSheet() != null
                     && columnIndex >= 0;
-            nameInput.setDisable(canNotChange);
+            nameInput.setDisable(isTableExistedColumn);
             for (int i = 1; i < typesPane.getChildren().size(); i++) {
-                typesPane.getChildren().get(i).setDisable(canNotChange);
+                typesPane.getChildren().get(i).setDisable(isTableExistedColumn);
             }
-            notNullCheck.setDisable(canNotChange);
-            defaultInput.setDisable(canNotChange);
-            lengthInput.setDisable(canNotChange);
+            notNullCheck.setDisable(isTableExistedColumn);
+            defaultInput.setDisable(isTableExistedColumn);
+            lengthInput.setDisable(isTableExistedColumn);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public Data2DColumn pickValues() {
+    public Data2DColumn pickValues(boolean checkValue) {
         try {
             String name = nameInput.getText();
             if (columnsController != null
@@ -344,10 +330,12 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 name = DerbyBase.fixedIdentifier(name);
             }
             if (name == null || name.isBlank()) {
-                popError(message("InvalidParameter") + ": " + message("Name"));
-                return null;
+                if (checkValue) {
+                    popError(message("InvalidParameter") + ": " + message("Name"));
+                    return null;
+                }
             }
-            if (columnsController != null) {
+            if (checkValue && columnsController != null) {
                 for (int i = 0; i < columnsController.tableData.size(); i++) {
                     Data2DColumn col = columnsController.tableData.get(i);
                     if (i != columnIndex && name.equalsIgnoreCase(col.getColumnName())) {
@@ -361,26 +349,51 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (clobRadio.isSelected()) {
                 length = Integer.MAX_VALUE;
             } else {
+                length = BaseTable.StringMaxLength;
                 try {
-                    length = Integer.parseInt(lengthInput.getText());
-                    if (length < 0 || length > BaseTable.StringMaxLength) {
-                        length = BaseTable.StringMaxLength;
+                    String s = lengthInput.getText();
+                    if (s == null || s.isBlank()) {
+                        if (checkValue) {
+                            popError(message("InvalidParameter") + ": " + message("Length"));
+                            return null;
+                        }
+                    } else {
+                        length = Integer.parseInt(s);
+                        if (length < 0 || length > BaseTable.StringMaxLength) {
+                            length = BaseTable.StringMaxLength;
+                        }
                     }
                 } catch (Exception ee) {
                     popError(message("InvalidParameter") + ": " + message("Length"));
                     return null;
                 }
             }
-            int width;
+            int width = 100;
             try {
-                width = Integer.parseInt(widthInput.getText());
+                String s = widthInput.getText();
+                if (s == null || s.isBlank()) {
+                    if (checkValue) {
+                        popError(message("InvalidParameter") + ": " + message("Width"));
+                        return null;
+                    }
+                } else {
+                    width = Integer.parseInt(s);
+                }
             } catch (Exception ee) {
                 popError(message("InvalidParameter") + ": " + message("Width"));
                 return null;
             }
-            int scale;
+            int scale = 2;
             try {
-                scale = Integer.parseInt(scaleInput.getText());
+                String s = scaleInput.getText();
+                if (s == null || s.isBlank()) {
+                    if (checkValue) {
+                        popError(message("InvalidParameter") + ": " + message("DecimialScale"));
+                        return null;
+                    }
+                } else {
+                    scale = Integer.parseInt(s);
+                }
             } catch (Exception ee) {
                 popError(message("InvalidParameter") + ": " + message("DecimialScale"));
                 return null;
@@ -396,24 +409,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
 
             String enumString = enumInput.getText();
-            if (enumRadio.isSelected()
+            if ((enumRadio.isSelected() || enumShortRadio.isSelected())
                     && (enumString == null || enumString.isBlank())) {
                 popError(message("InvalidParameter") + ": " + message("EnumerateValues"));
                 return null;
-            }
-            InvalidAs invalidAs;
-            if (skipInvalidRadio.isSelected()) {
-                invalidAs = InvalidAs.Skip;
-            } else if (emptyInvalidRadio.isSelected()) {
-                invalidAs = InvalidAs.Empty;
-            } else if (zeroInvalidRadio.isSelected()) {
-                invalidAs = InvalidAs.Zero;
-            } else if (nullInvalidRadio.isSelected()) {
-                invalidAs = InvalidAs.Null;
-            } else if (useInvalidRadio.isSelected()) {
-                invalidAs = InvalidAs.Use;
-            } else {
-                invalidAs = DefaultInvalidAs;
             }
             Data2DColumn column;
             if (columnsController != null && columnIndex >= 0) {
@@ -428,7 +427,6 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     .setColor((Color) colorController.rect.getFill())
                     .setFixTwoDigitYear(fixYearCheck.isSelected())
                     .setCentury(century)
-                    .setInvalidAs(invalidAs)
                     .setDescription(descInput.getText());
 
             String format = formatInput.getText();
@@ -462,6 +460,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Enumeration).setFormat(enumString);
             } else if (enumEditableRadio.isSelected()) {
                 column.setType(ColumnType.EnumerationEditable).setFormat(enumString);
+            } else if (enumShortRadio.isSelected()) {
+                column.setType(ColumnType.EnumeratedShort).setFormat(enumString);
             } else if (longitudeRadio.isSelected()) {
                 column.setType(ColumnType.Longitude).setFormat(null);
             } else if (latitudeRadio.isSelected()) {

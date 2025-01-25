@@ -1839,7 +1839,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             name = embedICCName;
         }
-        final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.XML)),
+        final File file = chooseFile(
+                UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.XML)),
                 name, FileFilters.XMLExtensionFilter);
         if (file == null) {
             return;
@@ -2026,8 +2027,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             name = embedICCName;
         }
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                name, targetExtensionFilter);
+        final File file = saveAsFile(name);
         if (file == null) {
             return;
         }

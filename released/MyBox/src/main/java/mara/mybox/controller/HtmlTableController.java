@@ -14,7 +14,6 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -136,8 +135,7 @@ public class HtmlTableController extends BaseWebViewController {
         if (name != null) {
             name += ".html";
         }
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                name, targetExtensionFilter);
+        final File file = saveAsFile(name);
         if (file == null) {
             return;
         }
@@ -216,8 +214,8 @@ public class HtmlTableController extends BaseWebViewController {
         }
     }
 
-    public static HtmlTableController open(String body) {
-        return open(null, body);
+    public static HtmlTableController open(String html) {
+        return open(null, html);
     }
 
     public static HtmlTableController open(String title, String body) {

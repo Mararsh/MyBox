@@ -113,7 +113,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
                     + HtmlWriteTools.stringToHtml(script) + "</div>";
             outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(ret) + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
-            outputController.loadContents(html);
+            outputController.loadContent(html);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -1,13 +1,13 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -24,6 +24,7 @@ public class TableNodeImageScope extends BaseNodeTable {
         dataName = message("ImageScope");
         dataFxml = Fxmls.ControlDataImageScopeFxml;
         examplesFileName = "ImageScope";
+        majorColumnName = "area_data";
         defineColumns();
     }
 

@@ -581,9 +581,6 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "MathFunction")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "MathFunctionTips")).append("</PRE>\n");
 
-            s.append("    <H3>").append(message(lang, "GeographyCode")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "GeographyCodeEditComments")).append("</PRE>\n");
-
             s.append("    <H3>").append(message(lang, "MapOptions")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "MapComments")).append("</PRE>\n");
 

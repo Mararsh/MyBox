@@ -46,6 +46,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     protected boolean domChanged, textsChanged, fileChanged;
     protected String title, typeName;
     protected final SimpleBooleanProperty loadNotify;
+    protected final long domLargeSize = 1 * 1024 * 1024;
 
     @FXML
     protected Tab domTab, textsTab;
@@ -115,16 +116,16 @@ public abstract class BaseDomEditorController extends BaseFileController {
             popError(message("InvalidData"));
             return;
         }
-        if (file.length() > 10 * 1024 * 1024) {
+        if (file.length() > domLargeSize) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonJson = new ButtonType(message("JsonEditor"));
+            ButtonType buttonDom = new ButtonType(message("Tree"));
             ButtonType buttonSystem = new ButtonType(message("SystemMethod"));
             ButtonType buttontext = new ButtonType(message("TextEditor"));
             ButtonType buttonCancel = new ButtonType(message("Cancel"));
-            alert.getButtonTypes().setAll(buttonJson, buttonSystem, buttontext, buttonCancel);
+            alert.getButtonTypes().setAll(buttonDom, buttonSystem, buttontext, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
@@ -217,7 +218,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     @Override
     public void saveAction() {
         if (sourceFile == null) {
-            targetFile = chooseSaveFile();
+            targetFile = saveCurrentFile();
         } else {
             targetFile = sourceFile;
         }
@@ -334,7 +335,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        File file = chooseSaveFile();
+        File file = saveAsFile();
         if (file == null) {
             return;
         }

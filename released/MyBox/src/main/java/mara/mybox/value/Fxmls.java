@@ -15,34 +15,6 @@ public class Fxmls {
     /*
         document
      */
-    public static final String DataTreeFxml = "/fxml/DataTree.fxml";
-    public static final String ControlDataTextFxml = "/fxml/ControlDataText.fxml";
-    public static final String ControlDataHtmlFxml = "/fxml/ControlDataHtml.fxml";
-    public static final String ControlDataMathFunctionFxml = "/fxml/ControlDataMathFunction.fxml";
-    public static final String ControlDataWebFavoriteFxml = "/fxml/ControlDataWebFavorite.fxml";
-    public static final String ControlDataSQLFxml = "/fxml/ControlDataSQL.fxml";
-    public static final String ControlDataJShellFxml = "/fxml/ControlDataJShell.fxml";
-    public static final String ControlDataJEXLFxml = "/fxml/ControlDataJEXL.fxml";
-    public static final String ControlDataJavaScriptFxml = "/fxml/ControlDataJavaScript.fxml";
-    public static final String ControlDataImageScopeFxml = "/fxml/ControlDataImageScope.fxml";
-    public static final String ControlDataDataColumnFxml = "/fxml/ControlDataDataColumn.fxml";
-    public static final String ControlDataRowExpressionFxml = "/fxml/ControlDataRowExpression.fxml";
-
-    public static final String DataTreeNodeEditorFxml = "/fxml/DataTreeNodeEditor.fxml";
-    public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
-    public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
-    public static final String DataTreeImportFxml = "/fxml/DataTreeImport.fxml";
-    public static final String DataTreeCopyFxml = "/fxml/DataTreeCopy.fxml";
-    public static final String DataTreeMoveFxml = "/fxml/DataTreeMove.fxml";
-    public static final String DataTreeDeleteFxml = "/fxml/DataTreeDelete.fxml";
-
-    public static final String DataSelectParentFxml = "/fxml/DataSelectParent.fxml";
-    public static final String DataSelectRowExpressionFxml = "/fxml/DataSelectRowExpression.fxml";
-    public static final String DataSelectJavaScriptFxml = "/fxml/DataSelectJavaScript.fxml";
-    public static final String DataSelectDataColumnFxml = "/fxml/DataSelectDataColumn.fxml";
-    public static final String DataSelectImageScopeFxml = "/fxml/DataSelectImageScope.fxml";
-    public static final String DataSelectSQLFxml = "/fxml/DataSelectSQL.fxml";
-
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
     public static final String PdfAttributesBatchFxml = "/fxml/PdfAttributesBatch.fxml";
@@ -293,6 +265,39 @@ public class Fxmls {
     public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";
 
     /*
+        tree
+     */
+    public static final String DataTreeFxml = "/fxml/DataTree.fxml";
+    public static final String ControlDataTextFxml = "/fxml/ControlDataText.fxml";
+    public static final String ControlDataHtmlFxml = "/fxml/ControlDataHtml.fxml";
+    public static final String ControlDataMathFunctionFxml = "/fxml/ControlDataMathFunction.fxml";
+    public static final String ControlDataWebFavoriteFxml = "/fxml/ControlDataWebFavorite.fxml";
+    public static final String ControlDataSQLFxml = "/fxml/ControlDataSQL.fxml";
+    public static final String ControlDataJShellFxml = "/fxml/ControlDataJShell.fxml";
+    public static final String ControlDataJEXLFxml = "/fxml/ControlDataJEXL.fxml";
+    public static final String ControlDataJavaScriptFxml = "/fxml/ControlDataJavaScript.fxml";
+    public static final String ControlDataImageScopeFxml = "/fxml/ControlDataImageScope.fxml";
+    public static final String ControlDataDataColumnFxml = "/fxml/ControlDataDataColumn.fxml";
+    public static final String ControlDataRowExpressionFxml = "/fxml/ControlDataRowExpression.fxml";
+    public static final String ControlDataGeographyCodeFxml = "/fxml/ControlDataGeographyCode.fxml";
+
+    public static final String DataTreeNodeEditorFxml = "/fxml/DataTreeNodeEditor.fxml";
+    public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
+    public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
+    public static final String DataTreeImportFxml = "/fxml/DataTreeImport.fxml";
+    public static final String DataTreeCopyFxml = "/fxml/DataTreeCopy.fxml";
+    public static final String DataTreeMoveFxml = "/fxml/DataTreeMove.fxml";
+    public static final String DataTreeDeleteFxml = "/fxml/DataTreeDelete.fxml";
+    public static final String DataTreeLocateFxml = "/fxml/DataTreeLocate.fxml";
+
+    public static final String DataSelectParentFxml = "/fxml/DataSelectParent.fxml";
+    public static final String DataSelectRowExpressionFxml = "/fxml/DataSelectRowExpression.fxml";
+    public static final String DataSelectJavaScriptFxml = "/fxml/DataSelectJavaScript.fxml";
+    public static final String DataSelectDataColumnFxml = "/fxml/DataSelectDataColumn.fxml";
+    public static final String DataSelectImageScopeFxml = "/fxml/DataSelectImageScope.fxml";
+    public static final String DataSelectSQLFxml = "/fxml/DataSelectSQL.fxml";
+
+    /*
         data
      */
     public static final String Data2DManufactureFxml = "/fxml/Data2DManufacture.fxml";
@@ -386,20 +391,11 @@ public class Fxmls {
     public static final String FileTTC2TTFFxml = "/fxml/FileTTC2TTF.fxml";
 
     public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";
-    public static final String GeographyCodeEditFxml = "/fxml/GeographyCodeEdit.fxml";
-    public static final String GeographyCodeImportInternalCSVFxml = "/fxml/GeographyCodeImportInternalCSV.fxml";
-    public static final String GeographyCodeImportExternalCSVFxml = "/fxml/GeographyCodeImportExternalCSV.fxml";
-    public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";
-    public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
-
+    public static final String MapOptionsFxml = "/fxml/MapOptions.fxml";
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
     public static final String CoordinatePickerFxml = "/fxml/CoordinatePicker.fxml";
     public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";
     public static final String Data2DCoordinatePickerFxml = "/fxml/Data2DCoordinatePicker.fxml";
-
-    public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
-    public static final String DataExportFxml = "/fxml/DataExport.fxml";
-
 
     /*
         file

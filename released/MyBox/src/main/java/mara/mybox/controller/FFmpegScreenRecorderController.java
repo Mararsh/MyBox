@@ -10,7 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -24,7 +23,6 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -42,7 +40,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @FXML
     protected TextField commandInput;
     @FXML
-    protected CheckBox miaoRecordCheck;
+    protected CheckBox miaoCheck;
 
     public FFmpegScreenRecorderController() {
         baseTitle = message("FFmpegScreenRecorder");
@@ -71,23 +69,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
             optionsController.setParameters(this);
 
-            miaoRecordCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderMiao", true));
-            miaoRecordCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean("FFmpegScreenRecorderMiao", nv);
-                }
-            });
-
             os = SystemTools.os();
-
-            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Open", newValue);
-                }
-            });
-            openCheck.setSelected(UserConfig.getBoolean(baseName + "Open", true));
 
             optionsController.extensionInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -158,7 +140,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @Override
     public boolean doTask(FxTask currentTask) {
         try {
-            if (miaoRecordCheck.isSelected()) {
+            if (miaoCheck.isSelected()) {
                 SoundTools.BenWu();
             }
             if (timer != null) {
@@ -214,7 +196,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 process = null;
             }
             stopping.set(false);
-            if (miaoRecordCheck.isSelected()) {
+            if (miaoCheck.isSelected()) {
                 SoundTools.miao7();
             }
             showLogs(message("Exit"));

@@ -18,9 +18,9 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.NetworkTools;
@@ -167,8 +167,8 @@ public class NetworkQueryAddressController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                infoController.loadContents(info);
-                headerController.loadContents(headerTable);
+                infoController.loadContent(info);
+                headerController.loadContent(headerTable);
                 ipaddressController.loadAddress("https://www.ipaddress.com/site/" + ip);
                 certArea.setText(certString);
             }
@@ -220,7 +220,7 @@ public class NetworkQueryAddressController extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(host + ".crt");
+        File file = saveAsFile(host + ".crt");
         if (file == null) {
             return;
         }

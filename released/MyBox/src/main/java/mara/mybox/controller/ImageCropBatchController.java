@@ -9,7 +9,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.bufferedimage.CropTools;
+import mara.mybox.image.data.CropTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;

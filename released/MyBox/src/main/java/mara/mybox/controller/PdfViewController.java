@@ -23,7 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -242,7 +242,7 @@ public class PdfViewController extends PdfViewController_Html {
             textsArea.clear();
             textsLabel.setText("");
             if (webViewController != null) {
-                webViewController.loadContents(null);
+                webViewController.loadContent(null);
             }
             if (file == null) {
                 return;

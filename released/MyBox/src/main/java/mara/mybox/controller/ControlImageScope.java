@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.FxSingletonTask;
 
 /**

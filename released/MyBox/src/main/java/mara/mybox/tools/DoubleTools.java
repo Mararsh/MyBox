@@ -18,15 +18,16 @@ public class DoubleTools {
 
     public static NumberFormat numberFormat;
 
-    public static boolean invalidDouble(double value) {
-        return Double.isNaN(value)
+    public static boolean invalidDouble(Double value) {
+        return value == null
+                || Double.isNaN(value)
                 || Double.isInfinite(value)
                 || value == AppValues.InvalidDouble;
     }
 
     public static double value(InvalidAs invalidAs) {
         if (invalidAs == InvalidAs.Zero) {
-            return 0;
+            return 0d;
         } else {
             return Double.NaN;
         }
@@ -222,6 +223,13 @@ public class DoubleTools {
         double d = r.nextDouble();
         int i = max > 0 ? r.nextInt(max) : 0;
         return sign == 1 ? i + d : -(i + d);
+    }
+
+    public static String format(double v, String format, int scale) {
+        if (invalidDouble(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
     }
 
 }

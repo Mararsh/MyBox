@@ -128,8 +128,8 @@ public class MenuController extends BaseChildController {
                 baseName = name(parent, node);
             }
             alwaysClear = isAlwaysClear;
-            clearAndSet = alwaysClear || UserConfig.getBoolean(conn, name + "ValuesClearAndSet", true);
-            closeAfterPaste = UserConfig.getBoolean(conn, name + "ValuesCloseAfterPaste", true);
+            clearAndSet = alwaysClear || UserConfig.getBoolean(conn, baseName + "ValuesClearAndSet", true);
+            closeAfterPaste = UserConfig.getBoolean(conn, baseName + "ValuesCloseAfterPaste", true);
 
             if (childWindowCheck != null) {
                 childWindowCheck.setSelected(UserConfig.getBoolean(conn, baseName + "AsChildWindow", false));

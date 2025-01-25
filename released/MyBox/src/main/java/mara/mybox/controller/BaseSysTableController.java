@@ -14,7 +14,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @param <P> Data
@@ -149,7 +148,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
 
     @FXML
     protected void exportAction() {
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
+        final File file = chooseFile(defaultTargetPath(),
                 Languages.message(tableName) + ".txt", FileFilters.AllExtensionFilter);
         if (file == null) {
             return;

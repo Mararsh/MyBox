@@ -163,7 +163,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
                         .setCharset(targetCharset)
                         .setHasHeader(csvTargetController.withNamesCheck.isSelected())
                         .setDelimiter(csvTargetController.getDelimiterName());
-                if (def.getD2did() < 0) {
+                if (def.getDataID() < 0) {
                     tableData2DDefinition.insertData(conn, def);
                 } else {
                     tableData2DDefinition.updateData(conn, def);

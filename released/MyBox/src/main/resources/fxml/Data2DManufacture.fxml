@@ -25,7 +25,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.web.WebView?>
 
 <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DManufactureController">
    <content>
@@ -462,12 +461,12 @@ License:    Apache License Version 2.0
                                 <Tab text="html">
                                     <content>
                                         <VBox fx:id="htmlBox" spacing="2.0">
-                                            <children>
-                                    <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                                            </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                  </padding>
+                                       <children>
+                                          <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
                                         </VBox>
                                     </content>
                                 </Tab>

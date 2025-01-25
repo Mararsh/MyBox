@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MapOptionsController">
+   <content>
+      <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+         <children>
+              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                  <children>
+                      <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                          <image>
+                              <Image url="@../buttons/Red/iconTips.png" />
+                          </image>
+                      </ImageView>
+                      <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                      <Hyperlink onAction="#aboutCoordinateSystem" text="%AboutCoordinateSystem" />
+                  </children>
+              </HBox>
+              <VBox fx:id="mapBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                  <children>
+                      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                          <children>
+                              <Label text="%Map" />
+                              <RadioButton fx:id="tiandituRadio" mnemonicParsing="false" text="%TianDiTu">
+                                  <toggleGroup>
+                                      <ToggleGroup fx:id="mapGroup" />
+                                  </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="gaodeRadio" mnemonicParsing="false" selected="true" text="%GaoDe" toggleGroup="$mapGroup" />
+                          </children>
+                      </FlowPane>
+                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="15.0" vgap="5.0">
+                          <children>
+                              <Label text="%Coordinate" />
+                              <RadioButton fx:id="cgcs2000Radio" mnemonicParsing="false" selected="true" text="CGCS2000">
+                                  <toggleGroup>
+                                      <ToggleGroup fx:id="coordinateGroup" />
+                                  </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="gcj02Radio" mnemonicParsing="false" text="GCJ-02" toggleGroup="$coordinateGroup" />
+                          </children>
+                      </FlowPane>
+                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" vgap="5.0">
+                          <children>
+                              <Label text="%Projection" />
+                              <RadioButton fx:id="mercatorRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EPSG900913" wrapText="true">
+                                  <toggleGroup>
+                                      <ToggleGroup fx:id="projectionGroup" />
+                                  </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="geodeticRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EPSG4326" toggleGroup="$projectionGroup" wrapText="true" />
+                          </children>
+                      </FlowPane>
+                  </children>
+              </VBox>
+              <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                  <children>
+                      <VBox fx:id="sizeBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                          <children>
+                              <CheckBox fx:id="fitViewCheck" mnemonicParsing="false" text="%FitView" />
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                  <children>
+                                      <Label text="%MapSize" />
+                                      <ComboBox fx:id="mapSizeSelector" prefWidth="150.0" />
+                                  </children>
+                              </HBox>
+                          </children>
+                      </VBox>
+                      <VBox fx:id="markerImageBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                          <children>
+                              <Label text="%MarkerImage">
+                                  <VBox.margin>
+                                      <Insets top="5.0" />
+                                  </VBox.margin>
+                              </Label>
+                              <FlowPane fx:id="markerImagePane" hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <RadioButton fx:id="markerPointRadio" mnemonicParsing="false" selected="true" text="%Point">
+                                          <toggleGroup>
+                                              <ToggleGroup fx:id="markerImageGroup" />
+                                          </toggleGroup>
+                                      </RadioButton>
+                                      <RadioButton fx:id="markerCircleRadio" mnemonicParsing="false" text="%Circle" toggleGroup="$markerImageGroup" />
+                                  </children>
+                              </FlowPane>
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <RadioButton fx:id="markerImageRadio" mnemonicParsing="false" text="%Image" toggleGroup="$markerImageGroup" />
+                                      <TextField fx:id="markerImageInput" prefWidth="160.0" />
+                                      <Button fx:id="selectFileMarkerButton" mnemonicParsing="false" onAction="#pickMarkerImage" onMouseEntered="#popMarkerImage">
+                                          <graphic>
+                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../buttons/Red/iconSelectFile.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </graphic>
+                                      </Button>
+                                  </children>
+                              </FlowPane>
+                              <FlowPane hgap="5.0" layoutX="10.0" layoutY="96.0" vgap="5.0">
+                                  <children>
+                                      <Label text="%MarkerImageSize" />
+                                      <ComboBox fx:id="markerSizeSelector" editable="true" prefWidth="80.0" />
+                                      <Label text="px" />
+                                  </children>
+                              </FlowPane>
+                          </children>
+                      </VBox>
+                      <VBox fx:id="markerTextBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                          <children>
+                              <Label text="%MarkerText">
+                                  <VBox.margin>
+                                      <Insets top="5.0" />
+                                  </VBox.margin>
+                              </Label>
+                              <FlowPane fx:id="baseTextPane" hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <CheckBox fx:id="markerLabelCheck" mnemonicParsing="false" selected="true" text="%Label" />
+                                      <CheckBox fx:id="markerCoordinateCheck" layoutX="118.0" layoutY="52.0" mnemonicParsing="false" text="%Coordinate" />
+                                  </children>
+                              </FlowPane>
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <Label text="%TextSize" />
+                                      <ComboBox fx:id="textSizeSelector" editable="true" prefWidth="80.0" />
+                                      <Label text="px" />
+                                      <CheckBox fx:id="boldCheck" mnemonicParsing="false" text="%Bold" />
+                                  </children>
+                              </FlowPane>
+                              <FlowPane fx:id="textColorPane" hgap="5.0" layoutX="15.0" layoutY="186.0" vgap="5.0">
+                                  <children>
+                                      <Label text="%TextColor" />
+                                      <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
+                                  </children>
+                              </FlowPane>
+                          </children>
+                      </VBox>
+                      <CheckBox fx:id="popInfoCheck" mnemonicParsing="false" text="%PopInformation" />
+                      <VBox fx:id="layersBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                          <children>
+                              <Label text="%MapLayers" />
+                              <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                  <children>
+                                      <CheckBox fx:id="standardLayerCheck" mnemonicParsing="false" selected="true" text="%Standard" />
+                                      <Label text="%Opacity" />
+                                      <ComboBox fx:id="standardOpacitySelector" prefWidth="80.0" />
+                                  </children>
+                              </FlowPane>
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <CheckBox fx:id="satelliteLayerCheck" mnemonicParsing="false" text="%Satellite" />
+                                      <Label text="%Opacity" />
+                                      <ComboBox fx:id="satelliteOpacitySelector" prefWidth="80.0" />
+                                  </children>
+                              </FlowPane>
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <CheckBox fx:id="roadLayerCheck" mnemonicParsing="false" text="%RoadNet" />
+                                      <Label text="%Opacity" />
+                                      <ComboBox fx:id="roadOpacitySelector" prefWidth="80.0" />
+                                  </children>
+                              </FlowPane>
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <CheckBox fx:id="trafficLayerCheck" mnemonicParsing="false" text="%Traffic" />
+                                      <Label text="%Opacity" />
+                                      <ComboBox fx:id="trafficOpacitySelector" prefWidth="80.0" />
+                                  </children>
+                              </FlowPane>
+                          </children>
+                      </VBox>
+                      <VBox fx:id="languageBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                          <children>
+                              <Label text="%Language" />
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <RadioButton fx:id="chineseRadio" mnemonicParsing="false" selected="true" text="%Chinese">
+                                          <toggleGroup>
+                                              <ToggleGroup fx:id="langGroup" />
+                                          </toggleGroup>
+                                      </RadioButton>
+                                      <RadioButton fx:id="englishRadio" mnemonicParsing="false" text="%English" toggleGroup="$langGroup" />
+                                      <RadioButton fx:id="chineseEnglishRadio" mnemonicParsing="false" text="%ChineseEnglish" toggleGroup="$langGroup" />
+                                  </children>
+                              </FlowPane>
+                          </children>
+                      </VBox>
+                      <VBox fx:id="controlsBox" layoutX="10.0" layoutY="1034.0" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                          <children>
+                              <Label text="%Controls" />
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                  <children>
+                                      <CheckBox fx:id="zoomCheck" mnemonicParsing="false" selected="true" text="%Zoom" />
+                                      <CheckBox fx:id="scaleCheck" mnemonicParsing="false" selected="true" text="%ZoomScale" />
+                                      <CheckBox fx:id="typeCheck" mnemonicParsing="false" selected="true" text="%MapType" />
+                                      <CheckBox fx:id="symbolsCheck" mnemonicParsing="false" text="%Symbols" />
+                                  </children>
+                              </FlowPane>
+                          </children>
+                      </VBox>
+                  </children>
+              </VBox>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </VBox>
+   </content>
+</ScrollPane>

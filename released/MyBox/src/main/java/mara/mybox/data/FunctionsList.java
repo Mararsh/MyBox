@@ -12,7 +12,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 

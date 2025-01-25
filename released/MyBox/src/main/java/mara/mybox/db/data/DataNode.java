@@ -6,6 +6,7 @@ import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
+import static mara.mybox.value.AppValues.InvalidDouble;
 import static mara.mybox.value.AppValues.InvalidInteger;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.AppValues.InvalidShort;
@@ -62,7 +63,11 @@ public class DataNode extends BaseData {
             if (values == null) {
                 values = new HashMap<>();
             }
-            values.put(column, value);
+            if (value == null) {
+                values.remove(column);
+            } else {
+                values.put(column, value);
+            }
             return true;
         } catch (Exception e) {
             return false;
@@ -111,7 +116,7 @@ public class DataNode extends BaseData {
             if (o == null) {
                 return InvalidInteger;
             }
-            return (int) getValue(column);
+            return (Integer) getValue(column);
         } catch (Exception e) {
             return InvalidInteger;
         }
@@ -123,7 +128,7 @@ public class DataNode extends BaseData {
             if (o == null) {
                 return InvalidLong;
             }
-            return (long) getValue(column);
+            return (Long) getValue(column);
         } catch (Exception e) {
             return InvalidLong;
         }
@@ -135,9 +140,21 @@ public class DataNode extends BaseData {
             if (o == null) {
                 return InvalidShort;
             }
-            return (short) getValue(column);
+            return (Short) getValue(column);
         } catch (Exception e) {
             return InvalidShort;
+        }
+    }
+
+    public double getDoubleValue(String column) {
+        try {
+            Object o = getValue(column);
+            if (o == null) {
+                return InvalidDouble;
+            }
+            return (Double) getValue(column);
+        } catch (Exception e) {
+            return InvalidDouble;
         }
     }
 
@@ -147,7 +164,7 @@ public class DataNode extends BaseData {
             if (o == null) {
                 return false;
             }
-            return (boolean) getValue(column);
+            return (Boolean) getValue(column);
         } catch (Exception e) {
             return false;
         }

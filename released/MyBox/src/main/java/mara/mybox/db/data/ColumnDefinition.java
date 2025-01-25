@@ -4,11 +4,8 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
@@ -17,7 +14,7 @@ import static mara.mybox.db.data.ColumnDefinition.getValue;
 import static mara.mybox.db.data.ColumnDefinition.setValue;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
@@ -27,6 +24,7 @@ import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.ShortTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.matchIgnoreCase;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -46,8 +44,6 @@ public class ColumnDefinition extends BaseData {
     protected OnUpdate onUpdate;
     protected Object value;
     protected Number maxValue, minValue;
-    protected InvalidAs invalidAs;
-    protected Map<Object, String> displayMap;
     protected DoubleStatistic statistic;
 
     final public static InvalidAs DefaultInvalidAs = InvalidAs.Skip;
@@ -60,7 +56,7 @@ public class ColumnDefinition extends BaseData {
         Datetime, Date, Era, // Looks Derby does not support date of BC(before Christ)
         Clob, // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
         Blob, // BLOB is handled as InputStream internally
-        Longitude, Latitude
+        Longitude, Latitude, EnumeratedShort
     }
 
     public static enum OnDelete {
@@ -69,10 +65,6 @@ public class ColumnDefinition extends BaseData {
 
     public static enum OnUpdate {
         NoAction, Restrict
-    }
-
-    public static enum DataFormat {
-        ScientificNotation, CommaSeparated, None
     }
 
     public enum InvalidAs {
@@ -100,10 +92,8 @@ public class ColumnDefinition extends BaseData {
         referTable = null;
         referColumn = null;
         statistic = null;
-        displayMap = null;
         description = null;
         century = 2000;
-        invalidAs = DefaultInvalidAs;
     }
 
     public ColumnDefinition() {
@@ -134,18 +124,17 @@ public class ColumnDefinition extends BaseData {
     public ColumnDefinition cloneAll() {
         try {
             ColumnDefinition newData = (ColumnDefinition) super.clone();
-            newData.cloneFrom(this);
-            return newData;
+            return newData.cloneFrom(this);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public void cloneFrom(ColumnDefinition c) {
+    public ColumnDefinition cloneFrom(ColumnDefinition c) {
         try {
             if (c == null) {
-                return;
+                return this;
             }
             tableName = c.tableName;
             columnName = c.columnName;
@@ -173,10 +162,10 @@ public class ColumnDefinition extends BaseData {
             description = c.description;
             fixTwoDigitYear = c.fixTwoDigitYear;
             century = c.century;
-            invalidAs = c.invalidAs;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+        return this;
     }
 
     public boolean isForeignKey() {
@@ -233,58 +222,15 @@ public class ColumnDefinition extends BaseData {
         return getValue(this, column);
     }
 
+    public boolean isId() {
+        return isPrimaryKey && auto;
+    }
+
     public boolean validValue(String value) {
-        try {
-            if (value == null || value.isBlank()) {
-                return !notNull;
-            }
-            switch (type) {
-                case String:
-                case Enumeration:
-                case EnumerationEditable:
-                case File:
-                case Image:
-                    return length <= 0 || value.length() <= length;
-                case Color:
-                    if (length > 0 && value.length() > length) {
-                        return false;
-                    }
-                    Color.web(value);
-                    return true;
-                case Double:
-                case Longitude:
-                case Latitude:
-                    Double.valueOf(value.replaceAll(",", ""));
-                    return true;
-                case Float:
-                    Float.valueOf(value.replaceAll(",", ""));
-                    return true;
-                case Long:
-                    Long.valueOf(value);
-                    return true;
-                case Integer:
-                    Integer.valueOf(value.replaceAll(",", ""));
-                    return true;
-                case Boolean:
-                    String v = value.toLowerCase();
-                    return "1".equals(v) || "0".equals(v)
-                            || "true".equals(v) || "false".equals(v)
-                            || "yes".equals(v) || "no".equals(v)
-                            || message("true").equals(v) || message("false").equals(v)
-                            || message("yes").equals(v) || message("no").equals(v);
-                case Short:
-                    Short.valueOf(value);
-                    return true;
-                case Datetime:
-                case Date:
-                case Era:
-                    return toDate(value) != null;
-                default:
-                    return true;
-            }
-        } catch (Exception e) {
+        if (value == null || value.isBlank()) {
+            return !notNull;
         }
-        return false;
+        return fromString(value, InvalidAs.Fail) != null;
     }
 
     public boolean validNotNull(String value) {
@@ -359,12 +305,8 @@ public class ColumnDefinition extends BaseData {
         return isNumberType(type);
     }
 
-    public boolean needScale() {
-        return type == ColumnType.Double || type == ColumnType.Float;
-    }
-
-    public boolean supportMultipleLine() {
-        return type == ColumnType.String || type == ColumnType.Clob;
+    public boolean isDBNumberType() {
+        return isDBNumberType(type);
     }
 
     public boolean isDBStringType() {
@@ -385,14 +327,53 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isEnumType() {
-        return type == ColumnType.Enumeration || type == ColumnType.EnumerationEditable;
+        return type == ColumnType.Enumeration
+                || type == ColumnType.EnumerationEditable
+                || type == ColumnType.EnumeratedShort;
     }
 
-    public List<String> enumValues() {
+    public List<String> enumNames() {
         if (!isEnumType()) {
             return null;
         }
         return StringTools.toList(format, "\n");
+    }
+
+    public String enumName(Short v) {
+        try {
+            return enumNames().get((int) v);
+        } catch (Exception e) {
+            return v != null ? v + "" : null;
+        }
+    }
+
+    public Short enumValue(String v) {
+        List<String> names = enumNames();
+        try {
+
+            Short s = Short.valueOf(v.replaceAll(",", ""));
+            if (!ShortTools.invalidShort(s) && s >= 0 && s < names.size()) {
+                return s;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            for (int i = 0; i < names.size(); i++) {
+                if (matchIgnoreCase(v, names.get(i))) {
+                    return (short) i;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public boolean needScale() {
+        return type == ColumnType.Double || type == ColumnType.Float;
+    }
+
+    public boolean supportMultipleLine() {
+        return type == ColumnType.String || type == ColumnType.Clob;
     }
 
     public String random(Random random, int maxRandom, short scale, boolean nonNegative) {
@@ -460,7 +441,6 @@ public class ColumnDefinition extends BaseData {
             return null;
         }
         try {
-            String s = o + "";
 //            MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
             switch (type) {
                 case String:
@@ -469,65 +449,110 @@ public class ColumnDefinition extends BaseData {
                 case Color:
                 case File:
                 case Image:
-                    return (String) o;
-                case Era:
-                    long lv;
                     try {
-                        lv = Long.parseLong(s);
-                        if (lv >= 10000 || lv <= -10000) {
-                            return lv;
+                        return (String) o;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                case Era:
+                    try {
+                        long e = Long.parseLong(o + "");
+                        if (e >= 10000 || e <= -10000) {
+                            return e;
+                        } else {
+                            return e;
                         }
                     } catch (Exception e) {
-                        return AppValues.InvalidLong;
+                        return null;
                     }
                 case Double:
-                case Longitude:
-                case Latitude:
-                    double d;
                     try {
-                        d = Double.parseDouble(o + "");
+                        double d = Double.parseDouble(o + "");
                         if (DoubleTools.invalidDouble(d)) {
-                            d = Double.NaN;
+                            return null;
+                        } else {
+                            return d;
                         }
                     } catch (Exception e) {
-                        d = Double.NaN;
+                        return null;
                     }
-                    return d;
+                case Longitude:
+                    try {
+                        double d = Double.parseDouble(o + "");
+                        if (d >= -180 && d <= 180) {
+                            return d;
+                        } else {
+                            return null;
+                        }
+                    } catch (Exception e) {
+                        return null;
+                    }
+                case Latitude:
+                    try {
+                        double d = Double.parseDouble(o + "");
+                        if (d >= -90 && d <= 90) {
+                            return d;
+                        } else {
+                            return null;
+                        }
+                    } catch (Exception e) {
+                        return null;
+                    }
                 case Float:
-                    float f;
                     try {
-                        f = Float.parseFloat(o + "");
+                        float f = Float.parseFloat(o + "");
                         if (FloatTools.invalidFloat(f)) {
-                            f = Float.NaN;
+                            return null;
+                        } else {
+                            return f;
                         }
                     } catch (Exception e) {
-                        f = Float.NaN;
+                        return null;
                     }
-                    return f;
                 case Long:
-                    long l;
                     try {
-                        l = Long.parseLong(o + "");
+                        long l = Long.parseLong(o + "");
+                        if (LongTools.invalidLong(l)) {
+                            return null;
+                        } else {
+                            return l;
+                        }
                     } catch (Exception e) {
-                        l = AppValues.InvalidLong;
+                        return null;
                     }
-                    return l;
                 case Integer:
-                    int i;
                     try {
-                        i = Integer.parseInt(o + "");
+                        int i = Integer.parseInt(o + "");
+                        if (IntTools.invalidInt(i)) {
+                            return null;
+                        } else {
+                            return i;
+                        }
                     } catch (Exception e) {
-                        i = AppValues.InvalidInteger;
+                        return null;
                     }
-                    return i;
                 case Short:
-                    short ss;
                     try {
-                        ss = Short.parseShort(o + "");
+                        short s = Short.parseShort(o + "");
+                        if (ShortTools.invalidShort(s)) {
+                            return null;
+                        } else {
+                            return s;
+                        }
                     } catch (Exception e) {
-                        ss = AppValues.InvalidShort;
+                        return null;
                     }
-                    return ss;
+                case EnumeratedShort:
+                    try {
+                        short s = Short.parseShort(o + "");
+                        if (ShortTools.invalidShort(s)) {
+                            return null;
+                        } else {
+                            return s;
+                        }
+                    } catch (Exception e) {
+                        return null;
+                    }
                 case Boolean:
                     return StringTools.isTrue(o + "");
                 case Datetime:
@@ -539,7 +564,7 @@ public class ColumnDefinition extends BaseData {
                     Clob clob = (Clob) o;
                     return clob.getSubString(1, (int) clob.length());
                 case Blob:
-                    MyBoxLog.console(tableName + " " + columnName + " " + type);
+//                    MyBoxLog.console(tableName + " " + columnName + " " + type);
                     Blob blob = (Blob) o;
                     return blob.getBinaryStream();
                 default:
@@ -551,91 +576,235 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
-    public Date toDate(String string) {
-        return stringToDate(string, fixTwoDigitYear, century);
-    }
-
-    public Object fromString(String string) {
-        return fromString(string, invalidAs);
-    }
-
+    // remove format and convert to real value type
     public Object fromString(String string, InvalidAs invalidAs) {
-        return fromString(type, string,
-                invalidAs != null ? invalidAs : this.invalidAs,
-                fixTwoDigitYear, century);
-    }
-
-    public String toString(Object value) {
-        return toString(type, value, null);
-    }
-
-    public double toDouble(String string) {
-        try {
-            if (null == type || string == null) {
-                return Double.NaN;
-            }
-            switch (type) {
-                case Datetime:
-                case Date:
-                case Era:
-                    return toDate(string).getTime() + 0d;
-                case Boolean:
-                    return StringTools.isTrue(string) ? 1 : 0;
-                default:
-                    return Double.parseDouble(string.replaceAll(",", ""));
-            }
-        } catch (Exception e) {
-            return Double.NaN;
-        }
-    }
-
-    public String trimValue(String string, InvalidAs inAs) {
-        Object o = null;
-        try {
-            o = fromString(string, inAs);
-        } catch (Exception e) {
-        }
-        if (o == null) {
-            return null;
-        }
-        return toString(o);
-    }
-
-    public String format(String string) {
-        return format(string, -1, invalidAs);
-    }
-
-    public String format(String string, InvalidAs inAs) {
-        return format(string, -1, inAs);
-    }
-
-    public String format(String string, int maxLen, InvalidAs inAs) {
-        Object o = null;
-        try {
-            o = fromString(string, inAs);
-        } catch (Exception e) {
-        }
-        if (o == null) {
-            return null;
-        }
-        String s = toString(o);
         try {
             switch (type) {
                 case Double:
-                    return NumberTools.format((double) o, format, scale);
+                    Double d = Double.valueOf(string.replaceAll(",", ""));
+                    if (!DoubleTools.invalidDouble(d)) {
+                        return d;
+                    }
+                    break;
+                case Longitude:
+                    Double lo = Double.valueOf(string.replaceAll(",", ""));
+                    if (lo >= -180 && lo <= 180) {
+                        return lo;
+                    }
+                    break;
+                case Latitude:
+                    Double la = Double.valueOf(string.replaceAll(",", ""));
+                    if (la >= -90 && la <= 90) {
+                        return la;
+                    }
+                    break;
                 case Float:
-                    return NumberTools.format((float) o, format, scale);
+                    Float f = Float.valueOf(string.replaceAll(",", ""));
+                    if (!FloatTools.invalidFloat(f)) {
+                        return f;
+                    }
+                    break;
                 case Long:
-                    return NumberTools.format((long) o, format, scale);
+                    Long l = Long.valueOf(string.replaceAll(",", ""));
+                    if (!LongTools.invalidLong(l)) {
+                        return l;
+                    }
+                    break;
                 case Integer:
-                    return NumberTools.format((int) o, format, scale);
+                    Integer i = Integer.valueOf(string.replaceAll(",", ""));
+                    if (!IntTools.invalidInt(i)) {
+                        return i;
+                    }
+                    break;
                 case Short:
-                    return NumberTools.format((short) o, format, scale);
+                    Short s = Short.valueOf(string.replaceAll(",", ""));
+                    if (!ShortTools.invalidShort(s)) {
+                        return s;
+                    }
+                    break;
+                case EnumeratedShort:
+                    Short es = enumValue(string);
+                    if (es != null) {
+                        return es;
+                    }
+                    break;
+                case Boolean:
+                    return StringTools.isTrue(string);
+                case Datetime:
+                case Date:
+                    Date t = stringToDate(string, fixTwoDigitYear, century);
+                    if (t != null) {
+                        return t;
+                    }
+                    break;
+                case Era:
+                    Date e = stringToDate(string, fixTwoDigitYear, century);
+                    if (e != null) {
+                        return e.getTime();
+                    }
+                    break;
+                case Color:
+                    try {
+                        Color.web(string);
+                        return string;
+                    } catch (Exception exx) {
+                    }
+                default:
+                    return string;
+            }
+        } catch (Exception e) {
+        }
+        if (invalidAs == null) {
+            return string;
+        }
+        switch (invalidAs) {
+            case Fail:
+                return null;
+            case Zero:
+                if (isDBNumberType()) {
+                    switch (type) {
+                        case Double:
+                            return 0d;
+                        case Float:
+                            return 0f;
+                        case Long:
+                            return 0l;
+                        case Short:
+                        case EnumeratedShort:
+                            return (short) 0;
+                        default:
+                            return 0;
+                    }
+                } else {
+                    return "0";
+                }
+            case Null:
+                if (isDBStringType()) {
+                    return "";
+                } else {
+                    return null;
+                }
+            case Empty:
+                return "";
+            case Skip:
+                return string;
+            case Use:
+                return string;
+            default:
+                return string;
+        }
+    }
+
+    public String toString(Object value) {
+        if (value == null) {
+            return null;
+        }
+        String s = value + "";
+        try {
+            switch (type) {
+                case Double:
+                case Longitude:
+                case Latitude:
+                    Double d = (Double) value;
+                    if (DoubleTools.invalidDouble(d)) {
+                        return null;
+                    } else {
+                        return s;
+                    }
+                case Float:
+                    Float f = (Float) value;
+                    if (FloatTools.invalidFloat(f)) {
+                        return null;
+                    } else {
+                        return s;
+                    }
+                case Long:
+                    Long l = (Long) value;
+                    if (LongTools.invalidLong(l)) {
+                        return null;
+                    } else {
+                        return s;
+                    }
+                case Integer:
+                    Integer i = (Integer) value;
+                    if (IntTools.invalidInt(i)) {
+                        return null;
+                    } else {
+                        return s;
+                    }
+                case Short:
+                    Short st = (Short) value;
+                    if (ShortTools.invalidShort(st)) {
+                        return null;
+                    } else {
+                        return s;
+                    }
+                case EnumeratedShort:
+                    Short es = (Short) value;
+                    if (ShortTools.invalidShort(es)
+                            || enumName(es) == null) {
+                        return null;
+                    } else {
+                        return s;
+                    }
+                case Datetime:
+                case Date:
+                    return DateTools.datetimeToString((Date) value);
+                case Era: {
+                    try {
+                        long lv = Long.parseLong(value.toString());
+                        if (lv >= 10000 || lv <= -10000) {
+                            return DateTools.datetimeToString(new Date(lv));
+                        }
+                    } catch (Exception exx) {
+                        return s;
+                    }
+                }
+                default:
+                    return s;
+            }
+        } catch (Exception e) {
+            return s;
+        }
+    }
+
+    public String formatValue(Object v) {
+        return formatString(toString(v), InvalidAs.Use);
+    }
+
+    public String formatString(String v) {
+        return formatString(v, InvalidAs.Use);
+    }
+
+    public String formatString(String string, InvalidAs inAs) {
+        Object o = null;
+        try {
+            o = fromString(string, inAs);
+        } catch (Exception e) {
+        }
+        if (o == null) {
+            return null;
+        }
+        try {
+            switch (type) {
+                case Double:
+                    return DoubleTools.format((Double) o, format, scale);
+                case Float:
+                    return FloatTools.format((Float) o, format, scale);
+                case Long:
+                    return LongTools.format((Long) o, format, scale);
+                case Integer:
+                    return IntTools.format((Integer) o, format, scale);
+                case Short:
+                    return ShortTools.format((Short) o, format, scale);
+                case EnumeratedShort:
+                    return enumName((Short) o);
                 case Datetime:
                     return DateTools.datetimeToString((Date) o, format);
                 case Date:
                     return DateTools.datetimeToString((Date) o, format);
                 case Era: {
+                    String s = toString(o);
                     try {
                         long lv = Long.parseLong(s);
                         if (lv >= 10000 || lv <= -10000) {
@@ -648,14 +817,21 @@ public class ColumnDefinition extends BaseData {
             }
         } catch (Exception e) {
         }
-        if (s != null && maxLen > 0) {
-            return s.length() > maxLen ? s.substring(0, maxLen) : s;
-        } else {
-            return s;
-        }
+        return toString(o);
     }
 
-    public String savedValue(String string, boolean validate) {
+    public String exportValue(Object v, boolean format) {
+        return format ? formatValue(v) : toString(v);
+    }
+
+    public String removeFormat(String string) {
+        return removeFormat(string, InvalidAs.Use);
+    }
+
+    public String removeFormat(String string, InvalidAs invalidAs) {
+        if (invalidAs == null) {
+            return string;
+        }
         switch (type) {
             case Datetime:
             case Date:
@@ -664,15 +840,17 @@ public class ColumnDefinition extends BaseData {
             case EnumerationEditable:
                 return string;
             default:
-                if (validate) {
-                    return trimValue(string, invalidAs);
+                Object o = null;
+                try {
+                    o = fromString(string, invalidAs);
+                } catch (Exception e) {
                 }
+                return toString(o);
         }
-        return string;
     }
 
     public boolean valueQuoted() {
-        return !isNumberType() && type != ColumnType.Boolean;
+        return !isDBNumberType() && type != ColumnType.Boolean;
     }
 
     public String dbDefaultValue() {
@@ -695,6 +873,7 @@ public class ColumnDefinition extends BaseData {
             case Long:
             case Integer:
             case Short:
+            case EnumeratedShort:
             case Longitude:
             case Latitude:
             case Era:
@@ -734,6 +913,30 @@ public class ColumnDefinition extends BaseData {
         return format == null ? null : format.replaceAll(AppValues.MyBoxSeparator, "\n");
     }
 
+    public Date toDate(String string) {
+        return stringToDate(string, fixTwoDigitYear, century);
+    }
+
+    public double toDouble(String string) {
+        try {
+            if (null == type || string == null) {
+                return Double.NaN;
+            }
+            switch (type) {
+                case Datetime:
+                case Date:
+                case Era:
+                    return toDate(string).getTime() + 0d;
+                case Boolean:
+                    return StringTools.isTrue(string) ? 1 : 0;
+                default:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+            }
+        } catch (Exception e) {
+            return Double.NaN;
+        }
+    }
+
     public String dummyValue() {
         switch (type) {
             case String:
@@ -749,6 +952,7 @@ public class ColumnDefinition extends BaseData {
             case Long:
             case Integer:
             case Short:
+            case EnumeratedShort:
             case Longitude:
             case Latitude:
             case Era:
@@ -766,6 +970,10 @@ public class ColumnDefinition extends BaseData {
 
     public String label() {
         return columnName;
+    }
+
+    public String info() {
+        return info(this);
     }
 
     /*
@@ -806,8 +1014,6 @@ public class ColumnDefinition extends BaseData {
                 return data.isNotNull();
             case "is_auto":
                 return data.isAuto();
-            case "invalid_as":
-                return invalidAsValue(data.getInvalidAs());
             case "editable":
                 return data.isEditable();
             case "fix_year":
@@ -870,9 +1076,6 @@ public class ColumnDefinition extends BaseData {
                     return true;
                 case "is_auto":
                     data.setAuto(value == null ? false : (boolean) value);
-                    return true;
-                case "invalid_as":
-                    data.setInvalidAs(invalidAs(value));
                     return true;
                 case "not_null":
                     data.setNotNull(value == null ? false : (boolean) value);
@@ -989,15 +1192,6 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public static List<ColumnType> editTypes() {
-        List<ColumnType> types = new ArrayList<>();
-        types.addAll(Arrays.asList(ColumnType.String, ColumnType.Boolean,
-                ColumnType.Double, ColumnType.Float, ColumnType.Long, ColumnType.Integer, ColumnType.Short,
-                ColumnType.Datetime, ColumnType.Date,
-                ColumnType.Enumeration, ColumnType.EnumerationEditable));
-        return types;
-    }
-
     public static short onUpdate(OnUpdate type) {
         if (type == null) {
             return 0;
@@ -1103,8 +1297,18 @@ public class ColumnDefinition extends BaseData {
     }
 
     public static boolean isNumberType(ColumnType type) {
-        return type == ColumnType.Double || type == ColumnType.Float
-                || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
+        return type == ColumnType.Double
+                || type == ColumnType.Float
+                || type == ColumnType.Integer
+                || type == ColumnType.Long
+                || type == ColumnType.Short
+                || type == ColumnType.EnumeratedShort;
+    }
+
+    public static boolean isDBNumberType(ColumnType type) {
+        return isNumberType(type)
+                || type == ColumnType.Longitude
+                || type == ColumnType.Latitude;
     }
 
     public static boolean isDBStringType(ColumnType type) {
@@ -1117,7 +1321,15 @@ public class ColumnDefinition extends BaseData {
     }
 
     public static boolean isTimeType(ColumnType type) {
-        return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
+        return type == ColumnType.Datetime
+                || type == ColumnType.Date
+                || type == ColumnType.Era;
+    }
+
+    public static boolean isEnumeratedType(ColumnType type) {
+        return type == ColumnType.Enumeration
+                || type == ColumnType.EnumerationEditable
+                || type == ColumnType.EnumeratedShort;
     }
 
     public static String number2String(Number n) {
@@ -1135,11 +1347,11 @@ public class ColumnDefinition extends BaseData {
                 case Float:
                     return Float.valueOf(string.replaceAll(",", ""));
                 case Long:
-                    return Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                    return Long.valueOf(string.replaceAll(",", ""));
                 case Integer:
-                    return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                    return Integer.valueOf(string.replaceAll(",", ""));
                 case Short:
-                    return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                    return Short.valueOf(string.replaceAll(",", ""));
             }
         } catch (Exception e) {
         }
@@ -1152,108 +1364,6 @@ public class ColumnDefinition extends BaseData {
 
     public static Date stringToDate(String string, boolean fixTwoDigitYear, int century) {
         return DateTools.encodeDate(string, fixTwoDigitYear ? century : 0);
-    }
-
-    public static Object fromString(ColumnType targetType, String string) {
-        return fromString(targetType, string, InvalidAs.Empty, false, 0);
-    }
-
-    public static Object fromString(ColumnType targetType, String string,
-            InvalidAs invalidAs, boolean fixTwoDigitYear, int century) {
-        try {
-            if (targetType == null) {
-                return string;
-            }
-            switch (targetType) {
-                case Double:
-                    return Double.valueOf(string.replaceAll(",", ""));
-                case Longitude:
-                case Latitude:
-                    return Double.valueOf(string.replaceAll(",", ""));
-                case Float:
-                    return Float.valueOf(string.replaceAll(",", ""));
-                case Long:
-                    return Math.round(Double.parseDouble(string.replaceAll(",", "")));
-                case Integer:
-                    return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
-                case Boolean:
-                    return StringTools.string2Boolean(string);
-                case Short:
-                    return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
-                case Datetime:
-                case Date:
-                    return stringToDate(string, fixTwoDigitYear, century);
-                case Era:
-                    Date d = stringToDate(string, fixTwoDigitYear, century);
-                    return d.getTime();
-                default:
-                    return string;
-            }
-        } catch (Exception e) {
-        }
-        if (invalidAs == null) {
-            return string;
-        }
-        switch (invalidAs) {
-            case Zero:
-                if (isNumberType(targetType)) {
-                    switch (targetType) {
-                        case Double:
-                            return 0d;
-                        case Float:
-                            return 0f;
-                        case Long:
-                            return 0l;
-                        case Short:
-                            return (short) 0;
-                        default:
-                            return 0;
-                    }
-                } else {
-                    return "0";
-                }
-            case Null:
-                if (isDBStringType(targetType)) {
-                    return "";
-                } else {
-                    return null;
-                }
-            case Empty:
-                return "";
-            case Skip:
-                return string;
-            case Use:
-                return string;
-            default:
-                return string;
-        }
-    }
-
-    public static String toString(ColumnType sourceType, Object value, String format) {
-        try {
-            if (sourceType == null || value == null) {
-                return null;
-            }
-            switch (sourceType) {
-                case Datetime:
-                case Date:
-                    return DateTools.datetimeToString((Date) value, format);
-                case Era: {
-                    try {
-                        long lv = Long.parseLong(value.toString());
-                        if (lv >= 10000 || lv <= -10000) {
-                            return DateTools.datetimeToString(new Date(lv), format);
-                        }
-                    } catch (Exception exx) {
-                        return value + "";
-                    }
-                }
-                default:
-                    return value + "";
-            }
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public static String info(ColumnDefinition column) {
@@ -1273,7 +1383,6 @@ public class ColumnDefinition extends BaseData {
             s.append(message("AutoGenerated")).append(": ").append(column.isAuto()).append("\n");
             s.append(message("DefaultValue")).append(": ").append(column.getDefaultValue()).append("\n");
             s.append(message("Color")).append(": ").append(column.getColor()).append("\n");
-            s.append(message("ToInvalidValue")).append(": ").append(column.getInvalidAs()).append("\n");
             s.append(message("DecimalScale")).append(": ").append(column.getScale()).append("\n");
             s.append(message("Century")).append(": ").append(column.getCentury()).append("\n");
             s.append(message("FixTwoDigitYears")).append(": ").append(column.isFixTwoDigitYear()).append("\n");
@@ -1286,13 +1395,6 @@ public class ColumnDefinition extends BaseData {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    /*
-        customized get/set
-     */
-    public boolean isId() {
-        return isPrimaryKey && auto;
     }
 
     /*
@@ -1451,15 +1553,6 @@ public class ColumnDefinition extends BaseData {
         return this;
     }
 
-    public Map<Object, String> getDisplayMap() {
-        return displayMap;
-    }
-
-    public ColumnDefinition setDisplayMap(Map<Object, String> data) {
-        this.displayMap = data;
-        return this;
-    }
-
     public int getCentury() {
         return century;
     }
@@ -1484,15 +1577,6 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setAuto(boolean auto) {
         this.auto = auto;
-        return this;
-    }
-
-    public InvalidAs getInvalidAs() {
-        return invalidAs;
-    }
-
-    public ColumnDefinition setInvalidAs(InvalidAs invalidAs) {
-        this.invalidAs = invalidAs;
         return this;
     }
 

@@ -73,17 +73,18 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
                         return false;
                     }
                     for (DataNode sourceNode : sourceNodes) {
+                        DataNode nodeValues = nodeTable.query(conn, sourceNode.getNodeid());
                         int ret;
                         if (nodeAndDescendantsRadio.isSelected()) {
-                            ret = nodeTable.copyNodeAndDescendants(this, conn, sourceNode, targetNode, true);
+                            ret = nodeTable.copyNodeAndDescendants(this, conn, nodeValues, targetNode, true);
                         } else if (descendantsRadio.isSelected()) {
-                            ret = nodeTable.copyDescendants(this, conn, sourceNode, targetNode, true, 0);
+                            ret = nodeTable.copyDescendants(this, conn, nodeValues, targetNode, true, 0);
                         } else if (nodeAndChildrenRadio.isSelected()) {
-                            ret = nodeTable.copyNodeAndDescendants(this, conn, sourceNode, targetNode, false);
+                            ret = nodeTable.copyNodeAndDescendants(this, conn, nodeValues, targetNode, false);
                         } else if (childrenRadio.isSelected()) {
-                            ret = nodeTable.copyDescendants(this, conn, sourceNode, targetNode, false, 0);
+                            ret = nodeTable.copyDescendants(this, conn, nodeValues, targetNode, false, 0);
                         } else {
-                            ret = nodeTable.copyNode(conn, sourceNode, targetNode) != null ? 1 : 0;
+                            ret = nodeTable.copyNode(conn, nodeValues, targetNode) != null ? 1 : 0;
                         }
                         if (ret <= 0) {
                             return false;

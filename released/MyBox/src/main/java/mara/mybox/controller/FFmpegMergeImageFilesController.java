@@ -10,14 +10,14 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.imagefile.ImageFileReaders;
-import static mara.mybox.imagefile.ImageFileReaders.getReader;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.data.ImageInformation;
+import mara.mybox.image.file.ImageFileReaders;
+import static mara.mybox.image.file.ImageFileReaders.getReader;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
@@ -43,10 +43,14 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         try {
             imageFileString = new StringBuilder();
             lastFile = null;
+            boolean selected = tableController.selectedItem() != null;
             for (int i = 0; i < tableData.size(); ++i) {
                 if (currentTask == null || !currentTask.isWorking()) {
-                    updateLogs(message("TaskCancelled"), true);
+                    showLogs(message("TaskCancelled"));
                     return null;
+                }
+                if (selected && !tableView.getSelectionModel().isSelected(i)) {
+                    continue;
                 }
                 tableController.markFileHandling(i);
                 FileInformation info = (FileInformation) tableData.get(i);

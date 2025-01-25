@@ -124,7 +124,7 @@ public class Data2DTransposeController extends BaseData2DTaskTargetsController {
             }
             TmpTable tmpTable = new TmpTable()
                     .setSourceData(tmp2D)
-                    .setTargetName(data2D.dataName())
+                    .setTargetName(data2D.getName())
                     .setSourcePickIndice(checkedColsIndices)
                     .setImportData(true)
                     .setForStatistic(false)

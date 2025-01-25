@@ -5,14 +5,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import javafx.collections.ObservableList;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
@@ -186,48 +188,73 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return -1;
     }
 
-    public List<String> tableRow(int rowIndex) {
+    // table data are formatted by this method
+    public void setPageData(ObservableList<List<String>> sourceData) {
         try {
-            List<String> trow = pageData.get(rowIndex);
-            List<String> row = new ArrayList<>();
-            for (int i = 0; i < columns.size(); i++) {
-                String v = trow.get(i + 1);
-                v = savedValue(i, v);
-                row.add(v);
+            if (sourceData == null) {
+                pageData = null;
+                return;
             }
-            return row;
+            for (int i = 0; i < sourceData.size(); i++) {
+                List<String> sourceRow = sourceData.get(i);
+                List<String> formatedRow = new ArrayList<>();
+                formatedRow.add(sourceRow.get(0));
+                for (int j = 0; j < columns.size(); j++) {
+                    String v = sourceRow.get(j + 1);
+                    formatedRow.add(columns.get(j).formatString(v));
+                }
+                sourceData.set(i, formatedRow);
+            }
+            pageData = sourceData;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    // without data row number
+    public List<String> dataRow(int rowIndex) {
+        return Data2D_Data.this.dataRow(rowIndex, false);
+    }
+
+    public List<String> dataRow(int rowIndex, boolean formatData) {
+        try {
+            List<String> pageRow = pageData.get(rowIndex);
+            List<String> dataRow = new ArrayList<>();
+            for (int i = 0; i < columns.size(); i++) {
+                String v = pageRow.get(i + 1);
+                v = formatData ? v : columns.get(i).removeFormat(v);
+                dataRow.add(v);
+            }
+            return dataRow;
         } catch (Exception e) {
             return null;
         }
     }
 
-    public List<String> tableRowShow(int rowIndex) {
+    // with data row number
+    public List<String> pageRow(int rowIndex, boolean formatData) {
         try {
             List<String> trow = pageData.get(rowIndex);
             List<String> row = new ArrayList<>();
-            String rindex = trow.get(0);
+            String rindex = trow.get(0);   // data row number
             row.add(rindex != null && rindex.startsWith("-1") ? null : rindex);
-            for (int i = 0; i < columns.size(); i++) {
-                String v = trow.get(i + 1);
-                v = formatValue(i, v);
-                row.add(v);
-            }
+            row.addAll(dataRow(rowIndex, formatData));
             return row;
         } catch (Exception e) {
             return null;
         }
     }
 
-    public List<List<String>> tableRows(boolean rowNumber) {
+    public List<List<String>> pageRows(boolean showPageRowNumber, boolean formatData) {
         try {
             List<List<String>> rows = new ArrayList<>();
             for (int i = 0; i < pageData.size(); i++) {
                 List<String> row = new ArrayList<>();
-                if (rowNumber) {
+                if (showPageRowNumber) {
                     row.add("" + (i + 1));
-                    row.addAll(tableRowShow(i));
+                    row.addAll(pageRow(i, formatData));
                 } else {
-                    row.addAll(tableRow(i));
+                    row.addAll(dataRow(i, formatData));
                 }
                 rows.add(row);
             }
@@ -237,8 +264,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRows() {
-        return tableRows(false);
+    // row data without format
+    public List<List<String>> pageData() {
+        return pageRows(false, false);
     }
 
     public List<String> newRow() {
@@ -246,11 +274,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             List<String> newRow = new ArrayList<>();
             newRow.add("-1");
             for (Data2DColumn column : columns) {
-                if (column.getDefaultValue() != null) {
-                    newRow.add(column.getDefaultValue());
-                } else {
-                    newRow.add(defaultColValue());
-                }
+                String v = column.getDefaultValue() != null
+                        ? column.getDefaultValue() : defaultColValue();
+                newRow.add(column.formatString(v));
             }
             return newRow;
         } catch (Exception e) {
@@ -290,7 +316,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             case InternalTable:
                 return sheet == null;
             default:
-                return d2did < 0;
+                return dataID < 0;
         }
     }
 
@@ -366,31 +392,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         } catch (Exception e) {
             error = e.toString();
             return false;
-        }
-    }
-
-    /*
-        page
-     */
-    public List<String> pageRow(int row) {
-        if (pageData == null || row < 0 || row > pageData.size() - 1) {
-            return null;
-        }
-        try {
-            return pageData.get(row);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public long pageRowIndex(int row) {
-        if (pageData == null || row < 0 || row > pageData.size() - 1) {
-            return -1;
-        }
-        try {
-            return Long.parseLong(pageData.get(row).get(0));
-        } catch (Exception e) {
-            return -1;
         }
     }
 
@@ -530,15 +531,15 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String formatValue(int col, String value) {
         try {
-            return column(col).format(value);
+            return column(col).formatString(value);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public String savedValue(int col, String value) {
+    public String removeFormat(int col, String value) {
         try {
-            return column(col).savedValue(value, rejectInvalidWhenEdit());
+            return column(col).removeFormat(value, InvalidAs.Use);
         } catch (Exception e) {
             return null;
         }
@@ -551,32 +552,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public int newColumnIndex() {
         return --newColumnIndex;
-    }
-
-    public List<String> editableColumnNames() {
-        if (columns == null) {
-            return null;
-        }
-        List<String> names = new ArrayList<>();
-        for (Data2DColumn col : columns) {
-            if (col.isEditable()) {
-                names.add(col.getColumnName());
-            }
-        }
-        return names;
-    }
-
-    public List<String> numberColumnNames() {
-        if (columns == null) {
-            return null;
-        }
-        List<String> names = new ArrayList<>();
-        for (Data2DColumn col : columns) {
-            if (col.isNumberType()) {
-                names.add(col.getColumnName());
-            }
-        }
-        return names;
     }
 
     public List<String> timeColumnNames() {
@@ -673,7 +648,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
             for (Data2DColumn column : columns) {
                 String name = column.getColumnName();
-                if (allStatistic || column.isNumberType()) {
+                if (allStatistic || column.isDBNumberType()) {
                     list.add("#{" + name + "-" + message("Mean") + "}");
                     list.add("#{" + name + "-" + message("Median") + "}");
                     list.add("#{" + name + "-" + message("Mode") + "}");

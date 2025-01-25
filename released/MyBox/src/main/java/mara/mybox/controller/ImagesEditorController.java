@@ -8,7 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;

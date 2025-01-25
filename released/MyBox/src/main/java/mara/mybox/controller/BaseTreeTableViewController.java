@@ -43,7 +43,6 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseTreeTableViewController<NodeP> extends BaseController {
 
     protected final SimpleBooleanProperty loadedNotify;
-    protected NodeP focusNode;
     protected List<TreeItem<NodeP>> selectedItems;
 
     @FXML
@@ -96,7 +95,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                                 setText(null);
                                 return;
                             }
-                            setText(makeHierarchyNumber(getTreeTableView().getTreeItem(getIndex())));
+                            TreeItem<NodeP> treeItem = getTreeTableView().getTreeItem(getIndex());
+                            String hierarchyNumber = makeHierarchyNumber(treeItem);
+                            setText(hierarchyNumber);
+//                            setHierarchyNumber(treeItem.getValue(), hierarchyNumber);
                         }
                     };
                     return cell;
@@ -191,11 +193,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         treeView.refresh();
         if (root != null) {
             root.setExpanded(true);
-            if (focusNode != null) {
-                focusNode(focusNode);
-            }
         }
-        focusNode = null;
         loadedNotify.set(!loadedNotify.get());
     }
 
@@ -226,6 +224,14 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (treeView == null || nodeitem == null) {
             return;
         }
+        unfoldItemAncestors(nodeitem);
+        moveToItem(nodeitem);
+    }
+
+    public void moveToItem(TreeItem<NodeP> nodeitem) {
+        if (treeView == null || nodeitem == null) {
+            return;
+        }
         isSettingValues = true;
         treeView.getSelectionModel().select(nodeitem);
         isSettingValues = false;
@@ -245,8 +251,19 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                 focusItem(item);
             }
         }
-        focusNode = null;
         return found;
+    }
+
+    public void unfoldItemAncestors(TreeItem<NodeP> nodeitem) {
+        if (treeView == null || nodeitem == null) {
+            return;
+        }
+        TreeItem<NodeP> parent = nodeitem.getParent();
+        if (parent == null) {
+            return;
+        }
+        parent.setExpanded(true);
+        unfoldItemAncestors(parent);
     }
 
     /*
@@ -301,14 +318,14 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         }
         String h = "";
         TreeItem<NodeP> parent = item.getParent();
-        TreeItem<NodeP> citem = item;
+        TreeItem<NodeP> child = item;
         while (parent != null) {
-            int index = parent.getChildren().indexOf(citem);
+            int index = parent.getChildren().indexOf(child);
             if (index < 0) {
                 return "";
             }
             h = "." + (index + 1) + h;
-            citem = parent;
+            child = parent;
             parent = parent.getParent();
         }
         if (h.startsWith(".")) {
@@ -514,14 +531,18 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (treeItem == null) {
             return null;
         }
-        List<MenuItem> items = foldMenuItems(treeItem);
+
+        List<MenuItem> items = new ArrayList<>();
+        if (!treeItem.isLeaf()) {
+            items.addAll(foldMenuItems(treeItem));
+
+            items.add(new SeparatorMenuItem());
+        }
 
         NodeP node = treeItem.getValue();
         if (node == null) {
             return items;
         }
-        items.add(new SeparatorMenuItem());
-
         MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             viewNode(treeItem);
@@ -533,14 +554,12 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(node));
         });
-        menu.setDisable(treeItem == null);
         items.add(menu);
 
         menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, title(node));
         });
-        menu.setDisable(treeItem == null);
         items.add(menu);
 
         items.add(new SeparatorMenuItem());

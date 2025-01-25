@@ -71,9 +71,12 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
             }
             if (!expressionController.checkExpression(isAllPages())) {
                 tabPane.getSelectionModel().select(valuesTab);
-                alertError(message("Invalid") + ": " + message("RowExpression") + "\n"
-                        + expressionController.error);
-                return false;
+                if (!PopTools.askSure(getTitle(),
+                        message("RowExpressionLooksInvalid") + ": \n"
+                        + expressionController.error,
+                        message("SureContinue"))) {
+                    return false;
+                }
             }
             String name = nameInput.getText();
             if (name == null || name.isBlank()) {

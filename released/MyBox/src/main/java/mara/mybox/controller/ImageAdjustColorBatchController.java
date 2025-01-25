@@ -5,12 +5,12 @@ import java.io.File;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.PixelsOperation;
-import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
-import mara.mybox.bufferedimage.PixelsOperation.OperationType;
-import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperation.ColorActionType;
+import mara.mybox.image.data.PixelsOperation.OperationType;
+import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 

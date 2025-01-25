@@ -19,6 +19,7 @@ public class TableNodeJEXL extends BaseNodeTable {
         dataName = message("JexlScript");
         dataFxml = Fxmls.ControlDataJEXLFxml;
         examplesFileName = "JEXL";
+        majorColumnName = "script";
         nodeExecutable = true;
         defineColumns();
     }

@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageFormat">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageFormat">
     <children>
         <VBox fx:id="formatBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
@@ -35,11 +35,12 @@ License:    Apache License Version 2.0
                         <RadioButton fx:id="jpgRadio" mnemonicParsing="false" text="jpg" toggleGroup="$formatGroup" />
                         <RadioButton fx:id="tifRadio" layoutX="10.0" layoutY="60.0" mnemonicParsing="false" text="tif" toggleGroup="$formatGroup" />
                         <RadioButton fx:id="gifRadio" layoutX="176.0" layoutY="10.0" mnemonicParsing="false" text="gif" toggleGroup="$formatGroup" />
+                  <RadioButton fx:id="webpRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="webp" toggleGroup="$formatGroup" />
+                        <RadioButton fx:id="icoRadio" layoutX="123.0" layoutY="92.0" mnemonicParsing="false" text="ico" toggleGroup="$formatGroup" />
                         <RadioButton fx:id="pcxRadio" layoutX="10.0" layoutY="92.0" mnemonicParsing="false" text="pcx" toggleGroup="$formatGroup" />
                         <RadioButton fx:id="pnmRadio" layoutX="10.0" layoutY="51.0" mnemonicParsing="false" text="pnm" toggleGroup="$formatGroup" />
                         <RadioButton fx:id="bmpRadio" layoutX="10.0" layoutY="92.0" mnemonicParsing="false" text="bmp" toggleGroup="$formatGroup" />
                         <RadioButton fx:id="wbmpRadio" layoutX="176.0" layoutY="10.0" mnemonicParsing="false" text="wbmp" toggleGroup="$formatGroup" />
-                        <RadioButton fx:id="icoRadio" layoutX="123.0" layoutY="92.0" mnemonicParsing="false" text="ico" toggleGroup="$formatGroup" />
                     </children>
                 </FlowPane>
             </children>

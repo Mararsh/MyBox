@@ -5,7 +5,7 @@ import java.util.Iterator;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.cos.COSName;

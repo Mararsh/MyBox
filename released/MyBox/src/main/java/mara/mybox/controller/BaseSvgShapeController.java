@@ -18,7 +18,7 @@ import mara.mybox.data.ShapeStyle;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;

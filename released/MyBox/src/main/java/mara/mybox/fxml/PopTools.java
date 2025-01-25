@@ -55,8 +55,6 @@ import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlStyleInputController;
 import mara.mybox.controller.MenuController;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataInternalTable;
-import mara.mybox.data2d.tools.Data2DTableTools;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Date;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Datetime;
@@ -73,6 +71,7 @@ import static mara.mybox.db.data.ColumnDefinition.ColumnType.Longitude;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Short;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.String;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -1177,6 +1176,7 @@ public class PopTools {
                     case String:
                     case Enumeration:
                     case EnumerationEditable:
+                    case EnumeratedShort:
                     case File:
                     case Image:
                     case Color:
@@ -1257,7 +1257,7 @@ public class PopTools {
             MenuController controller = valuesMenu(parent, valueInput, valueName, message("TableNames"), event);
 
             addButtonsPane(controller, isInternal
-                    ? DataInternalTable.InternalTables : Data2DTableTools.userTables());
+                    ? BaseTableTools.internalTableNames() : BaseTableTools.userTables());
 
             return controller;
 

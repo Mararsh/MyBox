@@ -29,7 +29,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
@@ -41,13 +40,14 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.data.ImageColorSpace;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FloatTools;
@@ -921,7 +921,7 @@ public class ChromaticityDiagramController extends BaseImageController {
     @FXML
     @Override
     public void saveAction() {
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
+        final File file = chooseFile(defaultTargetPath(),
                 "ChromaticityDiagram", FileFilters.ImageExtensionFilter);
         if (file == null) {
             return;

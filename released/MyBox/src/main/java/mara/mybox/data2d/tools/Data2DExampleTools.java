@@ -21,7 +21,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -165,8 +164,6 @@ public class Data2DExampleTools {
 
     public static Menu statisticDataOfChina(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
-
             // https://data.stats.gov.cn/index.htm
             Menu chinaMenu = new Menu(message(lang, "StatisticDataOfChina"), StyleTools.getIconImageView("iconChina.png"));
 
@@ -296,8 +293,6 @@ public class Data2DExampleTools {
 
     public static Menu regression(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
-
             Menu regressionMenu = new Menu(message(lang, "RegressionData"),
                     StyleTools.getIconImageView("iconLinearPgression.png"));
 
@@ -418,7 +413,6 @@ public class Data2DExampleTools {
 
     public static Menu location(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
 
             Menu locationMenu = new Menu(message(lang, "LocationData"),
                     StyleTools.getIconImageView("iconLocation.png"));
@@ -468,7 +462,6 @@ public class Data2DExampleTools {
 
     public static Menu projectManagement(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
 
             Menu pmMenu = new Menu(message(lang, "ProjectManagement"),
                     StyleTools.getIconImageView("iconCalculator.png"));
@@ -581,7 +574,6 @@ public class Data2DExampleTools {
 
     public static Menu SoftwareTesting(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
 
             Menu stMenu = new Menu(message(lang, "SoftwareTesting"), StyleTools.getIconImageView("iconVerify.png"));
 
@@ -1387,9 +1379,9 @@ public class Data2DExampleTools {
                 .setFixTwoDigitYear(false).setFormat("yyyy-MM-dd"));
         columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
         columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-        columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-        columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+        columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer));
+        columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer));
+        columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer));
         columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
         columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
         data.setColumns(columns).setDataName(message(lang, "EpidemicReportsCOVID19"))
@@ -1578,7 +1570,7 @@ public class Data2DExampleTools {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.Integer));
+        columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "通过" : "Pass", ColumnType.Boolean));
         columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
         columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));

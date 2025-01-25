@@ -66,7 +66,8 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     @FXML
     protected CheckBox idCheck, hierarchyCheck, timeCheck, tagsCheck, orderCheck,
             parentCheck, dataCheck, treeXmlCheck, treeHtmlCheck, treeJsonCheck,
-            listJsonCheck, listCsvCheck, listXmlCheck, listHtmlCheck, framesetCheck;
+            listJsonCheck, listCsvCheck, listXmlCheck, listHtmlCheck, framesetCheck,
+            dataFormatCheck;
     @FXML
     protected ComboBox<String> charsetSelector;
     @FXML
@@ -99,6 +100,14 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             setTitle(baseTitle);
 
             nodeLabel.setText(message("Node") + ": " + chainName);
+
+            dataFormatCheck.setSelected(UserConfig.getBoolean(baseName + "Format", true));
+            dataFormatCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "Format", dataFormatCheck.isSelected());
+                }
+            });
 
             idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
             idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -852,7 +861,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             String xml = DataNodeTools.toXML(currentTask, conn,
                     myController, nodeTable, prefix, parentName, hierarchyNumber, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
-                    orderCheck.isSelected(), dataCheck.isSelected());
+                    orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             treeXmlWriter.write(xml);
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -866,7 +875,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             String xml = DataNodeTools.toXML(currentTask, conn,
                     myController, nodeTable, Indent + Indent, parentName, hierarchyNumber, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
-                    orderCheck.isSelected(), dataCheck.isSelected());
+                    orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             listXmlWriter.write(xml);
             listXmlWriter.write(Indent + "</TreeNode>\n");
         } catch (Exception e) {
@@ -915,7 +924,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             String json = DataNodeTools.toJson(currentTask, conn,
                     myController, nodeTable, prefix + Indent, parentName, hierarchyNumber, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
-                    orderCheck.isSelected(), dataCheck.isSelected());
+                    orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             treeJsonWriter.write(json);
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -932,7 +941,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             String json = DataNodeTools.toJson(currentTask, conn,
                     myController, nodeTable, Indent, parentName, hierarchyNumber, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
-                    orderCheck.isSelected(), dataCheck.isSelected());
+                    orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             listJsonWriter.write(json);
             listJsonWriter.write("\n");
             listJsonWriter.write(Indent + "}\n");
@@ -947,7 +956,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             List<String> row = DataNodeTools.toCsv(currentTask, conn,
                     myController, nodeTable, parentName, hierarchyNumber, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
-                    orderCheck.isSelected(), dataCheck.isSelected());
+                    orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             if (row != null) {
                 csvPrinter.printRecord(row);
             }
@@ -1052,6 +1061,11 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         orderCheck.setSelected(select);
         parentCheck.setSelected(select);
         dataCheck.setSelected(select);
+    }
+
+    @Override
+    public boolean needStageVisitHistory() {
+        return false;
     }
 
 }

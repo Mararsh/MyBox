@@ -9,8 +9,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data2d.DataInternalTable;
-import mara.mybox.data2d.tools.Data2DTableTools;
+import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -81,9 +80,9 @@ public class DatabaseTableDefinitionController extends BaseController {
             protected boolean handle() {
                 try {
                     if (internalRadio.isSelected()) {
-                        names = DataInternalTable.InternalTables;
+                        names = BaseTableTools.internalTableNames();
                     } else {
-                        names = Data2DTableTools.userTables();
+                        names = BaseTableTools.userTables();
                     }
                     return true;
                 } catch (Exception e) {
@@ -106,7 +105,7 @@ public class DatabaseTableDefinitionController extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        viewController.loadContents("");
+        viewController.loadContent("");
         FxTask loadTask = new FxSingletonTask<Void>(this) {
 
             String html;
@@ -125,7 +124,7 @@ public class DatabaseTableDefinitionController extends BaseController {
             @Override
             protected void whenSucceeded() {
                 if (html != null && !html.isBlank()) {
-                    viewController.loadContents(html);
+                    viewController.loadContent(html);
                 }
             }
 

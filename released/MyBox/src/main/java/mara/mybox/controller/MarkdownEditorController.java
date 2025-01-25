@@ -147,7 +147,7 @@ public class MarkdownEditorController extends TextEditorController {
         try {
             codesArea.setText("");
             if (webViewController != null) {
-                webViewController.loadContents(null);
+                webViewController.loadContent(null);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -188,7 +188,7 @@ public class MarkdownEditorController extends TextEditorController {
             pairTask.cancel();
         }
         if (updateHtml) {
-            webViewController.loadContents(null);
+            webViewController.loadContent(null);
         }
         htmlScrollLeft = codesArea.getScrollLeft();
         htmlScrollTop = codesArea.getScrollTop();
@@ -223,7 +223,7 @@ public class MarkdownEditorController extends TextEditorController {
             protected void whenSucceeded() {
                 try {
                     if (updateHtml) {
-                        webViewController.loadContents(html);
+                        webViewController.loadContent(html);
                         htmlPage = sourceInformation.getCurrentPage();
                     }
                     if (updateCodes) {

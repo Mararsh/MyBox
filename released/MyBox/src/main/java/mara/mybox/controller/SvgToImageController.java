@@ -2,8 +2,8 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.image.data.ImageAttributes;
+import mara.mybox.image.tools.ImageConvertTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;

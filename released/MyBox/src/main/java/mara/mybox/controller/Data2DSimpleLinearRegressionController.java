@@ -396,7 +396,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
 //            s.append("\n<HR/><P align=left style=\"font-size:1em;\">* ")
 //                    .append(message("HtmlEditableComments")).append("</P>\n");
             s.append("</BODY>\n");
-            modelController.loadContents(HtmlWriteTools.html(s.toString()));
+            modelController.loadContent(HtmlWriteTools.html(s.toString()));
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

@@ -795,7 +795,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             if (maxData <= 0 && (sortController == null || orders == null || orders.isEmpty())) {
                 return filteredData(colIndices, needRowNumber);
             }
-            DataFileCSV csvData = sortedFile(data2D.dataName(), colIndices, needRowNumber);
+            DataFileCSV csvData = sortedFile(data2D.getName(), colIndices, needRowNumber);
             if (csvData == null) {
                 return null;
             }
@@ -864,7 +864,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             if (groupController == null) {
                 return null;
             }
-            TmpTable tmpTable = tmpTable(data2D.dataName(), data2D.columnIndices(), true);
+            TmpTable tmpTable = tmpTable(data2D.getName(), data2D.columnIndices(), true);
             if (tmpTable == null) {
                 return null;
             }

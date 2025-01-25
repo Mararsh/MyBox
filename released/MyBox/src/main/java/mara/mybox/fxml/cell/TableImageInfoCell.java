@@ -1,11 +1,11 @@
 package mara.mybox.fxml.cell;
 
-import mara.mybox.fximage.ImageViewInfoTask;
+import mara.mybox.fxml.image.ImageViewInfoTask;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.image.data.ImageInformation;
 
 /**
  * @Author Mara

@@ -11,7 +11,6 @@ import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
-import static mara.mybox.data2d.DataInternalTable.InternalTables;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataTableWriter;
@@ -21,10 +20,11 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
+import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -97,24 +97,25 @@ public class DataTable extends Data2D {
         }
     }
 
-    public boolean recordTable(Connection conn, String tableName, List<Data2DColumn> dataColumns, String comments) {
+    public boolean recordTable(Connection conn, String tableName,
+            List<Data2DColumn> dataColumns, String comments) {
         try {
             sheet = DerbyBase.fixedIdentifier(tableName);
             dataName = sheet;
             colsNumber = dataColumns.size();
             this.comments = comments;
-            if (InternalTables.contains(dataName.toUpperCase())) {
+            if (BaseTableTools.isInternalTable(dataName)) {
                 dataType = DataType.InternalTable;
             }
             tableData2DDefinition.writeTable(conn, this);
             conn.commit();
 
             for (Data2DColumn column : dataColumns) {
-                column.setD2id(d2did);
+                column.setDataID(dataID);
                 column.setColumnName(DerbyBase.fixedIdentifier(column.getColumnName()));
             }
             columns = dataColumns;
-            tableData2DColumn.save(conn, d2did, dataColumns);
+            tableData2DColumn.save(conn, dataID, dataColumns);
             conn.commit();
             return true;
         } catch (Exception e) {
@@ -147,7 +148,7 @@ public class DataTable extends Data2D {
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
-            if (d2did < 0 || sheet == null) {
+            if (dataID < 0 || sheet == null) {
                 return false;
             }
             tableData2D.readDefinitionFromDB(conn, sheet);
@@ -159,10 +160,11 @@ public class DataTable extends Data2D {
             Random random = new Random();
             for (int i = 0; i < dbColumns.size(); i++) {
                 ColumnDefinition dbColumn = dbColumns.get(i);
-                dbColumn.setIndex(i);
+                dbColumn.setIndex(i).setBaseID(-1);
                 if (savedColumns != null) {
                     for (Data2DColumn savedColumn : savedColumns) {
                         if (dbColumn.getColumnName().equalsIgnoreCase(savedColumn.getColumnName())) {
+                            dbColumn.setBaseID(savedColumn.getColumnID());
                             dbColumn.setIndex(savedColumn.getIndex());
                             dbColumn.setType(savedColumn.getType());
                             dbColumn.setFormat(savedColumn.getFormat());
@@ -205,11 +207,11 @@ public class DataTable extends Data2D {
             for (ColumnDefinition dbColumn : dbColumns) {
                 Data2DColumn column = new Data2DColumn();
                 column.cloneFrom(dbColumn);
-                column.setD2id(d2did);
+                column.setDataID(dataID).setColumnID(dbColumn.getBaseID());
                 columns.add(column);
             }
             colsNumber = columns.size();
-            tableData2DColumn.save(conn, d2did, columns);
+            tableData2DColumn.save(conn, dataID, columns);
             tableData2DDefinition.updateData(conn, this);
             return true;
         } catch (Exception e) {

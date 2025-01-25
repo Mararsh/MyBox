@@ -16,13 +16,13 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ScaleTools;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -93,13 +93,14 @@ public class ImageSizeController extends BaseImageEditController {
             widthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    pickSize();
+                    pickWidth();
                 }
             });
+
             heightInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    pickSize();
+                    pickHeight();
                 }
             });
 
@@ -197,7 +198,7 @@ public class ImageSizeController extends BaseImageEditController {
         }
     }
 
-    protected boolean pickSize() {
+    protected boolean checkWidth() {
         if (!pixelsRadio.isSelected() || isSettingValues) {
             return false;
         }
@@ -216,19 +217,49 @@ public class ImageSizeController extends BaseImageEditController {
             popError(message("InvalidParameter") + ": " + message("Width"));
             return false;
         }
+        return true;
+    }
+
+    protected boolean pickWidth() {
+        if (!checkWidth()) {
+            return false;
+        }
+        adjustRadio();
+        return true;
+    }
+
+    protected boolean checkHeight() {
+        if (!pixelsRadio.isSelected() || isSettingValues) {
+            return false;
+        }
         try {
-            int v = Integer.parseInt(heightInput.getText());
+            int v = Integer.parseInt(widthInput.getText());
             if (v > 0) {
-                height = v;
-                heightInput.setStyle(null);
+                width = v;
+                widthInput.setStyle(null);
             } else {
-                heightInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Height"));
+                widthInput.setStyle(UserConfig.badStyle());
+                popError(message("InvalidParameter") + ": " + message("Width"));
                 return false;
             }
         } catch (Exception e) {
-            heightInput.setStyle(UserConfig.badStyle());
-            popError(message("InvalidParameter") + ": " + message("Height"));
+            widthInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("Width"));
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean pickHeight() {
+        if (!checkHeight()) {
+            return false;
+        }
+        adjustRadio();
+        return true;
+    }
+
+    protected boolean pickSize() {
+        if (!checkWidth() || !checkHeight()) {
             return false;
         }
         adjustRadio();
@@ -295,7 +326,7 @@ public class ImageSizeController extends BaseImageEditController {
             }
 
             if (keepRatioType != BufferedImageTools.KeepRatioType.None) {
-                int[] wh = mara.mybox.bufferedimage.ScaleTools.scaleValues(
+                int[] wh = mara.mybox.image.tools.ScaleTools.scaleValues(
                         (int) image.getWidth(),
                         (int) image.getHeight(),
                         width, height, keepRatioType);

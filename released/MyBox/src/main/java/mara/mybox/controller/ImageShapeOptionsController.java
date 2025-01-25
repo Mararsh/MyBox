@@ -42,18 +42,13 @@ public class ImageShapeOptionsController extends ImageOptionsController {
     @FXML
     protected RadioButton anchorRectRadio, anchorCircleRadio, anchorNameRadio;
 
-    public void setParameters(BaseShapeController parent, boolean withStroke) {
+    @Override
+    public void initControls() {
         try {
-            super.setParameters(parent);
-
-            shapeController = parent;
-
-            if (!withStroke) {
-                shapeBox.getChildren().remove(strokePane);
-            }
+            super.initControls();
 
             strokeWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
-            strokeWidthSelector.setValue(UserConfig.getFloat(shapeController.baseName + "StrokeWidth", 2) + "");
+            strokeWidthSelector.setValue(UserConfig.getFloat(baseName + "StrokeWidth", 2) + "");
             strokeWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -63,7 +58,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                     try {
                         float v = Float.parseFloat(newValue);
                         if (v > 0) {
-                            UserConfig.setFloat(shapeController.baseName + "StrokeWidth", v);
+                            UserConfig.setFloat(baseName + "StrokeWidth", v);
                             ValidationTools.setEditorNormal(strokeWidthSelector);
                             if (shapeController != null) {
                                 if (shapeController.shapeStyle != null) {
@@ -80,7 +75,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                 }
             });
 
-            strokeColorController.init(this, shapeController.baseName + "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
+            strokeColorController.init(this, baseName + "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
             strokeColorController.asSaved();
             strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
@@ -96,7 +91,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
             });
 
             anchorSizeSelector.getItems().addAll(Arrays.asList("10", "2", "15", "1", "20", "3", "30", "4", "25", "5", "40", "50"));
-            anchorSizeSelector.setValue(UserConfig.getFloat(shapeController.baseName + "AnchorSize", 10) + "");
+            anchorSizeSelector.setValue(UserConfig.getFloat(baseName + "AnchorSize", 10) + "");
             anchorSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -106,7 +101,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                     try {
                         float v = Float.parseFloat(newValue);
                         if (v > 0) {
-                            UserConfig.setFloat(shapeController.baseName + "AnchorSize", v);
+                            UserConfig.setFloat(baseName + "AnchorSize", v);
                             ValidationTools.setEditorNormal(anchorSizeSelector);
                             if (shapeController != null) {
                                 if (shapeController.shapeStyle != null) {
@@ -123,7 +118,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                 }
             });
 
-            anchorColorController.init(this, shapeController.baseName + "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
+            anchorColorController.init(this, baseName + "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
             anchorColorController.asSaved();
             anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
@@ -138,7 +133,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                 }
             });
 
-            String anchorShape = UserConfig.getString(shapeController.baseName + "AnchorShape", "Rectangle");
+            String anchorShape = UserConfig.getString(baseName + "AnchorShape", "Rectangle");
             if ("Circle".equals(anchorShape)) {
                 anchorCircleRadio.setSelected(true);
                 if (shapeController != null) {
@@ -162,17 +157,17 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                         return;
                     }
                     if (anchorCircleRadio.isSelected()) {
-                        UserConfig.setString(shapeController.baseName + "AnchorShape", "Rectangle");
+                        UserConfig.setString(baseName + "AnchorShape", "Rectangle");
                         if (shapeController != null) {
                             shapeController.anchorShape = AnchorShape.Circle;
                         }
                     } else if (anchorNameRadio.isSelected()) {
-                        UserConfig.setString(shapeController.baseName + "AnchorShape", "Name");
+                        UserConfig.setString(baseName + "AnchorShape", "Name");
                         if (shapeController != null) {
                             shapeController.anchorShape = AnchorShape.Name;
                         }
                     } else {
-                        UserConfig.setString(shapeController.baseName + "AnchorShape", "Rectangle");
+                        UserConfig.setString(baseName + "AnchorShape", "Rectangle");
                         if (shapeController != null) {
                             shapeController.anchorShape = AnchorShape.Rectangle;
                         }
@@ -182,6 +177,21 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                     }
                 }
             });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setParameters(BaseShapeController parent, boolean withStroke) {
+        try {
+            super.setParameters(parent);
+
+            shapeController = parent;
+
+            if (!withStroke) {
+                shapeBox.getChildren().remove(strokePane);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);

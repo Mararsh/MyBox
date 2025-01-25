@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -538,7 +539,7 @@ public class StringTools {
             if (value == null || value.isBlank()) {
                 return null;
             }
-            String[] a = value.split(separater);
+            String[] a = value.split(separater, 0);
             if (a == null || a.length == 0) {
                 return null;
             }
@@ -579,17 +580,13 @@ public class StringTools {
         }
     }
 
-    public static boolean string2Boolean(String string) {
-        return isTrue(string);
-    }
-
     public static boolean isTrue(String string) {
         if (string == null || string.isBlank()) {
             return false;
         }
         return "1".equals(string)
-                || "true".equalsIgnoreCase(string) || "yes".equalsIgnoreCase(string)
-                || message("true").equals(string) || message("Yes").equals(string);
+                || Languages.matchIgnoreCase("true", string)
+                || Languages.matchIgnoreCase("yes", string);
     }
 
     public static boolean isFalse(String string) {
@@ -597,8 +594,8 @@ public class StringTools {
             return false;
         }
         return "0".equals(string)
-                || "false".equalsIgnoreCase(string) || "no".equalsIgnoreCase(string)
-                || message("false").equals(string) || message("No").equals(string);
+                || Languages.matchIgnoreCase("false", string)
+                || Languages.matchIgnoreCase("no", string);
     }
 
 }

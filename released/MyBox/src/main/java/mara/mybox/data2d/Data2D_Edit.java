@@ -32,8 +32,8 @@ import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -79,12 +79,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (definition == null) {
                 definition = tableData2DDefinition.insertData(conn, this);
                 conn.commit();
-                d2did = definition.getD2did();
+                dataID = definition.getDataID();
             } else {
                 tableData2DDefinition.updateData(conn, this);
                 conn.commit();
-                d2did = definition.getD2did();
-                savedColumns = tableData2DColumn.read(conn, d2did);
+                dataID = definition.getDataID();
+                savedColumns = tableData2DColumn.read(conn, dataID);
             }
         } catch (Exception e) {
             if (task != null) {
@@ -93,7 +93,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             MyBoxLog.debug(e);
             return -1;
         }
-        return d2did;
+        return dataID;
     }
 
     public boolean readColumns(Connection conn) {
@@ -127,7 +127,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 Random random = new Random();
                 for (int i = 0; i < columns.size(); i++) {
                     Data2DColumn column = columns.get(i);
-                    column.setD2id(d2did);
+                    column.setDataID(dataID);
                     column.setIndex(i);
                     if (column.getColor() == null) {
                         column.setColor(FxColorTools.randomColor(random));
@@ -141,16 +141,16 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                     }
                 }
                 colsNumber = columns.size();
-                if (d2did >= 0 && conn != null) {
-                    tableData2DColumn.save(conn, d2did, columns);
+                if (dataID >= 0 && conn != null) {
+                    tableData2DColumn.save(conn, dataID, columns);
                     tableData2DDefinition.updateData(conn, this);
                 }
             } else {
                 colsNumber = 0;
-                if (d2did >= 0 && conn != null) {
-                    tableData2DColumn.clear(conn, d2did);
+                if (dataID >= 0 && conn != null) {
+                    tableData2DColumn.clear(conn, dataID);
                     tableData2DDefinition.updateData(conn, this);
-                    tableData2DStyle.clear(conn, d2did);
+                    tableData2DStyle.clear(conn, dataID);
                 }
             }
             return true;
@@ -206,11 +206,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public void readPageStyles(Connection conn) {
         styles = new ArrayList<>();
-        if (d2did < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
+        if (dataID < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
             return;
         }
         try (PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles)) {
-            statement.setLong(1, d2did);
+            statement.setLong(1, dataID);
             conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
@@ -330,7 +330,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData() || cols == null || cols.isEmpty()) {
                 return -1;
             }
-            Data2DOperate operate = isUserTable()
+            Data2DOperate operate = isTable()
                     ? new DataTableSetValue((DataTable) this, setValue)
                     : Data2DSetValue.create(this, setValue);
             if (operate == null) {
@@ -357,7 +357,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData()) {
                 return -1;
             }
-            Data2DOperate operate = isUserTable()
+            Data2DOperate operate = isTable()
                     ? new DataTableDelete((DataTable) this)
                     : Data2DDelete.create(this);
             if (operate == null) {
@@ -382,7 +382,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData()) {
                 return -1;
             }
-            Data2DOperate operate = isUserTable()
+            Data2DOperate operate = isTable()
                     ? new DataTableClear((DataTable) this)
                     : Data2DClear.create(this);
 
@@ -405,7 +405,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public String encodeCSV(FxTask task, String delimiterName,
-            boolean displayRowNames, boolean displayColNames) {
+            boolean displayRowNames, boolean displayColNames, boolean formatData) {
         if (!isValidDefinition()) {
             return "";
         }
@@ -424,7 +424,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 cols.addAll(columnNames());
             }
             tmpFile = DataFileCSV.csvFile(task, tmpFile, delimiterValue(delimiterName),
-                    cols, tableRows(displayRowNames));
+                    cols, pageRows(displayRowNames, formatData));
             if (tmpFile == null || !tmpFile.exists()) {
                 return "";
             }
@@ -464,6 +464,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 } else {
                     MyBoxLog.error(e);
                 }
+                data = null;
             }
             FileDeleteTools.delete(tmpFile);
             return data;
@@ -534,7 +535,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 return false;
             }
             Data2DDefinition def;
-            long did = d.getD2did();
+            long did = d.getDataID();
             d.setModifyTime(new Date());
             d.setColsNumber(inColumns == null ? 0 : inColumns.size());
             TableData2DDefinition tableData2DDefinition = d.getTableData2DDefinition();
@@ -545,12 +546,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 if (def == null) {
                     def = tableData2DDefinition.insertData(conn, d);
                 } else {
-                    d.setD2did(def.getD2did());
+                    d.setDataID(def.getDataID());
                     def = tableData2DDefinition.updateData(conn, d);
                 }
             }
             conn.commit();
-            did = def.getD2did();
+            did = def.getDataID();
             if (did < 0) {
                 return false;
             }
@@ -560,10 +561,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                     List<Data2DColumn> targetColumns = new ArrayList<>();
                     for (int i = 0; i < inColumns.size(); i++) {
                         Data2DColumn column = inColumns.get(i).cloneAll();
-                        if (column.getD2id() != did) {
-                            column.setD2cid(-1);
+                        if (column.getDataID() != did) {
+                            column.setColumnID(-1);
                         }
-                        column.setD2id(did);
+                        column.setDataID(did);
                         column.setIndex(i);
                         if (!d.isTable()) {
                             column.setIsPrimaryKey(false);

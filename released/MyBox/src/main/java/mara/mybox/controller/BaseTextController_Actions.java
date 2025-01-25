@@ -116,7 +116,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
     }
 
     private void saveNew() {
-        final File file = chooseSaveFile();
+        final File file = saveCurrentFile();
         if (file == null) {
             return;
         }
@@ -198,12 +198,8 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         start(task, getMyWindow() == null || myWindow.isFocused());
     }
 
-    public void saveAs() {
-        if (!validateMainArea()) {
-            return;
-        }
-        final File file = chooseSaveFile();
-        if (file == null) {
+    public void saveAs(File file) {
+        if (file == null || !validateMainArea()) {
             return;
         }
         if (task != null && !task.isQuit()) {

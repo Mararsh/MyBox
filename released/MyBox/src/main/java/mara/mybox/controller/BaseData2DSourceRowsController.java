@@ -219,7 +219,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                 int size = tableData.size();
                 for (int row : selectedRowsIndices) {
                     if (row < 0 || row >= size
-                            || !filter.filterTableRow(data2D, tableData.get(row), row)) {
+                            || !filter.filterTableRow(data2D, data2D.pageRow(row, false), row)) {
                         continue;
                     }
                     if (filter.reachMaxPassed()) {
@@ -292,7 +292,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                 if (row < 0 || row >= size) {
                     continue;
                 }
-                List<String> tableRow = tableData.get(row);
+                List<String> tableRow = data2D.pageRow(row, false);
                 if (!data2D.filterTableRow(tableRow, row)) {
                     continue;
                 }

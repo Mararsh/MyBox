@@ -24,7 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import mara.mybox.bufferedimage.PixelsBlend;
+import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;

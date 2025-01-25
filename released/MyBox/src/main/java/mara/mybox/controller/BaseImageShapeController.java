@@ -6,12 +6,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.PixelsBlend;
+import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
-import mara.mybox.fximage.ShapeTools;
+import mara.mybox.fxml.image.ColorDemos;
+import mara.mybox.fxml.image.ShapeTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 

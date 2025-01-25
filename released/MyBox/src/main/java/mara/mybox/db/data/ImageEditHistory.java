@@ -7,7 +7,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.Languages.message;
 
 /**

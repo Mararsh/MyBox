@@ -14,16 +14,15 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMap">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BaseMapController">
       <children>
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
-            <Label fx:id="topLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-            <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconPop.png" />
+                        <Image url="@../buttons/Red/iconSave.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -37,11 +36,11 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+            <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconData.png" />
+                        <Image url="@../buttons/Red/iconSnapshot.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -64,14 +63,28 @@ License:    Apache License Version 2.0
                               </ImageView>
                           </graphic>
                       </Button>
+            <Button fx:id="optionsButton" mnemonicParsing="false" onAction="#optionsAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOptions.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
       </HBox>
-              <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                  <children>
-                        <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                      <WebView fx:id="mapView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                  <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" />
-                  </children>
-              </VBox>
+      <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+         <children>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
+               <children>
+                  <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="frameLabel" minWidth="-Infinity" HBox.hgrow="NEVER" />
+               </children>
+            </HBox>
+            <WebView fx:id="mapView" minHeight="100.0" minWidth="100.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+            <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" />
+         </children>
+      </VBox>
       </children>
   </VBox>

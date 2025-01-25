@@ -19,14 +19,14 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageAttributes;
+import mara.mybox.image.data.ImageColorSpace;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileExtensions;
@@ -61,7 +61,8 @@ public class ControlImageFormat extends BaseController {
     @FXML
     protected HBox profileBox;
     @FXML
-    protected RadioButton pngRadio, jpgRadio, tifRadio, gifRadio, bmpRadio, pnmRadio, wbmpRadio, icoRadio, pcxRadio,
+    protected RadioButton pngRadio, jpgRadio, tifRadio, gifRadio, bmpRadio, pnmRadio,
+            wbmpRadio, icoRadio, pcxRadio, webpRadio,
             alphaKeepRadio, alphaRemoveRadio, alphaPreKeepRadio, alphaPreReomveRadio;
     @FXML
     protected ControlImageBinary binaryController;
@@ -189,6 +190,7 @@ public class ControlImageFormat extends BaseController {
         ValidationTools.setEditorNormal(dpiSelector);
         ValidationTools.setEditorNormal(qualitySelector);
         ValidationTools.setEditorNormal(icoWidthSelector);
+
         if ("ico".equals(format)) {
             thisPane.getChildren().remove(1, thisPane.getChildren().size());
             thisPane.getChildren().addAll(icoPane);

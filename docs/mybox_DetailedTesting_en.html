@@ -18,35 +18,44 @@
         <DIV align="center">
             <TABLE>
                 <TR  style="font-weight:bold; "><TH>Test environment</TH><TH>Version</TH><TH>Type</TH><TH>Object</TH><TH>Title</TH><TH>Steps</TH><TH>Status</TH><TH>Modify time</TH><TH>Description</TH></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>create data</TD><TD>data types: CSV/Excel/texts/database table/MyBox clipboard/matrix</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>select file</TD><TD>data file types: CSV/Excel/texts</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>select data</TD><TD>data types: CSV/Excel/texts/database table/MyBox clipboard/matrix</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>Load contents in System Clipboard</TD><TD></TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>Import examples</TD><TD>1.import data
-2.only import definition</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>table - normal values</TD><TD>1.commit 
-2.cancel
-3.single line string
-4.multiple lines string
-5.number
-6.enumeration
-7.time
-8.boolean</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>bundary</TD><TD>Manufacture Data</TD><TD>table - null</TD><TD>1.permit  
-2.not permit</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Invalid</TD><TD>Manufacture Data</TD><TD>table - invalid values</TD><TD>1.commit 
-2.cancel</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>CSV - normal</TD><TD>1.commit 
-2.cancel</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Invalid</TD><TD>Manufacture Data</TD><TD>CSV - null</TD><TD>1.permit 
-2.not permit</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Invalid</TD><TD>Manufacture Data</TD><TD>CSV - invalid</TD><TD>1.commit 
-2.cancel</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
-                <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>switch mode - normal values</TD><TD>1.html to table 
-2.table to html 
-3.html to csv 
-4.csv to texts 
-5.texts to html</TD><TD>pass</TD><TD>2024-5-18</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>Invalid</TD><TD>Manufacture Data</TD><TD>row expression - invalid values and operators</TD><TD>1. Use function of 'Set Values' to check caluculation of row experssion
+2. To 'String' column, input null value and use operator: + - * /
+3. To 'Integer' column, input null value and use operator: + - * /
+4. To 'Double' column, input null value and use operator: + - * /</TD><TD>pass</TD><TD>2025-01-24 10:10:21</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>row expression - column types and operators</TD><TD>1. Use function of 'Set Values' to check caluculation of row experssion
+2. To 'String' column, input valid value and use operator: + - * /
+3. To 'Integer' column, input valid value and use operator: + - * /
+4. To 'Double' column, input valid value and use operator: + - * /</TD><TD>pass</TD><TD>2025-01-24 10:10:21</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>Enumerated Short</TD><TD>1. Open a CSV file
+2. Add column with type of Enumerated Short
+3. Add rows and select values of Enumerated Short
+4. Save new column and rows
+5. Values of Enumerated Short can be edited/saved/displayed/exported correctly</TD><TD>pass</TD><TD>2025-01-24 10:10:21</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>Function</TD><TD>Manufacture Image</TD><TD>read/write WebP file</TD><TD>1. Open WebP and save it as other formats
+2. Read jpg/png file and save it as WebP file</TD><TD>pass</TD><TD>2025-01-24 10:10:21</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>Set Values - row expression</TD><TD>1. To current page of csv file, use function 'Set Values', input valid row expression, and execute
+2. To all data of csv file, use function 'Set Values', input valid row expression, and execute
+3. To current page of database table, use function 'Set Values', input valid row expression, and execute
+4. To all data of database table, use function 'Set Values', input valid row expression, and execute</TD><TD>pass</TD><TD>2025-01-24 10:10:21</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>Invalid</TD><TD>Manufacture Data</TD><TD>Set Values - row expression</TD><TD>1. To current page of csv file, use function 'Set Values', input invalid row expression, and execute
+2. To all data of csv file, use function 'Set Values', input invalid row expression, and execute
+3. To current page of database table, use function 'Set Values', input invalid row expression, and execute
+4. To all data of database table, use function 'Set Values', input invalid row expression, and execute</TD><TD>pass</TD><TD>2025-01-24 10:10:16</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>Function</TD><TD>Geography Code</TD><TD>predefined geography codes</TD><TD>1. Set data path of v6.8.3 as new path, then start v6.8.3
+2. Import predefined geography codes
+3. Geography codes should be displayed in the tree correctly
+4. Geography codes should be displayed in map correctly
+5. Geography codes can be edited and saved correctly
+6. Other functions of the tree work correctly
+7. Geography codes can be handled as internal table correctly</TD><TD>pass</TD><TD>2025-01-24 10:03:32</TD><TD></TD></TR>
+                <TR><TD>win</TD><TD>MyBox v6.8.3</TD><TD>兼容性</TD><TD>Geography Code</TD><TD>Upgrade from v6.8</TD><TD>1. View geography codes in v6.8
+2. Set data path of v6.8.3 as the data path of v6.8, then start v6.8.3
+3. View geography codes in v6.8.3
+4. Geography codes of v6.8 should be displayed in the tree of v6.8.3 correctly
+5. Geography codes of v6.8 should be displayed in map of v6.8.3 correctly
+6. Geography codes can be edited and saved correctly
+7. Other functions of the tree work correctly
+8. Geography codes can be handled as internal table correctly</TD><TD>pass</TD><TD>2025-01-24 09:54:33</TD><TD></TD></TR>
                 <TR><TD>win</TD><TD>MyBox v6.8.1</TD><TD>Function</TD><TD>Manufacture Data</TD><TD>switch mode - null - permit</TD><TD>1.html to table 
 2.table to html 
 3.html to csv 

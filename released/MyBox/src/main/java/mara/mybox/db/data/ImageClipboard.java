@@ -9,15 +9,14 @@ import java.util.Date;
 import java.util.Random;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppPaths;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -111,10 +110,10 @@ public class ImageClipboard extends BaseData {
                     }
                     return true;
                 case "width":
-                    data.setWidth(value == null ? AppValues.InvalidInteger : (int) value);
+                    data.setWidth(value == null ? 100 : (int) value);
                     return true;
                 case "height":
-                    data.setHeight(value == null ? AppValues.InvalidInteger : (int) value);
+                    data.setHeight(value == null ? 100 : (int) value);
                     return true;
                 case "source":
                     short s = value == null ? -1 : (short) value;

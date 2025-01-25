@@ -540,7 +540,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             return;
         }
         if (sourceFile == null) {
-            targetFile = chooseSaveFile(title());
+            targetFile = saveCurrentFile(title());
         } else {
             targetFile = sourceFile;
         }
@@ -658,7 +658,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     public void loadView(String html, boolean updated) {
         try {
             isSettingValues = true;
-            webViewController.writeContents(html);
+            webViewController.writeContent(html);
             isSettingValues = false;
             htmlChanged(updated);
         } catch (Exception e) {
@@ -714,6 +714,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             return;
         }
         codesLabel.setText(message("CharactersNumber") + ": " + StringTools.format(codesArea.getLength()));
+        codesRaido.setText(changed ? "*" : "");
         if (changed) {
             updateStatus(true);
         }
@@ -755,6 +756,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
         if (isSettingValues) {
             return;
         }
+        treeRadio.setText(changed ? "*" : "");
         if (changed) {
             updateStatus(true);
         }
@@ -801,6 +803,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             len = c.length();
         }
         richEditorController.setLabel(message("CharactersNumber") + ": " + StringTools.format(len));
+        richRadio.setText(changed ? "*" : "");
         if (changed) {
             updateStatus(true);
         }
@@ -841,6 +844,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             return;
         }
         markdownLabel.setText(message("CharactersNumber") + ": " + StringTools.format(markdownArea.getLength()));
+        mdRadio.setText(changed ? "*" : "");
         if (changed) {
             updateStatus(true);
         }
@@ -872,6 +876,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             return;
         }
         textsLabel.setText(message("CharactersNumber") + ": " + StringTools.format(textsArea.getLength()));
+        textsRadio.setText(changed ? "*" : "");
         if (changed) {
             updateStatus(true);
         }
@@ -904,8 +909,8 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     public void refreshAction() {
         if (webViewController.address != null) {
             loadAddress(webViewController.address);
-        } else if (webViewController.contents != null) {
-            loadContents(webViewController.contents);
+        } else if (webViewController.content != null) {
+            loadContents(webViewController.content);
         }
         updateStatus(false);
     }
