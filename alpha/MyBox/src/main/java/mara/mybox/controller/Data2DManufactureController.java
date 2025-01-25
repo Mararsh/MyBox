@@ -345,11 +345,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             if (rows == null) {
                 return false;
             }
-            isSettingValues = true;
-            tableData.setAll(rows);
-            data2D.setPageData(tableData);
-            isSettingValues = false;
-            tableView.refresh();
+            setPageData(rows);
             isCSVpicked = true;
         }
         return true;

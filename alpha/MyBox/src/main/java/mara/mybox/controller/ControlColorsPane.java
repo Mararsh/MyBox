@@ -27,9 +27,9 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -44,7 +44,6 @@ import static mara.mybox.value.Languages.message;
 public class ControlColorsPane extends BaseController {
 
     protected ColorsManageController manageController;
-    protected ColorPalettePopupController popController;
     protected ColorPaletteName palette;
     protected TableColorPalette tableColorPalette;
     protected Rectangle clickedRect, enteredRect;
@@ -75,12 +74,13 @@ public class ControlColorsPane extends BaseController {
         }
     }
 
-    public void setParameter(ColorsManageController manageController) {
-        this.manageController = manageController;
+    public void setManager(ColorsManageController controller) {
+        manageController = controller;
+        parentController = controller;
     }
 
-    public void setParameter(ColorPalettePopupController popController) {
-        this.popController = popController;
+    public void setParent(BaseController controller) {
+        parentController = controller;
     }
 
     public void loadPalette(ColorPaletteName palette, boolean scrollEnd) {
@@ -303,7 +303,7 @@ public class ControlColorsPane extends BaseController {
 
         menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            HtmlPopController.showHtml(this, colorData.html());
+            HtmlPopController.showHtml(parentController, colorData.html());
         });
         items.add(menu);
 

@@ -26,10 +26,10 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
@@ -106,7 +106,7 @@ public class ColorPalettePopupController extends BaseChildController {
         try {
             super.initControls();
 
-            colorsController.setParameter(this);
+            colorsController.setParent(this);
 
             colorsController.clickNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -237,11 +237,13 @@ public class ColorPalettePopupController extends BaseChildController {
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         showFunctionsMenu(event);
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();

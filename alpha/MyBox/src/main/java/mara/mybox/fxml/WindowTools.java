@@ -294,7 +294,8 @@ public class WindowTools {
             if (parent == null) {
                 return openStage(newFxml);
             }
-            BaseController c = openStage(parent.getMyWindow(), newFxml);
+            BaseController c = openStage(parent.getMyWindow(), newFxml,
+                    AppVariables.CurrentBundle, true, Modality.NONE, null);
             if (c == null) {
                 return null;
             }

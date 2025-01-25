@@ -33,6 +33,8 @@ This is compute application to provide simple and easy functions. It's free and 
                       
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3)                                                
 
+Happy Chinese New Year!                        
+
 ## Notice         
 Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
  

@@ -298,6 +298,10 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     public void updateTable(List<List<String>> data) {
+        setPageData(data);
+    }
+
+    public void setPageData(List<List<String>> data) {
         try {
             isSettingValues = true;
             tableData.setAll(data);
