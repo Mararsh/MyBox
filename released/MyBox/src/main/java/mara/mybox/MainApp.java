@@ -1,6 +1,5 @@
 package mara.mybox;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +12,7 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.sysDefaultLanguage;
 
 /**
  * @Author Mara
@@ -57,7 +57,7 @@ public class MainApp extends Application {
 
     public static FXMLLoader openStage(Stage stage, String fxml) throws Exception {
         try {
-            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            String lang = sysDefaultLanguage();
             ResourceBundle bundle;
             if (lang.startsWith("zh")) {
                 bundle = Languages.BundleZhCN;

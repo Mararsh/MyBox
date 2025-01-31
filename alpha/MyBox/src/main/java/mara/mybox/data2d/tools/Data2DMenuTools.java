@@ -94,7 +94,7 @@ public class Data2DMenuTools {
             items.add(menu);
 
             if (dataController.isTableMode()) {
-                menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
+                menu = new MenuItem(message("SnapshotWindow"), StyleTools.getIconImageView("iconSnapshot.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     dataController.snapAction();
                 });

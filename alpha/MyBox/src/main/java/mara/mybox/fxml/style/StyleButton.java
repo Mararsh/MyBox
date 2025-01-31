@@ -844,7 +844,7 @@ public class StyleButton {
             case "gridButton":
                 return new StyleData(id, message("Grid"), "", "iconBrowse.png");
             case "snapshotButton":
-                return new StyleData("snapshotButton", message("Snapshot"), "", "iconSnapshot.png");
+                return new StyleData("snapshotButton", message("SnapshotWindow"), "", "iconSnapshot.png");
             case "splitButton":
                 return new StyleData("splitButton", message("Split"), "", "iconSplit.png");
             case "sampleButton":

@@ -109,7 +109,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
                             return;
                         }
                         Languages.setLanguage(name);
-                        parentController.reload();
+                        reloadAll();
                     }
                 });
                 items.add(langItem);

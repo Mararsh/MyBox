@@ -316,6 +316,7 @@ this function handles the original image in file instead of the loaded image in 
 - Save the list:
    - Select some images by CTRL/SELECT to save, or select none to save whole list.
    - Save each item as a supported image file.
+   - Merge items as one image.
    - Merge items as a multiple-frames tif file.
    - Merge items as an animated gif  file.
    - Merge items as a PDF file.
@@ -840,19 +841,6 @@ This tool helps to run JEXL in GUI:
 - With defined range, interval, and decimal scale, data set of the function can be generated.
 - To unary function, XY chart, including scatter chart and line chart, can be displayed.
 - To binary function, XYZ chart, including 3D scatter chart and surface chart, can be displayed.</PRE>
-    <H3>Geography Code</H3>
-    <PRE>Geography code should:
-1) Be subordinate to an existed geography code.
-2) Its level should be lower than its ancestors'.
-3) Has either Chinese name or English name.
-
-One of following can determine an address:
-1) dataid. This is accurate matching.
-2) level + ancestors + chinese_name/english_name/alias. This is accurate matching.
-3) level + chinese_name/english_name/alias. This is fuzzy matching. Duplaited names in same level can cause false matching.
-Matching of name or alias is case-insensitive. 
-
-"dataid" of new Geography Code is assigned by MyBox automatically.</PRE>
     <H3>Map options</H3>
     <PRE>Coordinates of GCJ-02 are  encrypted as offsets of real locations.
 Coordinates of CGCS2000 are real locations and approximate to WGS-84(GPS).
@@ -997,7 +985,7 @@ Rulers:
       - Click the cell in the row：
                - If  its English contains line breaks, then pop text editor to help input multiple lines.
                - If  its English is single line, then display a text field to help fill line directly.
-      - Keep item empty to use English as default.
+      - Keep item empty to use Chinese or English as default.
       - Right click the cell to select "Copy English" or "Copy Chinese".
 - Click button "Save" to save modification.</PRE>
     <H3>MyBox Shortcuts and Icons</H3>

@@ -9,45 +9,20 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是图形化计算机应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2025-1-27 版本6.8.3</p>
+  <p>2025-1-31 版本6.8.4</p>
   <ul>
-   <li>新增： 
-    <ul>
-     <li>读写WebP图片。</li>
-     <li>数据列类型：枚举短整型。显示为字符串，保存为短整型。<br>
-       好处是节省存储空间，坏处是失去数据独立性、需要其它数据来解释数值。</li>
-    </ul></li>
    <li>改进： 
     <ul>
-     <li>数据处理： 
-      <ul>
-       <li>移除数据列的“对非法值的处理”。操作按自己的判断和逻辑来处理非法值。</li>
-       <li>厘清“格式”在数据读入、显示、编辑、保存、导出、转换中的应用和解除。</li>
-       <li>当检验到行表达式/行过滤可能不合法时，询问用户而不是直接阻止操作。</li>
-      </ul></li>
-     <li>树形信息： 
-      <ul>
-       <li>把“地理编码”改成数据树。</li>
-       <li>导出时可选应用数据格式。</li>
-       <li>在树上按标题/编号/时间/值来定位结点。</li>
-      </ul></li>
+     <li>调整网页的菜单。</li>
+     <li>自定义语言：若翻译为空白，可选中文/英语作为缺省值。</li>
     </ul></li>
    <li>解决问题： 
     <ul>
-     <li>树形：保存/移动/重命名/改序以后结点的数据丢失。</li>
-     <li>升级到6.8.1或6.8.2后，<a target=_blank href="https://github.com/Mararsh/MyBox/issues/1979">“数据处理”不能正确加载已存在的数据</a> 。</li>
-     <li>数据处理的“CSV模式”：若焦点未离开则修改的内容不被保存。</li>
-     <li>数据处理执行“赋值”可能会写错数据。</li>
-     <li>行表达式在绑定变量时应转换数据类型。</li>
-     <li>修改图像大小时，若输入错误的宽度/高度则界面处理异常。</li>
-     <li>单个颜色的网页显示中XYZ和Adobe CMYK数值输出错误。</li>
-     <li>FFmpeg信息/媒体信息功能失效。</li>
-     <li>在弹出窗口上弹出窗口可能会失败。</li>
-     <li>在多个界面上，文件另存时，选择的目录失效。</li>
-     <li>单独打开“图像选项”界面时，一些控件未初始化。</li>
+     <li>无法用打包好的MyBox读写WebP图片。</li>
+     <li>自定义语言的名字不应受locale定义的约束。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.4">此版本关闭的需求/问题列表</a></p>
   <p>春节快乐！</p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
@@ -447,8 +422,8 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.4</td>
+     <td>2025-1-31</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -482,8 +457,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.4</td>
+     <td>2025-1-31</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -566,8 +541,8 @@
     </tr>
     <tr>
      <td>界面中的提示信息</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.4</td>
+     <td>2025-1-31</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>

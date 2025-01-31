@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -105,11 +106,13 @@ public class WebBrowserController extends BaseController {
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         popFunctionsMenu(event, initTab, null);
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event event) {
         showFunctionsMenu(event, initTab, null);
     }
@@ -220,17 +223,26 @@ public class WebBrowserController extends BaseController {
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStar.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataTreeController.webFavorite(myController, false);
-            });
-            items.add(menu);
+            WebAddressController controller = tabControllers.get(tab);
+            if (tab != initTab && controller != null && controller.hasHtml()) {
+                Menu funcMenu = new Menu(message("Functions"), StyleTools.getIconImageView("iconFunction.png"));
+                funcMenu.getItems().addAll(controller.webViewController.functionsMenu(fevent));
+                items.add(funcMenu);
 
-            menu = new MenuItem(message("WebHistories"), StyleTools.getIconImageView("iconHistory.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                WebHistoriesController.oneOpen();
-            });
-            items.add(menu);
+            } else {
+                menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStar.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    DataTreeController.webFavorite(myController, false);
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("WebHistories"), StyleTools.getIconImageView("iconHistory.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    WebHistoriesController.oneOpen();
+                });
+                items.add(menu);
+
+            }
 
             items.add(new SeparatorMenuItem());
 

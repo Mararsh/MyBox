@@ -203,7 +203,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message(lang, "Repeat"), "", "iconRepeat.png"));
             tableData.add(new ShortCut("", "", message(lang, "Sample"), "", "iconSample.png"));
             tableData.add(new ShortCut("", "", message(lang, "Shear"), "", "iconShear.png"));
-            tableData.add(new ShortCut("", "", message(lang, "Snapshot"), "", "iconSnapshot.png"));
+            tableData.add(new ShortCut("", "", message(lang, "SnapshotWindow"), "", "iconSnapshot.png"));
             tableData.add(new ShortCut("", "", message(lang, "Sort"), "", "iconSort.png"));
             tableData.add(new ShortCut("", "", message(lang, "Statistic"), "", "iconStatistic.png"));
             tableData.add(new ShortCut("", "", message(lang, "Style"), "", "iconStyle.png"));

@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import javafx.application.Platform;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
@@ -41,6 +40,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.value.Languages.sysDefaultLanguage;
 import mara.mybox.value.TimeFormats;
 
 /**
@@ -242,7 +242,7 @@ public class DataMigrationFrom65to67 {
             statement.executeUpdate("DELETE FROM VISIT_HISTORY WHERE resource_type=4 AND resource_value='疫情报告'");
 
             Platform.runLater(() -> {
-                if ("zh".equals(Locale.getDefault().getLanguage().toLowerCase())) {
+                if ("zh".equals(sysDefaultLanguage())) {
                     PopTools.alertInformation(null, "功能'位置数据'和'疫情报告'已被移除。\n"
                             + "它们已存在的数据可在菜单'数据 - 数据库 - 数据库表'下访问。");
                 } else {

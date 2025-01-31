@@ -23,6 +23,8 @@ import mara.mybox.fxml.TextClipboardMonitor;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.Languages.isChinese;
+import static mara.mybox.value.Languages.sysDefaultLanguage;
 
 /**
  * @Author Mara
@@ -49,7 +51,8 @@ public class AppVariables {
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
-            rejectInvalidValueWhenEdit, rejectInvalidValueWhenSave;
+            rejectInvalidValueWhenEdit, rejectInvalidValueWhenSave,
+            useChineseWhenBlankTranslation;
     public static TextClipboardMonitor TextClipMonitor;
     public static ImageClipboardMonitor ImageClipMonitor;
     public static Timer ExitTimer;
@@ -111,6 +114,8 @@ public class AppVariables {
             titleTrimSize = UserConfig.getInt(conn, "TitleTrimSize", 60);
             menuMaxLen = UserConfig.getInt(conn, "MenuMaxLen", 80);
             ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean(conn, "ShortcutsCanNotOmitCtrlAlt", false);
+            useChineseWhenBlankTranslation = UserConfig.getBoolean(conn,
+                    "UseChineseWhenBlankTranslation", isChinese(sysDefaultLanguage()));
 
             commitModificationWhenDataCellLoseFocus = UserConfig.getBoolean(conn, "CommitModificationWhenDataCellLoseFocus", true);
             rejectInvalidValueWhenEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", false);

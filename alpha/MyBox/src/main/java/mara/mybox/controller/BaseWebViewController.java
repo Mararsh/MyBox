@@ -216,6 +216,11 @@ public class BaseWebViewController extends BaseFileController {
         return webViewController.currentHtml();
     }
 
+    public boolean hasHtml() {
+        String html = html();
+        return html != null && !html.isBlank();
+    }
+
     public void clear() {
         if (webViewController == null) {
             return;

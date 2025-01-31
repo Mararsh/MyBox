@@ -29,13 +29,25 @@ public class Languages {
     //    public static final ResourceBundle BundleEsES = ResourceBundle.getBundle("bundles/Messages", LocaleEsES);
     //    public static final ResourceBundle BundleRuRU = ResourceBundle.getBundle("bundles/Messages", LocaleRuRU);
 
+    public static String sysDefaultLanguage() {
+        try {
+            return Locale.getDefault().getLanguage().toLowerCase();
+        } catch (Exception e) {
+            return "en";
+        }
+    }
+
     public static void setLanguage(String lang) {
         if (lang == null) {
-            lang = Locale.getDefault().getLanguage().toLowerCase();
+            lang = sysDefaultLanguage();
         }
         CurrentBundle = getBundle(lang);
         try {
-            CurrentLangName = CurrentBundle.getLocale().getLanguage();
+            if (CurrentBundle instanceof UserLanguage) {
+                CurrentLangName = ((UserLanguage) CurrentBundle).getLanguage();
+            } else {
+                CurrentLangName = CurrentBundle.getLocale().getLanguage();
+            }
             UserConfig.setString("language", CurrentLangName);
         } catch (Exception e) {
         }
@@ -43,7 +55,7 @@ public class Languages {
 
     public static String getLangName() {
         if (CurrentLangName == null) {
-            String defaultLang = Locale.getDefault().getLanguage();
+            String defaultLang = sysDefaultLanguage();
             String lang = null;
             try {
                 lang = UserConfig.getString("language", defaultLang);
@@ -52,7 +64,7 @@ public class Languages {
             if (lang != null) {
                 CurrentLangName = lang.toLowerCase();
             } else {
-                CurrentLangName = defaultLang.toLowerCase();
+                CurrentLangName = defaultLang;
                 try {
                     UserConfig.setString("language", CurrentLangName);
                 } catch (Exception e) {
@@ -64,7 +76,7 @@ public class Languages {
 
     public static String embedLangName() {
         try {
-            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            String lang = sysDefaultLanguage();
             if (isChinese(lang)) {
                 return "zh";
             }
@@ -105,7 +117,7 @@ public class Languages {
     public static ResourceBundle getBundle(String language) {
         String lang = language;
         if (lang == null) {
-            lang = Locale.getDefault().getLanguage().toLowerCase();
+            lang = sysDefaultLanguage();
         }
         ResourceBundle bundle = tryBundle(lang);
         if (bundle == null) {
@@ -269,7 +281,7 @@ public class Languages {
         MyBoxLog.console("embedLangName: " + embedLangName());
         MyBoxLog.console("isChinese: " + isChinese());
         MyBoxLog.console("getBundle: " + getBundle().getBaseBundleName());
-        MyBoxLog.console("Locale.getDefault().getLanguage().toLowerCase();: " + Locale.getDefault().getLanguage().toLowerCase());
+        MyBoxLog.console("sysDefaultLanguage();: " + sysDefaultLanguage());
         MyBoxLog.console("message(\"en\", \"FileInformation\"): " + message("en", "FileInformation"));
         MyBoxLog.console("message(\"zh\", \"FileInformation\"): " + message("zh", "FileInformation"));
         MyBoxLog.console("message( \"FileInformation\"): " + message("FileInformation"));

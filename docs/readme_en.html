@@ -9,44 +9,20 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2025-1-27 v6.8.3</p>
+  <p>2025-1-31 v6.8.4</p>
   <ul>
-   <li>Add: 
-    <ul>
-     <li>Read/write WebP image.</li>
-     <li>Data column type “Enumerated Short”: Data are displayed as String while saved as Short.<br>
-       Its benefit is saved storage while its disadvantage is lost independence and need other data to explain its values.</li>
-    </ul></li>
    <li>Improve: 
     <ul>
-     <li>Data Manufacture: 
-      <ul>
-       <li>Remove “Handle invalid value” from column definition. Operations handle invalid values as their judgement and logic.</li>
-       <li>Clear how apply or remove “format” when read, display, edit, save, export, or convert data.</li>
-      </ul></li>
-     <li>Data Tree: 
-      <ul>
-       <li>Change “Geography Code” as data tree.</li>
-       <li>Option to apply data format when export.</li>
-       <li>Locate node by title/id/time/value in tree.</li>
-      </ul></li>
+     <li>Adjust menu of html.</li>
+     <li>When define language, option to set blank translation as Chinese or English.</li>
     </ul></li>
    <li>Solved problems: 
     <ul>
-     <li>Tree: Values are lost after save/move/rename/reorder node.</li>
-     <li>After migrated to 6.8.1 or 6.8.2, <a target=_blank href="https://github.com/Mararsh/MyBox/issues/1979">“Data Manufacture” loads existed data incorrectly</a>.</li>
-     <li>Data Manufacture: Updates are not saved if focus is not out in “CSV” mode。</li>
-     <li>“Set Values” of Data Manufacture may write wrong values.</li>
-     <li>Data should be converted as their types when row expression binds variables.</li>
-     <li>When change image size, interface works abnormally after user inputs wrong value of width/height.</li>
-     <li>Values of XYZ and Adobe CMYK are displayed wrongly in html of single color.</li>
-     <li>“FFmpeg information” and “FFmpeg media information” do not work.</li>
-     <li>In pop window, may fail to pop window.</li>
-     <li>In many interfaces, when save as file, the selected path does not work.</li>
-     <li>When open interface “Image Options” independently, some controls are not initialized.</li>
+     <li>Fail to read/write WebP image with packed MyBox.</li>
+     <li>When define language, its name should not be limited by definition of locale.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.4">Closed requirements/bugs in this version</a></p>
   <p>Happy Chinese New Year!</p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
@@ -446,20 +422,20 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.4</td>
+     <td>2025-1-31</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>Shortcuts and icon</td>
+     <td>Shortcuts and Icons</td>
      <td>6.8.2</td>
      <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>Functions list</td>
+     <td>Functions List</td>
      <td>6.8.2</td>
      <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
@@ -481,8 +457,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.4</td>
+     <td>2025-1-31</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -565,8 +541,8 @@
     </tr>
     <tr>
      <td>Tips in Interfaces</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.4</td>
+     <td>2025-1-31</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
@@ -585,14 +561,14 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>About - row expression and row filter</td>
+     <td>About - Row Expression and Row Filter</td>
      <td>6.8.2</td>
      <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>About - data grouping</td>
+     <td>About - Data Grouping</td>
      <td>6.7.1</td>
      <td>2023-3-13</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_grouping_en.html">html</a></td>
@@ -634,14 +610,14 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_media_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>About - Items in one sentence about java</td>
+     <td>About - Items in One Sentence About Java</td>
      <td>6.7.3</td>
      <td>2023-5-22</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_java_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_java.html">html</a></td>
     </tr>
     <tr>
-     <td>About - Items in one sentence about javafx</td>
+     <td>About - Items in One Sentence About Javafx</td>
      <td>6.7.3</td>
      <td>2023-5-22</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_javafx_en.html">html</a></td>
@@ -760,49 +736,49 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_colorhexa_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Art hues wheel(RYB) - 12 colors</td>
+     <td>Palette - Art Hues Wheel(RYB) - 12 Colors</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb12_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Art hues wheel(RYB) - 24 colors</td>
+     <td>Palette - Art Hues Wheel(RYB) - 24 Colors</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb24_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Art hues wheel(RYB) - 360 colors</td>
+     <td>Palette - Art Hues Wheel(RYB) - 360 Colors</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_ryb360_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Optical hues wheel(RGB) - 12 colors</td>
+     <td>Palette - Optical Hues Wheel(RGB) - 12 Colors</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb12_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Optical hues wheel(RGB) - 24 colors</td>
+     <td>Palette - Optical Hues Wheel(RGB) - 24 Colors</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Optical hues wheel(RGB) - 360 colors</td>
+     <td>Palette - Optical Hues Wheel(RGB) - 360 Colors</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Art paints</td>
+     <td>Palette - Art Paints</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html">all</a></td>
@@ -816,7 +792,7 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_zh.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_zh.html">all</a></td>
     </tr>
     <tr>
-     <td>Palette - Gray scale</td>
+     <td>Palette - Gray Scale</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_rgba_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html">all</a></td>
@@ -830,7 +806,7 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
     <tr>
-     <td>Useful links</td>
+     <td>Useful Links</td>
      <td>6.7.8</td>
      <td>2024-1-15</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_en.html">html</a></td>

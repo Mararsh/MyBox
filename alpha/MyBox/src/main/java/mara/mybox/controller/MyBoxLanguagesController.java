@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -38,6 +39,7 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.useChineseWhenBlankTranslation;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -61,6 +63,8 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
     protected Label langLabel;
     @FXML
     protected Button addLangButton, useLangButton, deleteLangButton, editLangButton;
+    @FXML
+    protected CheckBox chineseCheck;
 
     public MyBoxLanguagesController() {
         baseTitle = message("ManageLanguages");
@@ -71,6 +75,15 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
     public void initControls() {
         try {
             super.initControls();
+
+            chineseCheck.selectedProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    useChineseWhenBlankTranslation = chineseCheck.isSelected();
+                    UserConfig.setBoolean("UseChineseWhenBlankTranslation", useChineseWhenBlankTranslation);
+                }
+            });
+            chineseCheck.setSelected(useChineseWhenBlankTranslation);
 
             listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
@@ -105,6 +118,7 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
 
             NodeStyleTools.setTooltip(useLangButton, new Tooltip(message("SetAsInterfaceLanguage")));
             NodeStyleTools.setTooltip(editLangButton, new Tooltip(message("Edit") + "\n" + message("DoubleClick")));
+            NodeStyleTools.setTooltip(chineseCheck, new Tooltip(message("BlankAsChinese")));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -301,6 +315,7 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
         boolean none = isNoneSelected();
         copyItemsButton.setDisable(none);
         saveButton.setDisable(isEmpty);
+        chineseCheck.setDisable(isEmpty);
         lostFocusCommitCheck.setDisable(isEmpty);
     }
 

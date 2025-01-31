@@ -8,6 +8,8 @@ import com.github.jaiimageio.impl.plugins.raw.RawImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi;
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi;
+import com.luciad.imageio.webp.WebPImageReaderSpi;
+import com.luciad.imageio.webp.WebPImageWriterSpi;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -89,6 +91,8 @@ public class ImageColorSpace {
 //        MyBoxLog.console("Writers:" + Arrays.asList(writeFormats));
 //Readers:[JPG, JPEG 2000, tiff, bmp, PCX, gif, WBMP, PNG, RAW, JPEG, PNM, tif, TIFF, wbmp, jpeg, jpg, JPEG2000, BMP, pcx, GIF, png, raw, pnm, TIF, jpeg2000, jpeg 2000]
 //Writers:[JPEG 2000, JPG, tiff, bmp, PCX, gif, WBMP, PNG, RAW, JPEG, PNM, tif, TIFF, wbmp, jpeg, jpg, JPEG2000, BMP, pcx, GIF, png, raw, pnm, TIF, jpeg2000, jpeg 2000]
+        registry.registerServiceProvider(new WebPImageWriterSpi());
+        registry.registerServiceProvider(new WebPImageReaderSpi());
     }
 
     public static String[] getCompressionTypes(String imageFormat, String colorSpace, boolean hasAlpha) {

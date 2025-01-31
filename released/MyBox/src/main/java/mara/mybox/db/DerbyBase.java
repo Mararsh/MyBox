@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.table.BaseTable;
@@ -29,6 +28,7 @@ import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.value.Languages.sysDefaultLanguage;
 import org.apache.derby.drda.NetworkServerControl;
 
 /**
@@ -101,7 +101,7 @@ public class DerbyBase {
 //                shutdownEmbeddedDerby();
             }
             Class.forName(embeddedDriver).getDeclaredConstructors()[0].newInstance();
-            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            String lang = sysDefaultLanguage();
             if (!startEmbededDriver()) {
                 status = DerbyStatus.NotConnected;
                 return MessageFormat.format(message(lang, "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath);
@@ -144,11 +144,11 @@ public class DerbyBase {
     public static String networkMode() {
         try {
             if (status == DerbyStatus.Starting) {
-                String lang = Locale.getDefault().getLanguage().toLowerCase();
+                String lang = sysDefaultLanguage();
                 return message(lang, "BeingStartingDerby");
             }
             Class.forName(ClientDriver).getDeclaredConstructors()[0].newInstance();
-            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            String lang = sysDefaultLanguage();
             if (startDerbyServer()) {
                 driver = ClientDriver;
                 protocol = "jdbc:derby://" + host + ":" + port + "/";

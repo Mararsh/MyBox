@@ -87,7 +87,7 @@ public class ConfigTools {
             if (file == null || !file.exists()) {
                 return values;
             }
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 for (String key : conf.stringPropertyNames()) {
@@ -106,7 +106,7 @@ public class ConfigTools {
                 return null;
             }
             String value;
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 value = conf.getProperty(key);
@@ -120,13 +120,13 @@ public class ConfigTools {
 
     public static boolean writeConfigValue(File file, String key, String value) {
         Properties conf = new Properties();
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             conf.load(in);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
-        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             if (value == null) {
                 conf.remove(key);
             } else {
@@ -142,13 +142,13 @@ public class ConfigTools {
 
     public static boolean writeValue(File file, String key, String value) {
         Properties conf = new Properties();
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             conf.load(in);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
-        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             if (value == null) {
                 conf.remove(key);
             } else {
@@ -167,7 +167,7 @@ public class ConfigTools {
             return false;
         }
         Properties conf = new Properties();
-        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             for (String key : values.keySet()) {
                 conf.setProperty(key, values.get(key));
             }

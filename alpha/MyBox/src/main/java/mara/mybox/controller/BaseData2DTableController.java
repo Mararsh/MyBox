@@ -629,7 +629,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
+            menu = new MenuItem(message("SnapshotWindow"), StyleTools.getIconImageView("iconSnapshot.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 snapAction();
             });
