@@ -87,7 +87,9 @@ public abstract class PixelsOperation {
         if (scope != null) {
             scope = ImageScopeFactory.create(scope);
         }
-        if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
+        if (scope != null
+                && (scope.getShapeType() == ImageScope.ShapeType.Matting4
+                || scope.getShapeType() == ImageScope.ShapeType.Matting8)) {
             isDithering = false;
             return operateMatting();
         } else {
@@ -102,7 +104,6 @@ public abstract class PixelsOperation {
         try {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
-            boolean isWhole = (scope == null || scope.isWhole());
             boolean inScope;
             if (isDithering) {
                 thisLine = new Color[imageWidth];
@@ -128,7 +129,7 @@ public abstract class PixelsOperation {
 
                     } else {
 
-                        inScope = inScope(isWhole, x, y, color);
+                        inScope = inScope(x, y, color);
                         if (isDithering && y == thisLineY) {
                             color = thisLine[x];
                         }
@@ -159,7 +160,7 @@ public abstract class PixelsOperation {
     // https://www.codeproject.com/Articles/6017/QuickFill-An-Efficient-Flood-Fill-Algorithm
     private BufferedImage operateMatting() {
         try {
-            if (image == null || scope == null || scope.isWhole()) {
+            if (image == null || scope == null) {
                 return image;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
@@ -193,7 +194,7 @@ public abstract class PixelsOperation {
 
             boolean[][] visited = new boolean[imageHeight][imageWidth];
             Queue<IntPoint> queue = new LinkedList<>();
-            boolean eightNeighbor = scope.isEightNeighbor();
+            boolean eightNeighbor = scope.getShapeType() == ImageScope.ShapeType.Matting8;
             int x, y;
             for (IntPoint point : points) {
                 if (taskInvalid()) {
@@ -220,7 +221,7 @@ public abstract class PixelsOperation {
                     visited[y][x] = true;
                     int pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
-                    if (scope.inColorMatch(startColor, color)) {
+                    if (scope.isMatchColor(startColor, color) && scope.isMatchColors(color)) {
                         if (pixel == 0 && skipTransparent) {
                             skipTransparent(target, x, y);
                         } else {
@@ -252,9 +253,9 @@ public abstract class PixelsOperation {
         }
     }
 
-    protected boolean inScope(boolean isWhole, int x, int y, Color color) {
+    protected boolean inScope(int x, int y, Color color) {
         try {
-            boolean inScope = isWhole || scope.inScope(x, y, color);
+            boolean inScope = scope == null || scope.inScope(x, y, color);
             if (excludeScope) {
                 inScope = !inScope;
             }

@@ -1,13 +1,13 @@
 package mara.mybox.image.data;
 
-import mara.mybox.image.tools.ColorMatchTools;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import mara.mybox.image.data.ImageQuantizationFactory.KMeansRegionQuantization;
+import mara.mybox.color.ColorMatch;
 import mara.mybox.data.ListKMeans;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.data.ImageQuantizationFactory.KMeansRegionQuantization;
 
 /**
  * @Author Mara
@@ -18,7 +18,11 @@ import mara.mybox.dev.MyBoxLog;
 public class ImageRGBKMeans extends ListKMeans<Color> {
 
     protected KMeansRegionQuantization regionQuantization;
-    protected int equalDistance = 16;
+    protected ColorMatch colorMatch;
+
+    public ImageRGBKMeans() {
+        colorMatch = new ColorMatch();
+    }
 
     public static ImageRGBKMeans create() {
         return new ImageRGBKMeans();
@@ -86,7 +90,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             if (p1 == null || p2 == null) {
                 return Double.MAX_VALUE;
             }
-            return ColorMatchTools.calculateColorDistanceSquare(p1, p2);
+            return colorMatch.distance(p1, p2);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return Double.MAX_VALUE;
@@ -99,7 +103,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             if (p1 == null || p2 == null) {
                 return false;
             }
-            return ColorMatchTools.isColorMatchSquare(p1, p2, equalDistance);
+            return colorMatch.isMatch(p1, p2);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
@@ -142,13 +146,13 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             // Some new colors maybe generated outside regions due to dithering again
             if (mappedColor == null) {
                 mappedColor = regionColor;
-                int minDistance = Integer.MAX_VALUE;
+                double minDistance = Integer.MAX_VALUE;
                 for (int i = 0; i < centers.size(); ++i) {
                     if (task != null && !task.isWorking()) {
                         return null;
                     }
                     Color centerColor = centers.get(i);
-                    int distance = ColorMatchTools.calculateColorDistanceSquare(regionColor, centerColor);
+                    double distance = colorMatch.distance(regionColor, centerColor);
                     if (distance < minDistance) {
                         minDistance = distance;
                         mappedColor = centerColor;
@@ -172,12 +176,12 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     /*
         get/set
      */
-    public int getEqualDistance() {
-        return equalDistance;
+    public double getThreshold() {
+        return colorMatch.getThreshold();
     }
 
-    public ImageRGBKMeans setEqualDistance(int equalDistance) {
-        this.equalDistance = equalDistance;
+    public ImageRGBKMeans setThreshold(double threshold) {
+        colorMatch.setThreshold(threshold);
         return this;
     }
 

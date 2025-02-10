@@ -3,111 +3,71 @@ package mara.mybox.image.data;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javafx.scene.image.Image;
+import mara.mybox.color.ColorMatch;
+import mara.mybox.color.ColorMatch.MatchAlgorithm;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
-import mara.mybox.db.data.BaseData;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.value.Colors;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2018-8-1 16:22:41
  * @License Apache License Version 2.0
  */
-public class ImageScope extends BaseData {
+public class ImageScope {
 
     public static String ValueSeparator = ",";
 
-    protected String file, name, areaData, colorData, outlineName;
-    protected ScopeType scopeType;
-    protected ColorScopeType colorScopeType;
-    protected List<Color> colors;
+    protected String file, name, shapeData, colorData, outlineName;
+    protected ShapeType shapeType;
     protected List<IntPoint> points;
     protected DoubleRectangle rectangle;
     protected DoubleCircle circle;
     protected DoubleEllipse ellipse;
     protected DoublePolygon polygon;
-    protected int colorDistance, colorDistanceSquare;
-    protected float hsbDistance;
-    protected boolean areaExcluded, colorExcluded, eightNeighbor, distanceSquareRoot;
+    protected ColorMatch colorMatch;
+    protected boolean shapeExcluded;
     protected Image image, clip;
     protected Color maskColor;
     protected float maskOpacity;
-    protected Date createTime, modifyTime;
     protected BufferedImage outlineSource, outline;
 
-    public static enum ScopeType {
-        Whole, Matting, Rectangle, Circle, Ellipse, Polygon, Colors, Outline
-    }
-
-    public static enum ColorScopeType {
-        AllColor, Color, Red, Green, Blue, Brightness, Saturation, Hue
+    public static enum ShapeType {
+        Whole, Matting4, Matting8, Rectangle, Circle, Ellipse, Polygon, Outline
     }
 
     public ImageScope() {
         init();
     }
 
-    public ImageScope(Image image) {
-        this.image = image;
-        init();
-    }
-
-    public ImageScope(Image image, ScopeType type) {
-        this.image = image;
-        init();
-        scopeType = type;
-    }
-
-    private void init() {
-        scopeType = ScopeType.Whole;
-        colorScopeType = ColorScopeType.AllColor;
-        clearValues();
-    }
-
-    @Override
-    public boolean valid() {
-        return valid(this);
-    }
-
-    @Override
-    public boolean setValue(String column, Object value) {
-        return setValue(this, column, value);
-    }
-
-    @Override
-    public Object getValue(String column) {
-        return getValue(this, column);
-    }
-
-    public final void clearValues() {
-        colors = new ArrayList<>();
-        points = new ArrayList<>();
-        colorDistance = 50;
-        colorDistanceSquare = colorDistance * colorDistance;
-        hsbDistance = 0.5f;
+    public final void init() {
+        shapeType = ShapeType.Whole;
+        colorMatch = new ColorMatch();
         maskColor = Colors.TRANSPARENT;
         maskOpacity = 0.5f;
-        areaExcluded = colorExcluded = distanceSquareRoot = false;
-        eightNeighbor = true;
+        shapeExcluded = false;
+        resetParameters();
+    }
+
+    public final void resetParameters() {
         rectangle = null;
         circle = null;
         ellipse = null;
         polygon = null;
-        areaData = null;
+        shapeData = null;
         colorData = null;
         outlineName = null;
         outlineSource = null;
         outline = null;
+        points = new ArrayList<>();
+        colorMatch.clearColors();
     }
 
     public ImageScope cloneValues() {
@@ -115,15 +75,15 @@ public class ImageScope extends BaseData {
     }
 
     public boolean isWhole() {
-        return scopeType == null || scopeType == ScopeType.Whole;
+        return shapeType == null || shapeType == ShapeType.Whole;
     }
 
     public void decode(FxTask task) {
         if (colorData != null) {
             ImageScopeTools.decodeColorData(this);
         }
-        if (areaData != null) {
-            ImageScopeTools.decodeAreaData(this);
+        if (shapeData != null) {
+            ImageScopeTools.decodeShapeData(this);
         }
         if (outlineName != null) {
             ImageScopeTools.decodeOutline(task, this);
@@ -132,7 +92,7 @@ public class ImageScope extends BaseData {
 
     public void encode(FxTask task) {
         ImageScopeTools.encodeColorData(this);
-        ImageScopeTools.encodeAreaData(this);
+        ImageScopeTools.encodeShapeData(this);
         ImageScopeTools.encodeOutline(task, this);
     }
 
@@ -176,32 +136,40 @@ public class ImageScope extends BaseData {
     }
 
     public boolean addColor(Color color) {
-        if (color == null) {
-            return false;
-        }
-        if (colors == null) {
-            colors = new ArrayList<>();
-        }
-        if (!colors.contains(color)) {
-            colors.add(color);
-            return true;
-        } else {
-            return false;
-        }
+        return colorMatch.addColor(color);
     }
 
     public void clearColors() {
-        colors = new ArrayList<>();
+        colorMatch.clearColors();
     }
 
     /*
-        SubClass should implement this
+        color match
      */
-    protected boolean inScope(int x, int y, Color color) {
-        return true;
+    protected boolean isMatchColor(Color color1, Color color2) {
+        return colorMatch.isMatch(color1, color2);
     }
 
-    public boolean inColorMatch(Color color1, Color color2) {
+    public boolean isMatchColors(List<Color> colors, Color color) {
+        return colorMatch.isMatch(colors, color);
+    }
+
+    public boolean isMatchColors(Color color) {
+        return colorMatch.isMatch(color);
+    }
+
+    /**
+     *
+     * @param x the x of the pixel
+     * @param y the y of the pixel
+     * @param color the color of the pixel
+     * @return whether in image scope
+     */
+    public boolean inScope(int x, int y, Color color) {
+        return inShape(x, y) && isMatchColors(color);
+    }
+
+    public boolean inShape(int x, int y) {
         return true;
     }
 
@@ -212,130 +180,91 @@ public class ImageScope extends BaseData {
         return new ImageScope();
     }
 
-    public static boolean setValue(ImageScope data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        try {
-            switch (column) {
-                case "image_location":
-                    data.setFile(value == null ? null : (String) value);
-                    return true;
-                case "name":
-                    data.setName(value == null ? null : (String) value);
-                    return true;
-                case "scope_type":
-                    data.setScopeType(value == null ? null : ImageScopeTools.scopeType((String) value));
-                    return true;
-                case "color_scope_type":
-                    data.setColorScopeType(value == null ? null : ColorScopeType.valueOf((String) value));
-                    return true;
-                case "area_data":
-                    data.setAreaData(value == null ? null : (String) value);
-                    return true;
-                case "color_data":
-                    data.setColorData(value == null ? null : (String) value);
-                    return true;
-                case "color_distance":
-                    data.setColorDistance(value == null ? 20 : (int) value);
-                    return true;
-                case "hsb_distance":
-                    data.setHsbDistance(value == null ? 20 : Float.parseFloat(value + ""));
-                    return true;
-                case "area_excluded":
-                    data.setAreaExcluded(value == null ? false : (int) value > 0);
-                    return true;
-                case "color_excluded":
-                    data.setColorExcluded(value == null ? false : (int) value > 0);
-                    return true;
-                case "outline":
-                    data.setOutlineName(value == null ? null : (String) value);
-                    return true;
-                case "create_time":
-                    data.setCreateTime(value == null ? null : (Date) value);
-                    return true;
-                case "modify_time":
-                    data.setCreateTime(value == null ? null : (Date) value);
-                    return true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
+    public static boolean valid(ImageScope data) {
+        return data != null
+                && data.getColorMatch() != null
+                && data.getShapeType() != null;
     }
 
-    public static Object getValue(ImageScope data, String column) {
-        if (data == null || column == null) {
+    public static ShapeType shapeType(String type) {
+        try {
+            return ShapeType.valueOf(type);
+        } catch (Exception e) {
             return null;
         }
-        switch (column) {
-            case "image_location":
-                return data.getFile();
-            case "name":
-                return data.getName();
-            case "scope_type":
-                return data.getScopeType().name();
-            case "color_scope_type":
-                return data.getColorScopeType().name();
-            case "area_data":
-                return data.getAreaData();
-            case "color_data":
-                return data.getColorData();
-            case "color_distance":
-                return data.getColorDistance();
-            case "hsb_distance":
-                return data.getHsbDistance();
-            case "area_excluded":
-                return data.isAreaExcluded() ? 1 : 0;
-            case "color_excluded":
-                return data.isColorExcluded() ? 1 : 0;
-            case "outline":
-                return data.getOutline();
-            case "create_time":
-                return data.getCreateTime();
-            case "modify_time":
-                return data.getModifyTime();
+    }
+
+    public static MatchAlgorithm matchAlgorithm(String a) {
+        try {
+            return MatchAlgorithm.valueOf(a);
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
-
-    public static boolean valid(ImageScope data) {
-        return data != null && data.getScopeType() != null;
-    }
-
 
     /*
         customized get/set
      */
-    public void setColorDistance(int colorDistance) {
-        this.colorDistance = colorDistance;
-        this.colorDistanceSquare = colorDistance * colorDistance;
+    public ImageScope setShapeType(ShapeType shapeType) {
+        this.shapeType = shapeType;
+        return this;
     }
 
-    public void setColorDistanceSquare(int colorDistanceSquare) {
-        this.colorDistanceSquare = colorDistanceSquare;
-        this.colorDistance = (int) Math.sqrt(colorDistanceSquare);
+    public ImageScope setShapeType(String shapeType) {
+        this.shapeType = shapeType(shapeType);
+        return this;
     }
 
-    public String getColorTypeName() {
-        if (colorScopeType == null) {
-            return null;
-        }
-        return message(colorScopeType.name());
+    public double getColorThreshold() {
+        return colorMatch.getThreshold();
     }
+
+    public void setColorThreshold(double threshold) {
+        colorMatch.setThreshold(threshold);
+    }
+
+    public MatchAlgorithm getColorAlgorithm() {
+        return colorMatch.getAlgorithm();
+    }
+
+    public void setColorAlgorithm(MatchAlgorithm algorithm) {
+        colorMatch.setAlgorithm(algorithm);
+    }
+
+    public void setColorAlgorithm(String algorithm) {
+        colorMatch.setAlgorithm(matchAlgorithm(algorithm));
+    }
+
+    public boolean isColorExcluded() {
+        return colorMatch.isExlcuded();
+    }
+
+    public ImageScope setColorExcluded(boolean colorExcluded) {
+        colorMatch.setExlcuded(colorExcluded);
+        return this;
+    }
+
+    public boolean setColorWeights(String weights) {
+        return colorMatch.setColorWeights(weights);
+    }
+
+    public String getColorWeights() {
+        return colorMatch.getColorWeights();
+    }
+
+    public List<Color> getColors() {
+        return colorMatch.getColors();
+    }
+
+    public ImageScope setColors(List<Color> colors) {
+        colorMatch.setColors(colors);
+        return this;
+    }
+
 
     /*
         get/set
      */
-    public List<Color> getColors() {
-        return colors;
-    }
-
-    public ImageScope setColors(List<Color> colors) {
-        this.colors = colors;
-        return this;
-    }
-
     public DoubleRectangle getRectangle() {
         return rectangle;
     }
@@ -362,8 +291,8 @@ public class ImageScope extends BaseData {
         return this;
     }
 
-    public int getColorDistance() {
-        return colorDistance;
+    public ColorMatch getColorMatch() {
+        return colorMatch;
     }
 
     public float getMaskOpacity() {
@@ -384,38 +313,16 @@ public class ImageScope extends BaseData {
         return this;
     }
 
-    public ScopeType getScopeType() {
-        return scopeType;
+    public ShapeType getShapeType() {
+        return shapeType;
     }
 
-    public ImageScope setScopeType(ScopeType scopeType) {
-        this.scopeType = scopeType;
-        return this;
+    public boolean isShapeExcluded() {
+        return shapeExcluded;
     }
 
-    public ColorScopeType getColorScopeType() {
-        return colorScopeType;
-    }
-
-    public void setColorScopeType(ColorScopeType colorScopeType) {
-        this.colorScopeType = colorScopeType;
-    }
-
-    public boolean isAreaExcluded() {
-        return areaExcluded;
-    }
-
-    public ImageScope setAreaExcluded(boolean areaExcluded) {
-        this.areaExcluded = areaExcluded;
-        return this;
-    }
-
-    public boolean isColorExcluded() {
-        return colorExcluded;
-    }
-
-    public ImageScope setColorExcluded(boolean colorExcluded) {
-        this.colorExcluded = colorExcluded;
+    public ImageScope setShapeExcluded(boolean shapeExcluded) {
+        this.shapeExcluded = shapeExcluded;
         return this;
     }
 
@@ -425,18 +332,6 @@ public class ImageScope extends BaseData {
 
     public void setPoints(List<IntPoint> points) {
         this.points = points;
-    }
-
-    public int getColorDistanceSquare() {
-        return colorDistanceSquare;
-    }
-
-    public float getHsbDistance() {
-        return hsbDistance;
-    }
-
-    public void setHsbDistance(float hsbDistance) {
-        this.hsbDistance = hsbDistance;
     }
 
     public DoubleEllipse getEllipse() {
@@ -471,22 +366,6 @@ public class ImageScope extends BaseData {
         this.name = name;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
     public BufferedImage getOutline() {
         return outline;
     }
@@ -513,29 +392,12 @@ public class ImageScope extends BaseData {
         this.clip = clip;
     }
 
-    public boolean isEightNeighbor() {
-        return eightNeighbor;
+    public String getShapeData() {
+        return shapeData;
     }
 
-    public ImageScope setEightNeighbor(boolean eightNeighbor) {
-        this.eightNeighbor = eightNeighbor;
-        return this;
-    }
-
-    public boolean isDistanceSquareRoot() {
-        return distanceSquareRoot;
-    }
-
-    public void setDistanceSquareRoot(boolean distanceSquareRoot) {
-        this.distanceSquareRoot = distanceSquareRoot;
-    }
-
-    public String getAreaData() {
-        return areaData;
-    }
-
-    public void setAreaData(String areaData) {
-        this.areaData = areaData;
+    public void setShapeData(String shapeData) {
+        this.shapeData = shapeData;
     }
 
     public String getColorData() {

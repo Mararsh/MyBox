@@ -162,7 +162,10 @@ public class ColorConvertTools {
         others
      */
     public static javafx.scene.paint.Color converColor(Color color) {
-        return new javafx.scene.paint.Color(color.getRed() / 255.0, color.getGreen() / 255.0, color.getBlue() / 255.0, color.getAlpha() / 255.0);
+        return new javafx.scene.paint.Color(color.getRed() / 255.0,
+                color.getGreen() / 255.0,
+                color.getBlue() / 255.0,
+                color.getAlpha() / 255.0);
     }
 
     public static Color converColor(javafx.scene.paint.Color color) {

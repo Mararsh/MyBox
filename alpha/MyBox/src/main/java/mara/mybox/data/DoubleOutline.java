@@ -38,7 +38,7 @@ public class DoubleOutline extends DoubleRectangle {
 
     public DoubleOutline(ImageScope scope) {
         image = scope.getOutline();
-        insideColor = scope.isAreaExcluded() ? -1 : 0;
+        insideColor = scope.isShapeExcluded() ? -1 : 0;
         DoubleRectangle rect = scope.getRectangle();
         x = rect.getX();
         y = rect.getY();

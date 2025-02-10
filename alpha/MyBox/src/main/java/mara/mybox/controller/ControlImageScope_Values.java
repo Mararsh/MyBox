@@ -16,13 +16,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import mara.mybox.image.tools.AlphaTools;
-import mara.mybox.image.data.ImageScope;
-import static mara.mybox.image.data.ImageScope.ScopeType.Circle;
-import static mara.mybox.image.data.ImageScope.ScopeType.Ellipse;
-import static mara.mybox.image.data.ImageScope.ScopeType.Rectangle;
-import mara.mybox.image.data.PixelsOperation;
-import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
@@ -36,7 +29,11 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.tools.AlphaTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -48,12 +45,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class BaseImageScope_Values extends BaseImageScope_Base {
+public abstract class ControlImageScope_Values extends ControlImageScope_Base {
 
     protected boolean needFixSize;
 
     public void indicateScope() {
-        if (scope.getScopeType() == ImageScope.ScopeType.Outline) {
+        if (scope.getShapeType() == ImageScope.ShapeType.Outline) {
             indicateOutline();
             return;
         }
@@ -84,7 +81,8 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
             protected void whenSucceeded() {
                 image = maskImage;
                 imageView.setImage(maskImage);
-                if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
+                if (scope.getShapeType() == ImageScope.ShapeType.Matting4
+                        || scope.getShapeType() == ImageScope.ShapeType.Matting8) {
                     drawMattingPoints();
                 } else {
                     drawMaskShape();
@@ -114,7 +112,7 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
             if (!isValidScope()) {
                 return;
             }
-            switch (scope.getScopeType()) {
+            switch (scope.getShapeType()) {
                 case Rectangle:
                     pickRectangle();
                     break;
@@ -132,7 +130,7 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
 
     public void pickRectangle() {
         try {
-            if (!isValidScope() || scope.getScopeType() != ImageScope.ScopeType.Rectangle) {
+            if (!isValidScope() || scope.getShapeType() != ImageScope.ShapeType.Rectangle) {
                 return;
             }
             DoubleRectangle rect = pickRectValues();
@@ -151,7 +149,7 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
     @Override
     public void selectAllAction() {
         if (!isValidScope() || isSettingValues
-                || scope.getScopeType() != ImageScope.ScopeType.Rectangle) {
+                || scope.getShapeType() != ImageScope.ShapeType.Rectangle) {
             return;
         }
         rectLeftTopXInput.setText("0");
@@ -163,7 +161,7 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
 
     public void pickEllipse() {
         try {
-            if (!isValidScope() || scope.getScopeType() != ImageScope.ScopeType.Ellipse) {
+            if (!isValidScope() || scope.getShapeType() != ImageScope.ShapeType.Ellipse) {
                 return;
             }
             DoubleRectangle rect = pickRectValues();
@@ -224,7 +222,7 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
 
     public void pickCircle() {
         try {
-            if (!isValidScope() || scope.getScopeType() != ImageScope.ScopeType.Circle) {
+            if (!isValidScope() || scope.getShapeType() != ImageScope.ShapeType.Circle) {
                 return;
             }
             double x, y, r;
@@ -328,20 +326,24 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
 
     @Override
     public boolean canDeleteAnchor() {
-        if (scope == null || scope.getScopeType() == null || image == null) {
+        if (scope == null || scope.getShapeType() == null || image == null) {
             return false;
         }
-        ImageScope.ScopeType type = scope.getScopeType();
-        return type == ImageScope.ScopeType.Polygon || type == ImageScope.ScopeType.Matting;
+        ImageScope.ShapeType type = scope.getShapeType();
+        return type == ImageScope.ShapeType.Polygon
+                || type == ImageScope.ShapeType.Matting4
+                || type == ImageScope.ShapeType.Matting8;
     }
 
     @Override
     public void moveMaskAnchor(int index, String name, DoublePoint p) {
-        if (scope == null || scope.getScopeType() == null || image == null) {
+        if (scope == null || scope.getShapeType() == null || image == null) {
             return;
         }
-        ImageScope.ScopeType type = scope.getScopeType();
-        if (type == ImageScope.ScopeType.Polygon || type == ImageScope.ScopeType.Matting) {
+        ImageScope.ShapeType type = scope.getShapeType();
+        if (type == ImageScope.ShapeType.Polygon
+                || type == ImageScope.ShapeType.Matting4
+                || type == ImageScope.ShapeType.Matting8) {
             pointsController.setPoint(index, p.getX(), p.getY());
         } else {
             super.moveMaskAnchor(index, name, p);
@@ -350,11 +352,13 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
 
     @Override
     public void deleteMaskAnchor(int index, String name) {
-        if (scope == null || scope.getScopeType() == null || image == null) {
+        if (scope == null || scope.getShapeType() == null || image == null) {
             return;
         }
-        ImageScope.ScopeType type = scope.getScopeType();
-        if (type == ImageScope.ScopeType.Polygon || type == ImageScope.ScopeType.Matting) {
+        ImageScope.ShapeType type = scope.getShapeType();
+        if (type == ImageScope.ShapeType.Polygon
+                || type == ImageScope.ShapeType.Matting4
+                || type == ImageScope.ShapeType.Matting8) {
             pointsController.deletePoint(index);
         }
     }
@@ -398,21 +402,15 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
 
     public boolean addColor(Color color) {
         if (isSettingValues || color == null
-                || scope == null || scope.getScopeType() == null
+                || scope == null || scope.getShapeType() == null
                 || colorsList.getItems().contains(color)) {
             return false;
         }
-        switch (scope.getScopeType()) {
-            case Colors:
-            case Rectangle:
-            case Circle:
-            case Ellipse:
-            case Polygon:
-                colorsList.getItems().add(color);
-                return true;
-            default:
-                return false;
-        }
+        isSettingValues = true;
+        colorsList.getItems().add(color);
+        isSettingValues = false;
+        indicateScope();
+        return true;
     }
 
     @FXML
@@ -459,6 +457,18 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
         };
         start(task);
     }
+
+    @FXML
+    public void goMatch() {
+        try {
+            if (matchController.pickValuesTo(scope)) {
+                indicateScope();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
 
     /*
         outline
@@ -563,7 +573,7 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
     public boolean validOutline() {
         return srcImage() != null
                 && scope != null
-                && scope.getScopeType() == ImageScope.ScopeType.Outline
+                && scope.getShapeType() == ImageScope.ShapeType.Outline
                 && scope.getOutlineSource() != null
                 && maskRectangleData != null;
     }

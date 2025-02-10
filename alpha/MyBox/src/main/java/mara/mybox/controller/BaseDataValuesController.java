@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2024-11-9
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataValuesController extends BaseController {
+public abstract class BaseDataValuesController extends BaseFileController {
 
     protected DataTreeNodeEditorController nodeEditor;
     protected BaseNodeTable nodeTable;

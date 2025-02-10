@@ -1,17 +1,17 @@
 package mara.mybox.image.data;
 
-import mara.mybox.image.tools.ColorConvertTools;
-import mara.mybox.image.tools.ColorBlendTools;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.image.data.PixelsOperation.ColorActionType;
 import mara.mybox.image.data.PixelsOperation.OperationType;
 import static mara.mybox.image.data.PixelsOperation.OperationType.Blend;
 import static mara.mybox.image.data.PixelsOperation.OperationType.Color;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
+import mara.mybox.image.tools.ColorBlendTools;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.value.Colors;
 
 /**
@@ -214,16 +214,15 @@ public class PixelsOperationFactory {
     }
 
     public static PixelsOperation replaceColorOperation(FxTask task, BufferedImage image,
-            Color oldColor, Color newColor, int distance) {
-        if (oldColor == null || distance < 0) {
+            Color oldColor, Color newColor, double threshold) {
+        if (oldColor == null || threshold < 0) {
             return null;
         }
         try {
             ImageScope scope = new ImageScope();
-            scope.setScopeType(ImageScope.ScopeType.Colors);
-            scope.setColorScopeType(ImageScope.ColorScopeType.Color);
+            scope.setShapeType(ImageScope.ShapeType.Whole);
             scope.getColors().add(oldColor);
-            scope.setColorDistance(distance);
+            scope.setColorThreshold(threshold);
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(image,
                     scope, OperationType.ReplaceColor, ColorActionType.Set)
                     .setColorPara1(oldColor)
@@ -254,8 +253,8 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        protected boolean inScope(boolean isWhole, int x, int y, Color color) {
-            return !super.inScope(isWhole, x, y, color);
+        protected boolean inScope(int x, int y, Color color) {
+            return !super.inScope(x, y, color);
         }
 
         @Override
@@ -294,8 +293,8 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        protected boolean inScope(boolean isWhole, int x, int y, Color color) {
-            return !super.inScope(isWhole, x, y, color);
+        protected boolean inScope(int x, int y, Color color) {
+            return !super.inScope(x, y, color);
         }
 
         @Override

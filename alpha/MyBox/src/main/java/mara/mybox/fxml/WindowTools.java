@@ -291,11 +291,7 @@ public class WindowTools {
 
     public static BaseController branchStage(BaseController parent, String newFxml) {
         try {
-            if (parent == null) {
-                return openStage(newFxml);
-            }
-            BaseController c = openStage(parent.getMyWindow(), newFxml,
-                    AppVariables.CurrentBundle, true, Modality.NONE, null);
+            BaseController c = openStage(newFxml);
             if (c == null) {
                 return null;
             }

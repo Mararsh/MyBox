@@ -18,12 +18,14 @@ public class ListKMeans<T> {
     protected List<T> data;
     protected List<T> centers;
     protected List<Integer>[] clusters;
-    protected int k = 1, maxIteration = 10000, loopCount;
+    protected int k, maxIteration, loopCount;
     protected long cost;
     protected Map<T, T> dataMap;
     protected FxTask task;
 
     public ListKMeans() {
+        k = 1;
+        maxIteration = 10000;
     }
 
     public static ListKMeans create() {

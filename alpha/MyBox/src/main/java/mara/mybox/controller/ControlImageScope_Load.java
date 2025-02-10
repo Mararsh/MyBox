@@ -2,22 +2,20 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.control.Tab;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import mara.mybox.image.tools.ColorConvertTools;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.data.ImageScope.ScopeType;
-import static mara.mybox.image.data.ImageScope.ScopeType.Circle;
-import static mara.mybox.image.data.ImageScope.ScopeType.Colors;
-import static mara.mybox.image.data.ImageScope.ScopeType.Ellipse;
-import static mara.mybox.image.data.ImageScope.ScopeType.Matting;
-import static mara.mybox.image.data.ImageScope.ScopeType.Outline;
-import static mara.mybox.image.data.ImageScope.ScopeType.Polygon;
-import static mara.mybox.image.data.ImageScope.ScopeType.Rectangle;
-import static mara.mybox.image.data.ImageScope.ScopeType.Whole;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.data.ImageScope.ShapeType;
+import static mara.mybox.image.data.ImageScope.ShapeType.Circle;
+import static mara.mybox.image.data.ImageScope.ShapeType.Ellipse;
+import static mara.mybox.image.data.ImageScope.ShapeType.Matting4;
+import static mara.mybox.image.data.ImageScope.ShapeType.Outline;
+import static mara.mybox.image.data.ImageScope.ShapeType.Polygon;
+import static mara.mybox.image.data.ImageScope.ShapeType.Rectangle;
+import static mara.mybox.image.data.ImageScope.ShapeType.Whole;
+import mara.mybox.image.tools.ColorConvertTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -26,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class BaseImageScope_Load extends BaseImageScope_Values {
+public abstract class ControlImageScope_Load extends ControlImageScope_Values {
 
     public void pickScope() {
         if (isSettingValues) {
@@ -34,15 +32,18 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
         }
         try {
             resetScope();
-            if (scopeTypeGroup.getSelectedToggle() == null
-                    || scopeWholeRadio.isSelected()) {
-                scope.setScopeType(ImageScope.ScopeType.Whole);
+            if (shapeTypeGroup.getSelectedToggle() == null
+                    || wholeRadio.isSelected()) {
+                scope.setShapeType(ImageScope.ShapeType.Whole);
 
             } else {
-                if (scopeMattingRadio.isSelected()) {
-                    scope.setScopeType(ImageScope.ScopeType.Matting);
+                if (matting4Radio.isSelected()) {
+                    scope.setShapeType(ImageScope.ShapeType.Matting4);
 
-                } else if (scopeRectangleRadio.isSelected()) {
+                } else if (matting8Radio.isSelected()) {
+                    scope.setShapeType(ImageScope.ShapeType.Matting8);
+
+                } else if (rectangleRadio.isSelected()) {
                     if (maskRectangleData == null) {
                         if (scope.getRectangle() != null) {
                             maskRectangleData = scope.getRectangle().copy();
@@ -50,9 +51,9 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                             setMaskRectangleDefaultValues();
                         }
                     }
-                    scope.setScopeType(ImageScope.ScopeType.Rectangle);
+                    scope.setShapeType(ImageScope.ShapeType.Rectangle);
 
-                } else if (scopeCircleRadio.isSelected()) {
+                } else if (circleRadio.isSelected()) {
                     if (maskCircleData == null) {
                         if (scope.getCircle() != null) {
                             maskCircleData = scope.getCircle().copy();
@@ -60,9 +61,9 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                             setMaskCircleDefaultValues();
                         }
                     }
-                    scope.setScopeType(ImageScope.ScopeType.Circle);
+                    scope.setShapeType(ImageScope.ShapeType.Circle);
 
-                } else if (scopeEllipseRadio.isSelected()) {
+                } else if (ellipseRadio.isSelected()) {
                     if (maskEllipseData == null) {
                         if (scope.getEllipse() != null) {
                             maskEllipseData = scope.getEllipse().copy();
@@ -70,20 +71,17 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                             setMaskEllipseDefaultValues();
                         }
                     }
-                    scope.setScopeType(ImageScope.ScopeType.Ellipse);
+                    scope.setShapeType(ImageScope.ShapeType.Ellipse);
 
-                } else if (scopePolygonRadio.isSelected()) {
+                } else if (polygonRadio.isSelected()) {
                     if (maskPolygonData == null) {
                         if (scope.getPolygon() != null) {
                             maskPolygonData = scope.getPolygon().copy();
                         }
                     }
-                    scope.setScopeType(ImageScope.ScopeType.Polygon);
+                    scope.setShapeType(ImageScope.ShapeType.Polygon);
 
-                } else if (scopeColorRadio.isSelected()) {
-                    scope.setScopeType(ImageScope.ScopeType.Colors);
-
-                } else if (scopeOutlineRadio.isSelected()) {
+                } else if (outlineRadio.isSelected()) {
                     if (maskRectangleData == null) {
                         if (scope.getRectangle() != null) {
                             maskRectangleData = scope.getRectangle().copy();
@@ -91,7 +89,7 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                             setMaskRectangleDefaultValues();
                         }
                     }
-                    scope.setScopeType(ImageScope.ScopeType.Outline);
+                    scope.setShapeType(ImageScope.ShapeType.Outline);
 
                 }
 
@@ -106,68 +104,69 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
 
     // not apply image file
     public void applyScope(ImageScope inScope) {
-        if (inScope == null || inScope.getScopeType() == null) {
+        if (inScope == null || inScope.getShapeType() == null) {
             pickScope();
             return;
         }
         resetScope();
         isSettingValues = true;
-        showScopeType(inScope);
-        showAreaData(inScope);
+        showShapeType(inScope);
+        showShapeData(inScope);
         showColorData(inScope);
         isSettingValues = false;
-        matchController.show(inScope);
+        matchController.loadValuesFrom(inScope);
         setControls();
         needFixSize = true;
         indicateScope();
     }
 
-    private boolean showScopeType(ImageScope inScope) {
-        if (inScope == null || inScope.getScopeType() == null) {
+    private boolean showShapeType(ImageScope inScope) {
+        if (inScope == null || inScope.getShapeType() == null) {
             return false;
         }
-        ScopeType type = inScope.getScopeType();
+        ShapeType type = inScope.getShapeType();
         if (type == null) {
-            type = ScopeType.Whole;
+            type = ShapeType.Whole;
         }
-        scope.setScopeType(type);
+        scope.setShapeType(type);
         switch (type) {
-            case Matting:
-                scopeMattingRadio.setSelected(true);
+            case Matting4:
+                matting4Radio.setSelected(true);
                 break;
-            case Colors:
-                scopeColorRadio.setSelected(true);
+            case Matting8:
+                matting8Radio.setSelected(true);
                 break;
             case Rectangle:
-                scopeRectangleRadio.setSelected(true);
+                rectangleRadio.setSelected(true);
                 break;
             case Circle:
-                scopeCircleRadio.setSelected(true);
+                circleRadio.setSelected(true);
                 break;
             case Ellipse:
-                scopeEllipseRadio.setSelected(true);
+                ellipseRadio.setSelected(true);
                 break;
             case Polygon:
-                scopePolygonRadio.setSelected(true);
+                polygonRadio.setSelected(true);
                 break;
             case Outline:
-                scopeOutlineRadio.setSelected(true);
+                outlineRadio.setSelected(true);
                 break;
         }
         return true;
     }
 
-    private boolean showAreaData(ImageScope inScope) {
-        if (inScope == null || inScope.getScopeType() == null) {
+    private boolean showShapeData(ImageScope inScope) {
+        if (inScope == null || inScope.getShapeType() == null) {
             return false;
         }
         try {
             pointsController.isSettingValues = true;
             pointsController.tableData.clear();
             pointsController.isSettingValues = false;
-            areaExcludedCheck.setSelected(inScope.isAreaExcluded());
-            switch (inScope.getScopeType()) {
-                case Matting:
+            shapeExcludedCheck.setSelected(inScope.isShapeExcluded());
+            switch (inScope.getShapeType()) {
+                case Matting4:
+                case Matting8:
                     pointsController.loadIntList(inScope.getPoints());
                     return true;
                 case Rectangle:
@@ -199,28 +198,20 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
     }
 
     private boolean showColorData(ImageScope inScope) {
-        if (inScope == null || inScope.getScopeType() == null) {
+        if (inScope == null || inScope.getShapeType() == null) {
             return false;
         }
         try {
             colorsList.getItems().clear();
             colorExcludedCheck.setSelected(inScope.isColorExcluded());
-            eightNeighborCheck.setSelected(inScope.isEightNeighbor());
-            switch (inScope.getScopeType()) {
-                case Colors:
-                case Rectangle:
-                case Circle:
-                case Ellipse:
-                case Polygon:
-                    List<java.awt.Color> colors = inScope.getColors();
-                    if (colors != null) {
-                        List<Color> list = new ArrayList<>();
-                        for (java.awt.Color color : colors) {
-                            list.add(ColorConvertTools.converColor(color));
-                        }
-                        colorsList.getItems().addAll(list);
-                        colorsList.getSelectionModel().selectLast();
-                    }
+            List<java.awt.Color> colors = inScope.getColors();
+            if (colors != null) {
+                List<Color> list = new ArrayList<>();
+                for (java.awt.Color color : colors) {
+                    list.add(ColorConvertTools.converColor(color));
+                }
+                colorsList.getItems().addAll(list);
+                colorsList.getSelectionModel().selectLast();
             }
             return true;
         } catch (Exception e) {
@@ -231,37 +222,35 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
 
     protected void setControls() {
         try {
-            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-            tabPane.getTabs().clear();
-            areaBox.getChildren().clear();
-            opPane.getChildren().clear();
+            shapeBox.getChildren().clear();
+            shapeOperationsPane.getChildren().clear();
             if (image == null || scope == null) {
                 return;
             }
-            ScopeType type = scope.getScopeType();
+            ShapeType type = scope.getShapeType();
             if (type == null) {
-                type = ImageScope.ScopeType.Whole;
-                scope.setScopeType(type);
+                type = ImageScope.ShapeType.Whole;
+                scope.setShapeType(type);
             }
             UserConfig.setBoolean(baseName + "AddPointWhenLeftClick", true);
             switch (type) {
                 case Whole:
-                    hideLeftPane();
+                    showLeftPane();
                     break;
-                case Matting:
-                    tabPane.getTabs().setAll(areaTab, matchTab);
-                    areaBox.getChildren().setAll(eightNeighborCheck, pointsBox);
-                    opPane.getChildren().setAll(shapeButton, clearButton, withdrawButton,
+
+                case Matting4:
+                case Matting8:
+                    shapeBox.getChildren().setAll(pointsBox);
+                    shapeOperationsPane.getChildren().setAll(shapeButton, clearButton, withdrawButton,
                             clearDataWhenLoadImageCheck);
-                    VBox.setVgrow(areaBox, Priority.ALWAYS);
+                    VBox.setVgrow(shapeBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     addPointCheck.setSelected(true);
                     break;
 
                 case Rectangle:
-                    tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
-                    areaBox.getChildren().setAll(rectangleBox, goScopeButton);
-                    opPane.getChildren().setAll(shapeButton, pickColorBox,
+                    shapeBox.getChildren().setAll(rectangleBox, goScopeButton);
+                    shapeOperationsPane.getChildren().setAll(shapeButton,
                             shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskRectangle();
                     isSettingValues = true;
@@ -274,9 +263,8 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                     break;
 
                 case Circle:
-                    tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
-                    areaBox.getChildren().setAll(circleBox, goScopeButton);
-                    opPane.getChildren().setAll(shapeButton, pickColorBox,
+                    shapeBox.getChildren().setAll(circleBox, goScopeButton);
+                    shapeOperationsPane.getChildren().setAll(shapeButton,
                             shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskCircle();
                     isSettingValues = true;
@@ -287,9 +275,8 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                     break;
 
                 case Ellipse:
-                    tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
-                    areaBox.getChildren().setAll(rectangleBox, goScopeButton);
-                    opPane.getChildren().setAll(shapeButton, pickColorBox,
+                    shapeBox.getChildren().setAll(rectangleBox, goScopeButton);
+                    shapeOperationsPane.getChildren().setAll(shapeButton,
                             shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskEllipse();
                     isSettingValues = true;
@@ -302,41 +289,30 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                     break;
 
                 case Polygon:
-                    tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
-                    areaBox.getChildren().setAll(pointsBox);
-                    opPane.getChildren().setAll(shapeButton, clearButton, withdrawButton,
-                            pickColorBox, addPointCheck, shapeCanMoveCheck, clearDataWhenLoadImageCheck);
-                    VBox.setVgrow(areaBox, Priority.ALWAYS);
+                    shapeBox.getChildren().setAll(pointsBox);
+                    shapeOperationsPane.getChildren().setAll(shapeButton, clearButton, withdrawButton,
+                            addPointCheck, shapeCanMoveCheck, clearDataWhenLoadImageCheck);
+                    VBox.setVgrow(shapeBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     showMaskPolygon();
                     break;
 
-                case Colors:
-                    tabPane.getTabs().setAll(colorsTab, matchTab);
-                    opPane.getChildren().setAll(clearButton, withdrawButton, pickColorBox,
-                            shapeCanMoveCheck, clearDataWhenLoadImageCheck);
-                    showLeftPane();
-                    break;
-
                 case Outline:
-                    tabPane.getTabs().setAll(pixTab);
-                    opPane.getChildren().setAll(clearDataWhenLoadImageCheck);
+                    shapeBox.getChildren().setAll(outlineBox);
+                    VBox.setVgrow(shapeBox, Priority.ALWAYS);
+                    VBox.setVgrow(outlineBox, Priority.ALWAYS);
+                    shapeOperationsPane.getChildren().setAll(clearDataWhenLoadImageCheck);
                     showLeftPane();
                     break;
 
             }
 
-            pickColorCheck.setSelected(type == ImageScope.ScopeType.Colors);
-            handleTransparentCheck.setVisible(type != ImageScope.ScopeType.Outline);
+            handleTransparentCheck.setVisible(type != ImageScope.ShapeType.Outline);
 
-            if (selectedTab != null && tabPane.getTabs().contains(selectedTab)) {
-                tabPane.getSelectionModel().select(selectedTab);
-            }
-
-            matchController.setDistanceValue(scope);
+            matchController.loadValuesFrom(scope);
 
             refreshStyle(tabPane);
-            refreshStyle(opPane);
+            refreshStyle(shapeOperationsPane);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -348,10 +324,9 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
             clearMaskShapes();
             image = srcImage();
             if (scope == null) {
-                scope = new ImageScope(image);
-            } else {
-                scope.setImage(image);
+                scope = new ImageScope();
             }
+            scope.setImage(image);
             imageView.setRotate(0);
             imageView.setImage(image);
 

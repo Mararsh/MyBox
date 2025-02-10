@@ -4,7 +4,7 @@
 这是图形化计算机应用，目标是提供简单易用的功能。免费开源。           
 
 ## 新内容
-2025-1-31 版本6.8.4                
+2025-2-28 版本6.8.5                
                             
 * 改进：                                     
      - 调整网页的菜单。                                                                                                          
@@ -13,7 +13,7 @@
      - 无法用打包好的MyBox读写WebP图片。                                 
      - 自定义语言的名字不应受locale定义的约束。                                 
                                                                 
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.4)                         
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.5)                         
             
 春节快乐！                
 
@@ -263,6 +263,7 @@ MyBox基于以下开放资源：
 | miguelemosreverte | SVG | <https://github.com/miguelemosreverte/imagetracerjava>    |
 | webp-imageio | WebP图像 | <https://github.com/sejda-pdf/webp-imageio>    |
 | 中国美术分类全集 | 素材 | 中国织染服饰全集-织染卷 ISBN：7-5305-231 7-1    |
+| DeepSeek | 信息 | <https://www.deepseek.com/>     |
 
 
 # 特点

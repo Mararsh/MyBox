@@ -6,12 +6,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -29,7 +31,7 @@ public class ControlDataImageScope extends BaseDataValuesController {
     @Override
     public void initEditor() {
         try {
-            scopeController.setEditor(this);
+            scopeController.setDataEditor(this);
             scopeController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
@@ -89,13 +91,13 @@ public class ControlDataImageScope extends BaseDataValuesController {
 
     protected void loadScope(ImageScope scope) {
         if (isSettingValues
-                || scope == null || scope.getScopeType() == null) {
+                || scope == null || scope.getShapeType() == null) {
             return;
         }
         nodeEditor.editNull();
         nodeEditor.isSettingValues = true;
         nodeEditor.titleInput.setText(
-                scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
+                scope.getShapeType() + "_" + DateTools.datetimeToString(new Date()));
         nodeEditor.isSettingValues = false;
         setScopeControls(scope);
     }
@@ -103,6 +105,43 @@ public class ControlDataImageScope extends BaseDataValuesController {
     @FXML
     public void clearValue() {
         scopeController.resetScope();
+    }
+
+    @Override
+    public void sourceFileChanged(File file) {
+        if (file == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private Image fileImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    fileImage = FxImageTools.readImage(this, file);
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    return fileImage != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFile = file;
+                srcImage = fileImage;
+                scopeController.image = fileImage;
+                scopeController.applyScope(scopeController.scope);
+            }
+
+        };
+        start(task);
     }
 
     /*

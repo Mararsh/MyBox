@@ -11,12 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
-import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -82,7 +82,6 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(matchController.distanceSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
         } catch (Exception e) {
@@ -117,10 +116,10 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
             List<java.awt.Color> colors = new ArrayList();
             colors.add(originalColor);
             ImageScope scope = new ImageScope()
-                    .setScopeType(ImageScope.ScopeType.Colors)
+                    .setShapeType(ImageScope.ShapeType.Whole)
                     .setColors(colors)
                     .setColorExcluded(excludeCheck.isSelected());
-            ok = matchController.pickValues(scope, 50);
+            ok = matchController.pickValuesTo(scope);
 
             pixelsOperation = PixelsOperationFactory.create(null, scope,
                     PixelsOperation.OperationType.ReplaceColor,

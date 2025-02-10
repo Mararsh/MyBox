@@ -63,7 +63,7 @@ public class ImageSelectPixelsController extends BasePixelsController {
             @Override
             protected boolean handle() {
                 try {
-                    handledImage = scopeController.selectedScope(this,
+                    handledImage = scopeHandler.selectedScope(this,
                             bgColorController.awtColor(), marginsCheck.isSelected());
                     return handledImage != null;
                 } catch (Exception e) {

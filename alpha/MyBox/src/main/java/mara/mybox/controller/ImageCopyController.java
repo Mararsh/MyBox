@@ -92,7 +92,7 @@ public class ImageCopyController extends ImageSelectPixelsController {
             @Override
             protected boolean handle() {
                 try {
-                    scopedImage = scopeController.selectedScope(this,
+                    scopedImage = scopeHandler.selectedScope(this,
                             bgColorController.awtColor(),
                             marginsCheck.isSelected());
                     if (scopedImage == null || task == null || isCancelled()) {

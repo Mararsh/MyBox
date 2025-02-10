@@ -4,7 +4,7 @@
 This is compute application to provide simple and easy functions. It's free and open sources.
 
 ## What's New                       
-2025-1-31 v6.8.4               
+2025-2-28 v6.8.5               
                                                                                                                  
 * Improve:                                      
      - Adjust menu of html.                                                                                                         
@@ -13,7 +13,7 @@ This is compute application to provide simple and easy functions. It's free and 
      - Fail to read/write WebP image with packed MyBox.                                                                                                                       
      - When define language, its name should not be limited by definition of locale.                                                                                                                       
                       
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.4)                                                
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.5)                                                
 
 Happy Chinese New Year!                        
 
@@ -264,6 +264,7 @@ MyBox is based on following open sources:
 | miguelemosreverte                   | SVG                             | <https://github.com/miguelemosreverte/imagetracerjava>    |
 | webp-imageio | WebP | <https://github.com/sejda-pdf/webp-imageio>    |
 | Book | Materials | ISBN:7-5305-231 7-1    |
+| DeepSeek | Information | <https://www.deepseek.com/>     |
 
 
 # Features        

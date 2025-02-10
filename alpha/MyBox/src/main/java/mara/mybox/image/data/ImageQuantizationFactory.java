@@ -1,6 +1,5 @@
 package mara.mybox.image.data;
 
-import mara.mybox.image.tools.ColorMatchTools;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -11,10 +10,11 @@ import java.util.List;
 import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
-import static mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
+import mara.mybox.color.ColorMatch;
 import mara.mybox.controller.ControlImageQuantization;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
+import static mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -444,6 +444,7 @@ public class ImageQuantizationFactory {
 
         protected PopularityRegionQuantization regionQuantization;
         protected List<PopularityRegion> regions;
+        protected ColorMatch colorMatch;
 
         public static PopularityQuantization create() {
             return new PopularityQuantization();
@@ -453,6 +454,7 @@ public class ImageQuantizationFactory {
         public PopularityQuantization buildPalette() {
             try {
                 algorithm = QuantizationAlgorithm.PopularityQuantization;
+                colorMatch = new ColorMatch();
 
                 regionQuantization = PopularityRegionQuantization.create();
                 regionQuantization.setQuantizationSize(regionSize)
@@ -501,11 +503,11 @@ public class ImageQuantizationFactory {
                 }
             }
             if (mappedColor == null) {
-                int minDistance = Integer.MAX_VALUE;
+                double minDistance = Integer.MAX_VALUE;
                 PopularityRegion nearestRegion = regions.get(0);
                 for (int i = 0; i < regions.size(); ++i) {
                     PopularityRegion region = regions.get(i);
-                    int distance = ColorMatchTools.calculateColorDistanceSquare(region.averageColor, color);
+                    double distance = colorMatch.distance(region.averageColor, color);
                     if (distance < minDistance) {
                         minDistance = distance;
                         nearestRegion = region;

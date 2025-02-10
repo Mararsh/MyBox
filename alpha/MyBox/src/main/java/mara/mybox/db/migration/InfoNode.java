@@ -1,25 +1,16 @@
 package mara.mybox.db.migration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.controller.BaseController;
-import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxImageTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -503,108 +494,6 @@ public class InfoNode extends BaseData {
         }
     }
 
-    public static String nodeHtml(FxTask task, BaseController controller,
-            InfoNode node, String title) {
-        if (node == null) {
-            return null;
-        }
-        List<String> names = new ArrayList<>();
-        names.addAll(Arrays.asList(message("Name"), message("Value")));
-        StringTable table = new StringTable(names, title);
-        List<String> row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Category"), message(node.getCategory())));
-        table.add(row);
-
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("ID"), node.getNodeid() >= 0 ? node.getNodeid() + "" : message("NewItem")));
-        table.add(row);
-
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Title"), node.getTitle()));
-        table.add(row);
-
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("UpdateTime"), DateTools.datetimeToString(node.getUpdateTime())));
-        table.add(row);
-
-        return table.div() + "<BR>" + infoHtml(task, controller,
-                node.getCategory(), node.getInfo(), true, false);
-    }
-
-    public static String infoHtml(FxTask task, BaseController controller,
-            String category, String s, boolean showIcon, boolean singleNotIn) {
-        if (s == null || s.isBlank()) {
-            return "";
-        }
-        String html = "";
-        switch (category) {
-            case InfoNode.Notebook:
-                html = HtmlReadTools.body(s, false);
-                break;
-            case InfoNode.WebFavorite: {
-                Map<String, String> values = InfoNode.parseInfo(category, s);
-                if (values != null) {
-                    String address = values.get("Address");
-                    if (address != null && !address.isBlank()) {
-                        html = "<A href=\"" + address + "\">";
-                        String icon = values.get("Icon");
-                        if (showIcon && icon != null && !icon.isBlank()) {
-                            try {
-                                String base64 = FxImageTools.base64(null, new File(icon), "png");
-                                if (base64 != null) {
-                                    html += "<img src=\"data:image/png;base64," + base64 + "\" width=" + 40 + " >";
-                                }
-                            } catch (Exception e) {
-                            }
-                        }
-                        html += address + "</A>\n";
-                    }
-                }
-                break;
-            }
-            case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DDefinitionTools.fromXML(s);
-                if (csv != null) {
-                    html = Data2DDefinitionTools.toHtml(csv);
-                }
-                break;
-            }
-            case InfoNode.ImageScope: {
-                ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
-                if (scope != null) {
-                    html = ImageScopeTools.toHtml(task, scope);
-                }
-                break;
-            }
-            default: {
-                Map<String, String> values = parseInfo(category, s);
-                if (values != null) {
-                    StringTable table = new StringTable();
-                    String pv = s;
-                    for (String key : values.keySet()) {
-                        String v = values.get(key);
-                        if (v == null || v.isBlank()) {
-                            continue;
-                        }
-                        pv = "<PRE><CODE>" + v + "</CODE></PRE>";
-                        List<String> row = new ArrayList<>();
-                        row.addAll(Arrays.asList(message(key), pv));
-                        table.add(row);
-                    }
-                    if (!table.isEmpty()) {
-                        if (singleNotIn && table.size() == 1) {
-                            html = pv;
-                        } else {
-                            html = table.div();
-                        }
-                    }
-                }
-                break;
-            }
-        }
-        return html;
-    }
-
     public static String infoXml(String category, String s, String prefix) {
         if (s == null || s.isBlank()) {
             return "";
@@ -651,10 +540,10 @@ public class InfoNode extends BaseData {
                 break;
             }
             case InfoNode.ImageScope: {
-                ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
+                OldImageScope scope = OldImageScopeTools.fromXML(task, controller, s);
                 if (scope != null) {
                     json = prefix + ",\n"
-                            + ImageScopeTools.toJSON(scope, prefix);
+                            + OldImageScopeTools.toJSON(scope, prefix);
                 }
                 break;
             }
@@ -690,39 +579,6 @@ public class InfoNode extends BaseData {
         return Languages.matchIgnoreCase(category, InfoNode.Notebook);
     }
 
-//    public static InfoTreeManageController openManager(String category) {
-//        if (category == null) {
-//            return null;
-//        }
-//        switch (category) {
-////            case InfoNode.WebFavorite:
-////                return WebFavoritesController.oneOpen();
-////            case InfoNode.Notebook:
-////                return NoteTreeController.oneOpen();
-////            case InfoNode.JShellCode:
-////                return JShellController.open("");
-////            case InfoNode.SQL:
-////                return DatabaseSqlController.open(false);
-////            case InfoNode.JavaScript:
-////                return JavaScriptController.loadScript("");
-////            case InfoNode.InformationInTree:
-////                return InfoTreeController.oneOpen();
-////            case InfoNode.JEXLCode:
-////                return JexlController.open("", "", "");
-////            case InfoNode.RowFilter:
-////                return RowFilterController.open();
-////            case InfoNode.MathFunction:
-////                return MathFunctionController.open();
-////            case InfoNode.ImageMaterial:
-////                return ImageMaterialController.open();
-////            case InfoNode.Data2DDefinition:
-////                return Data2DDefinitionController.open();
-////            case InfoNode.ImageScope:
-////                return ImageScopeController.open();
-//
-//        }
-//        return null;
-//    }
 
     /*
         get/set

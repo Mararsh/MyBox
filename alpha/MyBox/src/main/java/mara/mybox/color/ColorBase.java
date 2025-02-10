@@ -21,7 +21,6 @@ import java.awt.color.ICC_Profile;
  */
 public class ColorBase {
 
-
     public static int colorSpaceType(String colorSpaceType) {
         int csType = -1;
         if (colorSpaceType != null) {
@@ -202,6 +201,14 @@ public class ColorBase {
         rgb[0] = r;
         rgb[1] = g;
         rgb[2] = b;
+        return rgb;
+    }
+
+    public static float[] arrayFloat(Color color) {
+        float[] rgb = new float[3];
+        rgb[0] = color.getRed() / 255f;
+        rgb[1] = color.getGreen() / 255f;
+        rgb[2] = color.getBlue() / 255f;
         return rgb;
     }
 
