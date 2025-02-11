@@ -14,8 +14,7 @@ import mara.mybox.value.Languages;
  */
 public class ColorMatch {
 
-    // The "distance" and "threshold" may be squared values
-    protected double threshold, trueThreshold,
+    protected double threshold, realThreshold,
             brightnessWeight, saturationWeight, hueWeight;
     protected MatchAlgorithm algorithm;
     protected boolean exlcuded;
@@ -26,7 +25,8 @@ public class ColorMatch {
         CIEDE2000, CIE94, CIE76,
         HSBEuclidean, Hue, Saturation, Brightness,
         RGBEuclidean, RGBRoughWeightedEuclidean, RGBWeightedEuclidean, RGBManhattan,
-        Red, Green, Blue
+        Red, Green, Blue,
+        CMC
     }
 
     public ColorMatch() {
@@ -40,7 +40,7 @@ public class ColorMatch {
         hueWeight = 1d;
         exlcuded = false;
         algorithm = DefaultAlgorithm;
-        trueThreshold = 0d;
+        realThreshold = 0d;
         clearColors();
     }
 
@@ -77,11 +77,12 @@ public class ColorMatch {
             case RGBRoughWeightedEuclidean:
             case RGBWeightedEuclidean:
             case RGBEuclidean:
+            case HSBEuclidean:
             case CIEDE2000:
             case CIE94:
             case CIE76:
-            case HSBEuclidean:
-                trueThreshold = threshold * threshold;
+            case CMC:
+                realThreshold = threshold * threshold;
                 break;
             case Red:
             case Green:
@@ -90,10 +91,67 @@ public class ColorMatch {
             case Saturation:
             case Brightness:
             case RGBManhattan:
-                trueThreshold = threshold;
+                realThreshold = threshold;
                 break;
         }
         return this;
+    }
+
+    public static double suggestedThreshold(MatchAlgorithm a) {
+        switch (a) {
+            case RGBRoughWeightedEuclidean:
+                return 50d;
+            case RGBWeightedEuclidean:
+                return 50d;
+            case RGBEuclidean:
+                return 50d;
+            case CIEDE2000:
+                return 5d;
+            case CIE94:
+                return 5d;
+            case CIE76:
+                return 5d;
+            case CMC:
+                return 5d;
+            case HSBEuclidean:
+                return 20d;
+            case Red:
+            case Green:
+            case Blue:
+                return 50d;
+            case Hue:
+                return 10d;
+            case Saturation:
+                return 10d;
+            case Brightness:
+                return 5d;
+            case RGBManhattan:
+                return 50d;
+        }
+        return 50d;
+    }
+
+    public static boolean supportWeights(MatchAlgorithm a) {
+        switch (a) {
+            case RGBRoughWeightedEuclidean:
+            case RGBWeightedEuclidean:
+            case RGBEuclidean:
+            case Red:
+            case Green:
+            case Blue:
+            case Hue:
+            case Saturation:
+            case Brightness:
+            case RGBManhattan:
+            case CIE76:
+                return false;
+            case CIEDE2000:
+            case CIE94:
+            case HSBEuclidean:
+            case CMC:
+                return true;
+        }
+        return false;
     }
 
     public boolean setColorWeights(String weights) {
@@ -155,10 +213,10 @@ public class ColorMatch {
         }
         if (color1.getRGB() == color2.getRGB()) {
             return true;
-        } else if (threshold == 0 || color1.getRGB() == 0 || color2.getRGB() == 0) {
+        } else if (threshold < 0.000000001 || color1.getRGB() == 0 || color2.getRGB() == 0) {
             return false;
         }
-        return distance(color1, color2) <= trueThreshold;
+        return distance(color1, color2) <= realThreshold;
     }
 
     public boolean isMatch(Color color) {
@@ -209,11 +267,13 @@ public class ColorMatch {
             case RGBManhattan:
                 return manhattanDistance(color1, color2);
             case CIEDE2000:
-                return CIEDE2000Distance(color1, color2);
+                return ciede2000Distance(color1, color2);
             case CIE94:
                 return cie94Distance(color1, color2);
             case CIE76:
                 return cie76Distance(color1, color2);
+            case CMC:
+                return cmcDistance(color1, color2);
             case HSBEuclidean:
                 return hsbEuclideanDistance(color1, color2);
             case Hue:
@@ -226,9 +286,9 @@ public class ColorMatch {
         return Integer.MAX_VALUE;
     }
 
-    public int rgbEuclideanDistance(Color color1, Color color2) {
+    public static double rgbEuclideanDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         int redDistance = color1.getRed() - color2.getRed();
         int greenDistance = color1.getGreen() - color2.getGreen();
@@ -239,9 +299,9 @@ public class ColorMatch {
     }
 
     // https://www.compuphase.com/cmetric.htm
-    public static int rgbWeightEuclideanDistance(Color color1, Color color2) {
+    public static double rgbWeightEuclideanDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         int redDistance = color1.getRed() - color2.getRed();
         int greenDistance = color1.getGreen() - color2.getGreen();
@@ -253,9 +313,9 @@ public class ColorMatch {
     }
 
     // https://en.wikipedia.org/wiki/Color_difference
-    public int rgbRoughWeightedEuclideanDistance(Color color1, Color color2) {
+    public static double rgbRoughWeightedEuclideanDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         int redDistance = color1.getRed() - color2.getRed();
         int greenDistance = color1.getGreen() - color2.getGreen();
@@ -265,75 +325,75 @@ public class ColorMatch {
                 + 3 * blueDistance * blueDistance;
     }
 
-    public int manhattanDistance(Color color1, Color color2) {
+    public static double manhattanDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         return Math.abs(color1.getRed() - color2.getRed())
                 + Math.abs(color1.getGreen() - color2.getGreen())
                 + Math.abs(color1.getBlue() - color2.getBlue());
     }
 
-    public int redDistance(Color color1, Color color2) {
+    public static double redDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         return Math.abs(color1.getRed() - color2.getRed());
     }
 
-    public int greenDistance(Color color1, Color color2) {
+    public static double greenDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         return Math.abs(color1.getGreen() - color2.getGreen());
     }
 
-    public int blueDistance(Color color1, Color color2) {
+    public static double blueDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         return Math.abs(color1.getBlue() - color2.getBlue());
     }
 
     public double hsbEuclideanDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
-        javafx.scene.paint.Color fxColor1 = ColorConvertTools.converColor(color1);
-        javafx.scene.paint.Color fxColor2 = ColorConvertTools.converColor(color2);
-        double hueDistance = Math.abs(fxColor1.getHue() - fxColor2.getHue());
+        float[] hsb1 = ColorConvertTools.color2hsb(color1);
+        float[] hsb2 = ColorConvertTools.color2hsb(color2);
+        double hueDistance = Math.abs(hsb1[0] * 360 - hsb2[0] * 360);
         hueDistance = Math.min(hueDistance, 360 - hueDistance) / 1.8;
-        double saturationDistance = Math.abs(fxColor1.getSaturation() - fxColor2.getSaturation()) * 100;
-        double brightnessDistance = Math.abs(fxColor1.getBrightness() - fxColor2.getBrightness()) * 100;
-        return hueDistance * hueDistance
-                + saturationDistance * saturationDistance
-                + brightnessDistance * brightnessDistance;
+        double saturationDistance = Math.ceil(Math.abs(hsb1[1] - hsb2[1]) * 100);
+        double brightnessDistance = Math.ceil(Math.abs(hsb1[2] - hsb2[2]) * 100);
+        return hueWeight * hueDistance * hueDistance
+                + saturationWeight * saturationDistance * saturationDistance
+                + brightnessWeight * brightnessDistance * brightnessDistance;
     }
 
-    public double hueDistance(Color color1, Color color2) {
+    public static double hueDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
-        return Math.abs(ColorConvertTools.getHue(color1) - ColorConvertTools.getHue(color2));
+        return Math.abs(ColorConvertTools.getHue(color1) - ColorConvertTools.getHue(color2)) * 360;
     }
 
-    public double saturationDistance(Color color1, Color color2) {
+    public static double saturationDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         return Math.abs(ColorConvertTools.getSaturation(color1) - ColorConvertTools.getSaturation(color2)) * 100;
     }
 
-    public double brightnessDistance(Color color1, Color color2) {
+    public static double brightnessDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         return Math.abs(ColorConvertTools.getBrightness(color1) - ColorConvertTools.getBrightness(color2)) * 100;
     }
 
-    public double cie76Distance(Color color1, Color color2) {
+    public static double cie76Distance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         double[] lab1 = SRGBtoCIELab(color1);
         double[] lab2 = SRGBtoCIELab(color2);
@@ -346,7 +406,7 @@ public class ColorMatch {
 
     public double cie94Distance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         double[] lab1 = SRGBtoCIELab(color1);
         double[] lab2 = SRGBtoCIELab(color2);
@@ -384,9 +444,9 @@ public class ColorMatch {
         return term1 * term1 + term2 * term2 + term3 * term3;
     }
 
-    public double CIEDE2000Distance(Color color1, Color color2) {
+    public double ciede2000Distance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         double[] lab1 = SRGBtoCIELab(color1);
         double[] lab2 = SRGBtoCIELab(color2);
@@ -461,6 +521,52 @@ public class ColorMatch {
         return term1 * term1 + term2 * term2 + term3 * term3 + RT * term2 * term3;
     }
 
+    public double cmcDistance(Color color1, Color color2) {
+        if (color1 == null || color2 == null) {
+            return Double.MAX_VALUE;
+        }
+        double[] lab1 = SRGBtoCIELab(color1);
+        double[] lab2 = SRGBtoCIELab(color2);
+
+        double L1 = lab1[0];
+        double a1 = lab1[1];
+        double b1 = lab1[2];
+        double L2 = lab2[0];
+        double a2 = lab2[1];
+        double b2 = lab2[2];
+
+        // Following lines are generated by DeepSeek
+        // 计算 C1 和 C2
+        double C1 = Math.sqrt(a1 * a1 + b1 * b1);
+        double C2 = Math.sqrt(a2 * a2 + b2 * b2);
+
+        // 计算 ΔL, ΔC, ΔH
+        double deltaL = L2 - L1;
+        double deltaC = C2 - C1;
+        double deltaH = Math.sqrt(Math.pow(a2 - a1, 2) + Math.pow(b2 - b1, 2) - Math.pow(deltaC, 2));
+
+        // 计算 h1（色相）
+        double h1 = Math.toDegrees(Math.atan2(b1, a1));
+        if (h1 < 0) {
+            h1 += 360; // 确保色相在 [0, 360] 范围内
+        }
+        // 计算 S_L, S_C
+        double S_L = L1 < 16 ? 0.511 : (0.040975 * L1) / (1 + 0.01765 * L1);
+        double S_C = (0.0638 * C1) / (1 + 0.0131 * C1) + 0.638;
+
+        // 计算 T
+        double F = Math.sqrt(Math.pow(C1, 4) / (Math.pow(C1, 4) + 1900));
+        double T = F == 0 ? 1 : (0.56 + Math.abs(0.2 * Math.cos(Math.toRadians(h1 + 168))));
+
+        // 计算 ΔE*cmc
+        double termL = deltaL / (brightnessWeight * S_L);
+        double termC = deltaC / (saturationWeight * S_C);
+        double termH = deltaH / (S_C * T);
+
+        // Avoid "sqrt"
+        return termL * termL + termC * termC + termH * termH;
+    }
+
     /*
         get/set
      */
@@ -477,8 +583,8 @@ public class ColorMatch {
         return threshold;
     }
 
-    public double getTrueThreshold() {
-        return trueThreshold;
+    public double getRealThreshold() {
+        return realThreshold;
     }
 
     public MatchAlgorithm getAlgorithm() {

@@ -5,15 +5,18 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.color.ColorMatch;
 import mara.mybox.color.ColorMatch.MatchAlgorithm;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.image.data.ImageScope;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -35,6 +38,10 @@ public class ControlColorMatch extends BaseController {
             saturationWeightInput, brightnessWeightInput;
     @FXML
     protected VBox weightsBox;
+    @FXML
+    protected Label weightsLabel;
+    @FXML
+    protected FlowPane huePane;
 
     public ControlColorMatch() {
         TipsLabelKey = "ColorMatchComments";
@@ -57,9 +64,9 @@ public class ControlColorMatch extends BaseController {
                 }
             });
 
-            double threshold = UserConfig.getDouble(conn, baseName + "Threshold", 20.0d);
+            double threshold = UserConfig.getDouble(conn, baseName + "Threshold", 1.0d);
             if (threshold < 0) {
-                threshold = 20.0d;
+                threshold = 1.0d;
             }
             thresholdInput.setText(threshold + "");
 
@@ -120,15 +127,24 @@ public class ControlColorMatch extends BaseController {
             if (a == null) {
                 return;
             }
-            if (a == MatchAlgorithm.CIE94 || a == MatchAlgorithm.CIEDE2000) {
+            if (ColorMatch.supportWeights(a)) {
+                weightsBox.setVisible(true);
                 if (!thisPane.getChildren().contains(weightsBox)) {
                     thisPane.getChildren().add(weightsBox);
                 }
-            } else {
-                if (thisPane.getChildren().contains(weightsBox)) {
-                    thisPane.getChildren().remove(weightsBox);
+                huePane.setVisible(a != MatchAlgorithm.CMC);
+                if (a == MatchAlgorithm.HSBEuclidean) {
+                    weightsLabel.setText(message("LargerWeightMeansMoreContribution"));
+                } else {
+                    weightsLabel.setText(message("LargerWeightMeansLessContribution"));
                 }
+            } else {
+                weightsBox.setVisible(false);
             }
+            double s = ColorMatch.suggestedThreshold(a);
+            NodeStyleTools.setTooltip(thresholdInput, message("SuggestedRange") + ": "
+                    + "0~" + s);
+            thresholdInput.setText(s + "");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -196,7 +212,7 @@ public class ControlColorMatch extends BaseController {
         try {
             isSettingValues = true;
             setAlgorithm(message(ColorMatch.DefaultAlgorithm.name()));
-            thresholdInput.setText("20");
+            thresholdInput.setText(ColorMatch.suggestedThreshold(ColorMatch.DefaultAlgorithm) + "");
             hueWeightInput.setText("1.0");
             saturationWeightInput.setText("1.0");
             brightnessWeightInput.setText("1.0");

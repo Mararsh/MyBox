@@ -29,12 +29,6 @@ public class CIEColorSpace {
         return names;
     }
 
-    public static List<ColorValue> XYZd50toAll(double[] xyzD50) {
-        List<ColorValue> colors = new ArrayList<>();
-
-        return colors;
-    }
-
     public static double[] XYZd50toCIERGB(double[] xyz) {
         double[][] matrix = {
             {2.3706743, -0.9000405, -0.4706338},
@@ -56,20 +50,24 @@ public class CIEColorSpace {
         double xr = X / rX;
         double yr = Y / rY;
         double zr = Z / rZ;
-        if (xr > 0.008856) {
-            xr = Math.pow(xr, 1d / 3);
+        double threshold = 0.008856;
+        double d3 = 0.333333;
+        double p1 = 7.787069;
+        double p2 = 0.137931;
+        if (xr > threshold) {
+            xr = Math.pow(xr, d3);
         } else {
-            xr = (903.3 * xr + 16) / 116d;
+            xr = p1 * xr + p2;
         }
-        if (yr > 0.008856) {
-            yr = Math.pow(yr, 1d / 3);
+        if (yr > threshold) {
+            yr = Math.pow(yr, d3);
         } else {
-            yr = (903.3 * yr + 16) / 116d;
+            yr = p1 * yr + p2;
         }
-        if (zr > 0.008856) {
-            zr = Math.pow(zr, 1d / 3);
+        if (zr > threshold) {
+            zr = Math.pow(zr, d3);
         } else {
-            zr = (903.3 * zr + 16) / 116d;
+            zr = p1 * zr + p2;
         }
         double[] CIELab = new double[3];
         CIELab[0] = 116 * yr - 16;
