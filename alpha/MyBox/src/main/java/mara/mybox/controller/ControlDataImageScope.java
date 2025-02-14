@@ -86,7 +86,7 @@ public class ControlDataImageScope extends BaseDataValuesController {
         if (file == null || !file.exists()) {
             file = ImageItem.exampleImageFile();
         }
-        scopeController.sourceFileChanged(file);
+        sourceFileChanged(file);
     }
 
     protected void loadScope(ImageScope scope) {

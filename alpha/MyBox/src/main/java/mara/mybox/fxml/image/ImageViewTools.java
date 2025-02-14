@@ -2,6 +2,7 @@ package mara.mybox.fxml.image;
 
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
@@ -103,27 +104,30 @@ public class ImageViewTools {
         return new DoublePoint(x, y);
     }
 
-    public static Color imagePixel(MouseEvent event, ImageView view) {
+    public static Color viewPixel(MouseEvent event, ImageView view) {
         DoublePoint p = ImageViewTools.getImageXY(event, view);
         if (p == null) {
             return null;
         }
-        return imagePixel(p, view);
+        return viewPixel(p, view);
     }
 
-    public static Color imagePixel(DoublePoint p, ImageView view) {
-        if (p == null || view == null || view.getImage() == null) {
+    public static Color viewPixel(DoublePoint p, ImageView view) {
+        return imagePixel(p, view.getImage());
+    }
+
+    public static Color imagePixel(DoublePoint p, Image image) {
+        if (p == null || image == null) {
             return null;
         }
         int x = (int) p.getX();
         int y = (int) p.getY();
-        if (x >= 0 && x < view.getImage().getWidth()
-                && y >= 0 && y < view.getImage().getHeight()) {
-            PixelReader pixelReader = view.getImage().getPixelReader();
+        if (x >= 0 && x < image.getWidth()
+                && y >= 0 && y < image.getHeight()) {
+            PixelReader pixelReader = image.getPixelReader();
             return pixelReader.getColor(x, y);
         } else {
             return null;
         }
     }
-
 }

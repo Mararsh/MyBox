@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScope_Load extends ControlImageScope_Values {
+public abstract class ControlImageScope_Load extends ControlImageScope_Set {
 
     public void pickScope() {
         if (isSettingValues) {
@@ -130,6 +130,9 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Values {
         }
         scope.setShapeType(type);
         switch (type) {
+            case Whole:
+                wholeRadio.setSelected(true);
+                break;
             case Matting4:
                 matting4Radio.setSelected(true);
                 break;

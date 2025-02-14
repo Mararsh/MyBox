@@ -17,7 +17,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.table.TableColor;
@@ -134,9 +133,9 @@ public class ControlImageScope extends ControlImageScope_Load {
 
             maskColorController.init(this, baseName + "MaskColor", Color.TRANSPARENT);
             maskColor = maskColorController.awtColor();
-            maskColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            maskColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (!isSettingValues) {
                         maskColor = maskColorController.awtColor();
                         scope.setMaskColor(maskColor);
@@ -265,10 +264,10 @@ public class ControlImageScope extends ControlImageScope_Load {
             saveColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
 
             colorController.init(this, baseName + "Color", Color.GOLD);
-            colorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            colorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    addColor((Color) newValue);
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    addColor((Color) colorController.rect.getFill());
                     changedNotify.set(!changedNotify.get());
                 }
             });
@@ -418,8 +417,8 @@ public class ControlImageScope extends ControlImageScope_Load {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
-        if (tabPane.getTabs().contains(colorsTab) && isPickingColor) {
-            Color color = ImageViewTools.imagePixel(p, imageView);
+        if (isPickingColor) {
+            Color color = ImageViewTools.imagePixel(p, srcImage());
             if (color != null) {
                 addColor(color);
                 changedNotify.set(!changedNotify.get());

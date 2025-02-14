@@ -27,13 +27,14 @@ public class ImageScope {
 
     protected String file, name, shapeData, colorData, outlineName;
     protected ShapeType shapeType;
+    protected List<Color> colors;
     protected List<IntPoint> points;
     protected DoubleRectangle rectangle;
     protected DoubleCircle circle;
     protected DoubleEllipse ellipse;
     protected DoublePolygon polygon;
     protected ColorMatch colorMatch;
-    protected boolean shapeExcluded;
+    protected boolean shapeExcluded, colorExcluded;
     protected Image image, clip;
     protected Color maskColor;
     protected float maskOpacity;
@@ -67,7 +68,7 @@ public class ImageScope {
         outlineSource = null;
         outline = null;
         points = new ArrayList<>();
-        colorMatch.clearColors();
+        clearColors();
     }
 
     public ImageScope cloneValues() {
@@ -135,27 +136,35 @@ public class ImageScope {
         points = new ArrayList<>();
     }
 
-    public boolean addColor(Color color) {
-        return colorMatch.addColor(color);
-    }
-
-    public void clearColors() {
-        colorMatch.clearColors();
-    }
-
     /*
         color match
      */
     protected boolean isMatchColor(Color color1, Color color2) {
-        return colorMatch.isMatch(color1, color2);
-    }
-
-    public boolean isMatchColors(List<Color> colors, Color color) {
-        return colorMatch.isMatch(colors, color);
+        boolean match = colorMatch.isMatch(color1, color2);
+        return colorExcluded ? !match : match;
     }
 
     public boolean isMatchColors(Color color) {
-        return colorMatch.isMatch(color);
+        return colorMatch.isMatchColors(colors, color, colorExcluded);
+    }
+
+    public boolean addColor(Color color) {
+        if (color == null) {
+            return false;
+        }
+        if (colors == null) {
+            colors = new ArrayList<>();
+        }
+        if (!colors.contains(color)) {
+            colors.add(color);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void clearColors() {
+        colors = null;
     }
 
     /**
@@ -190,7 +199,7 @@ public class ImageScope {
         try {
             return ShapeType.valueOf(type);
         } catch (Exception e) {
-            return null;
+            return ShapeType.Whole;
         }
     }
 
@@ -198,7 +207,7 @@ public class ImageScope {
         try {
             return MatchAlgorithm.valueOf(a);
         } catch (Exception e) {
-            return null;
+            return ColorMatch.DefaultAlgorithm;
         }
     }
 
@@ -235,15 +244,6 @@ public class ImageScope {
         colorMatch.setAlgorithm(matchAlgorithm(algorithm));
     }
 
-    public boolean isColorExcluded() {
-        return colorMatch.isExlcuded();
-    }
-
-    public ImageScope setColorExcluded(boolean colorExcluded) {
-        colorMatch.setExlcuded(colorExcluded);
-        return this;
-    }
-
     public boolean setColorWeights(String weights) {
         return colorMatch.setColorWeights(weights);
     }
@@ -251,16 +251,6 @@ public class ImageScope {
     public String getColorWeights() {
         return colorMatch.getColorWeights();
     }
-
-    public List<Color> getColors() {
-        return colorMatch.getColors();
-    }
-
-    public ImageScope setColors(List<Color> colors) {
-        colorMatch.setColors(colors);
-        return this;
-    }
-
 
     /*
         get/set
@@ -293,6 +283,24 @@ public class ImageScope {
 
     public ColorMatch getColorMatch() {
         return colorMatch;
+    }
+
+    public List<Color> getColors() {
+        return colors;
+    }
+
+    public ImageScope setColors(List<Color> colors) {
+        this.colors = colors;
+        return this;
+    }
+
+    public boolean isColorExcluded() {
+        return colorExcluded;
+    }
+
+    public ImageScope setColorExcluded(boolean colorExcluded) {
+        this.colorExcluded = colorExcluded;
+        return this;
     }
 
     public float getMaskOpacity() {

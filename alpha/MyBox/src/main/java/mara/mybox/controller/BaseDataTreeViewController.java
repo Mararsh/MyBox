@@ -16,7 +16,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
@@ -67,8 +66,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     protected TreeTableColumn<DataNode, Float> orderColumn;
     @FXML
     protected TreeTableColumn<DataNode, Date> timeColumn;
-    @FXML
-    protected Label titleLabel;
     @FXML
     protected Button helpButton;
     @FXML
@@ -432,6 +429,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (viewController == null || node == null) {
             return;
         }
+        viewController.popInformation(message("Loading") + ": " + node.shortDescription());
         FxTask loadTask = new FxSingletonTask<Void>(this) {
             private String html;
             private DataNode savedNode;
@@ -466,6 +464,12 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
             @Override
             protected void whenFailed() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                viewController.closePopup();
             }
 
         };

@@ -45,7 +45,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlImageScope_Values extends ControlImageScope_Base {
+public abstract class ControlImageScope_Set extends ControlImageScope_Base {
 
     protected boolean needFixSize;
 

@@ -48,7 +48,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.Path;
 import javafx.stage.Popup;
@@ -164,11 +163,10 @@ public class GameEliminationController extends BaseController {
             minimumAdjacent = 3;
 
             colorSetController.init(this, baseName + "Color", Color.RED);
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            colorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
-                    String name = "color:" + ((Color) newValue).toString();
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    String name = "color:" + colorSetController.name();
                     addImageItem(name);
                 }
             });

@@ -1,11 +1,9 @@
 package mara.mybox.color;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 import static mara.mybox.color.SRGB.SRGBtoCIELab;
 import mara.mybox.image.tools.ColorConvertTools;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -17,8 +15,6 @@ public class ColorMatch {
     protected double threshold, realThreshold,
             brightnessWeight, saturationWeight, hueWeight;
     protected MatchAlgorithm algorithm;
-    protected boolean exlcuded;
-    protected List<Color> colors;
     public final static MatchAlgorithm DefaultAlgorithm = MatchAlgorithm.RGBRoughWeightedEuclidean;
 
     public static enum MatchAlgorithm {
@@ -38,10 +34,8 @@ public class ColorMatch {
         brightnessWeight = 1d;
         saturationWeight = 1d;
         hueWeight = 1d;
-        exlcuded = false;
         algorithm = DefaultAlgorithm;
         realThreshold = 0d;
-        clearColors();
     }
 
     public ColorMatch copyTo(ColorMatch match) {
@@ -50,8 +44,6 @@ public class ColorMatch {
         }
         match.setAlgorithm(algorithm);
         match.setThreshold(threshold);
-        match.setExlcuded(exlcuded);
-        match.setColors(colors);
         match.setHueWeight(hueWeight);
         match.setBrightnessWeight(brightnessWeight);
         match.setSaturationWeight(saturationWeight);
@@ -61,8 +53,6 @@ public class ColorMatch {
     public String info() {
         return "Algorithm :" + algorithm + "\n"
                 + "threshold :" + threshold + "\n"
-                + "exlcuded :" + exlcuded + "\n"
-                + "colors :" + (colors != null ? colors.size() : 0) + "\n"
                 + "hueWeight :" + hueWeight + "\n"
                 + "brightnessWeight :" + brightnessWeight + "\n"
                 + "saturationWeight :" + saturationWeight;
@@ -154,6 +144,14 @@ public class ColorMatch {
         return false;
     }
 
+    public static MatchAlgorithm algorithm(String a) {
+        try {
+            return MatchAlgorithm.valueOf(a);
+        } catch (Exception e) {
+            return DefaultAlgorithm;
+        }
+    }
+
     public boolean setColorWeights(String weights) {
         try {
             String[] values = weights.split(":");
@@ -168,40 +166,6 @@ public class ColorMatch {
 
     public String getColorWeights() {
         return hueWeight + ":" + saturationWeight + ":" + brightnessWeight;
-    }
-
-    public boolean addColor(Color color) {
-        if (color == null) {
-            return false;
-        }
-        if (colors == null) {
-            colors = new ArrayList<>();
-        }
-        if (!colors.contains(color)) {
-            colors.add(color);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void clearColors() {
-        colors = null;
-    }
-
-    public static MatchAlgorithm algorithm(String name) {
-        try {
-            if (name == null || name.isBlank()) {
-                return null;
-            }
-            for (MatchAlgorithm a : MatchAlgorithm.values()) {
-                if (Languages.matchIgnoreCase(a.name(), name)) {
-                    return a;
-                }
-            }
-        } catch (Exception e) {
-        }
-        return null;
     }
 
     /*
@@ -219,15 +183,11 @@ public class ColorMatch {
         return distance(color1, color2) <= realThreshold;
     }
 
-    public boolean isMatch(Color color) {
-        return isMatch(colors, color);
-    }
-
-    public boolean isMatch(List<Color> colors, Color color) {
+    public boolean isMatchColors(List<Color> colors, Color color, boolean excluded) {
         if (colors == null || colors.isEmpty()) {
             return true;
         }
-        if (exlcuded) {
+        if (excluded) {
             for (Color oColor : colors) {
                 if (isMatch(color, oColor)) {
                     return false;
@@ -570,15 +530,6 @@ public class ColorMatch {
     /*
         get/set
      */
-    public List<Color> getColors() {
-        return colors;
-    }
-
-    public ColorMatch setColors(List<Color> colors) {
-        this.colors = colors;
-        return this;
-    }
-
     public double getThreshold() {
         return threshold;
     }
@@ -595,7 +546,9 @@ public class ColorMatch {
     }
 
     public ColorMatch setAlgorithm(MatchAlgorithm algorithm) {
-        this.algorithm = algorithm;
+        if (algorithm != null) {
+            this.algorithm = algorithm;
+        }
         return this;
     }
 
@@ -623,15 +576,6 @@ public class ColorMatch {
 
     public ColorMatch setHueWeight(double hueWeight) {
         this.hueWeight = hueWeight;
-        return this;
-    }
-
-    public boolean isExlcuded() {
-        return exlcuded;
-    }
-
-    public ColorMatch setExlcuded(boolean exlcuded) {
-        this.exlcuded = exlcuded;
         return this;
     }
 

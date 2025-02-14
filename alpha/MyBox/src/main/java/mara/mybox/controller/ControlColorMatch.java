@@ -113,8 +113,7 @@ public class ControlColorMatch extends BaseController {
         try {
             return ColorMatch.algorithm(((RadioButton) algorithmGroup.getSelectedToggle()).getText());
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+            return ColorMatch.DefaultAlgorithm;
         }
     }
 

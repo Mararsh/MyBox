@@ -252,13 +252,11 @@ public class ControlColorsPane extends BaseController {
         }
         isSettingValues = true;
         try {
-            ColorData data = (ColorData) rect.getUserData();
             if (clickedRect != null) {
                 clickedRect.setEffect(null);
                 clickedRect.setWidth(rectSize);
                 clickedRect.setHeight(rectSize);
                 clickedRect.setStroke(Color.BLACK);
-                clickedRect.setUserData(data);
             }
             rect.setEffect(shadowEffect);
             rect.setWidth(rectSize * 1.6);
@@ -452,6 +450,7 @@ public class ControlColorsPane extends BaseController {
         if (clickedRect == null) {
             return null;
         }
+        MyBoxLog.console(clickedRect.getFill());
         return (ColorData) clickedRect.getUserData();
     }
 

@@ -16,6 +16,7 @@ import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeDataColumn;
@@ -56,8 +57,45 @@ public class DataMigrationFrom68 {
             if (lastVersion < 6008003) {
                 updateIn683(controller, conn, lang);
             }
+            if (lastVersion < 6008005) {
+                updateIn685(controller, conn, lang);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static void updateIn685(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        try (Statement exeStatement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.8.5...");
+            controller.info("Updating tables in 6.8.5...");
+
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN shape_type VARCHAR(128)");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_algorithm VARCHAR(128)");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN shape_excluded  BOOLEAN");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  BIGINT");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_weights  VARCHAR(" + StringMaxLength + ")");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN shape_data  CLOB");
+
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_type=scope_type");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_type='Matting8' WHERE scope_type='Matting'");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_type='Whole' WHERE scope_type='COLORS'");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_algorithm=color_type");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_algorithm='RGBRoughWeightedEuclidean' "
+                    + " WHERE color_type='AllColor' OR color_type='Color' ");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_excluded=area_excluded");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_distance");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_data=area_data");
+
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN scope_type");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_type");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_distance");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN area_excluded");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN area_data");
+
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 

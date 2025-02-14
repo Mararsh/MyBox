@@ -200,15 +200,15 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
             }
             clearColorsButton.setDisable(size == 0);
             if (list.isEmpty()) {
-                matchController.colorMatch.clearColors();
+                scope.clearColors();
             } else {
                 List<java.awt.Color> colors = new ArrayList<>();
                 for (Color color : list) {
                     colors.add(FxColorTools.toAwtColor(color));
                 }
-                matchController.colorMatch.setColors(colors);
+                scope.setColors(colors);
             }
-            matchController.colorMatch.setExlcuded(colorExcludedCheck.isSelected());
+            scope.setColorExcluded(colorExcludedCheck.isSelected());
             return matchController.pickValuesTo(scope);
         } catch (Exception e) {
             MyBoxLog.error(e);

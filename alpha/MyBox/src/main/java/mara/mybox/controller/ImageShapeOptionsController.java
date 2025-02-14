@@ -11,7 +11,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.controller.BaseShapeController_Base.AnchorShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
@@ -77,9 +76,9 @@ public class ImageShapeOptionsController extends ImageOptionsController {
 
             strokeColorController.init(this, baseName + "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
             strokeColorController.asSaved();
-            strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            strokeColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (isSettingValues || shapeController == null) {
                         return;
                     }
@@ -120,9 +119,9 @@ public class ImageShapeOptionsController extends ImageOptionsController {
 
             anchorColorController.init(this, baseName + "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
             anchorColorController.asSaved();
-            anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            anchorColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (isSettingValues || shapeController == null) {
                         return;
                     }

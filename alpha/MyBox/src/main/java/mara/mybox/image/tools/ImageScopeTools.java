@@ -56,6 +56,8 @@ public class ImageScopeTools {
             targetScope.setPolygon(sourceScope.getPolygon() != null ? sourceScope.getPolygon().copy() : null);
             targetScope.setShapeExcluded(sourceScope.isShapeExcluded());
 
+            targetScope.setColors(sourceScope.getColors());
+            targetScope.setColorExcluded(sourceScope.isColorExcluded());
             sourceScope.getColorMatch().copyTo(targetScope.getColorMatch());
 
             targetScope.setMaskOpacity(sourceScope.getMaskOpacity());
@@ -103,11 +105,12 @@ public class ImageScopeTools {
             ImageScope scope = new ImageScope();
             scope.setName(node.getTitle());
             scope.setShapeType(node.getStringValue("shape_type"));
+            scope.setShapeData(node.getStringValue("shape_data"));
+            scope.setShapeExcluded(node.getBooleanValue("shape_excluded"));
             scope.setColorAlgorithm(node.getStringValue("color_algorithm"));
-            scope.setShapeData(node.getStringValue("area_data"));
             scope.setColorData(node.getStringValue("color_data"));
             scope.setColorThreshold(node.getDoubleValue("color_threshold"));
-            scope.setShapeExcluded(node.getBooleanValue("area_excluded"));
+            scope.setColorWeights(node.getStringValue("color_weights"));
             scope.setColorExcluded(node.getBooleanValue("color_excluded"));
             scope.setFile(node.getStringValue("background_file"));
             scope.setOutlineName(node.getStringValue("outline_file"));
@@ -141,9 +144,9 @@ public class ImageScopeTools {
                 node = DataNode.create();
             }
             node.setValue("shape_type", type.name());
-            node.setValue("color_algorithm", scope.getColorAlgorithm().name());
             node.setValue("shape_data", ImageScopeTools.encodeShapeData(scope));
             node.setValue("shape_excluded", scope.isShapeExcluded());
+            node.setValue("color_algorithm", scope.getColorAlgorithm().name());
             node.setValue("color_data", ImageScopeTools.encodeColorData(scope));
             node.setValue("color_excluded", scope.isColorExcluded());
             node.setValue("color_threshold", scope.getColorThreshold());
@@ -188,7 +191,7 @@ public class ImageScopeTools {
             }
             StringTable htmlTable = new StringTable();
             List<String> row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ScopeType"), type.name()));
+            row.addAll(Arrays.asList(message("ShapeType"), type.name()));
             htmlTable.add(row);
             String v = scope.getFile();
             if (v != null && !v.isBlank()) {
@@ -214,7 +217,7 @@ public class ImageScopeTools {
             v = ImageScopeTools.encodeShapeData(scope);
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Area"), v));
+                row.addAll(Arrays.asList(message("Shape"), v));
                 htmlTable.add(row);
             }
             v = ImageScopeTools.encodeColorData(scope);
@@ -227,7 +230,7 @@ public class ImageScopeTools {
             row.addAll(Arrays.asList(message("ColorMatchThreshold"), scope.getColorThreshold() + ""));
             htmlTable.add(row);
             row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("AreaExcluded"), scope.isShapeExcluded() ? message("Yes") : ""));
+            row.addAll(Arrays.asList(message("ShapeExcluded"), scope.isShapeExcluded() ? message("Yes") : ""));
             htmlTable.add(row);
             row = new ArrayList<>();
             row.addAll(Arrays.asList(message("ColorExcluded"), scope.isColorExcluded() ? message("Yes") : ""));

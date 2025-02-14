@@ -221,7 +221,7 @@ public class PixelsOperationFactory {
         try {
             ImageScope scope = new ImageScope();
             scope.setShapeType(ImageScope.ShapeType.Whole);
-            scope.getColors().add(oldColor);
+            scope.addColor(oldColor);
             scope.setColorThreshold(threshold);
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(image,
                     scope, OperationType.ReplaceColor, ColorActionType.Set)

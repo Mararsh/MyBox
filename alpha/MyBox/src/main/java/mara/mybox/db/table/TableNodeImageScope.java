@@ -43,20 +43,6 @@ public class TableNodeImageScope extends BaseNodeTable {
         return this;
     }
 
-    public final TableNodeImageScope defineColumns2() {
-        defineNodeColumns();
-        addColumn(new ColumnDefinition("scope_type", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("color_type", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("area_excluded", ColumnType.Boolean));
-        addColumn(new ColumnDefinition("color_excluded", ColumnType.Boolean));
-        addColumn(new ColumnDefinition("color_distance", ColumnType.Integer));
-        addColumn(new ColumnDefinition("background_file", ColumnType.File));
-        addColumn(new ColumnDefinition("outline_file", ColumnType.File));
-        addColumn(new ColumnDefinition("area_data", ColumnType.Clob));
-        addColumn(new ColumnDefinition("color_data", ColumnType.Clob));
-        return this;
-    }
-
     @Override
     public String label(String name) {
         if (name == null || name.isBlank()) {
@@ -67,8 +53,8 @@ public class TableNodeImageScope extends BaseNodeTable {
                 return message("ShapeType");
             case "color_algorithm":
                 return message("ColorMatchAlgorithm");
-            case "area_excluded":
-                return message("AreaExcluded");
+            case "shape_excluded":
+                return message("ShapeExcluded");
             case "color_excluded":
                 return message("ColorExcluded");
             case "color_threshold":

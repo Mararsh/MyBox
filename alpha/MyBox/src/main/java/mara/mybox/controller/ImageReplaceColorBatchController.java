@@ -10,7 +10,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.image.ColorDemos;
@@ -46,9 +45,9 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
             super.initControls();
 
             originalColorSetController.init(this, baseName + "OriginalColor", Color.WHITE);
-            originalColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            originalColorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     handleTransparentCheck.setVisible(originalColorSetController.awtColor().getRGB() != 0);
                 }
             });

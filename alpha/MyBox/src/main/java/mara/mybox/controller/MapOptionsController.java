@@ -15,7 +15,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -310,13 +309,13 @@ public class MapOptionsController extends BaseController {
                     });
 
             colorSetController.init(this, baseName + "Color", Color.BLACK);
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            colorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (isSettingValues || mapController == null) {
                         return;
                     }
-                    mapController.setTextColor((Color) nv);
+                    mapController.setTextColor(colorSetController.color());
                 }
             });
 
