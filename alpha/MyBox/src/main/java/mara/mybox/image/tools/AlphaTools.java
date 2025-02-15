@@ -332,10 +332,6 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage[] outline(FxTask task, BufferedImage bgImage, BufferedImage alphaImage, DoubleRectangle rect) {
-        return outline(task, alphaImage, rect, bgImage.getWidth(), bgImage.getHeight(), false);
-    }
-
     public static BufferedImage[] outline(FxTask task, BufferedImage alphaImage,
             DoubleRectangle rect, int bgWidth, int bgHeight, boolean keepRatio) {
         try {

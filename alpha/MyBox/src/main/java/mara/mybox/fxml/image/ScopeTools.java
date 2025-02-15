@@ -2,12 +2,12 @@ package mara.mybox.fxml.image;
 
 import java.awt.Color;
 import javafx.scene.image.Image;
-import mara.mybox.image.tools.ColorConvertTools;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
+import mara.mybox.image.tools.ColorConvertTools;
 
 /**
  * @Author Mara
@@ -57,6 +57,7 @@ public class ScopeTools {
             MyBoxLog.debug(e);
             return null;
         }
+
     }
 
 }

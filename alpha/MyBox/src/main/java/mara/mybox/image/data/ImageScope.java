@@ -214,8 +214,15 @@ public class ImageScope {
     /*
         customized get/set
      */
+    public ShapeType getShapeType() {
+        if (shapeType == null) {
+            shapeType = ShapeType.Whole;
+        }
+        return shapeType;
+    }
+
     public ImageScope setShapeType(ShapeType shapeType) {
-        this.shapeType = shapeType;
+        this.shapeType = shapeType != null ? shapeType : ShapeType.Whole;
         return this;
     }
 
@@ -321,8 +328,8 @@ public class ImageScope {
         return this;
     }
 
-    public ShapeType getShapeType() {
-        return shapeType;
+    public String getFile() {
+        return file;
     }
 
     public boolean isShapeExcluded() {
@@ -356,10 +363,6 @@ public class ImageScope {
 
     public void setPolygon(DoublePolygon polygon) {
         this.polygon = polygon;
-    }
-
-    public String getFile() {
-        return file;
     }
 
     public void setFile(String file) {

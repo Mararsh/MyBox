@@ -125,7 +125,7 @@ License:    Apache License Version 2.0
                                                             <content>
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                     <children>
-                                                                        <CheckBox fx:id="shapeExcludedCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ShapeExclude" wrapText="true" />
+                                                                        <CheckBox fx:id="shapeExcludedCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ShapeExcluded" wrapText="true" />
                                                           <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0">
                                                               <children>
                                                                   <RadioButton fx:id="wholeRadio" layoutX="585.0" layoutY="10.0" mnemonicParsing="false" selected="true">
@@ -207,7 +207,7 @@ License:    Apache License Version 2.0
                                                           </FlowPane>
                                                                         <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS">
                                                                             <children>
-                                                                                <Button fx:id="goScopeButton" mnemonicParsing="false" onAction="#goScope">
+                                                                                <Button fx:id="goShapeButton" mnemonicParsing="false" onAction="#goShape">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
@@ -238,7 +238,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <CheckBox fx:id="colorExcludedCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ColorExclude" wrapText="true" />
+                                                                <CheckBox fx:id="colorExcludedCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ColorExcluded" wrapText="true" />
                                                                 <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%EmptyForAllColors" wrapText="true" />
                                                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                                     <children>
@@ -422,7 +422,7 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </Button>
-                                                                            <CheckBox fx:id="scopeOutlineKeepRatioCheck" mnemonicParsing="false" selected="true">
+                                                                            <CheckBox fx:id="outlineKeepRatioCheck" mnemonicParsing="false" selected="true">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>

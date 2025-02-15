@@ -11,6 +11,7 @@ import mara.mybox.image.data.ImageScope.ShapeType;
 import static mara.mybox.image.data.ImageScope.ShapeType.Circle;
 import static mara.mybox.image.data.ImageScope.ShapeType.Ellipse;
 import static mara.mybox.image.data.ImageScope.ShapeType.Matting4;
+import static mara.mybox.image.data.ImageScope.ShapeType.Matting8;
 import static mara.mybox.image.data.ImageScope.ShapeType.Outline;
 import static mara.mybox.image.data.ImageScope.ShapeType.Polygon;
 import static mara.mybox.image.data.ImageScope.ShapeType.Rectangle;
@@ -94,7 +95,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                 }
 
             }
-            setControls();
+            setShape();
             indicateScope();
 
         } catch (Exception e) {
@@ -108,23 +109,24 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
             pickScope();
             return;
         }
+        scope = inScope.cloneValues();
         resetScope();
         isSettingValues = true;
-        showShapeType(inScope);
-        showShapeData(inScope);
-        showColorData(inScope);
+        showShapeType();
+        showShapeData();
+        showColorData();
         isSettingValues = false;
-        matchController.loadValuesFrom(inScope);
-        setControls();
+        matchController.loadValuesFrom(scope);
+        setShape();
         needFixSize = true;
         indicateScope();
     }
 
-    private boolean showShapeType(ImageScope inScope) {
-        if (inScope == null || inScope.getShapeType() == null) {
+    private boolean showShapeType() {
+        if (scope == null) {
             return false;
         }
-        ShapeType type = inScope.getShapeType();
+        ShapeType type = scope.getShapeType();
         if (type == null) {
             type = ShapeType.Whole;
         }
@@ -158,37 +160,36 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
         return true;
     }
 
-    private boolean showShapeData(ImageScope inScope) {
-        if (inScope == null || inScope.getShapeType() == null) {
+    private boolean showShapeData() {
+        if (scope == null || scope.getShapeType() == null) {
             return false;
         }
         try {
             pointsController.isSettingValues = true;
             pointsController.tableData.clear();
             pointsController.isSettingValues = false;
-            shapeExcludedCheck.setSelected(inScope.isShapeExcluded());
-            switch (inScope.getShapeType()) {
+            shapeExcludedCheck.setSelected(scope.isShapeExcluded());
+            switch (scope.getShapeType()) {
                 case Matting4:
                 case Matting8:
-                    pointsController.loadIntList(inScope.getPoints());
+                    pointsController.loadIntList(scope.getPoints());
                     return true;
                 case Rectangle:
                 case Outline:
-                    MyBoxLog.console(inScope.getRectangle() != null);
-                    if (inScope.getRectangle() != null) {
-                        maskRectangleData = inScope.getRectangle().copy();
+                    if (scope.getRectangle() != null) {
+                        maskRectangleData = scope.getRectangle().copy();
                     }
                 case Circle:
-                    if (inScope.getCircle() != null) {
-                        maskCircleData = inScope.getCircle().copy();
+                    if (scope.getCircle() != null) {
+                        maskCircleData = scope.getCircle().copy();
                     }
                 case Ellipse:
-                    if (inScope.getEllipse() != null) {
-                        maskEllipseData = inScope.getEllipse().copy();
+                    if (scope.getEllipse() != null) {
+                        maskEllipseData = scope.getEllipse().copy();
                     }
                 case Polygon: {
-                    if (inScope.getPolygon() != null) {
-                        maskPolygonData = inScope.getPolygon().copy();
+                    if (scope.getPolygon() != null) {
+                        maskPolygonData = scope.getPolygon().copy();
                         pointsController.loadList(maskPolygonData.getPoints());
                     }
                 }
@@ -200,21 +201,20 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
         }
     }
 
-    private boolean showColorData(ImageScope inScope) {
-        if (inScope == null || inScope.getShapeType() == null) {
+    private boolean showColorData() {
+        if (scope == null) {
             return false;
         }
         try {
             colorsList.getItems().clear();
-            colorExcludedCheck.setSelected(inScope.isColorExcluded());
-            List<java.awt.Color> colors = inScope.getColors();
+            colorExcludedCheck.setSelected(scope.isColorExcluded());
+            List<java.awt.Color> colors = scope.getColors();
             if (colors != null) {
                 List<Color> list = new ArrayList<>();
                 for (java.awt.Color color : colors) {
                     list.add(ColorConvertTools.converColor(color));
                 }
                 colorsList.getItems().addAll(list);
-                colorsList.getSelectionModel().selectLast();
             }
             return true;
         } catch (Exception e) {
@@ -223,7 +223,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
         }
     }
 
-    protected void setControls() {
+    protected void setShape() {
         try {
             shapeBox.getChildren().clear();
             shapeOperationsPane.getChildren().clear();
@@ -252,7 +252,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     break;
 
                 case Rectangle:
-                    shapeBox.getChildren().setAll(rectangleBox, goScopeButton);
+                    shapeBox.getChildren().setAll(rectangleBox, goShapeButton);
                     shapeOperationsPane.getChildren().setAll(shapeButton,
                             shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskRectangle();
@@ -266,7 +266,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     break;
 
                 case Circle:
-                    shapeBox.getChildren().setAll(circleBox, goScopeButton);
+                    shapeBox.getChildren().setAll(circleBox, goShapeButton);
                     shapeOperationsPane.getChildren().setAll(shapeButton,
                             shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskCircle();
@@ -278,7 +278,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     break;
 
                 case Ellipse:
-                    shapeBox.getChildren().setAll(rectangleBox, goScopeButton);
+                    shapeBox.getChildren().setAll(rectangleBox, goShapeButton);
                     shapeOperationsPane.getChildren().setAll(shapeButton,
                             shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskEllipse();

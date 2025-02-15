@@ -201,7 +201,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 }
             });
 
-            scopeOutlineKeepRatioCheck.setSelected(true);
+            outlineKeepRatioCheck.setSelected(true);
 
             shapeExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -259,7 +259,6 @@ public class ControlImageScope extends ControlImageScope_Load {
                 }
             });
 
-            clearColorsButton.setDisable(true);
             deleteColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
             saveColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
 

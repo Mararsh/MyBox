@@ -66,15 +66,14 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
     protected ControlColorMatch matchController;
     @FXML
     protected CheckBox shapeExcludedCheck, colorExcludedCheck, scopeExcludeCheck,
-            handleTransparentCheck, scopeOutlineKeepRatioCheck,
+            handleTransparentCheck, outlineKeepRatioCheck,
             clearDataWhenLoadImageCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button shapeButton, goScopeButton, popScopeButton,
-            scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
-            clearColorsButton, deleteColorsButton, saveColorsButton, fileMenuButton;
+    protected Button shapeButton, goShapeButton, popScopeButton,
+            clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
     protected RadioButton wholeRadio, matting4Radio, matting8Radio, rectangleRadio, circleRadio,
             ellipseRadio, polygonRadio, outlineRadio;
@@ -123,7 +122,7 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
 
     public ImageScope pickScopeValues() {
         try {
-            if (!pickBaseValues()) {
+            if (!pickEnvValues()) {
                 return null;
             }
             switch (scope.getShapeType()) {
@@ -165,7 +164,7 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
         }
     }
 
-    public boolean pickBaseValues() {
+    public boolean pickEnvValues() {
         try {
             image = srcImage();
             if (image == null || scope == null) {

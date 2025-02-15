@@ -33,7 +33,7 @@ import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.image.tools.AlphaTools;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -107,7 +107,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
     }
 
     @FXML
-    public void goScope() {
+    public void goShape() {
         try {
             if (!isValidScope()) {
                 return;
@@ -156,7 +156,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
         rectLeftTopYInput.setText("0");
         rightBottomXInput.setText(image.getWidth() + "");
         rightBottomYInput.setText(image.getHeight() + "");
-        goScope();
+        goShape();
     }
 
     public void pickEllipse() {
@@ -579,36 +579,25 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
     }
 
     public void indicateOutline() {
-        if (isSettingValues || !validOutline() || !pickBaseValues()) {
+        if (isSettingValues || !validOutline() || !pickEnvValues()) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private BufferedImage[] outline;
             private Image outlineImage;
 
             @Override
             protected boolean handle() {
                 try {
                     Image bgImage = srcImage();
-                    outline = AlphaTools.outline(this,
-                            scope.getOutlineSource(),
-                            maskRectangleData,
-                            (int) bgImage.getWidth(),
-                            (int) bgImage.getHeight(),
-                            scopeOutlineKeepRatioCheck.isSelected());
-                    if (outline == null || task == null || isCancelled()
-                            || !validOutline()) {
+                    DoubleRectangle outlineReck = ImageScopeTools.makeOutline(this,
+                            scope, bgImage, maskRectangleData, outlineKeepRatioCheck.isSelected());
+                    if (outlineReck == null || task == null || isCancelled()) {
                         return false;
                     }
-                    maskRectangleData = DoubleRectangle.xywh(
-                            maskRectangleData.getX(), maskRectangleData.getY(),
-                            outline[0].getWidth(), outline[0].getHeight());
-                    scope.setOutline(outline[1]);
-                    scope.setRectangle(maskRectangleData.copy());
-
+                    maskRectangleData = outlineReck;
                     PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                             bgImage, scope, PixelsOperation.OperationType.ShowScope);
                     outlineImage = pixelsOperation.startFx();
@@ -627,6 +616,10 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
                 image = outlineImage;
                 imageView.setImage(outlineImage);
                 showMaskRectangle();
+                if (needFixSize) {
+                    paneSize();
+                    needFixSize = false;
+                }
                 showNotify.set(!showNotify.get());
             }
 

@@ -114,12 +114,7 @@ public class ImageScopeTools {
             scope.setColorExcluded(node.getBooleanValue("color_excluded"));
             scope.setFile(node.getStringValue("background_file"));
             scope.setOutlineName(node.getStringValue("outline_file"));
-            if (task != null && !task.isWorking()) {
-                return null;
-            }
-            decodeColorData(scope);
-            ImageScopeTools.decodeShapeData(scope);
-            decodeOutline(task, scope);
+            scope.decode(task);
             return scope;
         } catch (Exception e) {
 //            MyBoxLog.error(e);
@@ -144,15 +139,15 @@ public class ImageScopeTools {
                 node = DataNode.create();
             }
             node.setValue("shape_type", type.name());
-            node.setValue("shape_data", ImageScopeTools.encodeShapeData(scope));
+            node.setValue("shape_data", encodeShapeData(scope));
             node.setValue("shape_excluded", scope.isShapeExcluded());
             node.setValue("color_algorithm", scope.getColorAlgorithm().name());
-            node.setValue("color_data", ImageScopeTools.encodeColorData(scope));
+            node.setValue("color_data", encodeColorData(scope));
             node.setValue("color_excluded", scope.isColorExcluded());
             node.setValue("color_threshold", scope.getColorThreshold());
             node.setValue("color_weights", scope.getColorWeights());
             node.setValue("background_file", scope.getFile());
-            node.setValue("outline_file", ImageScopeTools.encodeOutline(null, scope));
+            node.setValue("outline_file", encodeOutline(null, scope));
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -160,15 +155,13 @@ public class ImageScopeTools {
         }
     }
 
+    // scope should have been decoded
     public static String toHtml(FxTask task, ImageScope scope) {
         try {
             if (scope == null) {
                 return null;
             }
             ShapeType type = scope.getShapeType();
-            if (type == null) {
-                return null;
-            }
             String html = "";
             try {
                 File file = null;
@@ -179,7 +172,16 @@ public class ImageScopeTools {
                     file = ImageItem.exampleImageFile();
                 }
                 Image image = FxImageTools.readImage(task, file);
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                if (scope.getShapeType() == ShapeType.Outline) {
+                    makeOutline(task, scope, image, scope.getRectangle(), true);
+                }
                 image = ScopeTools.maskScope(task, image, scope, false, true);
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 if (image != null) {
                     File imgFile = FxImageTools.writeImage(task, image);
                     if (imgFile != null) {
@@ -205,22 +207,23 @@ public class ImageScopeTools {
                 row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
                 htmlTable.add(row);
             }
-            v = ImageScopeTools.encodeOutline(null, scope);
+            v = scope.getOutlineName();
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
                 htmlTable.add(row);
             }
             row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ColorMatchAlgorithm"), scope.getColorAlgorithm().name()));
+            row.addAll(Arrays.asList(message("ColorMatchAlgorithm"),
+                    message(scope.getColorAlgorithm().name())));
             htmlTable.add(row);
-            v = ImageScopeTools.encodeShapeData(scope);
+            v = scope.getShapeData();
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Shape"), v));
                 htmlTable.add(row);
             }
-            v = ImageScopeTools.encodeColorData(scope);
+            v = scope.getColorData();
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Colors"), v));
@@ -236,6 +239,30 @@ public class ImageScopeTools {
             row.addAll(Arrays.asList(message("ColorExcluded"), scope.isColorExcluded() ? message("Yes") : ""));
             htmlTable.add(row);
             return html + htmlTable.div();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static DoubleRectangle makeOutline(FxTask task, ImageScope scope, Image bgImage,
+            DoubleRectangle reck, boolean keepRatio) {
+        try {
+            BufferedImage[] outline = AlphaTools.outline(task,
+                    scope.getOutlineSource(),
+                    reck,
+                    (int) bgImage.getWidth(),
+                    (int) bgImage.getHeight(),
+                    keepRatio);
+            if (outline == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            DoubleRectangle outlineReck = DoubleRectangle.xywh(
+                    reck.getX(), reck.getY(),
+                    outline[0].getWidth(), outline[0].getHeight());
+            scope.setOutline(outline[1]);
+            scope.setRectangle(outlineReck.copy());
+            return outlineReck;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -278,25 +305,15 @@ public class ImageScopeTools {
     }
 
     public static boolean decodeOutline(FxTask task, ImageScope scope) {
-        if (scope == null) {
+        if (scope == null || scope.getShapeType() != ShapeType.Outline) {
             return false;
-        }
-        return decodeOutline(task, scope.getOutlineName(), scope);
-    }
-
-    public static boolean decodeOutline(FxTask task, String outline, ImageScope scope) {
-        if (outline == null || scope == null) {
-            return false;
-        }
-        if (scope.getShapeType() != ShapeType.Outline) {
-            return true;
         }
         try {
-            scope.setOutlineName(outline);
-            BufferedImage image = ImageFileReaders.readImage(task, new File(outline));
-            if (task != null && !task.isWorking()) {
+            String file = scope.getOutlineName();
+            if (file == null) {
                 return false;
             }
+            BufferedImage image = ImageFileReaders.readImage(task, new File(file));
             scope.setOutlineSource(image);
             return image != null;
         } catch (Exception e) {
@@ -397,21 +414,19 @@ public class ImageScopeTools {
     }
 
     public static boolean decodeShapeData(ImageScope scope) {
-        if (scope == null || scope.getShapeType() == null) {
-            return false;
-        }
-        return decodeShapeData(scope.getShapeType(), scope.getShapeData(), scope);
-    }
-
-    public static boolean decodeShapeData(ShapeType type, String areaData, ImageScope scope) {
-        if (type == null || areaData == null || scope == null) {
-            return false;
-        }
         try {
+            if (scope == null) {
+                return false;
+            }
+            ShapeType type = scope.getShapeType();
+            String shapeData = scope.getShapeData();
+            if (shapeData == null) {
+                return false;
+            }
             switch (type) {
                 case Matting4:
                 case Matting8: {
-                    String[] items = areaData.split(ImageScope.ValueSeparator);
+                    String[] items = shapeData.split(ImageScope.ValueSeparator);
                     for (int i = 0; i < items.length / 2; ++i) {
                         int x = (int) Double.parseDouble(items[i * 2]);
                         int y = (int) Double.parseDouble(items[i * 2 + 1]);
@@ -421,7 +436,7 @@ public class ImageScopeTools {
                 break;
                 case Rectangle:
                 case Outline: {
-                    String[] items = areaData.split(ImageScope.ValueSeparator);
+                    String[] items = shapeData.split(ImageScope.ValueSeparator);
                     if (items.length == 4) {
                         DoubleRectangle rect = DoubleRectangle.xy12(Double.parseDouble(items[0]),
                                 Double.parseDouble(items[1]),
@@ -434,7 +449,7 @@ public class ImageScopeTools {
                 }
                 break;
                 case Circle: {
-                    String[] items = areaData.split(ImageScope.ValueSeparator);
+                    String[] items = shapeData.split(ImageScope.ValueSeparator);
                     if (items.length == 3) {
                         DoubleCircle circle = new DoubleCircle(Double.parseDouble(items[0]),
                                 Double.parseDouble(items[1]),
@@ -446,7 +461,7 @@ public class ImageScopeTools {
                 }
                 break;
                 case Ellipse: {
-                    String[] items = areaData.split(ImageScope.ValueSeparator);
+                    String[] items = shapeData.split(ImageScope.ValueSeparator);
                     if (items.length == 4) {
                         DoubleEllipse ellipse = DoubleEllipse.xy12(Double.parseDouble(items[0]),
                                 Double.parseDouble(items[1]),
@@ -459,7 +474,7 @@ public class ImageScopeTools {
                 }
                 break;
                 case Polygon: {
-                    String[] items = areaData.split(ImageScope.ValueSeparator);
+                    String[] items = shapeData.split(ImageScope.ValueSeparator);
                     DoublePolygon polygon = new DoublePolygon();
                     for (int i = 0; i < items.length / 2; ++i) {
                         int x = (int) Double.parseDouble(items[i * 2]);
@@ -470,7 +485,6 @@ public class ImageScopeTools {
                 }
                 break;
             }
-            scope.setShapeData(areaData);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -481,25 +495,25 @@ public class ImageScopeTools {
     public static String encodeOutline(FxTask task, ImageScope scope) {
         if (scope == null
                 || scope.getShapeType() != ImageScope.ShapeType.Outline
-                || scope.getOutline() == null) {
+                || scope.getOutlineSource() == null) {
             return "";
         }
-        String s = "";
+        String filename = "";
         try {
             String prefix = AppPaths.getImageScopePath() + File.separator + scope.getShapeType() + "_";
-            String filename = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
-            while (new File(filename).exists()) {
-                filename = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
+            String name = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
+            while (new File(name).exists()) {
+                name = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
             }
-            if (ImageFileWriters.writeImageFile(task, scope.getOutlineSource(), "png", filename)) {
-                s = filename;
+            if (ImageFileWriters.writeImageFile(task, scope.getOutlineSource(), "png", name)) {
+                filename = name;
             }
             scope.setOutlineName(filename);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            s = "";
+            filename = "";
         }
-        return s;
+        return filename;
     }
 
 }

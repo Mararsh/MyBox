@@ -450,7 +450,6 @@ public class ControlColorsPane extends BaseController {
         if (clickedRect == null) {
             return null;
         }
-        MyBoxLog.console(clickedRect.getFill());
         return (ColorData) clickedRect.getUserData();
     }
 
