@@ -31,13 +31,11 @@ public class ColorMatch {
     }
 
     public final void init() {
-        threshold = 0d;
+        algorithm = DefaultAlgorithm;
+        setThreshold(suggestedThreshold(algorithm));
         brightnessWeight = 1d;
         saturationWeight = 1d;
         hueWeight = 1d;
-        algorithm = DefaultAlgorithm;
-        realThreshold = 0d;
-        accurateMatch = true;
     }
 
     public ColorMatch copyTo(ColorMatch match) {
@@ -63,7 +61,7 @@ public class ColorMatch {
     /*
         parameters
      */
-    public ColorMatch setThreshold(double value) {
+    public final ColorMatch setThreshold(double value) {
         threshold = value;
         accurateMatch = threshold < 1e-10;
         switch (algorithm) {
@@ -93,11 +91,11 @@ public class ColorMatch {
     public static double suggestedThreshold(MatchAlgorithm a) {
         switch (a) {
             case RGBRoughWeightedEuclidean:
-                return 50d;
+                return 20d;
             case RGBWeightedEuclidean:
-                return 50d;
+                return 20d;
             case RGBEuclidean:
-                return 50d;
+                return 20d;
             case CIEDE2000:
                 return 5d;
             case CIE94:
@@ -111,17 +109,17 @@ public class ColorMatch {
             case Red:
             case Green:
             case Blue:
-                return 50d;
+                return 20d;
             case Hue:
-                return 10d;
+                return 20d;
             case Saturation:
-                return 10d;
+                return 20d;
             case Brightness:
-                return 5d;
+                return 20d;
             case RGBManhattan:
-                return 50d;
+                return 20d;
         }
-        return 50d;
+        return 20d;
     }
 
     public static boolean supportWeights(MatchAlgorithm a) {

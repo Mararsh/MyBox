@@ -4,11 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.image.data.ImageQuantization;
 import mara.mybox.image.data.ImageQuantizationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
-import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -35,6 +35,11 @@ public class ImageReduceColorsBatchController extends BaseImageEditBatchControll
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public boolean makeMoreParameters() {
+        return super.makeMoreParameters() && optionsController.pickValues();
     }
 
     @Override

@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import mara.mybox.color.ColorMatch;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.image.data.ImageBinary;
 import mara.mybox.image.data.ImageQuantization;
 import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
@@ -15,8 +18,6 @@ import mara.mybox.image.data.ImageQuantizationFactory;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppPaths;
@@ -522,12 +523,13 @@ public class ColorDemos {
             ImageQuantization quantization;
             BufferedImage bufferedImage;
             String tmpFile;
+            ColorMatch colorMatch = new ColorMatch();
             for (QuantizationAlgorithm a : QuantizationAlgorithm.values()) {
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
                 quantization = ImageQuantizationFactory.create(demoImage, null,
-                        a, 8, 256, 1, 1, 1, false, true, true);
+                        a, 8, 256, 1, 1, 1, false, true, true, colorMatch);
                 bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
@@ -544,7 +546,7 @@ public class ColorDemos {
                     return;
                 }
                 quantization = ImageQuantizationFactory.create(demoImage, null,
-                        a, 27, 1024, 1, 1, 1, false, true, true);
+                        a, 27, 1024, 1, 1, 1, false, true, true, colorMatch);
                 bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
@@ -561,7 +563,7 @@ public class ColorDemos {
                     return;
                 }
                 quantization = ImageQuantizationFactory.create(demoImage, null,
-                        a, 256, 1024, 2, 4, 3, false, true, true);
+                        a, 256, 1024, 2, 4, 3, false, true, true, colorMatch);
                 bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;

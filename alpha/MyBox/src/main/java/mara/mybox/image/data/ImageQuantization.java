@@ -1,6 +1,5 @@
 package mara.mybox.image.data;
 
-import mara.mybox.image.tools.ColorConvertTools;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,10 +8,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.color.ColorMatch;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -24,6 +25,8 @@ import static mara.mybox.value.Languages.message;
  */
 // http://web.cs.wpi.edu/~matt/courses/cs563/talks/color_quant/CQindex.html
 public class ImageQuantization extends PixelsOperation {
+
+    protected ColorMatch colorMatch;
 
     public static enum QuantizationAlgorithm {
         RGBUniformQuantization, HSBUniformQuantization,
@@ -167,6 +170,7 @@ public class ImageQuantization extends PixelsOperation {
                     .setFirstColor(firstColor)
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
                     .setRecordCount(true)
+                    .setColorMatch(colorMatch)
                     .setImage(image).setScope(scope).
                     setOperationType(PixelsOperation.OperationType.Quantization).
                     setIsDithering(isDithering)
@@ -307,6 +311,15 @@ public class ImageQuantization extends PixelsOperation {
 
     public ImageQuantization setPalette(Color[][][] palette) {
         this.palette = palette;
+        return this;
+    }
+
+    public ColorMatch getColorMatch() {
+        return colorMatch;
+    }
+
+    public ImageQuantization setColorMatch(ColorMatch colorMatch) {
+        this.colorMatch = colorMatch;
         return this;
     }
 

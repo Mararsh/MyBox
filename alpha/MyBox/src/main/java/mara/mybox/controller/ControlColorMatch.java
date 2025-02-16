@@ -151,10 +151,24 @@ public class ControlColorMatch extends BaseController {
 
     public boolean pickValues() {
         try (Connection conn = DerbyBase.getConnection()) {
-            double threshold;
+            return pickValues(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean pickValues(Connection conn) {
+        try {
+            if (conn == null) {
+                return false;
+            }
+            double threshold = -1d;
             try {
                 threshold = Double.parseDouble(thresholdInput.getText());
             } catch (Exception e) {
+            }
+            if (threshold < 0) {
                 popError(message("InvalidParameter") + ": " + message("Threshold"));
                 return false;
             }
@@ -216,6 +230,16 @@ public class ControlColorMatch extends BaseController {
             brightnessWeightInput.setText("1.0");
             isSettingValues = false;
 
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            isSettingValues = false;
+        }
+    }
+
+    public void defaultMatch() {
+        try {
+            setAlgorithm(ColorMatch.DefaultAlgorithm.name());
+            defaultAction();
         } catch (Exception e) {
             MyBoxLog.debug(e);
             isSettingValues = false;

@@ -43,13 +43,15 @@ public class ImageQuantizationFactory {
                 ? quantizationController.getHsbWeight3() : quantizationController.getRgbWeight3(),
                 recordCount,
                 quantizationController.getQuanDitherCheck().isSelected(),
-                quantizationController.getFirstColorCheck().isSelected());
+                quantizationController.getFirstColorCheck().isSelected(),
+                quantizationController.colorMatch());
     }
 
     public static ImageQuantization create(BufferedImage image, ImageScope scope,
             QuantizationAlgorithm algorithm, int quantizationSize,
             int regionSize, int weight1, int weight2, int weight3,
-            boolean recordCount, boolean dithering, boolean firstColor) {
+            boolean recordCount, boolean dithering, boolean firstColor,
+            ColorMatch colorMatch) {
         try {
             ImageQuantization quantization;
             switch (algorithm) {
@@ -77,6 +79,7 @@ public class ImageQuantizationFactory {
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
                     .setRecordCount(recordCount)
                     .setFirstColor(firstColor)
+                    .setColorMatch(colorMatch)
                     .setOperationType(PixelsOperation.OperationType.Quantization)
                     .setImage(image).setScope(scope).setIsDithering(dithering);
             return quantization.buildPalette();

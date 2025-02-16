@@ -314,7 +314,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
 
             matchController.loadValuesFrom(scope);
 
-            refreshStyle(tabPane);
+            refreshStyle(shapeBox);
             refreshStyle(shapeOperationsPane);
 
         } catch (Exception e) {

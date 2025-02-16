@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,9 +14,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
+import mara.mybox.color.ColorMatch;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ValidationTools;
+import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -46,6 +49,8 @@ public class ControlImageQuantization extends BaseController {
     protected Label resultsLabel;
     @FXML
     protected ImageView imageQuantizationTipsView;
+    @FXML
+    protected ControlColorMatch matchController;
 
     public ControlImageQuantization() {
         TipsLabelKey = "ImageQuantizationComments";
@@ -61,49 +66,11 @@ public class ControlImageQuantization extends BaseController {
             quanColorsSelector.getItems().addAll(Arrays.asList(
                     "27", "64", "8", "5", "3", "4", "12", "16", "256", "512", "1024", "2048", "4096", "216", "343", "128", "1000", "729", "1728", "8000"));
             quanColorsSelector.setValue(quanColors + "");
-            quanColorsSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            quanColors = v;
-                            if (!isSettingValues) {
-                                UserConfig.setInt(baseName + "QuanColorsNumber", quanColors);
-                            }
-                            ValidationTools.setEditorNormal(quanColorsSelector);
-                        } else {
-                            ValidationTools.setEditorBadStyle(quanColorsSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(quanColorsSelector);
-                    }
-                }
-            });
 
             regionSize = UserConfig.getInt(baseName + "RegionSize", 4096);
             regionSize = regionSize <= 0 ? 4096 : regionSize;
             regionSizeSelector.getItems().addAll(Arrays.asList("4096", "1024", "256", "8192", "2048", "512", "128", "16", "27", "64"));
             regionSizeSelector.setValue(regionSize + "");
-            regionSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            regionSize = v;
-                            if (!isSettingValues) {
-                                UserConfig.setInt(baseName + "RegionSize", regionSize);
-                            }
-                            regionSizeSelector.getEditor().setStyle(null);
-                        } else {
-                            regionSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        regionSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
 
             rgbWeight1 = 2;
             rgbWeight2 = 4;
@@ -113,30 +80,6 @@ public class ControlImageQuantization extends BaseController {
                     "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
             ));
             rgbWeightSelector.setValue(defaultV);
-            rgbWeightSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        String[] values = newValue.split(":");
-                        int v1 = Integer.parseInt(values[0]);
-                        int v2 = Integer.parseInt(values[1]);
-                        int v3 = Integer.parseInt(values[2]);
-                        if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            rgbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
-                            return;
-                        }
-                        rgbWeight1 = v1;
-                        rgbWeight2 = v2;
-                        rgbWeight3 = v3;
-                        rgbWeightSelector.getEditor().setStyle(null);
-                        if (!isSettingValues) {
-                            UserConfig.setString(baseName + "RGBWeights", newValue);
-                        }
-                    } catch (Exception e) {
-                        rgbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
 
             hsbWeight1 = 6;
             hsbWeight2 = 10;
@@ -146,85 +89,18 @@ public class ControlImageQuantization extends BaseController {
                     "6:10:100", "12:4:10", "24:10:10", "12:10:40", "24:10:40", "12:20:40", "12:10:80", "6:10:80"
             ));
             hsbWeightSelector.setValue(defaultV);
-            hsbWeightSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        String[] values = newValue.split(":");
-                        int v1 = Integer.parseInt(values[0]);
-                        int v2 = Integer.parseInt(values[1]);
-                        int v3 = Integer.parseInt(values[2]);
-                        if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            hsbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
-                            return;
-                        }
-                        hsbWeight1 = v1;
-                        hsbWeight2 = v2;
-                        hsbWeight3 = v3;
-                        hsbWeightSelector.getEditor().setStyle(null);
-                        if (!isSettingValues) {
-                            UserConfig.setString(baseName + "HSBWeights", newValue);
-                        }
-                    } catch (Exception e) {
-                        hsbWeightSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
 
             kmeansLoop = UserConfig.getInt(baseName + "KmeansLoop", 10000);
             kmeansLoop = kmeansLoop <= 0 ? 10000 : kmeansLoop;
             kmeansLoopSelector.getItems().addAll(Arrays.asList(
                     "10000", "5000", "3000", "1000", "500", "100", "20000"));
             kmeansLoopSelector.setValue(kmeansLoop + "");
-            kmeansLoopSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            kmeansLoop = v;
-                            if (!isSettingValues) {
-                                UserConfig.setInt(baseName + "KmeansLoop", kmeansLoop);
-                            }
-                            ValidationTools.setEditorNormal(kmeansLoopSelector);
-                        } else {
-                            ValidationTools.setEditorBadStyle(kmeansLoopSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(kmeansLoopSelector);
-                    }
-                }
-            });
 
             quanDitherCheck.setSelected(UserConfig.getBoolean(baseName + "QuanDither", true));
-            quanDitherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (!isSettingValues) {
-                        UserConfig.setBoolean(baseName + "QuanDither", newValue);
-                    }
-                }
-            });
 
             quanDataCheck.setSelected(UserConfig.getBoolean(baseName + "QuanData", true));
-            quanDataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (!isSettingValues) {
-                        UserConfig.setBoolean(baseName + "QuanData", newValue);
-                    }
-                }
-            });
 
             firstColorCheck.setSelected(UserConfig.getBoolean(baseName + "QuanFirstColor", true));
-            firstColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (!isSettingValues) {
-                        UserConfig.setBoolean(baseName + "QuanFirstColor", newValue);
-                    }
-                }
-            });
 
             quanGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -237,6 +113,92 @@ public class ControlImageQuantization extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public boolean pickValues() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (!matchController.pickValues(conn)) {
+                return false;
+            }
+            int v = 0;
+            try {
+                v = Integer.parseInt(quanColorsSelector.getValue());
+            } catch (Exception e) {
+            }
+            if (v <= 0) {
+                popError(message("InvalidParameter") + ": " + message("ColorsNumber"));
+                return false;
+            }
+            quanColors = v;
+            UserConfig.setInt(conn, baseName + "QuanColorsNumber", quanColors);
+
+            v = 0;
+            try {
+                v = Integer.parseInt(regionSizeSelector.getValue());
+            } catch (Exception e) {
+            }
+            if (v <= 0) {
+                popError(message("InvalidParameter") + ": " + message("ColorsRegionSize"));
+                return false;
+            }
+            regionSize = v;
+            UserConfig.setInt(conn, baseName + "RegionSize", regionSize);
+
+            int v1 = 0, v2 = 0, v3 = 0;
+            try {
+                String[] values = rgbWeightSelector.getValue().split(":");
+                v1 = Integer.parseInt(values[0]);
+                v2 = Integer.parseInt(values[1]);
+                v3 = Integer.parseInt(values[2]);
+            } catch (Exception e) {
+            }
+            if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
+                popError(message("InvalidParameter") + ": " + message("RGBWeight"));
+                return false;
+            }
+            rgbWeight1 = v1;
+            rgbWeight2 = v2;
+            rgbWeight3 = v3;
+            UserConfig.setString(conn, baseName + "RGBWeights", rgbWeightSelector.getValue());
+
+            v1 = v2 = v3 = 0;
+            try {
+                String[] values = hsbWeightSelector.getValue().split(":");
+                v1 = Integer.parseInt(values[0]);
+                v2 = Integer.parseInt(values[1]);
+                v3 = Integer.parseInt(values[2]);
+            } catch (Exception e) {
+            }
+            if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
+                popError(message("InvalidParameter") + ": " + message("HSBWeight"));
+                return false;
+            }
+            hsbWeight1 = v1;
+            hsbWeight2 = v2;
+            hsbWeight3 = v3;
+            UserConfig.setString(conn, baseName + "HSBWeights", hsbWeightSelector.getValue());
+
+            v = 0;
+            try {
+                v = Integer.parseInt(kmeansLoopSelector.getValue());
+            } catch (Exception e) {
+            }
+            if (v <= 0) {
+                popError(message("InvalidParameter") + ": " + message("MaximumLoop"));
+                return false;
+            }
+            kmeansLoop = v;
+            UserConfig.setInt(conn, baseName + "KmeansLoop", kmeansLoop);
+
+            UserConfig.setBoolean(conn, baseName + "QuanDither", quanDitherCheck.isSelected());
+            UserConfig.setBoolean(conn, baseName + "QuanData", quanDataCheck.isSelected());
+            UserConfig.setBoolean(conn, baseName + "QuanFirstColor", firstColorCheck.isSelected());
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -283,6 +245,8 @@ public class ControlImageQuantization extends BaseController {
         rgbWeightSelector.setValue("2:4:3");
         kmeansLoopSelector.setValue("10000");
 
+        matchController.defaultMatch();
+
         isSettingValues = false;
     }
 
@@ -302,7 +266,13 @@ public class ControlImageQuantization extends BaseController {
         rgbWeightSelector.setValue("2:4:3");
         kmeansLoopSelector.setValue("10000");
 
+        matchController.defaultMatch();
+
         isSettingValues = false;
+    }
+
+    public ColorMatch colorMatch() {
+        return matchController.colorMatch;
     }
 
     /*

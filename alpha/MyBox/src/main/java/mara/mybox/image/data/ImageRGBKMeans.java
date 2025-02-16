@@ -21,7 +21,6 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     protected ColorMatch colorMatch;
 
     public ImageRGBKMeans() {
-        colorMatch = new ColorMatch();
     }
 
     public static ImageRGBKMeans create() {
@@ -35,6 +34,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             regionQuantization = quantization;
             data = regionQuantization.regionColors;
+            colorMatch = quantization.colorMatch;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -44,6 +44,9 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     @Override
     public void initCenters() {
         try {
+            if (colorMatch == null) {
+                colorMatch = new ColorMatch();
+            }
             centers = new ArrayList<>();
             int dataSize = data.size();
             if (dataSize < k) {
