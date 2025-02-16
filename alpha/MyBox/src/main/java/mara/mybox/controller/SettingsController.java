@@ -70,7 +70,8 @@ public class SettingsController extends BaseController {
     @FXML
     protected ToggleGroup langGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
-    protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
+    protected CheckBox closeCurrentCheck, branchWindowIconifyParentCheck,
+            recordWindowsSizeLocationCheck, clearExpiredCheck,
             controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
             lostFocusCommitCheck, copyCurrentDataPathCheck, clearCurrentRootCheck,
             stopAlarmCheck;
@@ -149,6 +150,7 @@ public class SettingsController extends BaseController {
             clearExpiredCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
+            branchWindowIconifyParentCheck.setSelected(AppVariables.branchWindowIconifyParent);
 
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
@@ -255,6 +257,14 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     UserConfig.setBoolean("CloseCurrentWhenOpenTool", closeCurrentCheck.isSelected());
                     AppVariables.closeCurrentWhenOpenTool = closeCurrentCheck.isSelected();
+                }
+            });
+
+            branchWindowIconifyParentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    UserConfig.setBoolean("BranchWindowIconifyParent", branchWindowIconifyParentCheck.isSelected());
+                    AppVariables.branchWindowIconifyParent = branchWindowIconifyParentCheck.isSelected();
                 }
             });
 

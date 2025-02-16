@@ -262,7 +262,7 @@ public class PixelsOperationFactory {
             try {
                 Color color = ColorBlendTools.blendColor(Colors.TRANSPARENT, maskOpacity, maskColor, true);
                 target.setRGB(x, y, color.getRGB());
-                return Colors.TRANSPARENT;
+                return color;
             } catch (Exception e) {
                 return null;
             }

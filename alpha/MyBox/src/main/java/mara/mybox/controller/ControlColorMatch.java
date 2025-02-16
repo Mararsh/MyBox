@@ -210,13 +210,11 @@ public class ControlColorMatch extends BaseController {
     public void defaultAction() {
         try {
             isSettingValues = true;
-            setAlgorithm(message(ColorMatch.DefaultAlgorithm.name()));
-            thresholdInput.setText(ColorMatch.suggestedThreshold(ColorMatch.DefaultAlgorithm) + "");
+            thresholdInput.setText(ColorMatch.suggestedThreshold(selectedAlgorithm()) + "");
             hueWeightInput.setText("1.0");
             saturationWeightInput.setText("1.0");
             brightnessWeightInput.setText("1.0");
             isSettingValues = false;
-            algorithmChanged();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

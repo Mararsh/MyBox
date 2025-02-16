@@ -37,9 +37,9 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected ToggleGroup langGroup;
     @FXML
-    protected CheckMenuItem shortcutsCanNotOmitCheck, loseFocusCommitDataCheck, clearExpiredDataCheck,
-            closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
-            controlTextCheck;
+    protected CheckMenuItem shortcutsCanNotOmitCheck, loseFocusCommitDataCheck,
+            clearExpiredDataCheck, closeCurrentCheck, branchIconifyCheck,
+            recordWindowsSizeLocationCheck, popRecentCheck, controlTextCheck;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
@@ -84,6 +84,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         checkIconSize();
         controlTextCheck.setSelected(AppVariables.controlDisplayText);
         closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
+        branchIconifyCheck.setSelected(AppVariables.branchWindowIconifyParent);
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
@@ -320,6 +321,12 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected void closeCurrentAction() {
         UserConfig.setBoolean("CloseCurrentWhenOpenTool", closeCurrentCheck.isSelected());
         AppVariables.closeCurrentWhenOpenTool = closeCurrentCheck.isSelected();
+    }
+
+    @FXML
+    protected void branchIconifyParent() {
+        UserConfig.setBoolean("BranchWindowIconifyParent", branchIconifyCheck.isSelected());
+        AppVariables.branchWindowIconifyParent = branchIconifyCheck.isSelected();
     }
 
     @FXML

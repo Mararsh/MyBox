@@ -12,8 +12,9 @@ import mara.mybox.image.tools.ColorConvertTools;
  */
 public class ColorMatch {
 
-    protected double threshold, realThreshold,
-            brightnessWeight, saturationWeight, hueWeight;
+    private double threshold, realThreshold;
+    protected double brightnessWeight, saturationWeight, hueWeight;
+    private boolean accurateMatch;
     protected MatchAlgorithm algorithm;
     public final static MatchAlgorithm DefaultAlgorithm = MatchAlgorithm.RGBRoughWeightedEuclidean;
 
@@ -36,6 +37,7 @@ public class ColorMatch {
         hueWeight = 1d;
         algorithm = DefaultAlgorithm;
         realThreshold = 0d;
+        accurateMatch = true;
     }
 
     public ColorMatch copyTo(ColorMatch match) {
@@ -63,6 +65,7 @@ public class ColorMatch {
      */
     public ColorMatch setThreshold(double value) {
         threshold = value;
+        accurateMatch = threshold < 1e-10;
         switch (algorithm) {
             case RGBRoughWeightedEuclidean:
             case RGBWeightedEuclidean:
@@ -72,7 +75,7 @@ public class ColorMatch {
             case CIE94:
             case CIE76:
             case CMC:
-                realThreshold = threshold * threshold;
+                realThreshold = accurateMatch ? 1e-10 : threshold * threshold;
                 break;
             case Red:
             case Green:
@@ -177,7 +180,7 @@ public class ColorMatch {
         }
         if (color1.getRGB() == color2.getRGB()) {
             return true;
-        } else if (threshold < 0.000000001 || color1.getRGB() == 0 || color2.getRGB() == 0) {
+        } else if (accurateMatch || color1.getRGB() == 0 || color2.getRGB() == 0) {
             return false;
         }
         return distance(color1, color2) <= realThreshold;

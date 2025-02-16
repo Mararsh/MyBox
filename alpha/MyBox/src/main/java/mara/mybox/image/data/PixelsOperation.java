@@ -15,8 +15,8 @@ import mara.mybox.value.Colors;
 /**
  * @Author Mara
  * @CreateDate 2019-2-13 14:44:03
- * @Description Pixel operations whose calculation only involves pixel itself.
- * Pixel operations who involve other pixels need defined separatedly.
+ * @Description Pixel operations here only involve pixel itself. Pixel
+ * operations which involve other pixels need be defined separately.
  * @License Apache License Version 2.0
  */
 public abstract class PixelsOperation {
@@ -221,10 +221,11 @@ public abstract class PixelsOperation {
                     visited[y][x] = true;
                     int pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
-                    if (scope.isMatchColor(startColor, color) && scope.isMatchColors(color)) {
-                        if (pixel == 0 && skipTransparent) {
-                            skipTransparent(target, x, y);
-                        } else {
+                    if (pixel == 0 && skipTransparent) {
+                        skipTransparent(target, x, y);
+
+                    } else if (scope.isMatchColor(startColor, color)) {
+                        if (scope.isMatchColors(color)) {
                             if (excluded) {
                                 target.setRGB(x, y, pixel);
                             } else {

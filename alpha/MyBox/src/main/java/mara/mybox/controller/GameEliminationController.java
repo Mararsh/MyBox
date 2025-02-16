@@ -1054,7 +1054,7 @@ public class GameEliminationController extends BaseController {
                 if (s != null && !s.isEmpty()) {
                     String[] ss = s.split(",");
                     for (int i = 1; i < ss.length; i = i + 2) {
-                        scoreRulers.put(Integer.parseInt(ss[i - 1]), Integer.parseInt(ss[i]));
+                        scoreRulers.put(Integer.valueOf(ss[i - 1]), Integer.parseInt(ss[i]));
                     }
                 }
             } catch (Exception e) {

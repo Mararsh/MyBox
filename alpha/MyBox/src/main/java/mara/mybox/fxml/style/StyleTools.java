@@ -18,15 +18,15 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import mara.mybox.image.data.PixelsOperation;
-import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Colors.color;
@@ -79,23 +79,9 @@ public class StyleTools {
         if (node == null) {
             return;
         }
-        setStyle(node, node.getId());
-    }
-
-    public static void setStyle(Node node, String id) {
-        setStyle(node, id, false);
-    }
-
-    public static void setStyle(Node node, String id, boolean mustStyle) {
-        if (node == null) {
-            return;
-        }
         StyleData style = getStyleData(node);
         setTips(node, style);
         setIcon(node, StyleTools.getIconImageView(style));
-        //        if (mustStyle || AppVariables.ControlColor != ColorStyle.Default) {
-        //            setStyleColor(node, style, AppVariables.ControlColor);
-        //        }
         setTextStyle(node, style, AppVariables.ControlColor);
     }
 
@@ -174,16 +160,13 @@ public class StyleTools {
         Icon
      */
     public static String getIconPath() {
-        return getIconPath(AppVariables.ControlColor);
-    }
-
-    public static String getIconPath(StyleColor colorStyle) {
         try {
+            StyleColor colorStyle = AppVariables.ControlColor;
             if (colorStyle == null) {
                 colorStyle = StyleColor.Red;
             }
             if (colorStyle == StyleColor.Customize) {
-                return AppVariables.MyboxDataPath + "/buttons/";
+                return new File(AppVariables.MyboxDataPath + "/buttons/").toURI().toString();
             } else {
                 return ButtonsSourcePath + colorStyle.name() + "/";
             }
@@ -229,10 +212,10 @@ public class StyleTools {
 
     public static ImageView getIconImageView(String stylePath, String iconName) {
         try {
-            return new ImageView(ButtonsSourcePath + iconName);
+            return new ImageView(stylePath + iconName);
         } catch (Exception e) {
             try {
-                return new ImageView(stylePath + iconName);
+                return new ImageView(ButtonsSourcePath + iconName);
             } catch (Exception ex) {
                 try {
                     return new ImageView(ButtonsSourcePath + "Red/" + iconName);

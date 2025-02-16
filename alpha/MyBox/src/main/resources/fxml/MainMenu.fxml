@@ -421,6 +421,7 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="clearExpiredDataCheck" mnemonicParsing="false" onAction="#clearExpiredDataBeforeExit" text="%ClearExpiredDataBeforeExit" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
+                                <CheckMenuItem fx:id="branchIconifyCheck" mnemonicParsing="false" onAction="#branchIconifyParent" text="%BranchWindowIconifyParent" />
                                 <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 

@@ -90,10 +90,12 @@ public class Languages {
             String lang = CurrentLangName;
             if (isChinese(lang)) {
                 return "zh";
+            } else if (isEnglish(lang)) {
+                return "en";
             }
         } catch (Exception e) {
         }
-        return "en";
+        return embedLangName();
     }
 
     public static boolean isChinese() {
@@ -105,6 +107,13 @@ public class Languages {
             return false;
         }
         return lang.equals("zh") || lang.startsWith("zh_");
+    }
+
+    public static boolean isEnglish(String lang) {
+        if (lang == null) {
+            return false;
+        }
+        return lang.equals("en") || lang.startsWith("en_");
     }
 
     public static ResourceBundle getBundle() {

@@ -48,7 +48,7 @@ public class AppVariables {
             titleTrimSize, menuMaxLen;
     public static long maxDemoImage;
     public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
-            closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
+            closeCurrentWhenOpenTool, branchWindowIconifyParent, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
             rejectInvalidValueWhenEdit, rejectInvalidValueWhenSave,
@@ -102,6 +102,7 @@ public class AppVariables {
                 MyBoxLog.console(e.toString());
             }
             closeCurrentWhenOpenTool = UserConfig.getBoolean(conn, "CloseCurrentWhenOpenTool", false);
+            branchWindowIconifyParent = UserConfig.getBoolean(conn, "BranchWindowIconifyParent", true);
             recordWindowsSizeLocation = UserConfig.getBoolean(conn, "RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt(conn, "SceneFontSize", 15);
             fileRecentNumber = UserConfig.getInt(conn, "FileRecentNumber", VisitHistory.Default_Max_Histories);

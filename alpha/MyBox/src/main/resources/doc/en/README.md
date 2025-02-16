@@ -52,7 +52,7 @@ Notice: Due to compile failure, env on Linux is still Java 21 + JavaFX 21.
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
 | win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 280MB- | Java 23 or higher |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 23 or higher |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 21 |
 | mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  280MB-  | Java 23 or higher |        
 
 

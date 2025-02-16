@@ -85,7 +85,9 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
                             closeStage();
                         }
                     });
-                    parentStage.setFullScreen(false);
+                    if (AppVariables.branchWindowIconifyParent) {
+                        parentStage.setIconified(true);
+                    }
                 } catch (Exception e) {
                 }
                 break;
