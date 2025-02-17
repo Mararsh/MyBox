@@ -4,7 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -474,34 +475,17 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
         outline
      */
     public void outlineExamples() {
-        FxSingletonTask outlinesTask = new FxSingletonTask<Void>(this) {
-
+        ImageExampleSelectController controller = ImageExampleSelectController.open(this);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
-            protected boolean handle() {
-                for (ImageItem item : ImageItem.predefined()) {
-                    if (isCancelled()) {
-                        return true;
-                    }
-                    Image image = item.readImage();
-                    if (image != null) {
-                        Platform.runLater(() -> {
-                            isSettingValues = true;
-                            outlinesList.getItems().add(image);
-                            isSettingValues = false;
-                        });
-                        setInfo(item.getName());
-                    }
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                ImageItem item = controller.selectedItem();
+                if (item != null) {
+                    loadOutlineSource(item.readImage());
                 }
-                return true;
+                controller.close();
             }
-
-            @Override
-            protected void whenSucceeded() {
-                outlinesList.getSelectionModel().select(0);
-            }
-
-        };
-        start(outlinesTask);
+        });
     }
 
     @FXML
@@ -544,30 +528,25 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
 
             @Override
             protected void whenSucceeded() {
-                isSettingValues = true;
-                outlinesList.getItems().add(0, outlineImage);
-                isSettingValues = false;
-                outlinesList.getSelectionModel().select(0);
+                loadOutlineSource(outlineImage);
             }
 
         };
         start(task);
     }
 
-    public void loadOutlineSource(BufferedImage bufferedImage) {
-        if (isSettingValues || bufferedImage == null) {
-            return;
-        }
-        scope.setOutlineSource(bufferedImage);
-        maskRectangleData = DoubleRectangle.image(bufferedImage);
-        indicateOutline();
-    }
-
     public void loadOutlineSource(Image image) {
         if (isSettingValues || image == null) {
             return;
         }
-        loadOutlineSource(SwingFXUtils.fromFXImage(image, null));
+        outlineView.setFitWidth(outlineBox.getWidth() - 2);
+        outlineView.setImage(image);
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        scope.setOutlineSource(bufferedImage);
+        maskRectangleData = DoubleRectangle.image(bufferedImage);
+
+        changedNotify.set(!changedNotify.get());
+        indicateOutline();
     }
 
     public boolean validOutline() {

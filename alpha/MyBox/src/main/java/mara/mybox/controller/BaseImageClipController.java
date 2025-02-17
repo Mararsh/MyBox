@@ -199,7 +199,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
             @Override
             protected boolean handle() {
                 clips = new ArrayList<>();
-                for (ImageItem item : ImageItem.predefined()) {
+                for (ImageItem item : ImageItem.predefined(true)) {
                     if (task == null || isCancelled()) {
                         return true;
                     }

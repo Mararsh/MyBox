@@ -433,7 +433,7 @@ License:    Apache License Version 2.0
                                                                             </CheckBox>
                                                                         </children>
                                                                     </HBox>
-                                                                    <ListView fx:id="outlinesList" maxHeight="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="ALWAYS" />
+                                                      <ImageView fx:id="outlineView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                                                                 </children>
                                                             </VBox>
                                              </children>

@@ -24,7 +24,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.ListColorCell;
-import mara.mybox.fxml.cell.ListImageCell;
 import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.image.data.ImageScope.ShapeType;
@@ -226,24 +225,6 @@ public class ControlImageScope extends ControlImageScope_Load {
                 }
             });
 
-            outlinesList.setCellFactory(new Callback<ListView<Image>, ListCell<Image>>() {
-                @Override
-                public ListCell<Image> call(ListView<Image> param) {
-                    return new ListImageCell();
-                }
-            });
-
-            outlinesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Image>() {
-                @Override
-                public void changed(ObservableValue ov, Image oldValue, Image newValue) {
-                    if (isSettingValues || newValue == null) {
-                        return;
-                    }
-                    loadOutlineSource(newValue);
-                    changedNotify.set(!changedNotify.get());
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -319,8 +300,6 @@ public class ControlImageScope extends ControlImageScope_Load {
                 if (scope != null) {
                     scope.resetParameters();
                 }
-
-                outlinesList.getSelectionModel().clearSelection();
             }
 
             pickScope();

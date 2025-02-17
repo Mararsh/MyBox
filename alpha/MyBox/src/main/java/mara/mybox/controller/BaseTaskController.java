@@ -11,8 +11,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.DerbyBase;
@@ -25,7 +23,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -181,6 +178,7 @@ public class BaseTaskController extends BaseLogsController {
         }
     }
 
+    @FXML
     @Override
     public void cancelAction() {
         if (task != null && !task.isQuit()) {

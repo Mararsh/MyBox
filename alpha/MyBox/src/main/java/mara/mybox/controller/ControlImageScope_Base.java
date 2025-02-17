@@ -14,6 +14,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -55,7 +56,7 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
     @FXML
     protected ComboBox<String> opacitySelector;
     @FXML
-    protected ListView<Image> outlinesList;
+    protected ImageView outlineView;
     @FXML
     protected ControlColorSet colorController, maskColorController;
     @FXML

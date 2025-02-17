@@ -272,7 +272,7 @@ public class HelpTools {
     public static File imageStories(FxTask task, boolean isRemote, String lang) {
         try {
             StringTable table = new StringTable(null, message(lang, "StoriesOfImages"));
-            List<ImageItem> predefinedItems = ImageItem.predefined(lang);
+            List<ImageItem> predefinedItems = ImageItem.predefined(lang, false);
             for (ImageItem item : predefinedItems) {
                 String comments = item.getComments();
                 File file = item.getFile();

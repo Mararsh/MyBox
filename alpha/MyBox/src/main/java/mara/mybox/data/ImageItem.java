@@ -125,11 +125,11 @@ public class ImageItem {
     /*
         static
      */
-    public static List<ImageItem> predefined() {
-        return predefined(AppVariables.CurrentLangName);
+    public static List<ImageItem> predefined(boolean withColors) {
+        return predefined(AppVariables.CurrentLangName, withColors);
     }
 
-    public static List<ImageItem> predefined(String lang) {
+    public static List<ImageItem> predefined(String lang, boolean withColors) {
         List<ImageItem> preDefined = new ArrayList<>();
         try {
             for (int y = AppValues.AppYear; y >= 2018; y--) {
@@ -186,14 +186,16 @@ public class ImageItem {
                     .setComments(message(lang, "iconClaw"));
             preDefined.add(item);
 
-            preDefined.add(new ImageItem().setAddress("color:#ffccfd"));
-            preDefined.add(new ImageItem().setAddress("color:#fd98a2"));
-            preDefined.add(new ImageItem().setAddress("color:#dff0fe"));
-            preDefined.add(new ImageItem().setAddress("color:#65b4fd"));
-            preDefined.add(new ImageItem().setAddress("color:#fdba98"));
-            preDefined.add(new ImageItem().setAddress("color:#8fbc8f"));
-            preDefined.add(new ImageItem().setAddress("color:#9370db"));
-            preDefined.add(new ImageItem().setAddress("color:#eee8aa"));
+            if (withColors) {
+                preDefined.add(new ImageItem().setAddress("color:#ffccfd"));
+                preDefined.add(new ImageItem().setAddress("color:#fd98a2"));
+                preDefined.add(new ImageItem().setAddress("color:#dff0fe"));
+                preDefined.add(new ImageItem().setAddress("color:#65b4fd"));
+                preDefined.add(new ImageItem().setAddress("color:#fdba98"));
+                preDefined.add(new ImageItem().setAddress("color:#8fbc8f"));
+                preDefined.add(new ImageItem().setAddress("color:#9370db"));
+                preDefined.add(new ImageItem().setAddress("color:#eee8aa"));
+            }
 
         } catch (Exception e) {
         }
