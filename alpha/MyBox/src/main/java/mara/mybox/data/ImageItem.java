@@ -64,7 +64,7 @@ public class ImageItem {
                 return null;
             }
             if (isInternal()) {
-                image = new ImageView(new Image(address)).getImage();
+                image = new Image(address);
             } else if (isFile()) {
                 File file = new File(address);
                 if (file.exists()) {

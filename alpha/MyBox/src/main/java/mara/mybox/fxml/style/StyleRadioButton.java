@@ -129,7 +129,7 @@ public class StyleRadioButton {
             case "wholeRadio":
                 return new StyleData(id, message("WholeImage"), "", "iconSelectAll.png");
             case "matting4Radio":
-                return new StyleData(id, message("Matting4"), "", "iconColorFill.png");
+                return new StyleData(id, message("Matting4"), "", "iconColorFill4.png");
             case "matting8Radio":
                 return new StyleData(id, message("Matting8"), "", "iconColorFill.png");
             case "outlineRadio":

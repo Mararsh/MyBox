@@ -176,15 +176,6 @@ License:    Apache License Version 2.0
                                                                           </ImageView>
                                                                       </graphic>
                                                                   </RadioButton>
-                                                                  <RadioButton fx:id="matting4Radio" mnemonicParsing="false" toggleGroup="$shapeTypeGroup">
-                                                                      <graphic>
-                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                              <image>
-                                                                                  <Image url="@../buttons/Red/iconColorFill.png" />
-                                                                              </image>
-                                                                          </ImageView>
-                                                                      </graphic>
-                                                                  </RadioButton>
                                                             <RadioButton fx:id="matting8Radio" layoutX="10.0" layoutY="32.0" mnemonicParsing="false" toggleGroup="$shapeTypeGroup">
                                                                <graphic>
                                                                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -194,6 +185,15 @@ License:    Apache License Version 2.0
                                                                   </ImageView>
                                                                </graphic>
                                                             </RadioButton>
+                                                                  <RadioButton fx:id="matting4Radio" mnemonicParsing="false" toggleGroup="$shapeTypeGroup">
+                                                                      <graphic>
+                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                              <image>
+                                                                                  <Image url="@../buttons/Red/iconColorFill4.png" />
+                                                                              </image>
+                                                                          </ImageView>
+                                                                      </graphic>
+                                                                  </RadioButton>
                                                                   <RadioButton fx:id="outlineRadio" mnemonicParsing="false" toggleGroup="$shapeTypeGroup">
                                                                       <graphic>
                                                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

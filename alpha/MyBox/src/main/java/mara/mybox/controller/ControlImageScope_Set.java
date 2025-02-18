@@ -475,7 +475,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
         outline
      */
     public void outlineExamples() {
-        ImageExampleSelectController controller = ImageExampleSelectController.open(this);
+        ImageExampleSelectController controller = ImageExampleSelectController.open(this, false);
         controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

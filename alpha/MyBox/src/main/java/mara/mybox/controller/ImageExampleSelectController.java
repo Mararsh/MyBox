@@ -35,10 +35,9 @@ public class ImageExampleSelectController extends BaseInputController {
         baseTitle = message("Image");
     }
 
-    @Override
-    public void initControls() {
+    public void setParameters(BaseController parent, boolean withColors) {
         try {
-            super.initControls();
+            super.setParameters(parent, null);
 
             listView.setCellFactory((ListView<ImageItem> param) -> {
                 ListImageItemCell cell = new ListImageItemCell();
@@ -64,14 +63,14 @@ public class ImageExampleSelectController extends BaseInputController {
 
             viewController.setParent(this);
 
-            loadList();
+            loadList(withColors);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void loadList() {
+    public void loadList(boolean withColors) {
         if (task != null) {
             task.cancel();
         }
@@ -83,7 +82,7 @@ public class ImageExampleSelectController extends BaseInputController {
             protected boolean handle() {
                 try {
                     items = new ArrayList<>();
-                    List<ImageItem> predefinedItems = ImageItem.predefined(false);
+                    List<ImageItem> predefinedItems = ImageItem.predefined(withColors);
                     items.addAll(predefinedItems);
                     return true;
                 } catch (Exception e) {
@@ -132,14 +131,23 @@ public class ImageExampleSelectController extends BaseInputController {
         }
     }
 
+    public List<ImageItem> selectedItems() {
+        try {
+            List<ImageItem> items = listView.getSelectionModel().getSelectedItems();
+            return items;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /*
         static
      */
-    public static ImageExampleSelectController open(BaseController parent) {
+    public static ImageExampleSelectController open(BaseController parent, boolean withColors) {
         try {
             ImageExampleSelectController controller = (ImageExampleSelectController) WindowTools.childStage(
                     parent, Fxmls.ImageExampleSelectFxml);
-            controller.setParameters(parent, null);
+            controller.setParameters(parent, withColors);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

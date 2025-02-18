@@ -19,6 +19,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -104,7 +105,7 @@ public class GameEliminationController extends BaseController {
     @FXML
     protected VBox chessboardPane;
     @FXML
-    protected Label scoreLabel, autoLabel, soundFileLabel;
+    protected Label chessesLabel, scoreLabel, autoLabel, soundFileLabel;
     @FXML
     protected ListView<ImageItem> imagesListview;
     @FXML
@@ -200,6 +201,12 @@ public class GameEliminationController extends BaseController {
                     viewImage();
                 }
             });
+            imagesListview.getItems().addListener(new ListChangeListener<ImageItem>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends ImageItem> c) {
+                    chessesLabel.setText(message("Count") + ": " + imagesListview.getItems().size());
+                }
+            });
 
             chessWidth = 50;
             chessSizeSelector.getItems().addAll(Arrays.asList(
@@ -279,7 +286,7 @@ public class GameEliminationController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                imagesListview.getItems().addAll(items);
+                imagesListview.getItems().setAll(items);
                 if (resetGame) {
                     okChessesAction();
                     initRulersTab();
@@ -706,22 +713,6 @@ public class GameEliminationController extends BaseController {
         return true;
     }
 
-    public boolean addImageItem(ImageItem inItem) {
-        if (isSettingValues || inItem == null) {
-            return false;
-        }
-        String address = inItem.getAddress();
-        for (ImageItem item : imagesListview.getItems()) {
-            if (item.getAddress().equals(address)) {
-                popError(message("AlreadyExisted"));
-                return false;
-            }
-        }
-        imagesListview.getItems().add(0, inItem);
-        imagesListview.scrollTo(0);
-        return true;
-    }
-
     @FXML
     protected void clearChessesAction() {
         imagesListview.getItems().clear();
@@ -744,14 +735,28 @@ public class GameEliminationController extends BaseController {
 
     @FXML
     protected void chessExamples() {
-        ImageExampleSelectController controller = ImageExampleSelectController.open(this);
+        ImageExampleSelectController controller = ImageExampleSelectController.open(this, true);
         controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                ImageItem item = controller.selectedItem();
-                if (item != null) {
-                    addImageItem(item);
+                List<ImageItem> items = controller.selectedItems();
+                if (items == null || items.isEmpty()) {
+                    controller.popError(message("SelectToHandle"));
+                    return;
                 }
+                for (ImageItem item : items) {
+                    String address = item.getAddress();
+                    for (ImageItem litem : imagesListview.getItems()) {
+                        if (litem.getAddress().equals(address)) {
+                            address = null;
+                            break;
+                        }
+                    }
+                    if (address != null) {
+                        imagesListview.getItems().add(0, item);
+                    }
+                }
+                imagesListview.scrollTo(0);
                 controller.close();
             }
         });
