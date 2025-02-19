@@ -66,9 +66,10 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
     @FXML
     protected ControlColorMatch matchController;
     @FXML
+    protected ControlOutline outlineController;
+    @FXML
     protected CheckBox shapeExcludedCheck, colorExcludedCheck, scopeExcludeCheck,
-            handleTransparentCheck, outlineKeepRatioCheck,
-            clearDataWhenLoadImageCheck;
+            handleTransparentCheck, clearDataWhenLoadImageCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;

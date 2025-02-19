@@ -26,6 +26,7 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.data.ImageScope.ShapeType;
 import static mara.mybox.image.data.ImageScope.ShapeType.Matting4;
 import static mara.mybox.image.data.ImageScope.ShapeType.Matting8;
@@ -200,8 +201,6 @@ public class ControlImageScope extends ControlImageScope_Load {
                 }
             });
 
-            outlineKeepRatioCheck.setSelected(true);
-
             shapeExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -221,6 +220,15 @@ public class ControlImageScope extends ControlImageScope_Load {
                         return;
                     }
                     indicateScope();
+                    changedNotify.set(!changedNotify.get());
+                }
+            });
+
+            outlineController.setParameter(this, StyleTools.getIconPath() + "iconAdd.png");
+            outlineController.notify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    indicateOutline(true);
                     changedNotify.set(!changedNotify.get());
                 }
             });

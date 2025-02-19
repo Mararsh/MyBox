@@ -69,7 +69,7 @@ public class StyleCheckBox {
                 return new StyleData(id, message("AlwayOnTopComments"), "CTRL+0 / ALT+0", "iconTop.png");
             case "synchronizeSwitchCheck":
                 return new StyleData(id, message("SynchronizeWhenSwitchFormat"), "", "iconSynchronize.png");
-            case "outlineKeepRatioCheck":
+            case "keepRatioCheck":
                 return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
             case "scopeExcludeCheck":
                 return new StyleData(id, message("ScopeExclude"), "", "iconInvert.png");

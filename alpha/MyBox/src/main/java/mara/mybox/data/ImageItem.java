@@ -33,6 +33,11 @@ public class ImageItem {
         init();
     }
 
+    public ImageItem(String address) {
+        init();
+        this.address = address;
+    }
+
     private void init() {
         name = null;
         address = null;

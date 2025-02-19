@@ -402,38 +402,7 @@ License:    Apache License Version 2.0
                                                                     </VBox>
                                                             <VBox fx:id="outlineBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                                 <children>
-                                                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="389.0" spacing="2.0">
-                                                                        <children>
-                                                                            <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickOutlineFile" onMouseEntered="#popOutlineFile">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconSelectFile.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
-                                                                            <Button fx:id="examplesButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#outlineExamples">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconExamples.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
-                                                                            <CheckBox fx:id="outlineKeepRatioCheck" mnemonicParsing="false" selected="true">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconAspectRatio.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                        </children>
-                                                                    </HBox>
-                                                      <ImageView fx:id="outlineView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                      <fx:include fx:id="outline" source="ControlOutline.fxml" />
                                                                 </children>
                                                             </VBox>
                                              </children>

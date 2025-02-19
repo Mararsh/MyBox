@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.ImageScope.ShapeType;
@@ -175,7 +176,6 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     pointsController.loadIntList(scope.getPoints());
                     return true;
                 case Rectangle:
-                case Outline:
                     if (scope.getRectangle() != null) {
                         maskRectangleData = scope.getRectangle().copy();
                     }
@@ -191,6 +191,14 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     if (scope.getPolygon() != null) {
                         maskPolygonData = scope.getPolygon().copy();
                         pointsController.loadList(maskPolygonData.getPoints());
+                    }
+                }
+                case Outline: {
+                    if (scope.getRectangle() != null) {
+                        maskRectangleData = scope.getRectangle().copy();
+                    }
+                    if (scope.getOutlineName() != null) {
+                        outlineController.loadImageItem(new ImageItem(scope.getOutlineName()), false);
                     }
                 }
             }
@@ -249,6 +257,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     VBox.setVgrow(shapeBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     addPointCheck.setSelected(true);
+                    pointsController.refreshStyle();
                     break;
 
                 case Rectangle:
@@ -298,6 +307,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     VBox.setVgrow(shapeBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     showMaskPolygon();
+                    pointsController.refreshStyle();
                     break;
 
                 case Outline:
@@ -306,6 +316,7 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
                     VBox.setVgrow(outlineBox, Priority.ALWAYS);
                     shapeOperationsPane.getChildren().setAll(clearDataWhenLoadImageCheck);
                     showLeftPane();
+                    matchController.refreshStyle();
                     break;
 
             }

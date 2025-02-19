@@ -1,11 +1,8 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -21,22 +18,14 @@ import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.ImageItem;
 import mara.mybox.data.IntPoint;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.tools.ImageScopeTools;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -52,7 +41,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
 
     public void indicateScope() {
         if (scope.getShapeType() == ImageScope.ShapeType.Outline) {
-            indicateOutline();
+            indicateOutline(false);
             return;
         }
         if (pickScopeValues() == null) {
@@ -474,90 +463,14 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
     /*
         outline
      */
-    public void outlineExamples() {
-        ImageExampleSelectController controller = ImageExampleSelectController.open(this, false);
-        controller.notify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                ImageItem item = controller.selectedItem();
-                if (item != null) {
-                    loadOutlineSource(item.readImage());
-                }
-                controller.close();
-            }
-        });
-    }
-
-    @FXML
-    public void selectOutlineFile() {
-        try {
-            File file = FxFileTools.selectFile(this,
-                    UserConfig.getPath(baseName + "SourcePath"),
-                    FileFilters.AlphaImageExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            loadOutlineSource(file);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void loadOutlineSource(File file) {
-        if (file == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            private Image outlineImage;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    BufferedImage bufferedImage = ImageFileReaders.readImage(this, file);
-                    outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                    return outlineImage != null;
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                loadOutlineSource(outlineImage);
-            }
-
-        };
-        start(task);
-    }
-
-    public void loadOutlineSource(Image image) {
-        if (isSettingValues || image == null) {
-            return;
-        }
-        outlineView.setFitWidth(outlineBox.getWidth() - 2);
-        outlineView.setImage(image);
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        scope.setOutlineSource(bufferedImage);
-        maskRectangleData = DoubleRectangle.image(bufferedImage);
-
-        changedNotify.set(!changedNotify.get());
-        indicateOutline();
-    }
-
     public boolean validOutline() {
         return srcImage() != null
                 && scope != null
                 && scope.getShapeType() == ImageScope.ShapeType.Outline
-                && scope.getOutlineSource() != null
                 && maskRectangleData != null;
     }
 
-    public void indicateOutline() {
+    public void indicateOutline(boolean pickOutline) {
         if (isSettingValues || !validOutline() || !pickEnvValues()) {
             return;
         }
@@ -565,25 +478,36 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private Image outlineImage;
+            private Image handledImage;
 
             @Override
             protected boolean handle() {
                 try {
+                    if (pickOutline || scope.getOutlineSource() == null) {
+                        BufferedImage outline
+                                = SwingFXUtils.fromFXImage(outlineController.getImage(), null);
+                        scope.setOutlineSource(outline);
+                        maskRectangleData = DoubleRectangle.image(outline);
+                    }
+                    if (scope.getOutlineSource() == null) {
+                        return false;
+                    }
+
                     Image bgImage = srcImage();
                     DoubleRectangle outlineReck = ImageScopeTools.makeOutline(this,
-                            scope, bgImage, maskRectangleData, outlineKeepRatioCheck.isSelected());
+                            scope, bgImage, maskRectangleData,
+                            outlineController.keepRatioCheck.isSelected());
                     if (outlineReck == null || task == null || isCancelled()) {
                         return false;
                     }
                     maskRectangleData = outlineReck;
                     PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
                             bgImage, scope, PixelsOperation.OperationType.ShowScope);
-                    outlineImage = pixelsOperation.startFx();
+                    handledImage = pixelsOperation.startFx();
                     if (task == null || isCancelled()) {
                         return false;
                     }
-                    return outlineImage != null;
+                    return handledImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -592,8 +516,8 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
 
             @Override
             protected void whenSucceeded() {
-                image = outlineImage;
-                imageView.setImage(outlineImage);
+                image = handledImage;
+                imageView.setImage(handledImage);
                 showMaskRectangle();
                 if (needFixSize) {
                     paneSize();
@@ -604,63 +528,6 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
 
         };
         start(task, viewBox);
-    }
-
-    @FXML
-    public void showOutlineFileMenu(Event event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event, false) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber;
-                return VisitHistoryTools.getRecentAlphaImages(fileNumber);
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return recentSourcePathsBesidesFiles();
-            }
-
-            @Override
-            public void handleSelect() {
-                selectOutlineFile();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    handleSelect();
-                    return;
-                }
-                loadOutlineSource(file);
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleSourcePath(fname);
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void pickOutlineFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
-            selectOutlineFile();
-        } else {
-            showOutlineFileMenu(event);
-        }
-    }
-
-    @FXML
-    public void popOutlineFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
-            showOutlineFileMenu(event);
-        }
     }
 
 }
