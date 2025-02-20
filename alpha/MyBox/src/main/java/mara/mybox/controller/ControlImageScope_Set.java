@@ -47,6 +47,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
         if (pickScopeValues() == null) {
             return;
         }
+        popInformation(message("Loading..."), scrollPane);
         if (task != null) {
             task.cancel();
         }
@@ -69,6 +70,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
 
             @Override
             protected void whenSucceeded() {
+                closePopup();
                 image = maskImage;
                 imageView.setImage(maskImage);
                 if (scope.getShapeType() == ImageScope.ShapeType.Matting4
@@ -84,16 +86,8 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
                 showNotify.set(!showNotify.get());
             }
 
-            @Override
-            protected void whenCanceled() {
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
         };
-        start(task, viewBox);
+        start(task, false);
     }
 
     @FXML
@@ -474,6 +468,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
         if (isSettingValues || !validOutline() || !pickEnvValues()) {
             return;
         }
+        popInformation(message("Loading..."), scrollPane);
         if (task != null) {
             task.cancel();
         }
@@ -516,6 +511,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
 
             @Override
             protected void whenSucceeded() {
+                closePopup();
                 image = handledImage;
                 imageView.setImage(handledImage);
                 showMaskRectangle();
@@ -527,7 +523,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
             }
 
         };
-        start(task, viewBox);
+        start(task, false);
     }
 
 }

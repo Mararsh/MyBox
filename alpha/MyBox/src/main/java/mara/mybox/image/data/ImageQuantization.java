@@ -171,9 +171,9 @@ public class ImageQuantization extends PixelsOperation {
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
                     .setRecordCount(true)
                     .setColorMatch(colorMatch)
-                    .setImage(image).setScope(scope).
-                    setOperationType(PixelsOperation.OperationType.Quantization).
-                    setIsDithering(isDithering)
+                    .setImage(image).setScope(scope)
+                    .setOperationType(PixelsOperation.OperationType.Quantization)
+                    .setIsDithering(isDithering)
                     .setTask(task);
             regionQuantization.buildPalette().start();
             ImageRGBKMeans kmeans = ImageRGBKMeans.create();

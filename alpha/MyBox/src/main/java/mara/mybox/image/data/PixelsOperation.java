@@ -140,7 +140,9 @@ public abstract class PixelsOperation {
                             target.setRGB(x, y, color.getRGB());
                         }
                     }
-                    dithering(color, newColor, x, y);
+                    if (isDithering) {
+                        dithering(color, newColor, x, y);
+                    }
                 }
                 if (isDithering) {
                     thisLine = nextLine;
@@ -303,7 +305,7 @@ public abstract class PixelsOperation {
     // https://en.wikipedia.org/wiki/Dither
     // https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
     protected void dithering(Color color, Color newColor, int x, int y) {
-        if (!isDithering || y != thisLineY) {
+        if (y != thisLineY) {
             return;
         }
         int red_error, green_error, blue_error;

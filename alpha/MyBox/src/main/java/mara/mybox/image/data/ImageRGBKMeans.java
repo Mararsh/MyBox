@@ -1,9 +1,7 @@
 package mara.mybox.image.data;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import mara.mybox.color.ColorMatch;
 import mara.mybox.data.ListKMeans;
 import mara.mybox.dev.MyBoxLog;
@@ -19,6 +17,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
 
     protected KMeansRegionQuantization regionQuantization;
     protected ColorMatch colorMatch;
+    protected List<Color> colors;
 
     public ImageRGBKMeans() {
     }
@@ -33,8 +32,8 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                 return this;
             }
             regionQuantization = quantization;
-            data = regionQuantization.regionColors;
             colorMatch = quantization.colorMatch;
+            colors = regionQuantization.regionColors;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -42,45 +41,29 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     }
 
     @Override
-    public void initCenters() {
-        try {
-            if (colorMatch == null) {
-                colorMatch = new ColorMatch();
-            }
-            centers = new ArrayList<>();
-            int dataSize = data.size();
-            if (dataSize < k) {
-                centers.addAll(data);
-                return;
-            }
-            int mod = data.size() / k;
-            for (int i = 0; i < dataSize; i = i + mod) {
-                if (task != null && !task.isWorking()) {
-                    return;
-                }
-                centers.add(data.get(i));
-                if (centers.size() == k) {
-                    return;
-                }
-            }
-            while (centers.size() < k) {
-                if (task != null && !task.isWorking()) {
-                    return;
-                }
-                int index = new Random().nextInt(dataSize);
-                Color d = data.get(index);
-                if (!centers.contains(d)) {
-                    centers.add(d);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+    public boolean isDataEmpty() {
+        return colors == null || colors.isEmpty();
+    }
+
+    @Override
+    public int dataSize() {
+        return colors.size();
+    }
+
+    @Override
+    public Color getData(int index) {
+        return colors.get(index);
+    }
+
+    @Override
+    public List<Color> allData() {
+        return regionQuantization.regionColors;
     }
 
     @Override
     public boolean run() {
-        if (regionQuantization == null || data == null
+        if (colorMatch == null
+                || regionQuantization == null || isDataEmpty()
                 || regionQuantization.rgbPalette.counts == null) {
             return false;
         }
@@ -125,7 +108,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                 if (task != null && !task.isWorking()) {
                     return null;
                 }
-                Color regionColor = data.get(index);
+                Color regionColor = getData(index);
                 Long colorCount = regionQuantization.rgbPalette.counts.get(regionColor);
                 if (colorCount != null && colorCount > maxCount) {
                     centerColor = regionColor;
@@ -139,41 +122,9 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         }
     }
 
-    public Color map(Color color) {
-        try {
-            if (color.getRGB() == 0 || dataMap == null) {
-                return color;
-            }
-            Color regionColor = regionQuantization.map(new Color(color.getRGB(), false));
-            Color mappedColor = dataMap.get(regionColor);
-            // Some new colors maybe generated outside regions due to dithering again
-            if (mappedColor == null) {
-                mappedColor = regionColor;
-                double minDistance = Integer.MAX_VALUE;
-                for (int i = 0; i < centers.size(); ++i) {
-                    if (task != null && !task.isWorking()) {
-                        return null;
-                    }
-                    Color centerColor = centers.get(i);
-                    double distance = colorMatch.distance(regionColor, centerColor);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        mappedColor = centerColor;
-                    }
-                }
-            }
-            return mappedColor;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return color;
-        }
-    }
-
-    public int centerSize() {
-        if (centers == null) {
-            return 0;
-        }
-        return centers.size();
+    @Override
+    public Color preProcess(Color color) {
+        return regionQuantization.map(new Color(color.getRGB(), false));
     }
 
     /*

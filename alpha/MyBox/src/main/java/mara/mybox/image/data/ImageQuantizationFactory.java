@@ -447,7 +447,6 @@ public class ImageQuantizationFactory {
 
         protected PopularityRegionQuantization regionQuantization;
         protected List<PopularityRegion> regions;
-        protected ColorMatch colorMatch;
 
         public static PopularityQuantization create() {
             return new PopularityQuantization();
@@ -465,9 +464,9 @@ public class ImageQuantizationFactory {
                         .setFirstColor(firstColor)
                         .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
                         .setRecordCount(false)
-                        .setImage(image).setScope(scope).
-                        setOperationType(PixelsOperation.OperationType.Quantization).
-                        setIsDithering(isDithering)
+                        .setImage(image).setScope(scope)
+                        .setOperationType(PixelsOperation.OperationType.Quantization)
+                        .setIsDithering(isDithering)
                         .setTask(task);
                 regionQuantization.buildPalette().start();
                 regions = regionQuantization.getRegions(quantizationSize);

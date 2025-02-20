@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.List;
 import static mara.mybox.color.SRGB.SRGBtoCIELab;
 import mara.mybox.image.tools.ColorConvertTools;
+import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -145,12 +146,16 @@ public class ColorMatch {
         return false;
     }
 
-    public static MatchAlgorithm algorithm(String a) {
+    public static MatchAlgorithm algorithm(String as) {
         try {
-            return MatchAlgorithm.valueOf(a);
+            for (MatchAlgorithm a : MatchAlgorithm.values()) {
+                if (Languages.matchIgnoreCase(a.name(), as)) {
+                    return a;
+                }
+            }
         } catch (Exception e) {
-            return DefaultAlgorithm;
         }
+        return DefaultAlgorithm;
     }
 
     public boolean setColorWeights(String weights) {
