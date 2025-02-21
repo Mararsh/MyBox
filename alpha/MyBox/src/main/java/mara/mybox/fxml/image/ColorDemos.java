@@ -528,8 +528,8 @@ public class ColorDemos {
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
-                quantization = ImageQuantizationFactory.create(demoImage, null,
-                        a, 8, 256, 1, 1, 1, false, true, true, colorMatch);
+                quantization = ImageQuantizationFactory.create(demoTask, demoImage, null,
+                        a, 8, 256, 1, 1, 1, false, true, true, colorMatch, 10000);
                 bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
@@ -545,8 +545,8 @@ public class ColorDemos {
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
-                quantization = ImageQuantizationFactory.create(demoImage, null,
-                        a, 27, 1024, 1, 1, 1, false, true, true, colorMatch);
+                quantization = ImageQuantizationFactory.create(demoTask, demoImage, null,
+                        a, 27, 1024, 1, 1, 1, false, true, true, colorMatch, 10000);
                 bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
@@ -562,8 +562,8 @@ public class ColorDemos {
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
-                quantization = ImageQuantizationFactory.create(demoImage, null,
-                        a, 256, 1024, 2, 4, 3, false, true, true, colorMatch);
+                quantization = ImageQuantizationFactory.create(demoTask, demoImage, null,
+                        a, 256, 1024, 2, 4, 3, false, true, true, colorMatch, 10000);
                 bufferedImage = quantization.setTask(demoTask).start();
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;

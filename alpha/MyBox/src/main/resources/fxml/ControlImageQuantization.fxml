@@ -34,14 +34,15 @@
                                         </ImageView>
                                     </children>
                                 </FlowPane>
-                                <RadioButton fx:id="kmeansQuanRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%KMeansClustering" wrapText="true">
-                                    <toggleGroup>
+                                <RadioButton fx:id="regionKmeansRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%RegionKMeansClustering" wrapText="true">
+                                 <toggleGroup>
                                         <ToggleGroup fx:id="quanGroup" />
-                                    </toggleGroup>
+                                 </toggleGroup>
                                 </RadioButton>
-                                <RadioButton fx:id="popularQuanRadio" minHeight="-Infinity" mnemonicParsing="false" text="%PopularityQuantization" toggleGroup="$quanGroup" wrapText="true" />
+                                <RadioButton fx:id="regionPopularRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RegionPopularityQuantization" toggleGroup="$quanGroup" wrapText="true" />
                                 <RadioButton fx:id="rgbQuanRadio" minHeight="-Infinity" mnemonicParsing="false" text="%RGBUniformQuantization" toggleGroup="$quanGroup" wrapText="true" />
                                 <RadioButton fx:id="hsbQuanRadio" minHeight="-Infinity" mnemonicParsing="false" text="%HSBUniformQuantization" toggleGroup="$quanGroup" wrapText="true" />
+                              <RadioButton fx:id="kmeansRadio" layoutX="12.0" layoutY="34.0" minHeight="-Infinity" mnemonicParsing="false" text="%KMeansClustering" toggleGroup="$quanGroup" wrapText="true" />
                                 <VBox fx:id="setBox" spacing="5.0">
                                     <children>
                                         <FlowPane fx:id="regionPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
@@ -76,7 +77,6 @@
                                         </FlowPane>
                                     </children>
                                 </VBox>
-                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0" />
                                 <CheckBox fx:id="quanDitherCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Dithering" wrapText="true" />
                                 <CheckBox fx:id="firstColorCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ImageQuantizationFirstColor" wrapText="true" />
                                 <CheckBox fx:id="quanDataCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ShowData" wrapText="true" />

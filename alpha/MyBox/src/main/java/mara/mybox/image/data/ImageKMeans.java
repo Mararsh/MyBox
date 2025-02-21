@@ -2,7 +2,7 @@ package mara.mybox.image.data;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import mara.mybox.color.ColorMatch;
 import mara.mybox.data.ListKMeans;
@@ -13,11 +13,11 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2025-2-20
  * @License Apache License Version 2.0
  */
-public class ImageKMeans extends ListKMeans<Integer> {
+public class ImageKMeans extends ListKMeans<Color> {
 
     protected ColorMatch colorMatch;
-    protected BufferedImage image;
-    protected int width, height, dataSize;
+    protected Color[] colors;
+    protected int dataSize;   // can not handle big image
 
     public ImageKMeans() {
     }
@@ -26,20 +26,28 @@ public class ImageKMeans extends ListKMeans<Integer> {
         return new ImageKMeans();
     }
 
-    public ImageKMeans init(BufferedImage image, ColorMatch colorMatch) {
-        this.image = image;
-        this.colorMatch = colorMatch;
-        if (image != null) {
-            width = image.getWidth();
-            height = image.getHeight();
-            dataSize = width * height;
+    public ImageKMeans init(BufferedImage image, ColorMatch match) {
+        try {
+            int w = image.getWidth();
+            int h = image.getHeight();
+            colorMatch = match != null ? match : new ColorMatch();
+            dataSize = w * h;
+            colors = new Color[dataSize];
+            int index = 0;
+            for (int x = 0; x < w; x++) {
+                for (int y = 0; y < h; y++) {
+                    colors[index++] = new Color(image.getRGB(x, y));
+                }
+            }
+            return this;
+        } catch (Exception e) {
+            return null;
         }
-        return this;
     }
 
     @Override
     public boolean isDataEmpty() {
-        return image == null;
+        return colors == null;
     }
 
     @Override
@@ -48,19 +56,17 @@ public class ImageKMeans extends ListKMeans<Integer> {
     }
 
     @Override
-    public Integer getData(int index) {
-        return image.getRGB(index % width, index / width);
+    public Color getData(int index) {
+        try {
+            return colors[index];
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
-    public List<Integer> allData() {
-        List<Integer> rgb = new ArrayList<>();
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                rgb.add(image.getRGB(i, j));
-            }
-        }
-        return rgb;
+    public List<Color> allData() {
+        return Arrays.asList(colors);
     }
 
     @Override
@@ -72,12 +78,12 @@ public class ImageKMeans extends ListKMeans<Integer> {
     }
 
     @Override
-    public double distance(Integer p1, Integer p2) {
+    public double distance(Color p1, Color p2) {
         try {
             if (p1 == null || p2 == null) {
                 return Double.MAX_VALUE;
             }
-            return colorMatch.distance(new Color(p1), new Color(p2));
+            return colorMatch.distance(p1, p2);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return Double.MAX_VALUE;
@@ -85,12 +91,12 @@ public class ImageKMeans extends ListKMeans<Integer> {
     }
 
     @Override
-    public boolean equal(Integer p1, Integer p2) {
+    public boolean equal(Color p1, Color p2) {
         try {
             if (p1 == null || p2 == null) {
                 return false;
             }
-            return colorMatch.isMatch(new Color(p1), new Color(p2));
+            return colorMatch.isMatch(p1, p2);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
@@ -98,7 +104,7 @@ public class ImageKMeans extends ListKMeans<Integer> {
     }
 
     @Override
-    public Integer calculateCenters(List<Integer> cluster) {
+    public Color calculateCenters(List<Integer> cluster) {
         try {
             if (cluster == null || cluster.isEmpty()) {
                 return null;
@@ -109,14 +115,17 @@ public class ImageKMeans extends ListKMeans<Integer> {
                 if (task != null && !task.isWorking()) {
                     return null;
                 }
-                color = new Color(getData(index));
+                color = getData(index);
+                if (color == null) {
+                    continue;
+                }
                 r += color.getRed();
                 g += color.getGreen();
                 b += color.getBlue();
             }
             int size = cluster.size();
             color = new Color(r / size, g / size, b / size);
-            return color.getRGB();
+            return color;
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;

@@ -46,6 +46,7 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
     protected java.awt.Color maskColor;
     protected float maskOpacity;
     protected SimpleBooleanProperty showNotify, changedNotify;
+    protected String background;
 
     @FXML
     protected ToggleGroup shapeTypeGroup;
@@ -153,7 +154,6 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
                     maskPolygonData.setAll(pointsController.getPoints());
                     scope.setPolygon(maskPolygonData.copy());
                     break;
-
             }
             if (!pickColorValues()) {
                 popError(message("InvalidParameters"));
@@ -177,10 +177,12 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
                     .setColorExcluded(colorExcludedCheck.isSelected())
                     .setMaskColor(maskColor)
                     .setMaskOpacity(maskOpacity);
-            if (sourceFile != null && sourceFile.exists()) {
-                scope.setFile(sourceFile.getAbsolutePath());
+            if (background != null) {
+                scope.setBackground(background);
+            } else if (sourceFile != null && sourceFile.exists()) {
+                scope.setBackground(sourceFile.getAbsolutePath());
             } else {
-                scope.setFile("Unknown");
+                scope.setBackground(null);
             }
             return true;
         } catch (Exception e) {

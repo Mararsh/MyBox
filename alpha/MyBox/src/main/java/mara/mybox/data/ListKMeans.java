@@ -129,7 +129,10 @@ public class ListKMeans<T> {
         }
         clusters = new ArrayList[k];
         try {
-//            MyBoxLog.console("data: " + data.size() + " k:" + k + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
+            if (task != null) {
+                task.setInfo("data: " + dataSize() + " k:" + k
+                        + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
+            }
             while (true) {
                 if (task != null && !task.isWorking()) {
                     return false;
@@ -173,9 +176,14 @@ public class ListKMeans<T> {
                 if (!centerchange || loopCount >= maxIteration) {
                     break;
                 }
+                if (task != null && (loopCount % 100 == 0)) {
+                    task.setInfo("loopCount:" + loopCount);
+                }
             }
-//            MyBoxLog.console("loopCount: " + loopCount);
-//            MyBoxLog.console("centers: " + centers.size() + "   clusters: " + clusters.length);
+            if (task != null) {
+                task.setInfo("loopCount:" + loopCount);
+                task.setInfo("centers: " + centers.size() + "   clusters: " + clusters.length);
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -256,7 +264,7 @@ public class ListKMeans<T> {
                         mappedValue = centerValue;
                     }
                 }
-                dataMap.put(targetValue, mappedValue);
+//                dataMap.put(targetValue, mappedValue);
             }
             return mappedValue;
         } catch (Exception e) {

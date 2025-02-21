@@ -902,6 +902,7 @@ public class GameEliminationController extends BaseController {
         if (isSettingValues) {
             return;
         }
+        popInformation(message("Loading..."), chessboardPane);
         catButton.setSelected(false);
         try {
             chessWidth = Integer.parseInt(chessSizeSelector.getValue());
@@ -946,6 +947,7 @@ public class GameEliminationController extends BaseController {
         makeChessBoard();
         makeRulers();
         newGame(true);
+        closePopup();
     }
 
     protected void makeChessBoard() {

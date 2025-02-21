@@ -46,12 +46,7 @@ public class ImageReduceColorsBatchController extends BaseImageEditBatchControll
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             ImageQuantization quantization = ImageQuantizationFactory.create(
-                    source, null, optionsController, false);
-            if (optionsController.algorithm == ImageQuantization.QuantizationAlgorithm.KMeansClustering) {
-                ImageQuantizationFactory.KMeansClusteringQuantization q
-                        = (ImageQuantizationFactory.KMeansClusteringQuantization) quantization;
-                q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
-            }
+                    currentTask, source, null, optionsController, false);
             return quantization.setTask(currentTask).start();
         } catch (Exception e) {
             displayError(e.toString());

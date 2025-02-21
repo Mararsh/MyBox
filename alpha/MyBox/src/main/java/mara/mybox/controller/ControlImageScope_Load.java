@@ -344,10 +344,12 @@ public abstract class ControlImageScope_Load extends ControlImageScope_Set {
             imageView.setRotate(0);
             imageView.setImage(image);
 
-            if (sourceFile != null && sourceFile.exists()) {
-                scope.setFile(sourceFile.getAbsolutePath());
+            if (background != null) {
+                scope.setBackground(background);
+            } else if (sourceFile != null && sourceFile.exists()) {
+                scope.setBackground(sourceFile.getAbsolutePath());
             } else {
-                scope.setFile("Unknown");
+                scope.setBackground(null);
             }
             scope.setMaskOpacity(maskOpacity);
             scope.setMaskColor(maskColor);

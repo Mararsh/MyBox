@@ -5,7 +5,7 @@ import java.util.List;
 import mara.mybox.color.ColorMatch;
 import mara.mybox.data.ListKMeans;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.image.data.ImageQuantizationFactory.KMeansRegionQuantization;
+import mara.mybox.image.data.ImageQuantizationFactory.KMeansRegion;
 
 /**
  * @Author Mara
@@ -13,20 +13,20 @@ import mara.mybox.image.data.ImageQuantizationFactory.KMeansRegionQuantization;
  * @Version 1.0
  * @License Apache License Version 2.0
  */
-public class ImageRGBKMeans extends ListKMeans<Color> {
+public class ImageRegionKMeans extends ListKMeans<Color> {
 
-    protected KMeansRegionQuantization regionQuantization;
+    protected KMeansRegion regionQuantization;
     protected ColorMatch colorMatch;
     protected List<Color> colors;
 
-    public ImageRGBKMeans() {
+    public ImageRegionKMeans() {
     }
 
-    public static ImageRGBKMeans create() {
-        return new ImageRGBKMeans();
+    public static ImageRegionKMeans create() {
+        return new ImageRegionKMeans();
     }
 
-    public ImageRGBKMeans init(KMeansRegionQuantization quantization) {
+    public ImageRegionKMeans init(KMeansRegion quantization) {
         try {
             if (quantization == null) {
                 return this;
@@ -134,16 +134,16 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         return colorMatch.getThreshold();
     }
 
-    public ImageRGBKMeans setThreshold(double threshold) {
+    public ImageRegionKMeans setThreshold(double threshold) {
         colorMatch.setThreshold(threshold);
         return this;
     }
 
-    public KMeansRegionQuantization getRegionQuantization() {
+    public KMeansRegion getRegionQuantization() {
         return regionQuantization;
     }
 
-    public ImageRGBKMeans setRegionQuantization(KMeansRegionQuantization regionQuantization) {
+    public ImageRegionKMeans setRegionQuantization(KMeansRegion regionQuantization) {
         this.regionQuantization = regionQuantization;
         return this;
     }

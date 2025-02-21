@@ -27,10 +27,13 @@ import static mara.mybox.value.Languages.message;
 public class ImageQuantization extends PixelsOperation {
 
     protected ColorMatch colorMatch;
+    protected int maxLoop;
 
     public static enum QuantizationAlgorithm {
         RGBUniformQuantization, HSBUniformQuantization,
-        PopularityQuantization, KMeansClustering
+        RegionPopularityQuantization,
+        RegionKMeansClustering,
+        KMeansClustering
 //        MedianCutQuantization, ANN
     }
 
@@ -161,10 +164,10 @@ public class ImageQuantization extends PixelsOperation {
         return color;
     }
 
-    public ImageRGBKMeans imageKMeans() {
+    public ImageRegionKMeans imageRegionKMeans() {
         try {
-            ImageQuantizationFactory.KMeansRegionQuantization regionQuantization
-                    = ImageQuantizationFactory.KMeansRegionQuantization.create();
+            ImageQuantizationFactory.KMeansRegion regionQuantization
+                    = ImageQuantizationFactory.KMeansRegion.create();
             regionQuantization.setQuantizationSize(regionSize)
                     .setRegionSize(regionSize)
                     .setFirstColor(firstColor)
@@ -176,8 +179,10 @@ public class ImageQuantization extends PixelsOperation {
                     .setIsDithering(isDithering)
                     .setTask(task);
             regionQuantization.buildPalette().start();
-            ImageRGBKMeans kmeans = ImageRGBKMeans.create();
-            kmeans.setK(quantizationSize).setTask(task);
+            ImageRegionKMeans kmeans = ImageRegionKMeans.create();
+            kmeans.setK(quantizationSize)
+                    .setMaxIteration(maxLoop)
+                    .setTask(task);
             if (kmeans.init(regionQuantization).run()) {
                 kmeans.makeMap();
                 return kmeans;
@@ -188,7 +193,23 @@ public class ImageQuantization extends PixelsOperation {
         return null;
     }
 
-    public class PopularityRegion {
+    public ImageKMeans imageKMeans() {
+        try {
+            ImageKMeans kmeans = ImageKMeans.create();
+            kmeans.setK(quantizationSize)
+                    .setMaxIteration(maxLoop)
+                    .setTask(task);
+            if (kmeans.init(image, colorMatch).run()) {
+                kmeans.makeMap();
+                return kmeans;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return null;
+    }
+
+    public class PopularityRegionValue {
 
         protected long redAccum, greenAccum, blueAccum, pixelsCount;
         protected Color regionColor, averageColor;
@@ -320,6 +341,15 @@ public class ImageQuantization extends PixelsOperation {
 
     public ImageQuantization setColorMatch(ColorMatch colorMatch) {
         this.colorMatch = colorMatch;
+        return this;
+    }
+
+    public int getMaxLoop() {
+        return maxLoop;
+    }
+
+    public ImageQuantization setMaxLoop(int maxLoop) {
+        this.maxLoop = maxLoop;
         return this;
     }
 

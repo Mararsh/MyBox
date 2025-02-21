@@ -40,7 +40,7 @@ public class ImageScopeTools {
 
     public static void cloneValues(ImageScope targetScope, ImageScope sourceScope) {
         try {
-            targetScope.setFile(sourceScope.getFile());
+            targetScope.setBackground(sourceScope.getBackground());
             targetScope.setName(sourceScope.getName());
             targetScope.setShapeData(sourceScope.getShapeData());
             targetScope.setColorData(sourceScope.getColorData());
@@ -112,7 +112,7 @@ public class ImageScopeTools {
             scope.setColorThreshold(node.getDoubleValue("color_threshold"));
             scope.setColorWeights(node.getStringValue("color_weights"));
             scope.setColorExcluded(node.getBooleanValue("color_excluded"));
-            scope.setFile(node.getStringValue("background_file"));
+            scope.setBackground(node.getStringValue("background_file"));
             scope.setOutlineName(node.getStringValue("outline_file"));
             scope.decode(task);
             return scope;
@@ -146,7 +146,7 @@ public class ImageScopeTools {
             node.setValue("color_excluded", scope.isColorExcluded());
             node.setValue("color_threshold", scope.getColorThreshold());
             node.setValue("color_weights", scope.getColorWeights());
-            node.setValue("background_file", scope.getFile());
+            node.setValue("background_file", scope.getBackground());
             node.setValue("outline_file", encodeOutline(null, scope));
             return node;
         } catch (Exception e) {
@@ -164,14 +164,11 @@ public class ImageScopeTools {
             ShapeType type = scope.getShapeType();
             String html = "";
             try {
-                File file = null;
-                if (scope.getFile() != null) {
-                    file = new File(scope.getFile());
+                ImageItem item = new ImageItem(scope.getBackground());
+                Image image = item.readImage();
+                if (image == null) {
+                    image = new Image(ImageItem.exampleImageName());
                 }
-                if (file == null || !file.exists()) {
-                    file = ImageItem.exampleImageFile();
-                }
-                Image image = FxImageTools.readImage(task, file);
                 if (task != null && !task.isWorking()) {
                     return null;
                 }
@@ -195,7 +192,7 @@ public class ImageScopeTools {
             List<String> row = new ArrayList<>();
             row.addAll(Arrays.asList(message("ShapeType"), type.name()));
             htmlTable.add(row);
-            String v = scope.getFile();
+            String v = scope.getBackground();
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Background"), "<PRE><CODE>" + v + "</CODE></PRE>"));
@@ -272,6 +269,22 @@ public class ImageScopeTools {
     /*
        extract value from scope
      */
+    public static Image encodeBackground(FxTask task, String address) {
+        try {
+            String background = address;
+            ImageItem item = new ImageItem(background);
+            Image image = item.readImage();
+            if (image == null) {
+                background = ImageItem.exampleImageName();
+                image = new Image(background);
+            }
+            return image;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static boolean decodeColorData(ImageScope scope) {
         if (scope == null) {
             return false;

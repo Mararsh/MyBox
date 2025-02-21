@@ -13,8 +13,9 @@ import javafx.scene.image.Image;
 import mara.mybox.color.ColorMatch;
 import mara.mybox.controller.ControlImageQuantization;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
-import static mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
+import static mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm.RegionKMeansClustering;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -24,15 +25,15 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageQuantizationFactory {
 
-    public static ImageQuantization createFX(Image image, ImageScope scope,
+    public static ImageQuantization createFX(FxTask task, Image image, ImageScope scope,
             ControlImageQuantization quantizationController, boolean recordCount) {
-        return create(image != null ? SwingFXUtils.fromFXImage(image, null) : null,
+        return create(task, image != null ? SwingFXUtils.fromFXImage(image, null) : null,
                 scope, quantizationController, recordCount);
     }
 
-    public static ImageQuantization create(BufferedImage image, ImageScope scope,
+    public static ImageQuantization create(FxTask task, BufferedImage image, ImageScope scope,
             ControlImageQuantization quantizationController, boolean recordCount) {
-        return create(image, scope, quantizationController.getAlgorithm(),
+        return create(task, image, scope, quantizationController.getAlgorithm(),
                 quantizationController.getQuanColors(),
                 quantizationController.getRegionSize(),
                 quantizationController.getAlgorithm() == QuantizationAlgorithm.HSBUniformQuantization
@@ -44,14 +45,15 @@ public class ImageQuantizationFactory {
                 recordCount,
                 quantizationController.getQuanDitherCheck().isSelected(),
                 quantizationController.getFirstColorCheck().isSelected(),
-                quantizationController.colorMatch());
+                quantizationController.colorMatch(),
+                quantizationController.getMaxLoop());
     }
 
-    public static ImageQuantization create(BufferedImage image, ImageScope scope,
+    public static ImageQuantization create(FxTask task, BufferedImage image, ImageScope scope,
             QuantizationAlgorithm algorithm, int quantizationSize,
             int regionSize, int weight1, int weight2, int weight3,
             boolean recordCount, boolean dithering, boolean firstColor,
-            ColorMatch colorMatch) {
+            ColorMatch colorMatch, int maxLoop) {
         try {
             ImageQuantization quantization;
             switch (algorithm) {
@@ -61,8 +63,11 @@ public class ImageQuantizationFactory {
                 case HSBUniformQuantization:
                     quantization = HSBUniformQuantization.create();
                     break;
-                case PopularityQuantization:
-                    quantization = PopularityQuantization.create();
+                case RegionPopularityQuantization:
+                    quantization = RegionPopularityQuantization.create();
+                    break;
+                case RegionKMeansClustering:
+                    quantization = RegionKMeansClusteringQuantization.create();
                     break;
                 case KMeansClustering:
                     quantization = KMeansClusteringQuantization.create();
@@ -70,7 +75,7 @@ public class ImageQuantizationFactory {
 //             case ANN:
 //                return new RGBUniform(image, quantizationSize);
                 default:
-                    quantization = RGBUniformQuantization.create();
+                    quantization = RegionKMeansClusteringQuantization.create();
                     break;
             }
             quantization.setAlgorithm(algorithm).
@@ -80,8 +85,10 @@ public class ImageQuantizationFactory {
                     .setRecordCount(recordCount)
                     .setFirstColor(firstColor)
                     .setColorMatch(colorMatch)
+                    .setMaxLoop(maxLoop)
                     .setOperationType(PixelsOperation.OperationType.Quantization)
-                    .setImage(image).setScope(scope).setIsDithering(dithering);
+                    .setImage(image).setScope(scope).setIsDithering(dithering)
+                    .setTask(task);
             return quantization.buildPalette();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -378,12 +385,12 @@ public class ImageQuantizationFactory {
 
     }
 
-    public static class PopularityRegionQuantization extends RegionQuantization {
+    public static class PopularityRegion extends RegionQuantization {
 
-        protected Map<Color, PopularityRegion> regionsMap;
+        protected Map<Color, PopularityRegionValue> regionsMap;
 
-        public static PopularityRegionQuantization create() {
-            return new PopularityRegionQuantization();
+        public static PopularityRegion create() {
+            return new PopularityRegion();
         }
 
         @Override
@@ -395,35 +402,35 @@ public class ImageQuantizationFactory {
 
         @Override
         public void handleRegionColor(Color color, Color regionColor) {
-            PopularityRegion region = regionsMap.get(regionColor);
-            if (region == null) {
-                region = new PopularityRegion();
-                region.regionColor = regionColor;
-                region.redAccum = color.getRed();
-                region.greenAccum = color.getGreen();
-                region.blueAccum = color.getBlue();
-                region.pixelsCount = 1;
-                regionsMap.put(regionColor, region);
+            PopularityRegionValue value = regionsMap.get(regionColor);
+            if (value == null) {
+                value = new PopularityRegionValue();
+                value.regionColor = regionColor;
+                value.redAccum = color.getRed();
+                value.greenAccum = color.getGreen();
+                value.blueAccum = color.getBlue();
+                value.pixelsCount = 1;
+                regionsMap.put(regionColor, value);
             } else {
-                region.redAccum += color.getRed();
-                region.greenAccum += color.getGreen();
-                region.blueAccum += color.getBlue();
-                region.pixelsCount += 1;
+                value.redAccum += color.getRed();
+                value.greenAccum += color.getGreen();
+                value.blueAccum += color.getBlue();
+                value.pixelsCount += 1;
             }
         }
 
-        public List<PopularityRegion> getRegions(int quantizationSize) {
-            List<PopularityRegion> regions = new ArrayList<>();
-            regions.addAll(regionsMap.values());
-            for (PopularityRegion region : regions) {
+        public List<PopularityRegionValue> getRegionValues(int quantizationSize) {
+            List<PopularityRegionValue> values = new ArrayList<>();
+            values.addAll(regionsMap.values());
+            for (PopularityRegionValue region : values) {
                 region.averageColor = new Color(
                         Math.min(255, (int) (region.redAccum / region.pixelsCount)),
                         Math.min(255, (int) (region.greenAccum / region.pixelsCount)),
                         Math.min(255, (int) (region.blueAccum / region.pixelsCount)));
             }
-            Collections.sort(regions, new Comparator<PopularityRegion>() {
+            Collections.sort(values, new Comparator<PopularityRegionValue>() {
                 @Override
-                public int compare(PopularityRegion r1, PopularityRegion r2) {
+                public int compare(PopularityRegionValue r1, PopularityRegionValue r2) {
                     long diff = r2.pixelsCount - r1.pixelsCount;
                     if (diff == 0) {
                         return 0;
@@ -434,31 +441,31 @@ public class ImageQuantizationFactory {
                     }
                 }
             });
-            if (quantizationSize < regions.size()) {
-                regions = regions.subList(0, quantizationSize);
+            if (quantizationSize < values.size()) {
+                values = values.subList(0, quantizationSize);
             }
             regionsMap.clear();
-            return regions;
+            return values;
         }
 
     }
 
-    public static class PopularityQuantization extends ImageQuantization {
+    public static class RegionPopularityQuantization extends ImageQuantization {
 
-        protected PopularityRegionQuantization regionQuantization;
-        protected List<PopularityRegion> regions;
+        protected PopularityRegion regionQuantization;
+        protected List<PopularityRegionValue> regionValues;
 
-        public static PopularityQuantization create() {
-            return new PopularityQuantization();
+        public static RegionPopularityQuantization create() {
+            return new RegionPopularityQuantization();
         }
 
         @Override
-        public PopularityQuantization buildPalette() {
+        public RegionPopularityQuantization buildPalette() {
             try {
-                algorithm = QuantizationAlgorithm.PopularityQuantization;
+                algorithm = QuantizationAlgorithm.RegionPopularityQuantization;
                 colorMatch = new ColorMatch();
 
-                regionQuantization = PopularityRegionQuantization.create();
+                regionQuantization = PopularityRegion.create();
                 regionQuantization.setQuantizationSize(regionSize)
                         .setRegionSize(regionSize)
                         .setFirstColor(firstColor)
@@ -469,7 +476,7 @@ public class ImageQuantizationFactory {
                         .setIsDithering(isDithering)
                         .setTask(task);
                 regionQuantization.buildPalette().start();
-                regions = regionQuantization.getRegions(quantizationSize);
+                regionValues = regionQuantization.getRegionValues(quantizationSize);
 
                 if (recordCount) {
                     counts = new HashMap<>();
@@ -482,11 +489,11 @@ public class ImageQuantizationFactory {
 
         @Override
         public String resultInfo() {
-            if (regions == null) {
+            if (regionValues == null) {
                 return null;
             }
             return message(algorithm.name()) + "\n"
-                    + message("ColorsNumber") + ": " + regions.size() + "\n-----\n"
+                    + message("ColorsNumber") + ": " + regionValues.size() + "\n-----\n"
                     + regionQuantization.resultInfo();
         }
 
@@ -497,8 +504,8 @@ public class ImageQuantizationFactory {
             }
             Color mappedColor = null;
             Color regionColor = regionQuantization.map(color);
-            for (int i = 0; i < regions.size(); ++i) {
-                PopularityRegion region = regions.get(i);
+            for (int i = 0; i < regionValues.size(); ++i) {
+                PopularityRegionValue region = regionValues.get(i);
                 if (region.regionColor.equals(regionColor)) {
                     mappedColor = region.averageColor;
                     break;
@@ -506,9 +513,9 @@ public class ImageQuantizationFactory {
             }
             if (mappedColor == null) {
                 double minDistance = Integer.MAX_VALUE;
-                PopularityRegion nearestRegion = regions.get(0);
-                for (int i = 0; i < regions.size(); ++i) {
-                    PopularityRegion region = regions.get(i);
+                PopularityRegionValue nearestRegion = regionValues.get(0);
+                for (int i = 0; i < regionValues.size(); ++i) {
+                    PopularityRegionValue region = regionValues.get(i);
                     double distance = colorMatch.distance(region.averageColor, color);
                     if (distance < minDistance) {
                         minDistance = distance;
@@ -523,12 +530,12 @@ public class ImageQuantizationFactory {
 
     }
 
-    public static class KMeansRegionQuantization extends RegionQuantization {
+    public static class KMeansRegion extends RegionQuantization {
 
         protected List<Color> regionColors;
 
-        public static KMeansRegionQuantization create() {
-            return new KMeansRegionQuantization();
+        public static KMeansRegion create() {
+            return new KMeansRegion();
         }
 
         @Override
@@ -547,19 +554,19 @@ public class ImageQuantizationFactory {
 
     }
 
-    public static class KMeansClusteringQuantization extends ImageQuantization {
+    public static class RegionKMeansClusteringQuantization extends ImageQuantization {
 
-        protected ImageRGBKMeans kmeans;
+        protected ImageRegionKMeans kmeans;
 
-        public static KMeansClusteringQuantization create() throws Exception {
-            return new KMeansClusteringQuantization();
+        public static RegionKMeansClusteringQuantization create() throws Exception {
+            return new RegionKMeansClusteringQuantization();
         }
 
         @Override
-        public KMeansClusteringQuantization buildPalette() {
-            algorithm = QuantizationAlgorithm.KMeansClustering;
+        public RegionKMeansClusteringQuantization buildPalette() {
+            algorithm = QuantizationAlgorithm.RegionKMeansClustering;
 
-            kmeans = imageKMeans();
+            kmeans = imageRegionKMeans();
             if (recordCount) {
                 counts = new HashMap<>();
             }
@@ -590,11 +597,63 @@ public class ImageQuantizationFactory {
         /*
             get/set
          */
-        public ImageRGBKMeans getKmeans() {
+        public ImageRegionKMeans getKmeans() {
             return kmeans;
         }
 
-        public void setKmeans(ImageRGBKMeans kmeans) {
+        public void setKmeans(ImageRegionKMeans kmeans) {
+            this.kmeans = kmeans;
+        }
+
+    }
+
+    public static class KMeansClusteringQuantization extends ImageQuantization {
+
+        protected ImageKMeans kmeans;
+
+        public static KMeansClusteringQuantization create() throws Exception {
+            return new KMeansClusteringQuantization();
+        }
+
+        @Override
+        public KMeansClusteringQuantization buildPalette() {
+            algorithm = QuantizationAlgorithm.KMeansClustering;
+
+            kmeans = imageKMeans();
+            if (recordCount) {
+                counts = new HashMap<>();
+            }
+            return this;
+        }
+
+        @Override
+        public String resultInfo() {
+            if (kmeans == null) {
+                return null;
+            }
+            return message(algorithm.name()) + "\n"
+                    + message("ColorsNumber") + ": " + kmeans.centerSize() + "\n"
+                    + message("ActualLoop") + ": " + kmeans.getLoopCount();
+        }
+
+        @Override
+        public Color operateColor(Color color) {
+            if (color.getRGB() == 0) {
+                return color;
+            }
+            Color mappedColor = kmeans.map(color);
+            countColor(mappedColor);
+            return mappedColor;
+        }
+
+        /*
+            get/set
+         */
+        public ImageKMeans getKmeans() {
+            return kmeans;
+        }
+
+        public void setKmeans(ImageKMeans kmeans) {
             this.kmeans = kmeans;
         }
 

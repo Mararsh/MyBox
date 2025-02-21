@@ -25,7 +25,7 @@ public class ImageScope {
 
     public static String ValueSeparator = ",";
 
-    protected String file, name, shapeData, colorData, outlineName;
+    protected String background, name, shapeData, colorData, outlineName;
     protected ShapeType shapeType;
     protected List<Color> colors;
     protected List<IntPoint> points;
@@ -328,8 +328,8 @@ public class ImageScope {
         return this;
     }
 
-    public String getFile() {
-        return file;
+    public String getBackground() {
+        return background;
     }
 
     public boolean isShapeExcluded() {
@@ -365,8 +365,8 @@ public class ImageScope {
         this.polygon = polygon;
     }
 
-    public void setFile(String file) {
-        this.file = file;
+    public void setBackground(String background) {
+        this.background = background;
     }
 
     public String getName() {

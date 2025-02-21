@@ -28,14 +28,15 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageQuantization extends BaseController {
 
-    protected int regionSize, quanColors, kmeansLoop,
+    protected int regionSize, quanColors, maxLoop,
             rgbWeight1, rgbWeight2, rgbWeight3, hsbWeight1, hsbWeight2, hsbWeight3;
     protected QuantizationAlgorithm algorithm;
 
     @FXML
     protected ToggleGroup quanGroup;
     @FXML
-    protected RadioButton rgbQuanRadio, hsbQuanRadio, popularQuanRadio, kmeansQuanRadio;
+    protected RadioButton rgbQuanRadio, hsbQuanRadio, regionPopularRadio,
+            regionKmeansRadio, kmeansRadio;
     @FXML
     protected VBox setBox;
     @FXML
@@ -90,11 +91,11 @@ public class ControlImageQuantization extends BaseController {
             ));
             hsbWeightSelector.setValue(defaultV);
 
-            kmeansLoop = UserConfig.getInt(baseName + "KmeansLoop", 10000);
-            kmeansLoop = kmeansLoop <= 0 ? 10000 : kmeansLoop;
+            maxLoop = UserConfig.getInt(baseName + "KmeansLoop", 10000);
+            maxLoop = maxLoop <= 0 ? 10000 : maxLoop;
             kmeansLoopSelector.getItems().addAll(Arrays.asList(
                     "10000", "5000", "3000", "1000", "500", "100", "20000"));
-            kmeansLoopSelector.setValue(kmeansLoop + "");
+            kmeansLoopSelector.setValue(maxLoop + "");
 
             quanDitherCheck.setSelected(UserConfig.getBoolean(baseName + "QuanDither", true));
 
@@ -188,8 +189,8 @@ public class ControlImageQuantization extends BaseController {
                 popError(message("InvalidParameter") + ": " + message("MaximumLoop"));
                 return false;
             }
-            kmeansLoop = v;
-            UserConfig.setInt(conn, baseName + "KmeansLoop", kmeansLoop);
+            maxLoop = v;
+            UserConfig.setInt(conn, baseName + "KmeansLoop", maxLoop);
 
             UserConfig.setBoolean(conn, baseName + "QuanDither", quanDitherCheck.isSelected());
             UserConfig.setBoolean(conn, baseName + "QuanData", quanDataCheck.isSelected());
@@ -214,13 +215,17 @@ public class ControlImageQuantization extends BaseController {
             algorithm = QuantizationAlgorithm.HSBUniformQuantization;
             setBox.getChildren().addAll(numberPane, hsbWeightPane);
 
-        } else if (popularQuanRadio.isSelected()) {
-            algorithm = QuantizationAlgorithm.PopularityQuantization;
+        } else if (regionPopularRadio.isSelected()) {
+            algorithm = QuantizationAlgorithm.RegionPopularityQuantization;
             setBox.getChildren().addAll(numberPane, regionPane, rgbWeightPane);
 
-        } else if (kmeansQuanRadio.isSelected()) {
+        } else if (regionKmeansRadio.isSelected()) {
+            algorithm = QuantizationAlgorithm.RegionKMeansClustering;
+            setBox.getChildren().addAll(numberPane, regionPane, rgbWeightPane, loopPane);
+
+        } else if (kmeansRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.KMeansClustering;
-            setBox.getChildren().addAll(numberPane, regionPane, rgbWeightPane);
+            setBox.getChildren().addAll(numberPane, loopPane);
 
         } else {
             algorithm = null;
@@ -232,7 +237,7 @@ public class ControlImageQuantization extends BaseController {
     protected void defaultForAnalyse() {
         isSettingValues = true;
 
-        kmeansQuanRadio.setSelected(true);
+        regionKmeansRadio.setSelected(true);
 
         quanDataCheck.setVisible(false);
         quanDataCheck.setSelected(true);
@@ -253,7 +258,7 @@ public class ControlImageQuantization extends BaseController {
     protected void defaultForSvg() {
         isSettingValues = true;
 
-        kmeansQuanRadio.setSelected(true);
+        regionKmeansRadio.setSelected(true);
 
         quanDataCheck.setVisible(false);
         quanDataCheck.setSelected(true);
@@ -294,12 +299,12 @@ public class ControlImageQuantization extends BaseController {
         this.quanColors = quanColors;
     }
 
-    public int getKmeansLoop() {
-        return kmeansLoop;
+    public int getMaxLoop() {
+        return maxLoop;
     }
 
-    public void setKmeansLoop(int kmeansLoop) {
-        this.kmeansLoop = kmeansLoop;
+    public void setMaxLoop(int maxLoop) {
+        this.maxLoop = maxLoop;
     }
 
     public QuantizationAlgorithm getAlgorithm() {
@@ -430,20 +435,20 @@ public class ControlImageQuantization extends BaseController {
         this.hsbQuanRadio = hsbQuanRadio;
     }
 
-    public RadioButton getPopularQuanRadio() {
-        return popularQuanRadio;
+    public RadioButton getRegionPopularRadio() {
+        return regionPopularRadio;
     }
 
-    public void setPopularQuanRadio(RadioButton popularQuanRadio) {
-        this.popularQuanRadio = popularQuanRadio;
+    public void setRegionPopularRadio(RadioButton regionPopularRadio) {
+        this.regionPopularRadio = regionPopularRadio;
     }
 
-    public RadioButton getKmeansQuanRadio() {
-        return kmeansQuanRadio;
+    public RadioButton getRegionKmeansRadio() {
+        return regionKmeansRadio;
     }
 
-    public void setKmeansQuanRadio(RadioButton kmeansQuanRadio) {
-        this.kmeansQuanRadio = kmeansQuanRadio;
+    public void setRegionKmeansRadio(RadioButton regionKmeansRadio) {
+        this.regionKmeansRadio = regionKmeansRadio;
     }
 
     public FlowPane getRegionPane() {
