@@ -109,7 +109,7 @@ public class ImageItem {
             File file = null;
             if (isInternal()) {
                 file = FxFileTools.getInternalFile("/" + address, "image",
-                        name != null ? name : FileNameTools.name(address));
+                        name != null ? name : FileNameTools.name(address, "/"));
             } else if (isFile()) {
                 file = new File(address);
             }

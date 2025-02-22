@@ -142,7 +142,7 @@ public class GameMineController extends BaseWebViewController {
                 }
             });
 
-            imageController.setParameter(this, StyleTools.getIconPath() + "iconClear.png");
+            imageController.setParameter(this, StyleTools.getIconPath() + "iconClear.png", null);
 
             loadRecords();
             createAction();

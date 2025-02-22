@@ -25,7 +25,7 @@ public class ControlImage extends BaseController {
 
     protected Image image;
     protected SimpleBooleanProperty notify;
-    protected String defaultImage, address;
+    protected String defaultAddress, currentAddress;
 
     @FXML
     protected ImageView imageView;
@@ -37,16 +37,17 @@ public class ControlImage extends BaseController {
         setFileType(VisitHistory.FileType.Image);
     }
 
-    public void setParameter(BaseController parent, String defaultIm) {
+    public void setParameter(BaseController parent, String inDefault, String inCurrent) {
         try {
             notify = new SimpleBooleanProperty();
 
             baseName = parent.baseName + "Image";
-            defaultImage = defaultIm != null ? defaultIm
+            defaultAddress = inDefault != null ? inDefault
                     : StyleTools.getIconPath() + "iconAdd.png";
 
-            loadImageItem(new ImageItem(
-                    UserConfig.getString(baseName + "Address", defaultImage)), false);
+            currentAddress = inCurrent != null ? inCurrent
+                    : UserConfig.getString(baseName + "Address", defaultAddress);
+            loadImageItem(new ImageItem(currentAddress), false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -54,7 +55,7 @@ public class ControlImage extends BaseController {
     }
 
     public void setDefault(String address) {
-        defaultImage = address;
+        defaultAddress = address;
     }
 
     public Image getImage() {
@@ -64,7 +65,7 @@ public class ControlImage extends BaseController {
 
     public File getFile() {
         try {
-            return new ImageItem(address).getFile();
+            return new ImageItem(currentAddress).getFile();
         } catch (Exception e) {
             return null;
         }
@@ -92,11 +93,11 @@ public class ControlImage extends BaseController {
                 try {
                     inImage = item.readImage();
                     if (inImage == null) {
-                        if (defaultImage == null) {
-                            defaultImage = StyleTools.getIconPath() + "iconAdd.png";
+                        if (defaultAddress == null) {
+                            defaultAddress = StyleTools.getIconPath() + "iconAdd.png";
                         }
-                        inAddress = defaultImage;
-                        inImage = new Image(address);
+                        inAddress = defaultAddress;
+                        inImage = new Image(currentAddress);
                     } else {
                         inAddress = item.getAddress();
                     }
@@ -110,7 +111,7 @@ public class ControlImage extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                address = inAddress;
+                currentAddress = inAddress;
                 image = inImage;
                 imageView.setImage(image);
                 if (fireNotify) {
@@ -144,10 +145,10 @@ public class ControlImage extends BaseController {
 
     @FXML
     public void defaultAction() {
-        if (defaultImage == null) {
-            defaultImage = InternalImages.exampleIcon();
+        if (defaultAddress == null) {
+            defaultAddress = InternalImages.exampleIcon();
         }
-        loadImageItem(new ImageItem(defaultImage), true);
+        loadImageItem(new ImageItem(defaultAddress), true);
     }
 
 }

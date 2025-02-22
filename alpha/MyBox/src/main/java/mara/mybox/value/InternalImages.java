@@ -85,7 +85,7 @@ public class InternalImages {
                 }
                 name = icon.substring(4, icon.length() - 4);
                 ImageItem item = new ImageItem()
-                        .setName(name)
+                        .setName(name + ".png")
                         .setAddress(path + icon)
                         .setComments(message(lang, "icon" + name));
                 images.add(item);

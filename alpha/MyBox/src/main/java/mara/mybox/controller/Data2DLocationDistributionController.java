@@ -134,11 +134,11 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             if (dname != null) {
                 dname = dname.replaceAll("\"", "");
                 if (Languages.matchIgnoreCase("ChineseHistoricalCapitals", dname)) {
-                    address = "/img/jade.png";
+                    address = "img/jade.png";
                 } else if (Languages.matchIgnoreCase("AutumnMovementPatternsOfEuropeanGadwalls", dname)) {
-                    address = "/img/Gadwalls.png";
+                    address = "img/Gadwalls.png";
                 } else if (Languages.matchIgnoreCase("SpermWhalesGulfOfMexico", dname)) {
-                    address = "/img/SpermWhale.png";
+                    address = "img/SpermWhale.png";
                 }
             }
             if (address != null) {
@@ -180,7 +180,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 return false;
             }
             dataColsIndices.add(col);
-            MyBoxLog.console(labelCol);
 
             longCol = longitudeSelector.getValue();
             col = data2D.colOrder(longCol);

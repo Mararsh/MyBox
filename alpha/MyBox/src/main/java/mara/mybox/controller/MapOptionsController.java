@@ -72,7 +72,9 @@ public class MapOptionsController extends BaseController {
             }
             mapController = controller;
             mapController.optionsController = this;
-            imageController.setParameter(this, mapController.defaultMarkerImage);
+            imageController.setParameter(this,
+                    mapController.defaultMarkerImage,
+                    mapController.markerImage.getAbsolutePath());
 
             setControlListeners();
 
@@ -147,7 +149,7 @@ public class MapOptionsController extends BaseController {
             imageController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    mapController.applyMarkerImage(imageController.address);
+                    mapController.applyMarkerImage(imageController.currentAddress);
                 }
             });
 
