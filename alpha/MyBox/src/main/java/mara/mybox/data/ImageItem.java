@@ -2,9 +2,6 @@ package mara.mybox.data;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
@@ -14,9 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javax.imageio.ImageIO;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.tools.FileNameTools;
 
 /**
  * @Author Mara
@@ -113,7 +108,8 @@ public class ImageItem {
         try {
             File file = null;
             if (isInternal()) {
-                file = FxFileTools.getInternalFile("/" + address, "image", name);
+                file = FxFileTools.getInternalFile("/" + address, "image",
+                        name != null ? name : FileNameTools.name(address));
             } else if (isFile()) {
                 file = new File(address);
             }
@@ -130,96 +126,7 @@ public class ImageItem {
     /*
         static
      */
-    public static List<ImageItem> predefined(boolean withColors) {
-        return predefined(AppVariables.CurrentLangName, withColors);
-    }
-
-    public static List<ImageItem> predefined(String lang, boolean withColors) {
-        List<ImageItem> preDefined = new ArrayList<>();
-        try {
-            for (int y = AppValues.AppYear; y >= 2018; y--) {
-                for (int i = 1; i <= (y == 2018 ? 6 : 9); i++) {
-                    String name = "cover" + y + "g" + i;
-                    ImageItem item = new ImageItem()
-                            .setName(name + ".png")
-                            .setAddress("img/" + name + ".png")
-                            .setComments(y == 2018 ? null : message(lang, name));
-                    preDefined.add(item);
-                }
-            }
-
-            ImageItem item = new ImageItem()
-                    .setName("jade.png").setAddress("img/jade.png")
-                    .setComments(message(lang, "jadeImageTips"));
-            preDefined.add(item);
-            item = new ImageItem()
-                    .setName("exg1.png").setAddress("img/exg1.png")
-                    .setComments(message(lang, "exg1ImageTips"));
-            preDefined.add(item);
-            item = new ImageItem()
-                    .setName("exg2.png").setAddress("img/exg2.png")
-                    .setComments(message(lang, "exg2ImageTips"));
-            preDefined.add(item);
-            item = new ImageItem()
-                    .setName("MyBox.png").setAddress("img/MyBox.png")
-                    .setComments(message(lang, "MyBoxImageTips"));
-            preDefined.add(item);
-
-            preDefined.add(new ImageItem().setName("Gadwalls.png").setAddress("img/Gadwalls.png"));
-            preDefined.add(new ImageItem().setName("SpermWhale.png").setAddress("img/SpermWhale.png"));
-
-            List<String> icons = new ArrayList<>();
-            icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat",
-                    "Clear", "Clipboard", "Close", "Copy",
-                    "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
-                    "Edit", "Examples", "Export", "File", "Format", "Frame",
-                    "Function", "Go", "History", "Import", "Manage", "Menu", "NewItem",
-                    "OK", "OpenPath", "Operation", "Options",
-                    "Panes", "Play", "Permission", "Polylines", "Pop", "Preview", "Query",
-                    "Random", "Recover", "Refresh", "Repeat",
-                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Shape", "Style",
-                    "SVG", "Tag", "Tips", "Tree", "Undo", "Verify", "View", "Window", "Withdraw"));
-            for (String name : icons) {
-                item = new ImageItem()
-                        .setName("icon" + name + ".png")
-                        .setAddress("buttons/Red/icon" + name + ".png")
-                        .setComments(message(lang, "icon" + name));
-                preDefined.add(item);
-            }
-            item = new ImageItem()
-                    .setName("iconClaw.png").setAddress("buttons/iconClaw.png")
-                    .setComments(message(lang, "iconClaw"));
-            preDefined.add(item);
-
-            if (withColors) {
-                preDefined.add(new ImageItem().setAddress("color:#ffccfd"));
-                preDefined.add(new ImageItem().setAddress("color:#fd98a2"));
-                preDefined.add(new ImageItem().setAddress("color:#dff0fe"));
-                preDefined.add(new ImageItem().setAddress("color:#65b4fd"));
-                preDefined.add(new ImageItem().setAddress("color:#fdba98"));
-                preDefined.add(new ImageItem().setAddress("color:#8fbc8f"));
-                preDefined.add(new ImageItem().setAddress("color:#9370db"));
-                preDefined.add(new ImageItem().setAddress("color:#eee8aa"));
-            }
-
-        } catch (Exception e) {
-        }
-        return preDefined;
-    }
-
-    public static String exampleImageName() {
-        return "img/cover" + AppValues.AppYear + "g5.png";
-    }
-
-    public static Image exampleImage() {
-        return new Image(exampleImageName());
-    }
-
-    public static File exampleImageFile() {
-        return FxFileTools.getInternalFile("/" + exampleImageName(), "image", "Example.png");
-    }
-
-    /*
+ /*
         get/set
      */
     public String getAddress() {

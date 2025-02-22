@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -131,19 +130,20 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             String dname = data2D.getName();
 
-            File file = null;
+            String address = null;
             if (dname != null) {
                 dname = dname.replaceAll("\"", "");
                 if (Languages.matchIgnoreCase("ChineseHistoricalCapitals", dname)) {
-                    file = mapController.chineseHistoricalCapitalsImage();
+                    address = "/img/jade.png";
                 } else if (Languages.matchIgnoreCase("AutumnMovementPatternsOfEuropeanGadwalls", dname)) {
-                    file = mapController.europeanGadwallsImage();
+                    address = "/img/Gadwalls.png";
                 } else if (Languages.matchIgnoreCase("SpermWhalesGulfOfMexico", dname)) {
-                    file = mapController.spermWhalesImage();
+                    address = "/img/SpermWhale.png";
                 }
             }
-            if (file != null) {
-                mapController.setMarkerImageFile(file);
+            if (address != null) {
+                mapController.setMarkerImageDefault(address);
+                mapController.applyMarkerImage(address);
             }
 
         } catch (Exception e) {

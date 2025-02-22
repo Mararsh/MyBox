@@ -75,6 +75,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -253,7 +254,7 @@ public class GameEliminationController extends BaseController {
             protected boolean handle() {
                 try {
                     items = new ArrayList<>();
-                    List<ImageItem> predefinedItems = ImageItem.predefined(true);
+                    List<ImageItem> predefinedItems = InternalImages.allWithColors();
                     List<String> addresses = null;
                     String savedNames = UserConfig.getString("GameEliminationChessImages", null);
                     if (savedNames != null) {
@@ -270,7 +271,7 @@ public class GameEliminationController extends BaseController {
                                 }
                             }
                             if (!predefined) {
-                                items.add(new ImageItem().setAddress(address));
+                                items.add(new ImageItem(address));
                             }
                         }
                     }

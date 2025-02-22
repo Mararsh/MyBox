@@ -24,6 +24,7 @@ import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -199,7 +200,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
             @Override
             protected boolean handle() {
                 clips = new ArrayList<>();
-                for (ImageItem item : ImageItem.predefined(true)) {
+                for (ImageItem item : InternalImages.all()) {
                     if (task == null || isCancelled()) {
                         return true;
                     }

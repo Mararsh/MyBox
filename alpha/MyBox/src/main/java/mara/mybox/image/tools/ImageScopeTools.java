@@ -29,6 +29,7 @@ import static mara.mybox.image.data.ImageScope.ShapeType.Matting4;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -167,7 +168,7 @@ public class ImageScopeTools {
                 ImageItem item = new ImageItem(scope.getBackground());
                 Image image = item.readImage();
                 if (image == null) {
-                    image = new Image(ImageItem.exampleImageName());
+                    image = new Image(InternalImages.exampleImageName());
                 }
                 if (task != null && !task.isWorking()) {
                     return null;
@@ -275,7 +276,7 @@ public class ImageScopeTools {
             ImageItem item = new ImageItem(background);
             Image image = item.readImage();
             if (image == null) {
-                background = ImageItem.exampleImageName();
+                background = InternalImages.exampleImageName();
                 image = new Image(background);
             }
             return image;

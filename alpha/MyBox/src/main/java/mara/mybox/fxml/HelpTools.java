@@ -22,6 +22,7 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.InternalImages;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -272,8 +273,8 @@ public class HelpTools {
     public static File imageStories(FxTask task, boolean isRemote, String lang) {
         try {
             StringTable table = new StringTable(null, message(lang, "StoriesOfImages"));
-            List<ImageItem> predefinedItems = ImageItem.predefined(lang, false);
-            for (ImageItem item : predefinedItems) {
+            List<ImageItem> imageItems = InternalImages.all(lang);
+            for (ImageItem item : imageItems) {
                 String comments = item.getComments();
                 File file = item.getFile();
                 if (comments == null || comments.isBlank()

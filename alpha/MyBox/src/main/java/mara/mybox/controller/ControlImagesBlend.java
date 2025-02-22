@@ -16,18 +16,18 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.fxml.image.ShapeDemos;
 import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.image.data.PixelsBlend.ImagesBlendMode;
 import mara.mybox.image.data.PixelsBlend.TransparentAs;
 import static mara.mybox.image.data.PixelsBlend.fixedOpacity;
 import mara.mybox.image.data.PixelsBlendFactory;
 import mara.mybox.image.tools.ScaleTools;
-import mara.mybox.data.ImageItem;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxImageTools;
-import mara.mybox.fxml.image.ShapeDemos;
-import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -204,7 +204,7 @@ public class ControlImagesBlend extends BaseController {
     }
 
     public void demo(Color color) {
-        Image baseImage = ImageItem.exampleImage();
+        Image baseImage = InternalImages.exampleImage();
         Image overlay = FxImageTools.createImage(
                 (int) (baseImage.getWidth()), (int) (baseImage.getHeight()),
                 color);

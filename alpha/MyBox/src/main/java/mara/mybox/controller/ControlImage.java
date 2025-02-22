@@ -13,6 +13,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.value.InternalImages;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -24,7 +25,7 @@ public class ControlImage extends BaseController {
 
     protected Image image;
     protected SimpleBooleanProperty notify;
-    protected String defaultImage;
+    protected String defaultImage, address;
 
     @FXML
     protected ImageView imageView;
@@ -40,22 +41,33 @@ public class ControlImage extends BaseController {
         try {
             notify = new SimpleBooleanProperty();
 
-            baseName = parent.baseName + "_" + baseName;
+            baseName = parent.baseName + "Image";
             defaultImage = defaultIm != null ? defaultIm
                     : StyleTools.getIconPath() + "iconAdd.png";
 
-            String address = UserConfig.getString(baseName + "Address", defaultImage);
-
-            loadImageItem(new ImageItem(address), false);
+            loadImageItem(new ImageItem(
+                    UserConfig.getString(baseName + "Address", defaultImage)), false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
+    public void setDefault(String address) {
+        defaultImage = address;
+    }
+
     public Image getImage() {
         image = imageView.getImage();
         return image;
+    }
+
+    public File getFile() {
+        try {
+            return new ImageItem(address).getFile();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void loadImage(Image im, boolean fireNotify) {
@@ -72,6 +84,7 @@ public class ControlImage extends BaseController {
         }
         task = new FxSingletonTask<Void>(this) {
 
+            private String inAddress;
             private Image inImage;
 
             @Override
@@ -79,10 +92,16 @@ public class ControlImage extends BaseController {
                 try {
                     inImage = item.readImage();
                     if (inImage == null) {
-                        return false;
+                        if (defaultImage == null) {
+                            defaultImage = StyleTools.getIconPath() + "iconAdd.png";
+                        }
+                        inAddress = defaultImage;
+                        inImage = new Image(address);
+                    } else {
+                        inAddress = item.getAddress();
                     }
-                    UserConfig.setString(baseName + "Address", item.getAddress());
-                    return true;
+                    UserConfig.setString(baseName + "Address", inAddress);
+                    return inImage != null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -91,7 +110,12 @@ public class ControlImage extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                loadImage(inImage, fireNotify);
+                address = inAddress;
+                image = inImage;
+                imageView.setImage(image);
+                if (fireNotify) {
+                    notify.set(!notify.get());
+                }
             }
 
         };
@@ -120,6 +144,9 @@ public class ControlImage extends BaseController {
 
     @FXML
     public void defaultAction() {
+        if (defaultImage == null) {
+            defaultImage = InternalImages.exampleIcon();
+        }
         loadImageItem(new ImageItem(defaultImage), true);
     }
 

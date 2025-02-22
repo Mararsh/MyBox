@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +16,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.ListImageItemCell;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -81,9 +81,8 @@ public class ImageExampleSelectController extends BaseInputController {
             @Override
             protected boolean handle() {
                 try {
-                    items = new ArrayList<>();
-                    List<ImageItem> predefinedItems = ImageItem.predefined(withColors);
-                    items.addAll(predefinedItems);
+                    items = withColors
+                            ? InternalImages.allWithColors() : InternalImages.all();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

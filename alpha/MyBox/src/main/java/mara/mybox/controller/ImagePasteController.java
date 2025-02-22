@@ -15,24 +15,24 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import mara.mybox.image.tools.BufferedImageTools;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxImageTools;
-import mara.mybox.fxml.image.MarginTools;
-import mara.mybox.fxml.image.ScaleTools;
-import mara.mybox.fxml.image.ShapeDemos;
-import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.fxml.image.MarginTools;
+import mara.mybox.fxml.image.ScaleTools;
+import mara.mybox.fxml.image.ShapeDemos;
+import mara.mybox.fxml.image.TransformTools;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.data.PixelsBlend;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.InternalImages;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -336,7 +336,7 @@ public class ImagePasteController extends BaseImageEditController {
 
     @Override
     protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        Image overlay = finalClip != null ? finalClip : ImageItem.exampleImage();
+        Image overlay = finalClip != null ? finalClip : InternalImages.exampleImage();
         ShapeDemos.blendImage(currentTask, files, message("Paste"),
                 SwingFXUtils.fromFXImage(bgImage, null),
                 SwingFXUtils.fromFXImage(overlay, null),

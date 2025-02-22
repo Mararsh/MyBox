@@ -21,18 +21,17 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCode.CoordinateSystem;
+import mara.mybox.data.ImageItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -42,7 +41,6 @@ import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -57,14 +55,14 @@ public class BaseMapController extends BaseController {
     protected MapOptionsController optionsController;
 
     protected TableNodeGeographyCode nodeTable;
-    protected String mapTitle, mapType, mapStyle, language;
+    protected String mapTitle, mapType, mapStyle, language, defaultMarkerImage;
+    protected File markerImage;
     protected WebEngine webEngine;
     protected boolean mapLoaded, isGeodetic, isFitView,
             isPopInfo, isBold, isMarkLabel, isMarkCoordinate,
             showStandardLayer, showSatelliteLayer, showRoadLayer, showTrafficLayer,
             showZoomControl, showScaleControl, showTypeControl, showSymbolsControl;
     protected float standardOpacity, satelliteOpacity, roadOpacity, trafficOpacity;
-    protected File markerImageFile;
     protected Color textColor;
     protected CoordinateSystem coordinateSystem;
     protected int markerSize, textSize, mapZoom, interval;
@@ -105,6 +103,9 @@ public class BaseMapController extends BaseController {
             loadNotify = new SimpleBooleanProperty();
             mapLoaded = false;
             geoCodes = null;
+
+            setMarkerImageDefault(defaultMarkerImage().getAbsolutePath());
+            setMarkerImage(UserConfig.getString("MapOptionsImageAddress", null));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -335,7 +336,7 @@ public class BaseMapController extends BaseController {
                     + lo + "," + la
                     + ", " + jsString(pLabel)
                     + ", " + jsString(isPopInfo ? nodeTable.text(code) : null)
-                    + ", '" + image().replaceAll("\\\\", "/") + "'"
+                    + ", '" + markerImage.getAbsolutePath().replaceAll("\\\\", "/") + "'"
                     + ", " + markSize
                     + ", " + textSize()
                     + ", '" + textRGB() + "'"
@@ -433,16 +434,7 @@ public class BaseMapController extends BaseController {
             markerSize = UserConfig.getInt(conn, baseName + "MarkerSize", 24);
             textSize = UserConfig.getInt(conn, baseName + "TextSize", 12);
             mapZoom = UserConfig.getInt(conn, baseName + "MapZoom", 9);
-            String v = UserConfig.getString(conn, baseName + "MarkerImageFile", null);
-            if (v == null) {
-                markerImageFile = this.pointImage();
-            } else {
-                markerImageFile = new File(v);
-                if (!markerImageFile.exists() || !markerImageFile.isFile()) {
-                    markerImageFile = this.pointImage();
-                }
-            }
-            v = UserConfig.getString(conn, baseName + "TextColor", null);
+            String v = UserConfig.getString(conn, baseName + "TextColor", null);
             try {
                 textColor = Color.web(v);
             } catch (Exception e) {
@@ -802,13 +794,29 @@ public class BaseMapController extends BaseController {
     /*
         map points options
      */
-    public void setMarkerImageFile(File file) {
-        if (file == null || !file.exists() || !file.isFile()) {
-            return;
+    public File setMarkerImage(String address) {
+        markerImage = new ImageItem(address).getFile();
+        if (markerImage == null) {
+            markerImage = defaultMarkerImage();
         }
-        markerImageFile = file;
-        recordFileOpened(file, VisitHistory.FileType.Image);
-        UserConfig.setString(baseName + "MarkerImageFile", markerImageFile.getAbsolutePath());
+        return markerImage;
+    }
+
+    public File defaultMarkerImage() {
+        return new ImageItem(StyleTools.getIconPath() + "iconLocation.png").getFile();
+    }
+
+    public String setMarkerImageDefault(String address) {
+        File file = new ImageItem(address).getFile();
+        if (file == null) {
+            file = defaultMarkerImage();
+        }
+        defaultMarkerImage = file.getAbsolutePath();
+        return defaultMarkerImage;
+    }
+
+    public void applyMarkerImage(String address) {
+        markerImage = setMarkerImage(address);
         refreshAction();
     }
 
@@ -887,38 +895,6 @@ public class BaseMapController extends BaseController {
         }
         return textColor;
     }
-
-    public String image() {
-        if (markerImageFile == null) {
-            markerImageFile = pointImage();
-        }
-        return markerImageFile.getAbsolutePath();
-    }
-
-    public File pointImage() {
-        if (AppVariables.ControlColor == StyleData.StyleColor.Customize) {
-            return new File(AppVariables.MyboxDataPath + "/buttons/iconLocation.png");
-        } else {
-            return FxFileTools.getInternalFile("/" + StyleTools.getIconPath() + "iconLocation.png", "map",
-                    AppVariables.ControlColor.name() + "Point.png");
-        }
-    }
-
-    public File chineseHistoricalCapitalsImage() {
-        markerImageFile = FxFileTools.getInternalFile("/img/jade.png", "image", "jade.png");
-        return markerImageFile;
-    }
-
-    public File europeanGadwallsImage() {
-        markerImageFile = FxFileTools.getInternalFile("/img/Gadwalls.png", "image", "Gadwalls.png");
-        return markerImageFile;
-    }
-
-    public File spermWhalesImage() {
-        markerImageFile = FxFileTools.getInternalFile("/img/SpermWhale.png", "image", "SpermWhale.png");
-        return markerImageFile;
-    }
-
 
     /*
         action

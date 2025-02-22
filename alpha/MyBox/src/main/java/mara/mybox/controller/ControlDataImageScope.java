@@ -15,6 +15,7 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -131,7 +132,7 @@ public class ControlDataImageScope extends BaseDataValuesController {
                     if (image != null) {
                         background = address;
                     } else {
-                        background = ImageItem.exampleImageName();
+                        background = InternalImages.exampleImageName();
                         image = new Image(background);
                     }
                     return image != null;

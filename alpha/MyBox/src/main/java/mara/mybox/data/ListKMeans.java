@@ -239,31 +239,46 @@ public class ListKMeans<T> {
         return value;
     }
 
+    public T nearestCenter(T value) {
+        try {
+            if (value == null) {
+                return value;
+            }
+            T targetValue = value;
+            double minDistance = Double.MAX_VALUE;
+            for (int i = 0; i < centers.size(); ++i) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                T centerValue = centers.get(i);
+                double distance = distance(value, centerValue);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    targetValue = centerValue;
+                }
+            }
+            return targetValue;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     public T map(T value) {
         try {
             if (value == null) {
                 return value;
             }
-            if (dataMap == null) {
-                return belongCenter(value);
-            }
             T targetValue = preProcess(value);
-            T mappedValue = dataMap.get(targetValue);
+            T mappedValue;
+            if (dataMap == null) {
+                mappedValue = belongCenter(value);
+            } else {
+                mappedValue = dataMap.get(targetValue);
+            }
             // Some new colors maybe generated outside regions due to dithering again
             if (mappedValue == null) {
-                mappedValue = targetValue;
-                double minDistance = Integer.MAX_VALUE;
-                for (int i = 0; i < centers.size(); ++i) {
-                    if (task != null && !task.isWorking()) {
-                        return null;
-                    }
-                    T centerValue = centers.get(i);
-                    double distance = distance(targetValue, centerValue);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        mappedValue = centerValue;
-                    }
-                }
+                mappedValue = nearestCenter(targetValue);
 //                dataMap.put(targetValue, mappedValue);
             }
             return mappedValue;

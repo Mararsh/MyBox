@@ -19,7 +19,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.NodeTools;
@@ -33,6 +32,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.InternalImages;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.krysalis.barcode4j.ChecksumMode;
@@ -446,7 +446,7 @@ public class BarcodeCreatorController extends BaseImageController {
             });
             qrErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getString("QRErrorCorrection", Languages.message("ErrorCorrectionLevelH")));
 
-            File pic = ImageItem.exampleImageFile();
+            File pic = InternalImages.exampleImageFile();
             if (pic != null) {
                 sourceFileInput.setText(pic.getAbsolutePath());
             }
