@@ -344,6 +344,18 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     }
 
+    public void goPage(int pageNumber) {
+
+    }
+
+    public void pageSize(int pageSize) {
+
+    }
+
+    public void goRow(int rowNumber) {
+
+    }
+
     @FXML
     public void refreshAction() {
         if (sourceFile == null || !checkBeforeNextAction()) {

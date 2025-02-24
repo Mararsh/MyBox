@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class WebHistoriesController extends BaseSysTableController<WebHistory> {
+public class WebHistoriesController extends BaseSysTable2Controller<WebHistory> {
 
     protected TableWebHistory tableWebHistory;
 
@@ -122,7 +122,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         queryConditions = null;
         queryConditionsString = null;
         tableData.clear();
-        startRowOfCurrentPage = 0;
+        pagesController.startRowOfCurrentPage = 0;
     }
 
     /*

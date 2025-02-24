@@ -7,6 +7,7 @@ import java.util.List;
 import mara.mybox.color.ColorMatch;
 import mara.mybox.data.ListKMeans;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -30,6 +31,14 @@ public class ImageKMeans extends ListKMeans<Color> {
         try {
             int w = image.getWidth();
             int h = image.getHeight();
+            if (1l * w * h >= Integer.MAX_VALUE) {
+                if (task != null) {
+                    task.setError(message("TooLargeToHandle"));
+                } else {
+                    MyBoxLog.error(message("TooLargeToHandle"));
+                }
+                return null;
+            }
             colorMatch = match != null ? match : new ColorMatch();
             dataSize = w * h;
             colors = new Color[dataSize];
