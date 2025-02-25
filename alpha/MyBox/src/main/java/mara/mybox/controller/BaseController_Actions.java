@@ -344,7 +344,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     }
 
-    public void goPage(int pageNumber) {
+    public void goPage(long pageNumber) {
 
     }
 
@@ -352,7 +352,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     }
 
-    public void goRow(int rowNumber) {
+    public void goRow(long rowNumber) {
 
     }
 

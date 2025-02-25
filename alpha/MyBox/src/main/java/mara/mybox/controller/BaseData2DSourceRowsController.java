@@ -115,11 +115,11 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             makeColumns();
             updateTable(dataController.tableData);
             isSettingValues = true;
-            currentPage = dataController.currentPage;
-            startRowOfCurrentPage = dataController.startRowOfCurrentPage;
-            pageSize = dataController.pageSize;
-            pagesNumber = dataController.pagesNumber;
-            dataSize = dataController.dataSize;
+            pagination.currentPage = dataController.pagination.currentPage;
+            pagination.startRowOfCurrentPage = dataController.pagination.startRowOfCurrentPage;
+            pagination.pageSize = dataController.pagination.pageSize;
+            pagination.pagesNumber = dataController.pagination.pagesNumber;
+            pagination.totalSize = dataController.pagination.totalSize;
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
             isSettingValues = false;

@@ -72,7 +72,7 @@ public abstract class BaseSysTable2Controller<P> extends BaseTablePages2Controll
     public List<P> readPageData(FxTask currentTask, Connection conn) {
         if (tableDefinition != null) {
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns,
-                    pagesController.startRowOfCurrentPage, pagesController.pageSize);
+                    pagination.startRowOfCurrentPage, pagination.pageSize);
         } else {
             return null;
         }

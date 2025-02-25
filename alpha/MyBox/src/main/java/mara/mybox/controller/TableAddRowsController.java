@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
  */
 public class TableAddRowsController extends BaseBranchController {
 
-    protected BaseTablePagesController tableViewController;
+    protected BaseTablePages2Controller tableViewController;
     protected int number;
 
     @FXML
@@ -43,7 +43,7 @@ public class TableAddRowsController extends BaseBranchController {
         baseTitle = message("AddRows");
     }
 
-    public void setParameters(BaseTablePagesController tableViewController) {
+    public void setParameters(BaseTablePages2Controller tableViewController) {
         try {
             this.tableViewController = tableViewController;
             this.baseName = tableViewController.baseName;
@@ -167,7 +167,7 @@ public class TableAddRowsController extends BaseBranchController {
     /*
         static
      */
-    public static TableAddRowsController open(BaseTablePagesController tableViewController) {
+    public static TableAddRowsController open(BaseTablePages2Controller tableViewController) {
         try {
             TableAddRowsController controller = (TableAddRowsController) WindowTools.branchStage(
                     tableViewController, Fxmls.TableAddRowsFxml);

@@ -13,7 +13,7 @@ import mara.mybox.fxml.cell.TableBooleanCell;
  * @CreateDate 2022-4-7
  * @License Apache License Version 2.0
  */
-public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> {
+public class ControlData2DStyleList extends BaseSysTable2Controller<Data2DStyle> {
 
     protected Data2DSetStylesController manageController;
     protected BaseData2DLoadController tableController;

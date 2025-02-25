@@ -80,7 +80,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-11
  * @License Apache License Version 2.0
  */
-public class DownloadFirstLevelLinksController extends BaseTablePagesController<Link> {
+public class DownloadFirstLevelLinksController extends BaseTablePages2Controller<Link> {
 
     protected final ObservableList<Link> downloadingData, failedData;
     protected int maxThreadsNumber, maxLogs, maxRetries;

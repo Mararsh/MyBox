@@ -58,7 +58,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-1-7
  * @License Apache License Version 2.0
  */
-public class ColorsManageController extends BaseSysTableController<ColorData> {
+public class ColorsManageController extends BaseSysTable2Controller<ColorData> {
 
     protected TableColorPaletteName tableColorPaletteName;
     protected TableColorPalette tableColorPalette;
@@ -159,6 +159,8 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     displayColorInfo(colorsController.clickedColor());
                 }
             });
+
+            pagesController.setRightOrientation();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -368,7 +370,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     public void loadPalette(String paletteName) {
-        currentPage = Integer.MAX_VALUE;
+        pagination.currentPage = Integer.MAX_VALUE;
         palettesController.loadPalette(paletteName);
         paletteTabPane.getSelectionModel().select(colorsTab);
     }
@@ -469,7 +471,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 return;
             }
             if ("page".equals(type)) {
-                filename += "_" + message("Page") + currentPage;
+                filename += "_" + message("Page") + (pagination.currentPage + 1);
             } else {
                 filename += "_" + message("All");
             }
@@ -524,7 +526,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     return;
                 }
                 if ("page".equals(type)) {
-                    title += "_" + message("Page") + (currentPage + 1);
+                    title += "_" + message("Page") + (pagination.currentPage + 1);
                     displayHtml(title, rows);
                 } else {
                     String atitle = title;
@@ -766,9 +768,11 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     @Override
     public List<ColorData> readPageData(FxTask currentTask, Connection conn) {
         if (palettesController.isAllColors()) {
-            return tableColor.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
+            return tableColor.queryConditions(conn, null, null,
+                    pagination.startRowOfCurrentPage, pagination.pageSize);
         } else {
-            return tableColorPalette.colors(conn, palettesController.currentPaletteId(), startRowOfCurrentPage, pageSize);
+            return tableColorPalette.colors(conn, palettesController.currentPaletteId(),
+                    pagination.startRowOfCurrentPage, pagination.pageSize);
         }
     }
 

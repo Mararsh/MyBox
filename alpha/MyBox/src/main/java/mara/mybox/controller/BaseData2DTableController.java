@@ -43,7 +43,6 @@ import mara.mybox.fxml.cell.TableDataDateEditCell;
 import mara.mybox.fxml.cell.TableDataDisplayCell;
 import mara.mybox.fxml.cell.TableDataEditCell;
 import mara.mybox.fxml.cell.TableDataEnumCell;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
@@ -55,7 +54,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-17
  * @License Apache License Version 2.0
  */
-public class BaseData2DTableController extends BaseTablePagesController<List<String>> {
+public class BaseData2DTableController extends BaseTablePages2Controller<List<String>> {
 
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
@@ -217,17 +216,15 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     @Override
-    public void setDataSizeLabel() {
-        if (dataSizeLabel == null || data2D == null) {
+    public void updatePagination() {
+        if (data2D == null) {
             return;
         }
-        int tsize = tableData == null ? 0 : tableData.size();
-        long start = data2D.getStartRowOfCurrentPage();
-        long end = data2D.getEndRowOfCurrentPage();
-        dataSizeLabel.setText(message("Rows") + ": "
-                + "[" + start + "-" + end + "]" + tsize
-                + (data2D.isTableChanged() ? "*" : "")
-                + (dataSize > 0 ? "/" + dataSize : ""));
+        pagination.startRowOfCurrentPage = data2D.getStartRowOfCurrentPage();
+        pagination.endRowOfCurrentPage = data2D.getEndRowOfCurrentPage();
+        if (pagesController != null) {
+            pagesController.updateLabels();
+        }
     }
 
     public boolean isValidData() {
@@ -400,24 +397,22 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         return data2D.readPageData(conn);
     }
 
-    @Override
     protected void countPagination(FxTask currentTask, Connection conn, long page) {
         if (data2D.isMatrix()) {
-            pageSize = Integer.MAX_VALUE;
-            dataSize = data2D.getRowsNumber();
-            pagesNumber = 1;
-            currentPage = 0;
-            startRowOfCurrentPage = 0;
+            pagination.pageSize = Integer.MAX_VALUE;
+            pagination.totalSize = data2D.getRowsNumber();
+            pagination.pagesNumber = 1;
+            pagination.currentPage = 0;
+            pagination.startRowOfCurrentPage = 0;
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
         } else {
-            pageSize = UserConfig.getInt(conn, baseName + "PageSize", 50);
-            super.countPagination(currentTask, conn, page);
+            pagination.goPage(readDataSize(currentTask, conn), page);
         }
-        data2D.setPageSize(pageSize);
-        data2D.setPagesNumber(pagesNumber);
-        data2D.setCurrentPage(currentPage);
-        data2D.setStartRowOfCurrentPage(startRowOfCurrentPage);
+        data2D.setPageSize(pagination.pageSize);
+        data2D.setPagesNumber(pagination.pagesNumber);
+        data2D.setCurrentPage(pagination.currentPage);
+        data2D.setStartRowOfCurrentPage(pagination.startRowOfCurrentPage);
     }
 
     @Override
@@ -451,8 +446,8 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         data2D.setRowsNumber(-1);
         dataSizeLoaded = false;
         data2D.setDataLoaded(false);
-        if (paginationPane != null) {
-            paginationPane.setVisible(false);
+        if (pagesController != null) {
+            pagesController.hide();
         }
         if (saveButton != null) {
             saveButton.setDisable(true);
@@ -499,10 +494,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         dataSizeLoaded = true;
         data2D.setDataLoaded(true);
         correctDataSize();
-        if (paginationPane != null) {
+        if (pagesController != null) {
             if (paginate) {
                 showPaginationPane(true);
-                countPagination(null, null, currentPage);
+                countPagination(null, null, pagination.currentPage);
                 setPagination();
                 updateStatus();
             } else {
@@ -557,33 +552,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     protected void showPaginationPane(boolean show) {
-        if (paginationPane == null) {
+        if (pagesController == null) {
             return;
         }
-        paginationPane.setVisible(show);
-        if (dataBox != null) {
-            if (show) {
-                if (!dataBox.getChildren().contains(paginationPane)) {
-                    dataBox.getChildren().add(paginationPane);
-                }
-            } else {
-                if (dataBox.getChildren().contains(paginationPane)) {
-                    dataBox.getChildren().remove(paginationPane);
-                }
-            }
-            NodeStyleTools.refreshStyle(dataBox);
-        } else {
-            if (show) {
-                if (!thisPane.getChildren().contains(paginationPane)) {
-                    thisPane.getChildren().add(paginationPane);
-                    NodeStyleTools.refreshStyle(paginationPane);
-                }
-            } else {
-                if (thisPane.getChildren().contains(paginationPane)) {
-                    thisPane.getChildren().remove(paginationPane);
-                }
-            }
-        }
+        pagesController.setVisible(show);
     }
 
     /*

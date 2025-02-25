@@ -32,7 +32,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-6-5
  * @License Apache License Version 2.0
  */
-public class BaseImageClipController extends BaseSysTableController<ImageClipboard> {
+public class BaseImageClipController extends BaseSysTable2Controller<ImageClipboard> {
 
     protected Image lastSystemClip;
     protected int thumbWidth = AppVariables.thumbnailWidth;
@@ -109,7 +109,8 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
     public List<ImageClipboard> readPageData(FxTask currentTask, Connection conn) {
         try {
             ((TableImageClipboard) tableDefinition).clearInvalid(null, conn);
-            return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
+            return tableDefinition.queryConditions(conn, queryConditions, orderColumns,
+                    pagination.startRowOfCurrentPage, pagination.pageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return new ArrayList<>();

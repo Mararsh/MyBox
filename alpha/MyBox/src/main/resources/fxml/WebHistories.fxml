@@ -26,168 +26,172 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 
 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WebHistoriesController">
-   <content>
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-    <top>
-        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
-    </top>
-    <center>
-        <VBox>
-            <children>
-                <SplitPane dividerPositions="0.4">
-                    <items>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="922.0">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                            <tabs>
-                                                <Tab text="%Time">
-                                                    <content>
-                                                        <VBox fx:id="timesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <fx:include fx:id="times" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTimesTree.fxml" VBox.vgrow="ALWAYS" />
-                                                            </children>
-                                                            <padding>
-                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                            </padding>
-                                                        </VBox> 
-                                                    </content>
-                                                </Tab>
-                                                <Tab text="%Find">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <RadioButton fx:id="titleRadio" mnemonicParsing="false" selected="true" text="%Title">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="searchGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton fx:id="addressRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Address" toggleGroup="$searchGroup" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                    <children>
-                                                                        <Button fx:id="historyFindButton" mnemonicParsing="false" onAction="#showFindHistories" onMouseEntered="#popFindHistories">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconHistory.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <TextField fx:id="findInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#find">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconQuery.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                                <Label minHeight="-Infinity" text="%SearchComments" wrapText="true" />
-                                                            </children>
-                                                            <padding>
-                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                            </padding>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                            </tabs>
-                                        </TabPane>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="921.0">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+    <content>
+        <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+            <top>
+                <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+            </top>
+            <center>
+                <VBox>
+                    <children>
+                        <SplitPane dividerPositions="0.4">
+                            <items>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="922.0">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
-                                                <Label fx:id="queryConditionsLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" onDragDetected="#refreshAction" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconRefresh.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconClear.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconDelete.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="goButton" disable="true" mnemonicParsing="false" onAction="#goAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconGo.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
+                                                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                                    <tabs>
+                                                        <Tab text="%Time">
+                                                            <content>
+                                                                <VBox fx:id="timesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                    <children>
+                                                                        <fx:include fx:id="times" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTimesTree.fxml" VBox.vgrow="ALWAYS" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                    </padding>
+                                                                </VBox> 
+                                                            </content>
+                                                        </Tab>
+                                                        <Tab text="%Find">
+                                                            <content>
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <RadioButton fx:id="titleRadio" mnemonicParsing="false" selected="true" text="%Title">
+                                                                                    <toggleGroup>
+                                                                                        <ToggleGroup fx:id="searchGroup" />
+                                                                                    </toggleGroup>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="addressRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Address" toggleGroup="$searchGroup" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                            <children>
+                                                                                <Button fx:id="historyFindButton" mnemonicParsing="false" onAction="#showFindHistories" onMouseEntered="#popFindHistories">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconHistory.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <TextField fx:id="findInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                                <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#find">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconQuery.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <Label minHeight="-Infinity" text="%SearchComments" wrapText="true" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </Tab>
+                                                    </tabs>
+                                                </TabPane>
                                             </children>
-                                        </HBox>
-                                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                            <columns>
-                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
-                                                    <graphic>
-                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
-                                                    </graphic>
-                                                </TableColumn>
-                                                <TableColumn fx:id="timeColumn" prefWidth="120.0" text="%Time" />
-                                                <TableColumn fx:id="iconColumn" prefWidth="60.0" text="%Icon" />
-                                                <TableColumn fx:id="titleColumn" prefWidth="150.0" text="%Title" />
-                                                <TableColumn fx:id="addressColumn" prefWidth="600.0" text="%Address" />
-                                            </columns>
-                                        </TableView>
-                                    <fx:include fx:id="pages" maxWidth="1.7976931348623157E308" source="ControlPages.fxml" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
-                    </items>
-                </SplitPane>
-            </children>
-            <BorderPane.margin>
-                <Insets />
-            </BorderPane.margin>
+                                            <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="921.0">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label fx:id="queryConditionsLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" onDragDetected="#refreshAction" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconDelete.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="goButton" disable="true" mnemonicParsing="false" onAction="#goAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconGo.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                                            <graphic>
+                                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                                            </graphic>
+                                                        </TableColumn>
+                                                        <TableColumn fx:id="timeColumn" prefWidth="120.0" text="%Time" />
+                                                        <TableColumn fx:id="iconColumn" prefWidth="60.0" text="%Icon" />
+                                                        <TableColumn fx:id="titleColumn" prefWidth="150.0" text="%Title" />
+                                                        <TableColumn fx:id="addressColumn" prefWidth="600.0" text="%Address" />
+                                                    </columns>
+                                                </TableView>
+                                                <HBox fx:id="paginationBox" nodeOrientation="LEFT_TO_RIGHT">
+                                                    <children>
+                                                        <fx:include fx:id="pages" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" source="ControlPagination.fxml" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </items>
+                        </SplitPane>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets />
+                    </BorderPane.margin>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+            </center>
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
-        </VBox>
-    </center>
-    <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-    </padding>
-</BorderPane>
-   </content>
+        </BorderPane>
+    </content>
 </ScrollPane>

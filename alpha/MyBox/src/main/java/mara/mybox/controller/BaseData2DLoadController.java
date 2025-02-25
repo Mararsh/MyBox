@@ -184,7 +184,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             if (readSize) {
                 loadPage(0);
             } else {
-                loadPage(currentPage);
+                loadPage(pagination.currentPage);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -500,7 +500,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     @FXML
-    public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
+    public void renameAction(BaseTablePages2Controller parent, int index, Data2DDefinition targetData) {
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
                 message("NewName"), targetData.getDataName() + "m");
         if (newName == null || newName.isBlank()) {

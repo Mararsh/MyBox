@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data.Pagination;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -27,9 +28,10 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
     protected String tableName, idColumnName, queryConditions, orderColumns, queryConditionsString;
     protected int editingIndex, viewingIndex;
     protected boolean dataSizeLoaded, loadInBackground;
+    protected Pagination pagination;
 
     @FXML
-    protected ControlPages pagesController;
+    protected ControlPagination pagesController;
 
     public BaseTablePages2Controller() {
         tableName = "";
@@ -42,6 +44,7 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
 
             editingIndex = viewingIndex = -1;
             dataSizeLoaded = false;
+            pagination = new Pagination();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -53,7 +56,9 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
         try {
             super.initControls();
 
-            pagesController.setParameters(this);
+            if (pagesController != null) {
+                pagesController.setParameters(this, pagination);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -66,9 +71,14 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
     @Override
     public void updateStatus() {
         super.updateStatus();
-        pagesController.endRowOfCurrentPage = pagesController.startRowOfCurrentPage
-                + (tableData == null ? 0 : tableData.size());
-        pagesController.updateLabels();
+        updatePagination();
+    }
+
+    public void updatePagination() {
+        pagination.updatePageEnd(tableData == null ? 0 : tableData.size());
+        if (pagesController != null) {
+            pagesController.updateLabels();
+        }
     }
 
     public boolean checkBeforeLoadingTableData() {
@@ -76,7 +86,7 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
     }
 
     public void loadTableData() {
-        loadPage(pagesController.currentPage);
+        loadPage(pagination.currentPage);
     }
 
     public void loadPage(long page) {
@@ -88,37 +98,17 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
         }
         task = new FxSingletonTask<Void>(this) {
             private List<P> data;
-            private long dataSize, totalSize, pagesNumber, currentPage,
-                    startRowOfCurrentPage, endRowOfCurrentPage;
-            private final int pageSize = pagesController.pageSize;
 
             @Override
             protected boolean handle() {
+                pagination.reset();
                 try (Connection conn = DerbyBase.getConnection()) {
-                    dataSize = readDataSize(this, conn);
-                    totalSize = dataSize < 0 ? 0 : dataSize;
-                    if (dataSize < 0 || dataSize <= pageSize) {
-                        pagesNumber = 1;
-                    } else {
-                        pagesNumber = dataSize / pageSize;
-                        if (dataSize % pageSize > 0) {
-                            pagesNumber++;
-                        }
-                    }
-                    if (page >= pagesNumber) {
-                        currentPage = pagesNumber - 1;
-                    } else {
-                        currentPage = page;
-                    }
-                    if (currentPage < 0) {
-                        currentPage = 0;
-                    }
-                    startRowOfCurrentPage = pageSize * currentPage;
+                    pagination.goPage(readDataSize(this, conn), page);
                     if (task == null || !isWorking()) {
                         return false;
                     }
                     data = readPageData(this, conn);
-                    endRowOfCurrentPage = startRowOfCurrentPage + data.size();
+                    pagination.updatePageEnd(data.size());
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -128,12 +118,6 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
 
             @Override
             protected void whenSucceeded() {
-                pagesController.totalSize = totalSize;
-                pagesController.currentPage = currentPage;
-                pagesController.pagesNumber = pagesNumber;
-                pagesController.startRowOfCurrentPage = startRowOfCurrentPage;
-                pagesController.endRowOfCurrentPage = endRowOfCurrentPage;
-                pagesController.selectedRows = 0;
             }
 
             @Override
@@ -188,7 +172,7 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
-        pagesController.reset();
+        pagination.reset();
         dataSizeLoaded = true;
         tableChanged(changed);
         editNull();
@@ -515,17 +499,14 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
     @FXML
     @Override
     public void refreshAction() {
-        loadPage(pagesController.currentPage);
+        loadPage(pagination.currentPage);
     }
 
     @Override
     protected List<MenuItem> moreContextMenu() {
-        if (!pagesController.isVisible()) {
-            return null;
-        }
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
-        if (pagesController.currentPage < pagesController.pagesNumber) {
+        if (pagination.currentPage < pagination.pagesNumber) {
             menu = new MenuItem(message("NextPage") + "  ALT+PAGE_DOWN",
                     StyleTools.getIconImageView("iconNext.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -534,7 +515,7 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
             items.add(menu);
         }
 
-        if (pagesController.currentPage > 1) {
+        if (pagination.currentPage > 1) {
             menu = new MenuItem(message("PreviousPage") + "  ALT+PAGE_UP",
                     StyleTools.getIconImageView("iconPrevious.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -561,15 +542,24 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
         }
     }
 
+    @FXML
+    public void goPage() {
+        goPage(pagination.currentPage);
+    }
+
     @Override
-    public void goPage(int pageNumber) {
+    public void goPage(long pageNumber) {
         if (isSettingValues) {
+            return;
         }
         loadPage(pageNumber);
     }
 
     protected void setPagination() {
         try {
+            if (pagesController == null) {
+                return;
+            }
             if (!dataSizeLoaded) {
                 pagesController.hide();
                 return;
@@ -585,25 +575,73 @@ public abstract class BaseTablePages2Controller<P> extends BaseTableViewControll
     @FXML
     @Override
     public void pageNextAction() {
-        loadPage(pagesController.currentPage + 1);
+        if (pagination.currentPage == pagination.pagesNumber - 1) {
+            return;
+        }
+        loadPage(pagination.currentPage + 1);
     }
 
     @FXML
     @Override
     public void pagePreviousAction() {
-        loadPage(pagesController.currentPage - 1);
+        if (pagination.currentPage == 0) {
+            return;
+        }
+        loadPage(pagination.currentPage - 1);
     }
 
     @FXML
     @Override
     public void pageFirstAction() {
+        if (pagination.currentPage == 0) {
+            return;
+        }
         loadPage(0);
     }
 
     @FXML
     @Override
     public void pageLastAction() {
+        if (pagination.currentPage == pagination.pagesNumber - 1) {
+            return;
+        }
         loadPage(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public boolean altPageUp() {
+        if (pagesController != null) {
+            pagePreviousAction();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean altPageDown() {
+        if (pagesController != null) {
+            pageNextAction();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean altHome() {
+        if (pagesController != null) {
+            pageFirstAction();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean altEnd() {
+        if (pagesController != null) {
+            pageLastAction();
+            return true;
+        }
+        return false;
     }
 
 }

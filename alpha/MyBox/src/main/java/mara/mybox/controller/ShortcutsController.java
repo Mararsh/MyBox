@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public class ShortcutsController extends BaseTablePagesController<ShortCut> {
+public class ShortcutsController extends BaseTablePages2Controller<ShortCut> {
 
     @FXML
     protected TableColumn<ShortCut, String> keyColumn, actionColumn, altColumn;

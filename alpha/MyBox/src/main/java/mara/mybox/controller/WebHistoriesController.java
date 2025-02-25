@@ -91,6 +91,8 @@ public class WebHistoriesController extends BaseSysTable2Controller<WebHistory> 
                 }
             });
 
+            pagesController.setRightOrientation();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -122,7 +124,7 @@ public class WebHistoriesController extends BaseSysTable2Controller<WebHistory> 
         queryConditions = null;
         queryConditionsString = null;
         tableData.clear();
-        pagesController.startRowOfCurrentPage = 0;
+        pagination.startRowOfCurrentPage = 0;
     }
 
     /*

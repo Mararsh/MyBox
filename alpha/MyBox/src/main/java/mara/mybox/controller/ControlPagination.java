@@ -6,12 +6,14 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data.Pagination;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -23,55 +25,50 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2025-2-24
  * @License Apache License Version 2.0
  */
-public class ControlPages extends BaseController {
+public class ControlPagination extends BaseController {
 
-    protected long totalSize, currentPage, pagesNumber,
-            startRowOfCurrentPage, endRowOfCurrentPage; // 0-based
-    protected int pageSize, selectedRows;
+    protected Pagination pagination;
 
     @FXML
     protected Button pagesButton;
     @FXML
-    protected Label sizeLabel, pageLabel, selectedLabel;
+    protected Label label;
     @FXML
     protected FlowPane flowPane;
 
-    public void setParameters(BaseController parent) {
+    public void setParameters(BaseController parent, Pagination pagi) {
         try {
             parentController = parent;
             baseName = parentController.baseName + "_Pages";
 
-            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
+            int pageSize = UserConfig.getInt(baseName + "PageSize", 50);
             if (pageSize < 1) {
                 pageSize = 50;
             }
-            reset();
+            pagination = pagi != null ? pagi : new Pagination();
+            pagination.initSize(pageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void reset() {
-        totalSize = 0;
-        startRowOfCurrentPage = 0;
-        endRowOfCurrentPage = 0;
-        currentPage = 1;
-        pagesNumber = 1;
-        selectedRows = 0;
-    }
-
     public void updateLabels() {
         try {
-            long start = startRowOfCurrentPage + 1;
-            long end = endRowOfCurrentPage + 1;
-            sizeLabel.setText(message("Rows") + ": "
-                    + "[" + start + "-" + end + "]"
-                    + (end - start + 1)
-                    + (totalSize > 0 ? "/" + totalSize : ""));
-            pageLabel.setText(pageSize <= 0 ? ""
-                    : (message("Page") + ":" + currentPage + "/" + pagesNumber));
-            selectedLabel.setText(selectedRows <= 0 ? ""
-                    : (message("Selected") + ":" + selectedRows));
+            long start = pagination.startRowOfCurrentPage + 1;
+            long end = pagination.endRowOfCurrentPage + 1;
+            String s = message("Rows") + ": " + "[" + start + "-" + end + "]"
+                    + (end - start + 1);
+            if (pagination.totalSize > 0) {
+                s += "/" + pagination.totalSize;
+            }
+            if (pagination.pageSize > 0) {
+                s += "   " + message("Page") + ":" + (pagination.currentPage + 1)
+                        + "/" + pagination.pagesNumber;
+            }
+            if (pagination.selectedRows > 0) {
+                s += "   " + message("Selected") + ":" + pagination.selectedRows;
+            }
+            label.setText(s);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -79,13 +76,11 @@ public class ControlPages extends BaseController {
     }
 
     public void setRightOrientation() {
-        try {
-            flowPane.getChildren().clear();
-            flowPane.getChildren().addAll(sizeLabel, selectedLabel, pageLabel, pagesButton);
-            refreshStyle(flowPane);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        flowPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+    }
+
+    public void setVisible(boolean show) {
+        thisPane.setVisible(show);
     }
 
     public void hide() {
@@ -114,8 +109,8 @@ public class ControlPages extends BaseController {
 
         MenuItem menu;
 
-        if (pagesNumber > 1) {
-            if (currentPage < pagesNumber) {
+        if (pagination.pagesNumber > 1) {
+            if (pagination.currentPage < pagination.pagesNumber - 1) {
                 menu = new MenuItem(message("NextPage") + "  ALT+PAGE_DOWN",
                         StyleTools.getIconImageView("iconNext.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -124,7 +119,7 @@ public class ControlPages extends BaseController {
                 items.add(menu);
             }
 
-            if (currentPage > 1) {
+            if (pagination.currentPage > 0) {
                 menu = new MenuItem(message("PreviousPage") + "  ALT+PAGE_UP",
                         StyleTools.getIconImageView("iconPrevious.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -133,7 +128,7 @@ public class ControlPages extends BaseController {
                 items.add(menu);
             }
 
-            if (currentPage > 1) {
+            if (pagination.currentPage > 0) {
                 menu = new MenuItem(message("FirstPage") + "  ALT+HOME",
                         StyleTools.getIconImageView("iconFirst.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -142,7 +137,7 @@ public class ControlPages extends BaseController {
                 items.add(menu);
             }
 
-            if (currentPage < pagesNumber) {
+            if (pagination.currentPage < pagination.pagesNumber - 1) {
                 menu = new MenuItem(message("LastPage") + "  ALT+END",
                         StyleTools.getIconImageView("iconLast.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -154,13 +149,13 @@ public class ControlPages extends BaseController {
             menu = new MenuItem(message("PageTo") + "...");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 String value = PopTools.askValue(parentController.getTitle(),
-                        null, message("PageTo"), currentPage + "");
+                        null, message("PageTo"), pagination.currentPage + "");
                 if (value == null || value.isBlank()) {
                     return;
                 }
                 try {
                     int v = Integer.parseInt(value) - 1;
-                    if (v == currentPage) {
+                    if (v == pagination.currentPage) {
                         return;
                     }
                     parentController.goPage(v);
@@ -174,17 +169,17 @@ public class ControlPages extends BaseController {
         menu = new MenuItem(message("PageSize") + "...");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             String value = PopTools.askValue(parentController.getTitle(),
-                    null, message("PageSize"), pageSize + "");
+                    null, message("PageSize"), pagination.pageSize + "");
             if (value == null || value.isBlank()) {
                 return;
             }
             try {
                 int v = Integer.parseInt(value);
-                if (v == pageSize || v <= 0) {
+                if (v == pagination.pageSize || v <= 0) {
                     return;
                 }
-                pageSize = v;
-                UserConfig.setInt(baseName + "PageSize", pageSize);
+                pagination.pageSize = v;
+                UserConfig.setInt(baseName + "PageSize", pagination.pageSize);
                 parentController.pageSize(v);
             } catch (Exception e) {
                 popError(e.toString());
@@ -200,12 +195,13 @@ public class ControlPages extends BaseController {
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "PopWhenMouseHovering", true));
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
+                StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "MenuPopWhenMouseHovering", true));
         popItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "PopWhenMouseHovering", popItem.isSelected());
+                UserConfig.setBoolean(baseName + "MenuPopWhenMouseHovering", popItem.isSelected());
             }
         });
         items.add(popItem);
@@ -213,63 +209,40 @@ public class ControlPages extends BaseController {
         popNodeMenu(pagesButton, items);
     }
 
-    /*
-        get/set
-     */
-    public long getTotalSize() {
-        return totalSize;
+    @Override
+    public boolean altPageUp() {
+        if (parentController != null) {
+            parentController.pagePreviousAction();
+            return true;
+        }
+        return false;
     }
 
-    public void setTotalSize(long totalSize) {
-        this.totalSize = totalSize;
+    @Override
+    public boolean altPageDown() {
+        if (parentController != null) {
+            parentController.pageNextAction();
+            return true;
+        }
+        return false;
     }
 
-    public long getCurrentPage() {
-        return currentPage;
+    @Override
+    public boolean altHome() {
+        if (parentController != null) {
+            parentController.pageFirstAction();
+            return true;
+        }
+        return false;
     }
 
-    public void setCurrentPage(long currentPage) {
-        this.currentPage = currentPage;
-    }
-
-    public long getPagesNumber() {
-        return pagesNumber;
-    }
-
-    public void setPagesNumber(long pagesNumber) {
-        this.pagesNumber = pagesNumber;
-    }
-
-    public long getStartRowOfCurrentPage() {
-        return startRowOfCurrentPage;
-    }
-
-    public void setStartRowOfCurrentPage(long startRowOfCurrentPage) {
-        this.startRowOfCurrentPage = startRowOfCurrentPage;
-    }
-
-    public long getEndRowOfCurrentPage() {
-        return endRowOfCurrentPage;
-    }
-
-    public void setEndRowOfCurrentPage(long endRowOfCurrentPage) {
-        this.endRowOfCurrentPage = endRowOfCurrentPage;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public int getSelectedRows() {
-        return selectedRows;
-    }
-
-    public void setSelectedRows(int selectedRows) {
-        this.selectedRows = selectedRows;
+    @Override
+    public boolean altEnd() {
+        if (parentController != null) {
+            parentController.pageLastAction();
+            return true;
+        }
+        return false;
     }
 
 }

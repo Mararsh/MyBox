@@ -314,7 +314,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     || data2D.isTmpData() || !data2D.isTableChanged());
             saveButton.setDisable(invalidData || !dataSizeLoaded);
             dataDefinitionButton.setDisable(invalidData);
-            paginationPane.setVisible(dataSizeLoaded);
+            pagesController.setVisible(dataSizeLoaded);
             if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
                 if (!toolbar.getChildren().contains(fileMenuButton)) {
                     toolbar.getChildren().add(0, fileMenuButton);
@@ -740,8 +740,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     }
                     data2D.startTask(this, null);
 
-                    dataSize = data2D.savePageData(this);
-                    return dataSize >= 0;
+                    pagination.totalSize = data2D.savePageData(this);
+                    return pagination.totalSize >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

@@ -322,7 +322,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void addRowsAction() {
-        TableAddRowsController.open(this);
+//        TableAddRowsController.open(this);
     }
 
     @FXML

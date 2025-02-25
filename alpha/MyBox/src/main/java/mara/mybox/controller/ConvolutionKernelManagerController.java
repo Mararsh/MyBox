@@ -26,17 +26,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.Languages;
@@ -48,7 +48,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ConvolutionKernelManagerController extends BaseTablePagesController<ConvolutionKernel> {
+public class ConvolutionKernelManagerController extends BaseTablePages2Controller<ConvolutionKernel> {
 
     private int width, height, type, edge_Op;
     private boolean matrixValid;

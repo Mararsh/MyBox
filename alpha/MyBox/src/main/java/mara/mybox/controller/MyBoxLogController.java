@@ -41,7 +41,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-2-3
  * @License Apache License Version 2.0
  */
-public class MyBoxLogController extends BaseSysTableController<MyBoxLog> {
+public class MyBoxLogController extends BaseSysTable2Controller<MyBoxLog> {
 
     @FXML
     protected TableColumn<MyBoxLog, String> typeColumn, logColumn, fileColumn,

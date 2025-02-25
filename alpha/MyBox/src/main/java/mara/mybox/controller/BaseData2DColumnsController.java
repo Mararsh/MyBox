@@ -35,13 +35,13 @@ import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
 import mara.mybox.fxml.cell.TableDataColumnCell;
 import mara.mybox.fxml.cell.TableTextAreaEditCell;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
@@ -55,7 +55,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-16
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DColumnsController extends BaseTablePagesController<Data2DColumn> {
+public abstract class BaseData2DColumnsController extends BaseTablePages2Controller<Data2DColumn> {
 
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
