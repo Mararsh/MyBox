@@ -9,22 +9,47 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class Pagination {
 
-    public long totalSize, currentPage, pagesNumber,
-            startRowOfCurrentPage, endRowOfCurrentPage; // 0-based
-    public int pageSize, selectedRows;
+    // 0-based, exclude end
+    public long currentPage, pagesNumber,
+            rowsNumber, startRowOfCurrentPage, endRowOfCurrentPage,
+            objectsNumber, startObjectOfCurrentPage, endObjectOfCurrentPage;
+    public int pageSize, defaultPageSize;
+    public String selection;
+    public ObjectType objectType;
+
+    public enum ObjectType {
+        Table, Text, Bytes
+    }
 
     public Pagination() {
-        pageSize = 50;
+        init(ObjectType.Table);
+    }
+
+    public Pagination(ObjectType type) {
+        init(type);
+    }
+
+    public final void init(ObjectType type) {
+        objectType = type != null ? type : ObjectType.Table;
+        switch (objectType) {
+            case Table:
+                defaultPageSize = 50;
+                break;
+            case Bytes:
+                defaultPageSize = 100000;
+                break;
+            case Text:
+                defaultPageSize = 200;
+                break;
+        }
+        pageSize = defaultPageSize;
         reset();
     }
 
-    public Pagination initSize(int pagesize) {
+    public Pagination init(ObjectType type, int size) {
         try {
-            pageSize = pagesize;
-            if (pageSize < 1) {
-                pageSize = 50;
-            }
-            reset();
+            init(type);
+            pageSize = size > 0 ? size : defaultPageSize;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -32,21 +57,23 @@ public class Pagination {
     }
 
     public final void reset() {
-        totalSize = 0;
-        startRowOfCurrentPage = 0;
-        endRowOfCurrentPage = 0;
+        rowsNumber = 0;
         currentPage = 0;
         pagesNumber = 1;
-        selectedRows = 0;
+        selection = null;
+        startRowOfCurrentPage = 0;
+        endRowOfCurrentPage = 0;
+        startObjectOfCurrentPage = 0;
+        endObjectOfCurrentPage = 0;
     }
 
     public void goPage(long dataSize, long page) {
-        totalSize = dataSize < 0 ? 0 : dataSize;
-        if (totalSize < 0 || totalSize <= pageSize) {
+        rowsNumber = dataSize < 0 ? 0 : dataSize;
+        if (rowsNumber < 0 || rowsNumber <= pageSize) {
             pagesNumber = 1;
         } else {
-            pagesNumber = totalSize / pageSize;
-            if (totalSize % pageSize > 0) {
+            pagesNumber = rowsNumber / pageSize;
+            if (rowsNumber % pageSize > 0) {
                 pagesNumber++;
             }
         }
@@ -62,29 +89,40 @@ public class Pagination {
     }
 
     public void updatePageEnd(long tableSize) {
-        endRowOfCurrentPage = startRowOfCurrentPage + tableSize - 1;
+        endRowOfCurrentPage = startRowOfCurrentPage + tableSize;
     }
 
     public String info() {
-        String s = "totalSize:" + totalSize + "\n"
+        String s = "rowsNumber:" + rowsNumber + "\n"
                 + "pageSize:" + pageSize + "\n"
                 + "startRowOfCurrentPage:" + startRowOfCurrentPage + "\n"
                 + "endRowOfCurrentPage:" + endRowOfCurrentPage + "\n"
                 + "currentPage:" + currentPage + "\n"
                 + "pagesNumber:" + pagesNumber + "\n"
-                + "selectedRows:" + selectedRows;
+                + "startObjectOfCurrentPage:" + startObjectOfCurrentPage + "\n"
+                + "endObjectOfCurrentPage:" + endObjectOfCurrentPage + "\n"
+                + "selection:" + selection;
         return s;
     }
 
     /*
         get/set
      */
-    public long getTotalSize() {
-        return totalSize;
+    public long getRowsNumber() {
+        return rowsNumber;
     }
 
-    public Pagination setTotalSize(long totalSize) {
-        this.totalSize = totalSize;
+    public Pagination setRowsNumber(long rowsNumber) {
+        this.rowsNumber = rowsNumber;
+        return this;
+    }
+
+    public long getObjectsNumber() {
+        return objectsNumber;
+    }
+
+    public Pagination setObjectsNumber(long objectsNumber) {
+        this.objectsNumber = objectsNumber;
         return this;
     }
 
@@ -133,12 +171,30 @@ public class Pagination {
         return this;
     }
 
-    public int getSelectedRows() {
-        return selectedRows;
+    public String getSelection() {
+        return selection;
     }
 
-    public Pagination setSelectedRows(int selectedRows) {
-        this.selectedRows = selectedRows;
+    public Pagination setSelection(String selection) {
+        this.selection = selection;
+        return this;
+    }
+
+    public long getStartObjectOfCurrentPage() {
+        return startObjectOfCurrentPage;
+    }
+
+    public Pagination setStartObjectOfCurrentPage(long startObjectOfCurrentPage) {
+        this.startObjectOfCurrentPage = startObjectOfCurrentPage;
+        return this;
+    }
+
+    public long getEndObjectOfCurrentPage() {
+        return endObjectOfCurrentPage;
+    }
+
+    public Pagination setEndObjectOfCurrentPage(long endObjectOfCurrentPage) {
+        this.endObjectOfCurrentPage = endObjectOfCurrentPage;
         return this;
     }
 

@@ -38,7 +38,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-3-15
  * @License Apache License Version 2.0
  */
-public class ControlRemoteConnection extends BaseSysTable2Controller<PathConnection> {
+public class ControlRemoteConnection extends BaseSysTableController<PathConnection> {
 
     protected BaseTaskController taskController;
     protected Session sshSession;

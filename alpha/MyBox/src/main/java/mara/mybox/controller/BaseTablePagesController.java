@@ -2,28 +2,21 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.IndexRange;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
+import mara.mybox.data.Pagination;
+import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @param <P> Data
@@ -34,17 +27,8 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseTablePagesController<P> extends BaseTableViewController<P> {
 
     protected String tableName, idColumnName, queryConditions, orderColumns, queryConditionsString;
-    protected int pageSize, editingIndex, viewingIndex;
-    protected long pagesNumber, dataSize;
-    protected long currentPage, startRowOfCurrentPage;  // 0-based
+    protected int editingIndex, viewingIndex;
     protected boolean dataSizeLoaded, loadInBackground;
-
-    @FXML
-    protected Label pageLabel;
-    @FXML
-    protected FlowPane paginationPane;
-    @FXML
-    protected ComboBox<String> pageSizeSelector, pageSelector;
 
     public BaseTablePagesController() {
         tableName = "";
@@ -55,11 +39,10 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         try {
             super.initValues();
 
-            pagesNumber = 1;
-            currentPage = startRowOfCurrentPage = 0;
-            dataSize = 0;
             editingIndex = viewingIndex = -1;
             dataSizeLoaded = false;
+            pagination = new Pagination();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -70,13 +53,14 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         try {
             super.initControls();
 
-            initPagination();
+            if (paginationController != null) {
+                paginationController.setParameters(this, pagination, ObjectType.Table);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
 
     /*
         table
@@ -84,19 +68,14 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @Override
     public void updateStatus() {
         super.updateStatus();
-        setDataSizeLabel();
+        updatePagination();
     }
 
-    public void setDataSizeLabel() {
-        if (dataSizeLabel == null) {
-            return;
+    public void updatePagination() {
+        pagination.updatePageEnd(tableData == null ? 0 : tableData.size());
+        if (paginationController != null) {
+            paginationController.updateStatus();
         }
-        int tsize = tableData == null ? 0 : tableData.size();
-        long start = startRowOfCurrentPage + 1;
-        long end = start + tsize - 1;
-        dataSizeLabel.setText(message("Rows") + ": "
-                + "[" + start + "-" + end + "]" + tsize
-                + (dataSize > 0 ? "/" + dataSize : ""));
     }
 
     public boolean checkBeforeLoadingTableData() {
@@ -104,11 +83,12 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     public void loadTableData() {
-        loadPage(currentPage);
+        loadPage(pagination.currentPage);
     }
 
+    @Override
     public void loadPage(long page) {
-        if (!checkBeforeLoadingTableData()) {
+        if (isSettingValues || !checkBeforeLoadingTableData()) {
             return;
         }
         if (task != null) {
@@ -119,12 +99,14 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
             @Override
             protected boolean handle() {
+                pagination.reset();
                 try (Connection conn = DerbyBase.getConnection()) {
-                    countPagination(this, conn, page);
+                    pagination.goPage(readDataSize(this, conn), page);
                     if (task == null || !isWorking()) {
                         return false;
                     }
                     data = readPageData(this, conn);
+                    pagination.updatePageEnd(data.size());
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -155,23 +137,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         } else {
             start(task, true, message("LoadingTableData"));
         }
-    }
-
-    protected void countPagination(FxTask currentTask, Connection conn, long page) {
-        dataSize = readDataSize(currentTask, conn);
-        if (dataSize < 0 || dataSize <= pageSize) {
-            pagesNumber = 1;
-        } else {
-            pagesNumber = dataSize % pageSize == 0 ? dataSize / pageSize : dataSize / pageSize + 1;
-        }
-        currentPage = page;
-        if (currentPage >= pagesNumber) {
-            currentPage = pagesNumber - 1;
-        }
-        if (currentPage < 0) {
-            currentPage = 0;
-        }
-        startRowOfCurrentPage = pageSize * currentPage;
     }
 
     public void postLoadedTableData() {
@@ -205,9 +170,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
-        pagesNumber = 1;
-        dataSize = 0;
-        startRowOfCurrentPage = 0;
+        paginationController.reset();
         dataSizeLoaded = true;
         tableChanged(changed);
         editNull();
@@ -322,7 +285,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void addRowsAction() {
-//        TableAddRowsController.open(this);
+        TableAddRowsController.open(this);
     }
 
     @FXML
@@ -534,31 +497,31 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void refreshAction() {
-        loadPage(currentPage);
+        loadPage(pagination.currentPage);
     }
 
     @Override
     protected List<MenuItem> moreContextMenu() {
-        if (paginationPane == null || !paginationPane.isVisible()) {
-            return null;
-        }
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
-        if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
-            menu = new MenuItem(message("NextPage"), StyleTools.getIconImageView("iconNext.png"));
+        if (pagination.currentPage < pagination.pagesNumber) {
+            menu = new MenuItem(message("NextPage") + "  ALT+PAGE_DOWN",
+                    StyleTools.getIconImageView("iconNext.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 pageNextAction();
             });
             items.add(menu);
         }
 
-        if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
-            menu = new MenuItem(message("PreviousPage"), StyleTools.getIconImageView("iconPrevious.png"));
+        if (pagination.currentPage > 1) {
+            menu = new MenuItem(message("PreviousPage") + "  ALT+PAGE_UP",
+                    StyleTools.getIconImageView("iconPrevious.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 pagePreviousAction();
             });
             items.add(menu);
         }
+
         if (items.isEmpty()) {
             return null;
         }
@@ -570,152 +533,21 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     /*
         pagination
      */
-    protected void initPagination() {
-        try {
-            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
-            if (pageSize < 1) {
-                pageSize = 50;
-            }
-            if (pageSelector == null) {
-                return;
-            }
-            pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> o, String ov, String nv) {
-                    checkPageSelector();
-                }
-            });
-
-            pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
-                    "500", "1000", "2000", "5000", "10000", "20000", "50000"));
-            pageSizeSelector.setValue(pageSize + "");
-            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> o, String ov, String nv) {
-                    try {
-                        int v = Integer.parseInt(nv.trim());
-                        if (v <= 0) {
-                            pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                        } else {
-                            pageSizeChanged(v);
-                        }
-                    } catch (Exception e) {
-                        pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void pageSizeChanged(int v) {
-        if (v <= 0) {
-            return;
-        }
-        pageSize = v;
-        UserConfig.setInt(baseName + "PageSize", pageSize);
-        pageSizeSelector.getEditor().setStyle(null);
-        if (!isSettingValues) {
-            loadTableData();
-        }
-    }
-
-    protected boolean checkPageSelector() {
-        if (isSettingValues || pageSelector == null) {
-            return false;
-        }
-        try {
-            String value = pageSelector.getEditor().getText();
-            int v = Integer.parseInt(value);
-            if (v <= 0) {
-                pageSelector.getEditor().setStyle(UserConfig.badStyle());
-                return false;
-            } else {
-                pageSelector.getEditor().setStyle(null);
-                loadPage(v - 1);
-                return true;
-            }
-        } catch (Exception e) {
-            pageSelector.getEditor().setStyle(UserConfig.badStyle());
-            return false;
-        }
-    }
-
     protected void setPagination() {
         try {
-            if (paginationPane != null) {
-                if (!dataSizeLoaded) {
-                    paginationPane.setVisible(false);
-                    return;
-                }
-                paginationPane.setVisible(true);
-            }
-            if (pageSelector == null) {
+            if (paginationController == null) {
                 return;
             }
-            isSettingValues = true;
-            pageSelector.setDisable(false);
-            IndexRange range = NumberTools.scrollRange(UserConfig.selectorScrollSize(),
-                    (int) pagesNumber, (int) currentPage);
-            List<String> pages = new ArrayList<>();
-            for (long i = range.getStart(); i < range.getEnd(); i++) {
-                pages.add((i + 1) + "");
+            if (!dataSizeLoaded) {
+                paginationController.hide();
+                return;
             }
-            pageSelector.getItems().clear();
-            pageSelector.getItems().addAll(pages);
-            pageSelector.getSelectionModel().select((currentPage + 1) + "");
-            pageLabel.setText("/" + pagesNumber);
-            if (currentPage > 0) {
-                pagePreviousButton.setDisable(false);
-                pageFirstButton.setDisable(false);
-            } else {
-                pagePreviousButton.setDisable(true);
-                pageFirstButton.setDisable(true);
-            }
-            if (currentPage >= pagesNumber - 1) {
-                pageNextButton.setDisable(true);
-                pageLastButton.setDisable(true);
-            } else {
-                pageNextButton.setDisable(false);
-                pageLastButton.setDisable(false);
-            }
-            pageSelector.getEditor().setStyle(null);
-            isSettingValues = false;
+            paginationController.show();
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
 
-    }
-
-    @FXML
-    public void goPage() {
-        checkPageSelector();
-    }
-
-    @FXML
-    @Override
-    public void pageNextAction() {
-        loadPage(currentPage + 1);
-    }
-
-    @FXML
-    @Override
-    public void pagePreviousAction() {
-        loadPage(currentPage - 1);
-    }
-
-    @FXML
-    @Override
-    public void pageFirstAction() {
-        loadPage(0);
-    }
-
-    @FXML
-    @Override
-    public void pageLastAction() {
-        loadPage(Integer.MAX_VALUE);
     }
 
 }

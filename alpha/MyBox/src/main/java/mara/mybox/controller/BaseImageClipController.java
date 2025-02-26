@@ -32,7 +32,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-6-5
  * @License Apache License Version 2.0
  */
-public class BaseImageClipController extends BaseSysTable2Controller<ImageClipboard> {
+public class BaseImageClipController extends BaseSysTableController<ImageClipboard> {
 
     protected Image lastSystemClip;
     protected int thumbWidth = AppVariables.thumbnailWidth;

@@ -21,7 +21,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-12-18
  * @License Apache License Version 2.0
  */
-public abstract class BaseSysTable2Controller<P> extends BaseTablePages2Controller<P> {
+public abstract class BaseSysTableController<P> extends BaseTablePagesController<P> {
 
     protected BaseTable tableDefinition;
 
@@ -31,7 +31,7 @@ public abstract class BaseSysTable2Controller<P> extends BaseTablePages2Controll
     @FXML
     protected Label queryConditionsLabel;
 
-    public BaseSysTable2Controller() {
+    public BaseSysTableController() {
         tableName = "";
         TipsLabelKey = "TableTips";
     }

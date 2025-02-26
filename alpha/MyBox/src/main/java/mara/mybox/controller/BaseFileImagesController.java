@@ -442,6 +442,7 @@ public abstract class BaseFileImagesController extends BaseFileController {
     }
 
     @FXML
+    @Override
     public void goPage() {
         checkCurrentPage();
     }

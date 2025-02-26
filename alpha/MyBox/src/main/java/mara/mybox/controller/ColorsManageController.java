@@ -58,7 +58,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-1-7
  * @License Apache License Version 2.0
  */
-public class ColorsManageController extends BaseSysTable2Controller<ColorData> {
+public class ColorsManageController extends BaseSysTableController<ColorData> {
 
     protected TableColorPaletteName tableColorPaletteName;
     protected TableColorPalette tableColorPalette;
@@ -160,7 +160,7 @@ public class ColorsManageController extends BaseSysTable2Controller<ColorData> {
                 }
             });
 
-            pagesController.setRightOrientation();
+            paginationController.setRightOrientation();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

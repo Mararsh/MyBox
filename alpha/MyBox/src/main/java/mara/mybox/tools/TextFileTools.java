@@ -77,7 +77,7 @@ public class TextFileTools {
             if (file == null || !file.exists()) {
                 return Charset.forName("utf-8");
             }
-            TextEditInformation info = new TextEditInformation(file);
+            TextEditInformation info = new TextEditInformation(file, null);
             if (TextTools.checkCharset(info)) {
                 return info.getCharset();
             } else {

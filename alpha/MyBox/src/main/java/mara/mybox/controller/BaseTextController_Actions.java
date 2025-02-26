@@ -2,12 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.input.Clipboard;
@@ -21,7 +16,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
@@ -35,48 +29,12 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseTextController_Actions extends BaseTextController_File {
 
-    protected void initPageBar() {
-        try {
-            List<String> values = new ArrayList();
-            if (editType == FileEditInformation.Edit_Type.Bytes) {
-                values.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
-                        "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
-            } else {
-                values.addAll(Arrays.asList("200", "500", "100", "300", "600", "50", "20", "800", "1000", "2000"));
-            }
-            pageSizeSelector.getItems().addAll(values);
-            int pageSize = UserConfig.getInt(baseName + "PageSize", defaultPageSize);
-            if (pageSize <= 0) {
-                pageSize = defaultPageSize;
-            }
-            pageSizeSelector.setValue(StringTools.format(pageSize));
-            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    Platform.runLater(() -> {
-                        setPageSize();
-                    });
-                    Platform.requestNextPulse();
-                }
-            });
-
-            pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkCurrentPage();
-                }
-            });
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @FXML
     @Override
     public void recoverAction() {
         try {
             if (!recoverButton.isDisabled() && sourceInformation.getFile() != null) {
-                loadPage();
+                goPage();
             }
         } catch (Exception e) {
 
@@ -139,10 +97,10 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                 sourceFile = file;
                 sourceInformation.setTotalNumberRead(false);
                 String pageText = mainArea.getText();
-                sourceInformation.setCurrentPageLineStart(0);
-                sourceInformation.setCurrentPageLineEnd(pageLinesNumber(pageText));
-                sourceInformation.setCurrentPageObjectStart(0);
-                sourceInformation.setCurrentPageObjectEnd(pageObjectsNumber(pageText));
+                sourceInformation.setStartRowOfCurrentPage(0);
+                sourceInformation.setEndRowOfCurrentPage(pageLinesNumber(pageText));
+                sourceInformation.setStartObjectOfCurrentPage(0);
+                sourceInformation.setEndObjectOfCurrentPage(pageObjectsNumber(pageText));
                 updateInterface(false);
                 loadTotalNumbers();
             }
@@ -186,10 +144,10 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                 }
                 sourceInformation.setTotalNumberRead(false);
                 String pageText = mainArea.getText();
-                sourceInformation.setCurrentPageLineEnd(
-                        sourceInformation.getCurrentPageLineStart() + pageLinesNumber(pageText));
-                sourceInformation.setCurrentPageObjectEnd(
-                        sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber(pageText));
+                sourceInformation.setEndRowOfCurrentPage(
+                        sourceInformation.getStartRowOfCurrentPage() + pageLinesNumber(pageText));
+                sourceInformation.setEndObjectOfCurrentPage(
+                        sourceInformation.getStartObjectOfCurrentPage() + pageObjectsNumber(pageText));
                 updateInterface(false);
                 loadTotalNumbers();
             }
@@ -205,7 +163,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         if (task != null && !task.isQuit()) {
             return;
         }
-        FileEditInformation targetInformation = FileEditInformation.create(editType, file);
+        FileEditInformation targetInformation = FileEditInformation.create(editType, file, pagination);
         targetInformation.setFile(file);
         targetInformation.setCharset(Charset.forName(UserConfig.getString(baseName + "TargetCharset", "utf-8")));
         targetInformation.setPageSize(sourceInformation.getPageSize());
@@ -287,7 +245,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                     filterInfo = sourceInformation;
                 } else {
                     File tmpfile = TextFileTools.writeFile(FileTmpTools.getTempFile(".txt"), mainArea.getText(), Charset.forName("utf-8"));
-                    filterInfo = FileEditInformation.create(editType, tmpfile);
+                    filterInfo = FileEditInformation.create(editType, tmpfile, null);
                     if (editType != Edit_Type.Bytes) {
                         filterInfo.setLineBreak(TextTools.checkLineBreak(this, tmpfile));
                         filterInfo.setLineBreakValue(TextTools.lineBreakValue(filterInfo.getLineBreak()));

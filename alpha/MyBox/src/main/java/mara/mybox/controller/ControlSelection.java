@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class ControlSelection extends BaseTablePages2Controller<List<String>> {
+public class ControlSelection extends BaseTablePagesController<List<String>> {
 
     @FXML
     protected TableColumn<List<String>, String> nameColumn;

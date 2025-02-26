@@ -31,13 +31,11 @@ public abstract class FileEditInformation extends FileInformation implements Clo
     protected Charset charset;
     protected Line_Break lineBreak;
     protected String lineBreakValue;
-    protected int objectUnit, pageSize, lineBreakWidth;// 1-based
-    protected long objectsNumber, linesNumber, pagesNumber;// 1-based
-    protected long currentPage, currentPageLineStart, currentPageLineEnd,
-            currentPageObjectStart, currentPageObjectEnd; // 0-based, excluded end
+    protected int objectUnit, lineBreakWidth;
     protected String[] filterStrings;
     protected FindReplaceFile findReplace;
     protected StringFilterType filterType;
+    public Pagination pagination;
 
     public enum Edit_Type {
         Text, Bytes, Markdown
@@ -60,12 +58,15 @@ public abstract class FileEditInformation extends FileInformation implements Clo
 
     public FileEditInformation() {
         editType = Edit_Type.Text;
-        initValues();
     }
 
     public FileEditInformation(File file) {
         super(file);
-        initValues();
+    }
+
+    public FileEditInformation(File file, Pagination pagi) {
+        super(file);
+        initValues(pagi);
     }
 
     @Override
@@ -84,15 +85,14 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         }
     }
 
-    protected final void initValues() {
+    protected final void initValues(Pagination pagi) {
         filterType = StringFilterType.IncludeOne;
         withBom = totalNumberRead = charsetDetermined = false;
         charset = defaultCharset();
-        pagesNumber = 1;
-        pageSize = 100000;
-        objectsNumber = linesNumber = 0;
-        currentPage = 0;
-        currentPageLineStart = currentPageLineEnd = currentPageObjectStart = currentPageObjectEnd = 0;
+        pagination = pagi != null ? pagi : new Pagination();
+        pagination.init(editType == Edit_Type.Bytes
+                ? Pagination.ObjectType.Bytes
+                : Pagination.ObjectType.Text);
         findReplace = null;
         switch (System.lineSeparator()) {
             case "\r\n":
@@ -117,14 +117,14 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         return Charset.forName("UTF-8");
     }
 
-    public static FileEditInformation create(Edit_Type type, File file) {
+    public static FileEditInformation create(Edit_Type type, File file, Pagination pagi) {
         switch (type) {
             case Text:
-                return new TextEditInformation(file);
+                return new TextEditInformation(file, pagi);
             case Bytes:
-                return new BytesEditInformation(file);
+                return new BytesEditInformation(file, pagi);
             default:
-                return new TextEditInformation(file);
+                return new TextEditInformation(file, pagi);
         }
     }
 
@@ -200,10 +200,6 @@ public abstract class FileEditInformation extends FileInformation implements Clo
     public abstract String readObjects(FxTask currentTask, long from, long number);
 
     public abstract File filter(FxTask currentTask, boolean recordLineNumbers);
-
-    public String readPage(FxTask currentTask) {
-        return readPage(currentTask, currentPage);
-    }
 
     public String readLine(FxTask currentTask, long line) {
         return readLines(currentTask, line, 1);
@@ -324,6 +320,99 @@ public abstract class FileEditInformation extends FileInformation implements Clo
     }
 
     /*
+        pagination
+     */
+    public long getRowsNumber() {
+        return pagination != null ? pagination.getRowsNumber() : 0;
+    }
+
+    public void setRowsNumber(long v) {
+        if (pagination != null) {
+            pagination.setRowsNumber(v);
+        }
+    }
+
+    public long getObjectsNumber() {
+        return pagination != null ? pagination.getObjectsNumber() : 0;
+    }
+
+    public void setObjectsNumber(long v) {
+        if (pagination != null) {
+            pagination.setObjectsNumber(v);
+        }
+    }
+
+    public long getPagesNumber() {
+        return pagination != null ? pagination.getPagesNumber() : 0;
+    }
+
+    public void setPagesNumber(long v) {
+        if (pagination != null) {
+            pagination.setPagesNumber(v);
+        }
+    }
+
+    public int getPageSize() {
+        return pagination != null ? pagination.getPageSize() : 0;
+    }
+
+    public void setPageSize(int v) {
+        if (pagination != null) {
+            pagination.setPageSize(v);
+        }
+    }
+
+    public long getCurrentPage() {
+        return pagination != null ? pagination.getCurrentPage() : 0;
+    }
+
+    public void setCurrentPage(long v) {
+        if (pagination != null) {
+            pagination.setCurrentPage(v);
+        }
+    }
+
+    public long getStartRowOfCurrentPage() {
+        return pagination != null ? pagination.getStartRowOfCurrentPage() : 0;
+    }
+
+    public void setStartRowOfCurrentPage(long v) {
+        if (pagination != null) {
+            pagination.setStartRowOfCurrentPage(v);
+        }
+    }
+
+    public long getEndRowOfCurrentPage() {
+        return pagination != null ? pagination.getEndRowOfCurrentPage() : 0;
+    }
+
+    public void setEndRowOfCurrentPage(long v) {
+        if (pagination != null) {
+            pagination.setEndRowOfCurrentPage(v);
+        }
+    }
+
+    public long getStartObjectOfCurrentPage() {
+        return pagination != null ? pagination.getStartObjectOfCurrentPage() : 0;
+    }
+
+    public void setStartObjectOfCurrentPage(long v) {
+        if (pagination != null) {
+            pagination.setStartObjectOfCurrentPage(v);
+        }
+    }
+
+    public long getEndObjectOfCurrentPage() {
+        return pagination != null ? pagination.getEndObjectOfCurrentPage() : 0;
+    }
+
+    public void setEndObjectOfCurrentPage(long v) {
+        if (pagination != null) {
+            pagination.setEndObjectOfCurrentPage(v);
+        }
+    }
+
+    /*
         get/set
      */
     public boolean isWithBom() {
@@ -374,46 +463,6 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         this.filterType = filterType;
     }
 
-    public long getObjectsNumber() {
-        return objectsNumber;
-    }
-
-    public void setObjectsNumber(long objectsNumber) {
-        this.objectsNumber = objectsNumber;
-    }
-
-    public long getCurrentPageLineStart() {
-        return currentPageLineStart;
-    }
-
-    public void setCurrentPageLineStart(long currentPageLineStart) {
-        this.currentPageLineStart = currentPageLineStart;
-    }
-
-    public long getCurrentPageLineEnd() {
-        return currentPageLineEnd;
-    }
-
-    public void setCurrentPageLineEnd(long currentPageLineEnd) {
-        this.currentPageLineEnd = currentPageLineEnd;
-    }
-
-    public long getCurrentPageObjectStart() {
-        return currentPageObjectStart;
-    }
-
-    public void setCurrentPageObjectStart(long currentPageObjectStart) {
-        this.currentPageObjectStart = currentPageObjectStart;
-    }
-
-    public long getCurrentPageObjectEnd() {
-        return currentPageObjectEnd;
-    }
-
-    public void setCurrentPageObjectEnd(long currentPageObjectEnd) {
-        this.currentPageObjectEnd = currentPageObjectEnd;
-    }
-
     public int getLineBreakWidth() {
         return lineBreakWidth;
     }
@@ -438,36 +487,12 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         this.totalNumberRead = totalNumberRead;
     }
 
-    public long getLinesNumber() {
-        return linesNumber;
+    public Pagination getPagination() {
+        return pagination;
     }
 
-    public void setLinesNumber(long linesNumber) {
-        this.linesNumber = linesNumber;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public long getPagesNumber() {
-        return pagesNumber;
-    }
-
-    public void setPagesNumber(long pagesNumber) {
-        this.pagesNumber = pagesNumber;
-    }
-
-    public long getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(long currentPage) {
-        this.currentPage = currentPage;
+    public void setPagination(Pagination pagination) {
+        this.pagination = pagination;
     }
 
     public FindReplaceFile getFindReplace() {

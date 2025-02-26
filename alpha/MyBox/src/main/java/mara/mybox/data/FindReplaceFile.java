@@ -56,7 +56,8 @@ public class FindReplaceFile extends FindReplaceString {
     }
 
     public boolean shouldHandleAsString() {
-        return fileInfo.pagesNumber < 2 && inputString != null && !inputString.isEmpty();
+        return fileInfo.pagination.pagesNumber < 2
+                && inputString != null && !inputString.isEmpty();
     }
 
     public boolean handlePage(FxTask currentTask) {
@@ -159,7 +160,7 @@ public class FindReplaceFile extends FindReplaceString {
     }
 
     public boolean isMultiplePages() {
-        return fileInfo != null && fileInfo.pagesNumber > 1;
+        return fileInfo != null && fileInfo.pagination.pagesNumber > 1;
     }
 
     public DataFileCSV initMatchesData(File sourceFile) {

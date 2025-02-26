@@ -74,7 +74,7 @@ License:    Apache License Version 2.0
         </TableView>
       <HBox fx:id="paginationBox" nodeOrientation="LEFT_TO_RIGHT">
          <children>
-            <fx:include fx:id="pages" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" source="ControlPagination.fxml" HBox.hgrow="ALWAYS" />
+            <fx:include fx:id="pagination" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" source="ControlPagination.fxml" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
     </children>

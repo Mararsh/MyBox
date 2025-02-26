@@ -666,7 +666,7 @@ public class FindReplaceTextFile {
         LongRange fileRange = findReplace.getFileRange();
         FileEditInformation fileInfo = findReplace.getFileInfo();
         if (fileRange != null && fileInfo != null) {
-            long pageStart = fileInfo.getCurrentPageObjectStart() * findReplace.getUnit();
+            long pageStart = fileInfo.pagination.startObjectOfCurrentPage * findReplace.getUnit();
             pageRange = new IndexRange((int) (fileRange.getStart() - pageStart), (int) (fileRange.getEnd() - pageStart));
         }
         findReplace.setStringRange(pageRange);
@@ -681,7 +681,7 @@ public class FindReplaceTextFile {
         IndexRange pageRange = findReplace.getStringRange();
         FileEditInformation fileInfo = findReplace.getFileInfo();
         if (pageRange != null && fileInfo != null) {
-            long pageStart = fileInfo.getCurrentPageObjectStart() * findReplace.getUnit();
+            long pageStart = fileInfo.pagination.startObjectOfCurrentPage * findReplace.getUnit();
             fileRange = new LongRange(pageRange.getStart() + pageStart, pageRange.getEnd() + pageStart);
         }
         findReplace.setFileRange(fileRange);

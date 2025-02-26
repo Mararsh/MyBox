@@ -54,7 +54,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-17
  * @License Apache License Version 2.0
  */
-public class BaseData2DTableController extends BaseTablePages2Controller<List<String>> {
+public class BaseData2DTableController extends BaseTablePagesController<List<String>> {
 
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
@@ -222,8 +222,8 @@ public class BaseData2DTableController extends BaseTablePages2Controller<List<St
         }
         pagination.startRowOfCurrentPage = data2D.getStartRowOfCurrentPage();
         pagination.endRowOfCurrentPage = data2D.getEndRowOfCurrentPage();
-        if (pagesController != null) {
-            pagesController.updateLabels();
+        if (paginationController != null) {
+            paginationController.updateStatus();
         }
     }
 
@@ -400,7 +400,7 @@ public class BaseData2DTableController extends BaseTablePages2Controller<List<St
     protected void countPagination(FxTask currentTask, Connection conn, long page) {
         if (data2D.isMatrix()) {
             pagination.pageSize = Integer.MAX_VALUE;
-            pagination.totalSize = data2D.getRowsNumber();
+            pagination.rowsNumber = data2D.getRowsNumber();
             pagination.pagesNumber = 1;
             pagination.currentPage = 0;
             pagination.startRowOfCurrentPage = 0;
@@ -446,8 +446,8 @@ public class BaseData2DTableController extends BaseTablePages2Controller<List<St
         data2D.setRowsNumber(-1);
         dataSizeLoaded = false;
         data2D.setDataLoaded(false);
-        if (pagesController != null) {
-            pagesController.hide();
+        if (paginationController != null) {
+            paginationController.hide();
         }
         if (saveButton != null) {
             saveButton.setDisable(true);
@@ -494,7 +494,7 @@ public class BaseData2DTableController extends BaseTablePages2Controller<List<St
         dataSizeLoaded = true;
         data2D.setDataLoaded(true);
         correctDataSize();
-        if (pagesController != null) {
+        if (paginationController != null) {
             if (paginate) {
                 showPaginationPane(true);
                 countPagination(null, null, pagination.currentPage);
@@ -552,10 +552,10 @@ public class BaseData2DTableController extends BaseTablePages2Controller<List<St
     }
 
     protected void showPaginationPane(boolean show) {
-        if (pagesController == null) {
+        if (paginationController == null) {
             return;
         }
-        pagesController.setVisible(show);
+        paginationController.setVisible(show);
     }
 
     /*

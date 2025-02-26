@@ -4,15 +4,12 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -41,7 +38,7 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
             return;
         }
         initPage(file);
-        bottomLabel.setText(message("CheckingEncoding"));
+        popInformation(message("CheckingEncoding"));
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -60,15 +57,8 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
 
             @Override
             protected void whenSucceeded() {
-                bottomLabel.setText("");
                 sourceInformation.setCharsetDetermined(true);
-                loadPage();
-            }
-
-            @Override
-            protected void whenFailed() {
-                bottomLabel.setText("");
-                super.whenFailed();
+                goPage();
             }
 
         };
@@ -88,7 +78,7 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
         sourceInformation.setLineBreak(lineBreak);
         sourceInformation.setLineBreakValue(lineBreakValue);
         sourceInformation.setLineBreakWidth(lineBreakWidth);
-        loadPage();
+        goPage();
     }
 
     protected void initPage(File file) {
@@ -108,7 +98,8 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
             sourceFile = file;
 
             FileEditInformation existedInfo = sourceInformation;
-            sourceInformation = FileEditInformation.create(editType, file);
+            sourceInformation = FileEditInformation.create(editType, file, pagination);
+            sourceInformation.pagination = pagination;
             if (existedInfo != null) {
                 sourceInformation.setCharset(existedInfo.getCharset());
                 sourceInformation.setWithBom(existedInfo.isWithBom());
@@ -119,13 +110,11 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
             } else {
                 sourceInformation.setCurrentPage(0);
             }
-            sourceInformation.setPageSize(UserConfig.getInt(baseName + "PageSize", defaultPageSize));
             sourceInformation.setFindReplace(null);
 
             mainArea.clear();
             lineArea.clear();
-            bottomLabel.setText("");
-            selectionLabel.setText("");
+            paginationController.reset();
             recoverButton.setDisable(file == null);
             clearPairArea();
 
@@ -195,27 +184,27 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
         start(backgroundTask, false);
     }
 
-    protected void loadPage() {
+    @Override
+    public void loadPage(long page) {
         if (sourceInformation == null || sourceFile == null) {
             return;
         }
         if (task != null && !task.isQuit()) {
             return;
         }
-        bottomLabel.setText(message("ReadingFile"));
+        popInformation(message("ReadingFile"));
         task = new FxSingletonTask<Void>(this) {
 
             private String text;
 
             @Override
             protected boolean handle() {
-                text = sourceInformation.readPage(this);
+                text = sourceInformation.readPage(this, page);
                 return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                bottomLabel.setText("");
                 if (text != null) {
                     loadText(text, false);
                     if (!sourceInformation.isTotalNumberRead()) {
@@ -234,112 +223,6 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
 
         };
         start(task);
-    }
-
-    public void setPageSize() {
-        try {
-            if (isSettingValues || !checkBeforeNextAction()) {
-                return;
-            }
-            int v = Integer.parseInt(pageSizeSelector.getValue().replaceAll(",", ""));
-            int available = (int) (SystemTools.freeBytes() / 4);
-            if (v > available) {
-                popError(message("MayOutOfMemory"));
-                v = available;
-            } else if (v <= 0) {
-                pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameters"));
-                return;
-            }
-            pageSizeSelector.getEditor().setStyle(null);
-            UserConfig.setInt(baseName + "PageSize", v);
-            sourceInformation.setPageSize(v);
-            sourceInformation.setCurrentPage(0);
-            if (sourceInformation.getLineBreak() == FileEditInformation.Line_Break.Width) {
-                sourceInformation.setTotalNumberRead(false);
-                openFile(sourceFile);
-            } else {
-                loadPage();
-            }
-        } catch (Exception e) {
-            pageSizeSelector.getEditor().setStyle(UserConfig.badStyle());
-            popError(message("InvalidParameters"));
-        }
-    }
-
-    protected boolean checkCurrentPage() {
-        if (isSettingValues || pageSelector == null || !checkBeforeNextAction()) {
-            return false;
-        }
-        String value = pageSelector.getEditor().getText();
-        try {
-            int v = Integer.parseInt(value);
-            if (v > 0 && v <= sourceInformation.getPagesNumber()) {
-                sourceInformation.setCurrentPage(v - 1);
-                pageSelector.getEditor().setStyle(null);
-                loadPage();
-                return true;
-            } else {
-                pageSelector.getEditor().setStyle(UserConfig.badStyle());
-                return false;
-            }
-        } catch (Exception e) {
-            pageSelector.getEditor().setStyle(UserConfig.badStyle());
-            return false;
-        }
-    }
-
-    @FXML
-    public void goPage() {
-        checkCurrentPage();
-    }
-
-    @FXML
-    @Override
-    public void pageNextAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        if (sourceInformation.getCurrentPage() >= sourceInformation.getPagesNumber() - 1) {
-            pageNextButton.setDisable(true);
-        } else {
-            sourceInformation.setCurrentPage(sourceInformation.getCurrentPage() + 1);
-            loadPage();
-        }
-    }
-
-    @FXML
-    @Override
-    public void pagePreviousAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        if (sourceInformation.getCurrentPage() <= 0) {
-            pagePreviousButton.setDisable(true);
-        } else {
-            sourceInformation.setCurrentPage(sourceInformation.getCurrentPage() - 1);
-            loadPage();
-        }
-    }
-
-    @FXML
-    @Override
-    public void pageFirstAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        sourceInformation.setCurrentPage(0);
-        loadPage();
-    }
-
-    @FXML
-    @Override
-    public void pageLastAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        sourceInformation.setCurrentPage(sourceInformation.getPagesNumber() - 1);
-        loadPage();
     }
 
     public void loadContents(String contents) {

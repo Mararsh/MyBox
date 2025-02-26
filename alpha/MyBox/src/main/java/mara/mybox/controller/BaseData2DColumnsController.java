@@ -55,7 +55,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-16
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DColumnsController extends BaseTablePages2Controller<Data2DColumn> {
+public abstract class BaseData2DColumnsController extends BaseTablePagesController<Data2DColumn> {
 
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;

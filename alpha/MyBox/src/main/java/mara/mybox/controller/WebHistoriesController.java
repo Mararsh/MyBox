@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class WebHistoriesController extends BaseSysTable2Controller<WebHistory> {
+public class WebHistoriesController extends BaseSysTableController<WebHistory> {
 
     protected TableWebHistory tableWebHistory;
 
@@ -91,7 +91,7 @@ public class WebHistoriesController extends BaseSysTable2Controller<WebHistory> 
                 }
             });
 
-            pagesController.setRightOrientation();
+            paginationController.setRightOrientation();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

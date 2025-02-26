@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -128,12 +126,12 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                 + StringTools.format(pageStart + 1) + " - " + StringTools.format(pageEnd)
                 + "] " + StringTools.format(len == 0 ? 0 : pageEnd - pageStart);
         if (sourceInformation != null && sourceInformation.getPagesNumber() > 1 && sourceInformation.getCurrentPage() > 0) {
-            long fileStart = sourceInformation.getCurrentPageObjectStart() + pageStart;
-            long fileEnd = len == 0 ? fileStart + 1 : sourceInformation.getCurrentPageObjectStart() + pageEnd;
+            long fileStart = sourceInformation.getStartObjectOfCurrentPage() + pageStart;
+            long fileEnd = len == 0 ? fileStart + 1 : sourceInformation.getStartObjectOfCurrentPage() + pageEnd;
             info += "  " + message("SelectionInFile") + ": "
                     + StringTools.format(fileStart + 1) + " - " + StringTools.format(fileEnd);
         }
-        selectionLabel.setText(info);
+        paginationController.setSelection(info);
     }
 
     protected boolean validateMainArea() {
@@ -176,7 +174,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                 Platform.runLater(() -> {
                     isSettingValues = true;
                     lineArea.setScrollTop(mainArea.getScrollTop());
-                    AnchorPane.setLeftAnchor(mainArea, (sourceInformation.getCurrentPageLineEnd() + "").length() * AppVariables.sceneFontSize + 5d);
+                    AnchorPane.setLeftAnchor(mainArea, (sourceInformation.getEndRowOfCurrentPage() + "").length() * AppVariables.sceneFontSize + 5d);
 
                     // https://stackoverflow.com/questions/51075499/javafx-tableview-how-to-tell-if-scrollbar-is-visible
                     double barHeight = 0;
@@ -209,9 +207,9 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
     }
 
     protected void updateControls(boolean changed) {
+        closePopup();
         fileChanged.set(changed);
-        bottomLabel.setText("");
-        selectionLabel.setText("");
+        paginationController.setSelection(null);
         if (getMyStage() == null || sourceInformation == null) {
             return;
         }
@@ -267,14 +265,12 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
         int pageSize = sourceInformation.getPageSize();
         long currentPage = sourceInformation.getCurrentPage();
         if (sourceFile == null) {
-            if (pageLabel != null) {
-                pageLabel.setText("");
-            }
+            paginationController.reset();
             sourceInformation.setObjectsNumber(pageObjectsNumber);
-            sourceInformation.setLinesNumber(pageLinesNumber);
+            sourceInformation.setRowsNumber(pageLinesNumber);
             writeLineNumbers(0, pageLinesNumber);
         } else {
-            long pageLineStart = sourceInformation.getCurrentPageLineStart();
+            long pageLineStart = sourceInformation.getStartRowOfCurrentPage();
             long pageLineEnd = pageLineStart + pageLinesNumber;
             writeLineNumbers(pageLineStart, pageLineEnd);
 
@@ -282,7 +278,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                 buttonsPane.setDisable(true);
             } else {
                 long fileObjectNumber = sourceInformation.getObjectsNumber();
-                long fileLinesNumber = sourceInformation.getLinesNumber();
+                long fileLinesNumber = sourceInformation.getRowsNumber();
 
                 if (editType == Edit_Type.Bytes) {
                     pagesNumber = fileObjectNumber / pageSize;
@@ -300,21 +296,17 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
             }
         }
 
-        pageBox.setDisable(changed);
-        pagePreviousButton.setDisable(currentPage <= 0 || pagesNumber < 2);
-        pageNextButton.setDisable(currentPage >= pagesNumber - 1 || pagesNumber < 2);
-        List<String> pages = new ArrayList<>();
-        for (int i = 1; i <= pagesNumber; i++) {
-            pages.add(i + "");
-        }
-        isSettingValues = true;
-        pageSelector.getItems().clear();
-        pageSelector.getItems().setAll(pages);
-        pageLabel.setText("/" + pagesNumber);
-        pageSelector.setValue((currentPage + 1) + "");
-        pageSelector.getEditor().setStyle(null);
-        pageSizeSelector.setValue(StringTools.format(pageSize));
-        isSettingValues = false;
+        pagination.pagesNumber = pagesNumber;
+        pagination.currentPage = currentPage;
+        pagination.pageSize = pageSize;
+        pagination.rowsNumber = sourceInformation.getRowsNumber();
+        pagination.startRowOfCurrentPage = sourceInformation.getStartRowOfCurrentPage();
+        pagination.endRowOfCurrentPage = sourceInformation.getEndRowOfCurrentPage();
+        pagination.objectsNumber = sourceInformation.getObjectsNumber();
+        pagination.startObjectOfCurrentPage = sourceInformation.getStartObjectOfCurrentPage();
+        pagination.endObjectOfCurrentPage = sourceInformation.getEndObjectOfCurrentPage();
+        pagination.selection = null;
+        paginationController.updateStatus();
     }
 
     protected void loadText(String text, boolean changed) {
@@ -326,16 +318,16 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
     }
 
     protected boolean locateLine(long line) {
-        if (line < 0 || line >= sourceInformation.getLinesNumber()) {
+        if (line < 0 || line >= sourceInformation.getRowsNumber()) {
             popError(message("InvalidParameter") + ": " + message("LineNumber"));
             return false;
         }
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
             selectLine(line);
         } else {
-            if (line >= sourceInformation.getCurrentPageLineStart()
-                    && line < sourceInformation.getCurrentPageLineEnd()) {
-                selectLine(line - sourceInformation.getCurrentPageLineStart());
+            if (line >= sourceInformation.getStartRowOfCurrentPage()
+                    && line < sourceInformation.getEndRowOfCurrentPage()) {
+                selectLine(line - sourceInformation.getStartRowOfCurrentPage());
             } else {
                 if (!checkBeforeNextAction()) {
                     return false;
@@ -356,7 +348,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     @Override
                     protected void whenSucceeded() {
                         loadText(text, false);
-                        selectLine(line - sourceInformation.getCurrentPageLineStart());
+                        selectLine(line - sourceInformation.getStartRowOfCurrentPage());
                     }
 
                 };
@@ -376,9 +368,9 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
             selectObjects(locate * unit, unit);
 
         } else {
-            if (locate >= sourceInformation.getCurrentPageObjectStart()
-                    && locate < sourceInformation.getCurrentPageObjectEnd()) {
-                selectObjects((locate - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+            if (locate >= sourceInformation.getStartObjectOfCurrentPage()
+                    && locate < sourceInformation.getEndObjectOfCurrentPage()) {
+                selectObjects((locate - sourceInformation.getStartObjectOfCurrentPage()) * unit, unit);
             } else {
                 if (!checkBeforeNextAction()) {
                     return false;
@@ -399,7 +391,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     @Override
                     protected void whenSucceeded() {
                         loadText(text, false);
-                        selectObjects((locate - sourceInformation.getCurrentPageObjectStart()) * unit, unit);
+                        selectObjects((locate - sourceInformation.getStartObjectOfCurrentPage()) * unit, unit);
                     }
 
                 };
@@ -410,11 +402,11 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
     }
 
     protected boolean locateLinesRange(long from, long to) {
-        if (from < 0 || from >= sourceInformation.getLinesNumber()) {
+        if (from < 0 || from >= sourceInformation.getRowsNumber()) {
             popError(message("InvalidParameters") + ": " + message("LinesRange"));
             return false;
         }
-        if (to < 0 || to > sourceInformation.getLinesNumber() || from > to) {
+        if (to < 0 || to > sourceInformation.getRowsNumber() || from > to) {
             popError(message("InvalidParameters") + ": " + message("LinesRange"));
             return false;
         }
@@ -422,8 +414,8 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
             selectLines(from, number);
         } else {
-            if (from >= sourceInformation.getCurrentPageLineStart() && to <= sourceInformation.getCurrentPageLineEnd()) {
-                selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+            if (from >= sourceInformation.getStartRowOfCurrentPage() && to <= sourceInformation.getEndRowOfCurrentPage()) {
+                selectLines(from - sourceInformation.getStartRowOfCurrentPage(), number);
             } else {
                 if (!checkBeforeNextAction()) {
                     return false;
@@ -444,7 +436,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     @Override
                     protected void whenSucceeded() {
                         loadText(text, false);
-                        selectLines(from - sourceInformation.getCurrentPageLineStart(), number);
+                        selectLines(from - sourceInformation.getStartRowOfCurrentPage(), number);
                     }
 
                 };
@@ -468,8 +460,8 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
             selectObjects(from * unit, len * unit);
 
         } else {
-            if (from >= sourceInformation.getCurrentPageObjectStart() && to <= sourceInformation.getCurrentPageObjectEnd()) {
-                selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
+            if (from >= sourceInformation.getStartObjectOfCurrentPage() && to <= sourceInformation.getEndObjectOfCurrentPage()) {
+                selectObjects((from - sourceInformation.getStartObjectOfCurrentPage()) * unit, len * unit);
 
             } else {
                 if (!checkBeforeNextAction()) {
@@ -491,7 +483,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     @Override
                     protected void whenSucceeded() {
                         loadText(text, false);
-                        selectObjects((from - sourceInformation.getCurrentPageObjectStart()) * unit, len * unit);
+                        selectObjects((from - sourceInformation.getStartObjectOfCurrentPage()) * unit, len * unit);
                     }
 
                 };

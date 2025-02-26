@@ -48,7 +48,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ConvolutionKernelManagerController extends BaseTablePages2Controller<ConvolutionKernel> {
+public class ConvolutionKernelManagerController extends BaseTablePagesController<ConvolutionKernel> {
 
     private int width, height, type, edge_Op;
     private boolean matrixValid;

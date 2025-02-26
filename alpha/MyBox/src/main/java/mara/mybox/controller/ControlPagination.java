@@ -1,7 +1,10 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -9,11 +12,14 @@ import javafx.fxml.FXML;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import mara.mybox.data.Pagination;
+import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -27,48 +33,114 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPagination extends BaseController {
 
-    protected Pagination pagination;
-
+    @FXML
+    protected FlowPane menuPane;
+    @FXML
+    protected HBox navigatorBox;
+    @FXML
+    protected ComboBox<String> pageSelector, pageSizeSelector;
     @FXML
     protected Button pagesButton;
     @FXML
-    protected Label label;
-    @FXML
-    protected FlowPane flowPane;
+    protected Label menuLabel, selectionLabel, pagesLabel;
 
-    public void setParameters(BaseController parent, Pagination pagi) {
+    public void setParameters(BaseController parent, Pagination pagi, ObjectType type) {
         try {
             parentController = parent;
             baseName = parentController.baseName + "_Pages";
 
-            int pageSize = UserConfig.getInt(baseName + "PageSize", 50);
-            if (pageSize < 1) {
-                pageSize = 50;
-            }
             pagination = pagi != null ? pagi : new Pagination();
-            pagination.initSize(pageSize);
+            pagination.init(type);
+            pagination.pageSize = UserConfig.getInt(baseName + "PageSize", 50);
+            if (pagination.pageSize < 1) {
+                pagination.pageSize = pagination.defaultPageSize;
+            }
+
+            List<String> sizeValues = new ArrayList();
+            switch (pagination.objectType) {
+                case Table:
+                    sizeValues.addAll(Arrays.asList("50", "20", "100", "10", "300", "500", "600", "800", "1000", "2000"));
+                    break;
+                case Bytes:
+                    sizeValues.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
+                            "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
+                    break;
+                case Text:
+                    sizeValues.addAll(Arrays.asList("200", "500", "100", "300", "600", "50", "20", "800", "1000", "2000"));
+                    break;
+
+            }
+
+            pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    goPage(pageSelector.getValue());
+                }
+            });
+
+            pageSizeSelector.getItems().addAll(sizeValues);
+            pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    setPageSize(pageSizeSelector.getValue());
+                }
+            });
+
+            updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void updateLabels() {
+    public void reset() {
+        pagination.reset();
+        updateStatus();
+    }
+
+    public void setSelection(String info) {
+        pagination.selection = info;
+        updateStatus();
+    }
+
+    public void updateStatus() {
         try {
+            isSettingValues = true;
+            thisPane.getChildren().clear();
+            if (thisPane.getWidth() > 800) {
+                thisPane.getChildren().add(navigatorBox);
+            } else {
+                thisPane.getChildren().add(menuPane);
+            }
             long start = pagination.startRowOfCurrentPage + 1;
-            long end = pagination.endRowOfCurrentPage + 1;
+            long end = pagination.endRowOfCurrentPage;
             String s = message("Rows") + ": " + "[" + start + "-" + end + "]"
-                    + (end - start + 1);
-            if (pagination.totalSize > 0) {
-                s += "/" + pagination.totalSize;
+                    + (end - start);
+            if (pagination.rowsNumber > 0) {
+                s += "/" + pagination.rowsNumber;
             }
             if (pagination.pageSize > 0) {
                 s += "   " + message("Page") + ":" + (pagination.currentPage + 1)
                         + "/" + pagination.pagesNumber;
             }
-            if (pagination.selectedRows > 0) {
-                s += "   " + message("Selected") + ":" + pagination.selectedRows;
+            if (pagination.selection != null && !pagination.selection.isBlank()) {
+                s += "   " + pagination.selection;
             }
-            label.setText(s);
+            menuLabel.setText(s);
+
+            pagesLabel.setText("/" + pagination.pagesNumber);
+            selectionLabel.setText(pagination.selection);
+
+            List<String> pages = new ArrayList<>();
+            for (int i = 1; i <= pagination.pagesNumber; i++) {
+                pages.add(i + "");
+            }
+            pageSelector.getItems().setAll(pages);
+            pageSelector.setValue((pagination.currentPage + 1) + "");
+            pageSizeSelector.setValue(pagination.pageSize + "");
+
+            isSettingValues = false;
+
+            refreshStyle(thisPane);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -76,7 +148,8 @@ public class ControlPagination extends BaseController {
     }
 
     public void setRightOrientation() {
-        flowPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        menuPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        navigatorBox.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
     }
 
     public void setVisible(boolean show) {
@@ -89,11 +162,42 @@ public class ControlPagination extends BaseController {
 
     public void show() {
         thisPane.setVisible(true);
-        updateLabels();
+        updateStatus();
     }
 
     public boolean isVisible() {
         return thisPane.isVisible();
+    }
+
+    protected void goPage(String value) {
+        try {
+            if (isSettingValues || parentController == null
+                    || value == null || value.isBlank()) {
+                return;
+            }
+            int v = Integer.parseInt(value) - 1;
+            parentController.loadPage(v);
+        } catch (Exception e) {
+            popError(e.toString());
+        }
+    }
+
+    protected void setPageSize(String value) {
+        try {
+            if (isSettingValues || parentController == null
+                    || value == null || value.isBlank()) {
+                return;
+            }
+            int v = Integer.parseInt(value);
+            if (v == pagination.pageSize || v <= 0) {
+                return;
+            }
+            pagination.pageSize = v;
+            UserConfig.setInt(baseName + "PageSize", pagination.pageSize);
+            parentController.pageSize(v);
+        } catch (Exception e) {
+            popError(e.toString());
+        }
     }
 
     @FXML
@@ -150,40 +254,16 @@ public class ControlPagination extends BaseController {
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 String value = PopTools.askValue(parentController.getTitle(),
                         null, message("PageTo"), pagination.currentPage + "");
-                if (value == null || value.isBlank()) {
-                    return;
-                }
-                try {
-                    int v = Integer.parseInt(value) - 1;
-                    if (v == pagination.currentPage) {
-                        return;
-                    }
-                    parentController.goPage(v);
-                } catch (Exception e) {
-                    popError(e.toString());
-                }
+                goPage(value);
             });
             items.add(menu);
         }
 
-        menu = new MenuItem(message("PageSize") + "...");
+        menu = new MenuItem(message("RowsPerPage") + "...");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             String value = PopTools.askValue(parentController.getTitle(),
-                    null, message("PageSize"), pagination.pageSize + "");
-            if (value == null || value.isBlank()) {
-                return;
-            }
-            try {
-                int v = Integer.parseInt(value);
-                if (v == pagination.pageSize || v <= 0) {
-                    return;
-                }
-                pagination.pageSize = v;
-                UserConfig.setInt(baseName + "PageSize", pagination.pageSize);
-                parentController.pageSize(v);
-            } catch (Exception e) {
-                popError(e.toString());
-            }
+                    null, message("RowsPerPage"), pagination.pageSize + "");
+            setPageSize(value);
         });
         items.add(menu);
 
@@ -207,6 +287,43 @@ public class ControlPagination extends BaseController {
         items.add(popItem);
 
         popNodeMenu(pagesButton, items);
+    }
+
+    @FXML
+    public void goPage(Event event) {
+        goPage(pageSelector.getValue());
+    }
+
+    @FXML
+    @Override
+    public void pageNextAction() {
+        if (parentController != null) {
+            parentController.pageNextAction();
+        }
+    }
+
+    @FXML
+    @Override
+    public void pagePreviousAction() {
+        if (parentController != null) {
+            parentController.pagePreviousAction();
+        }
+    }
+
+    @FXML
+    @Override
+    public void pageFirstAction() {
+        if (parentController != null) {
+            parentController.pageFirstAction();
+        }
+    }
+
+    @FXML
+    @Override
+    public void pageLastAction() {
+        if (parentController != null) {
+            parentController.pageLastAction();
+        }
     }
 
     @Override

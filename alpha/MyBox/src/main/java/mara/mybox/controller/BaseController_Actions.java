@@ -326,30 +326,56 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void pageNextAction() {
-
+        if (pagination == null
+                || pagination.currentPage == pagination.pagesNumber - 1) {
+            return;
+        }
+        loadPage(pagination.currentPage + 1);
     }
 
     @FXML
     public void pagePreviousAction() {
-
+        if (pagination == null
+                || pagination.currentPage == 0) {
+            return;
+        }
+        loadPage(pagination.currentPage - 1);
     }
 
     @FXML
     public void pageFirstAction() {
-
+        if (pagination == null
+                || pagination.currentPage == 0) {
+            return;
+        }
+        loadPage(0);
     }
 
     @FXML
     public void pageLastAction() {
-
+        if (pagination == null
+                || pagination.currentPage == pagination.pagesNumber - 1) {
+            return;
+        }
+        loadPage(Integer.MAX_VALUE);
     }
 
-    public void goPage(long pageNumber) {
+    @FXML
+    public void goPage() {
+        if (pagination == null) {
+            return;
+        }
+        loadPage(pagination.currentPage);
+    }
 
+    public void loadPage(long pageNumber) {
     }
 
     public void pageSize(int pageSize) {
-
+        if (pagination == null) {
+            return;
+        }
+        loadPage(pagination.currentPage);
     }
 
     public void goRow(long rowNumber) {

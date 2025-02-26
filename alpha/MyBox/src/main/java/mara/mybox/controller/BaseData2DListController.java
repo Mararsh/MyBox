@@ -36,7 +36,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-16
  * @License Apache License Version 2.0
  */
-public class BaseData2DListController extends BaseSysTable2Controller<Data2DDefinition> {
+public class BaseData2DListController extends BaseSysTableController<Data2DDefinition> {
 
     protected TableData2DDefinition tableData2DDefinition;
 
