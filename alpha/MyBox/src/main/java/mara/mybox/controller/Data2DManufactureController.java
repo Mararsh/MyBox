@@ -314,7 +314,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     || data2D.isTmpData() || !data2D.isTableChanged());
             saveButton.setDisable(invalidData || !dataSizeLoaded);
             dataDefinitionButton.setDisable(invalidData);
-            paginationController.setVisible(dataSizeLoaded);
+
             if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
                 if (!toolbar.getChildren().contains(fileMenuButton)) {
                     toolbar.getChildren().add(0, fileMenuButton);

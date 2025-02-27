@@ -281,7 +281,8 @@ public class DataTable extends Data2D {
         if (orderby != null && !orderby.isBlank()) {
             sql += " ORDER BY " + orderby;
         }
-        sql += " OFFSET " + startRowOfCurrentPage + " ROWS FETCH NEXT " + pageSize + " ROWS ONLY";
+        sql += " OFFSET " + pagination.startRowOfCurrentPage + " ROWS FETCH NEXT "
+                + pagination.pageSize + " ROWS ONLY";
         return sql;
     }
 
@@ -328,9 +329,9 @@ public class DataTable extends Data2D {
                 }
             }
             conn.commit();
-            rowsNumber = tableData2D.size(conn);
+            pagination.rowsNumber = tableData2D.size(conn);
             saveAttributes(conn);
-            return rowsNumber;
+            return pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -374,11 +375,11 @@ public class DataTable extends Data2D {
                     conn.commit();
                 }
             }
-            attributes.rowsNumber = rowsNumber;
+            attributes.pagination.rowsNumber = pagination.rowsNumber;
             attributes.tableChanged = false;
-            attributes.currentPage = currentPage;
+            attributes.pagination.currentPage = pagination.currentPage;
             cloneData(attributes);
-            return rowsNumber;
+            return pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

@@ -58,7 +58,7 @@ public class DataMatrix extends Data2D {
     @Override
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
-            dataName = rowsNumber + "x" + colsNumber;
+            dataName = pagination.rowsNumber + "x" + colsNumber;
         }
         return true;
     }
@@ -70,7 +70,7 @@ public class DataMatrix extends Data2D {
 
     @Override
     public long readTotal() {
-        return rowsNumber;
+        return pagination.rowsNumber;
     }
 
     @Override
@@ -85,19 +85,19 @@ public class DataMatrix extends Data2D {
 
     @Override
     public List<List<String>> readPageData(Connection conn) {
-        if (startRowOfCurrentPage < 0) {
-            startRowOfCurrentPage = 0;
+        if (pagination.startRowOfCurrentPage < 0) {
+            pagination.startRowOfCurrentPage = 0;
         }
-        endRowOfCurrentPage = startRowOfCurrentPage;
+        pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage;
         List<List<String>> rows = new ArrayList<>();
-        if (dataID >= 0 && rowsNumber > 0 && colsNumber > 0) {
-            double[][] matrix = new double[(int) rowsNumber][(int) colsNumber];
+        if (dataID >= 0 && pagination.rowsNumber > 0 && colsNumber > 0) {
+            double[][] matrix = new double[(int) pagination.rowsNumber][(int) colsNumber];
             try (PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
                 query.setLong(1, dataID);
                 ResultSet results = query.executeQuery();
                 while (results.next()) {
                     Data2DCell cell = tableData2DCell.readData(results);
-                    if (cell.getColumnID() < colsNumber && cell.getRowID() < rowsNumber) {
+                    if (cell.getColumnID() < colsNumber && cell.getRowID() < pagination.rowsNumber) {
                         matrix[(int) cell.getRowID()][(int) cell.getColumnID()] = toDouble(cell.getValue());
                     }
                 }
@@ -109,16 +109,16 @@ public class DataMatrix extends Data2D {
                 MyBoxLog.console(e);
             }
         }
-        rowsNumber = rows.size();
-        endRowOfCurrentPage = startRowOfCurrentPage + rowsNumber;
+        pagination.rowsNumber = rows.size();
+        pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage + pagination.rowsNumber;
         readPageStyles(conn);
         return rows;
     }
 
     @Override
     public long savePageData(FxTask task) {
-        rowsNumber = save(null, this, columns, pageData());
-        return rowsNumber;
+        pagination.rowsNumber = save(null, this, columns, pageData());
+        return pagination.rowsNumber;
     }
 
     public boolean isSquare() {
@@ -142,13 +142,13 @@ public class DataMatrix extends Data2D {
     }
 
     public double[][] toMatrix() {
-        rowsNumber = tableRowsNumber();
+        pagination.rowsNumber = tableRowsNumber();
         colsNumber = tableColsNumber();
-        if (rowsNumber <= 0 || colsNumber <= 0) {
+        if (pagination.rowsNumber <= 0 || colsNumber <= 0) {
             return null;
         }
-        double[][] data = new double[(int) rowsNumber][(int) colsNumber];
-        for (int r = 0; r < rowsNumber; r++) {
+        double[][] data = new double[(int) pagination.rowsNumber][(int) colsNumber];
+        for (int r = 0; r < pagination.rowsNumber; r++) {
             List<String> row = dataRow(r);
             for (int c = 0; c < row.size(); c++) {
                 data[r][c] = toDouble(row.get(c));

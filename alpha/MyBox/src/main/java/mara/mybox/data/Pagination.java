@@ -56,7 +56,7 @@ public class Pagination {
         return this;
     }
 
-    public final void reset() {
+    public final Pagination reset() {
         rowsNumber = 0;
         currentPage = 0;
         pagesNumber = 1;
@@ -65,11 +65,48 @@ public class Pagination {
         endRowOfCurrentPage = 0;
         startObjectOfCurrentPage = 0;
         endObjectOfCurrentPage = 0;
+        return this;
+    }
+
+    public Pagination copyFrom(Pagination p) {
+        if (p == null) {
+            return this;
+        }
+        objectType = p.objectType;
+        pageSize = p.pageSize;
+        defaultPageSize = p.defaultPageSize;
+        rowsNumber = p.rowsNumber;
+        currentPage = p.currentPage;
+        pagesNumber = p.pagesNumber;
+        selection = p.selection;
+        startRowOfCurrentPage = p.startRowOfCurrentPage;
+        endRowOfCurrentPage = p.endRowOfCurrentPage;
+        startObjectOfCurrentPage = p.startObjectOfCurrentPage;
+        endObjectOfCurrentPage = p.endObjectOfCurrentPage;
+        return this;
+    }
+
+    public Pagination copyTo(Pagination p) {
+        if (p == null) {
+            p = new Pagination();
+        }
+        p.objectType = objectType;
+        p.pageSize = pageSize;
+        p.defaultPageSize = defaultPageSize;
+        p.rowsNumber = rowsNumber;
+        p.currentPage = currentPage;
+        p.pagesNumber = pagesNumber;
+        p.selection = selection;
+        p.startRowOfCurrentPage = startRowOfCurrentPage;
+        p.endRowOfCurrentPage = endRowOfCurrentPage;
+        p.startObjectOfCurrentPage = startObjectOfCurrentPage;
+        p.endObjectOfCurrentPage = endObjectOfCurrentPage;
+        return p;
     }
 
     public void goPage(long dataSize, long page) {
         rowsNumber = dataSize < 0 ? 0 : dataSize;
-        if (rowsNumber < 0 || rowsNumber <= pageSize) {
+        if (rowsNumber <= pageSize) {
             pagesNumber = 1;
         } else {
             pagesNumber = rowsNumber / pageSize;
@@ -90,6 +127,33 @@ public class Pagination {
 
     public void updatePageEnd(long tableSize) {
         endRowOfCurrentPage = startRowOfCurrentPage + tableSize;
+    }
+
+    public void updatePageSize(int size) {
+        if (size < 0 || pageSize == size) {
+            return;
+        }
+        pageSize = size;
+        if (rowsNumber <= pageSize) {
+            pagesNumber = 1;
+        } else {
+            pagesNumber = rowsNumber / pageSize;
+            if (rowsNumber % pageSize > 0) {
+                pagesNumber++;
+            }
+        }
+        if (startRowOfCurrentPage <= 0) {
+            startRowOfCurrentPage = 0;
+            currentPage = 0;
+        } else {
+            currentPage = startRowOfCurrentPage / pageSize;
+            if (startRowOfCurrentPage % pageSize > 0) {
+                currentPage++;
+            }
+            if (currentPage >= pagesNumber) {
+                currentPage = pagesNumber - 1;
+            }
+        }
     }
 
     public String info() {

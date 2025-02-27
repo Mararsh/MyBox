@@ -132,8 +132,8 @@ public class DataFileTextReader extends Data2DReader {
             skipHeader();
             sourceIndex = 0;
             long fileIndex = -1;
-            long startIndex = sourceData.startRowOfCurrentPage;
-            long endIndex = sourceData.endRowOfCurrentPage;
+            long startIndex = sourceData.pagination.startRowOfCurrentPage;
+            long endIndex = sourceData.pagination.endRowOfCurrentPage;
             String line;
             while ((line = textReader.readLine()) != null && !isStopped()) {
                 sourceRow = parseFileLine(line);

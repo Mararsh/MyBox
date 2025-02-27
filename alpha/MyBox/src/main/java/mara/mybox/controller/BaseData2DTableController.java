@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import mara.mybox.data.Pagination;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -76,6 +77,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         statusNotify = new SimpleBooleanProperty(false);
         readOnly = true;
         styleFilter = new DataFilter();
+        pagination = new Pagination(Pagination.ObjectType.Table);
     }
 
     @Override
@@ -163,6 +165,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
+
+        updateValues();
+
         notifyLoaded();
     }
 
@@ -181,13 +186,25 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     @Override
     public void updateStatus() {
         try {
-            super.updateStatus();
+            updateValues();
+
+            statusNotify.set(!statusNotify.get());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void updateValues() {
+        try {
+            showPaginationPane(true);
 
             sourceFile = data2D != null ? data2D.getFile() : null;
             if (dataManufactureButton != null) {
-                dataManufactureButton.setDisable(data2D == null);
+                dataManufactureButton.setDisable(!isValidData());
             }
             checkSelected();
+
             if (dataLabel != null) {
                 dataLabel.setText(data2D != null ? data2D.displayName() : "");
             }
@@ -206,24 +223,8 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             }
             myStage.setTitle(title);
 
-            if (statusNotify != null) {
-                statusNotify.set(!statusNotify.get());
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void updatePagination() {
-        if (data2D == null) {
-            return;
-        }
-        pagination.startRowOfCurrentPage = data2D.getStartRowOfCurrentPage();
-        pagination.endRowOfCurrentPage = data2D.getEndRowOfCurrentPage();
-        if (paginationController != null) {
-            paginationController.updateStatus();
         }
     }
 
@@ -397,24 +398,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         return data2D.readPageData(conn);
     }
 
-    protected void countPagination(FxTask currentTask, Connection conn, long page) {
-        if (data2D.isMatrix()) {
-            pagination.pageSize = Integer.MAX_VALUE;
-            pagination.rowsNumber = data2D.getRowsNumber();
-            pagination.pagesNumber = 1;
-            pagination.currentPage = 0;
-            pagination.startRowOfCurrentPage = 0;
-            dataSizeLoaded = true;
-            data2D.setDataLoaded(true);
-        } else {
-            pagination.goPage(readDataSize(currentTask, conn), page);
-        }
-        data2D.setPageSize(pagination.pageSize);
-        data2D.setPagesNumber(pagination.pagesNumber);
-        data2D.setCurrentPage(pagination.currentPage);
-        data2D.setStartRowOfCurrentPage(pagination.startRowOfCurrentPage);
-    }
-
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
@@ -429,7 +412,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public long readDataSize(FxTask currentTask, Connection conn) {
-        return data2D.getRowsNumber();
+        return pagination.rowsNumber;
     }
 
     @Override
@@ -496,9 +479,14 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         correctDataSize();
         if (paginationController != null) {
             if (paginate) {
-                showPaginationPane(true);
-                countPagination(null, null, pagination.currentPage);
-                setPagination();
+                if (data2D.isMatrix()) {
+                    pagination.pageSize = Integer.MAX_VALUE;
+                    pagination.pagesNumber = 1;
+                    pagination.currentPage = 0;
+                    pagination.startRowOfCurrentPage = 0;
+                } else {
+                    pagination.goPage(pagination.rowsNumber, pagination.currentPage);
+                }
                 updateStatus();
             } else {
                 showPaginationPane(false);
@@ -538,24 +526,20 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     @Override
-    protected void setPagination() {
-        try {
-            if (data2D == null || data2D.isMatrix() || data2D.isTmpData() || !dataSizeLoaded) {
-                showPaginationPane(false);
-                return;
-            }
-            super.setPagination();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-
-    }
-
     protected void showPaginationPane(boolean show) {
         if (paginationController == null) {
             return;
         }
+        if (data2D == null || !data2D.isValidDefinition()
+                || data2D.isMatrix() || data2D.isTmpData()
+                || !dataSizeLoaded) {
+            paginationController.setVisible(false);
+            return;
+        }
         paginationController.setVisible(show);
+        if (show) {
+            paginationController.updateStatus();
+        }
     }
 
     /*

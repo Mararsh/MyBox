@@ -344,8 +344,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 if (start <= 0) {
                     start = 1;
                 }
-                if (end > rowsNumber) {
-                    end = rowsNumber;
+                if (end > pagination.rowsNumber) {
+                    end = pagination.rowsNumber;
                 }
                 if (start > end) {
                     continue;

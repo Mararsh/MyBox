@@ -357,7 +357,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                 || pagination.currentPage == pagination.pagesNumber - 1) {
             return;
         }
-        loadPage(Integer.MAX_VALUE);
+        loadPage(pagination.pagesNumber - 1);
     }
 
     @FXML
@@ -369,17 +369,6 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public void loadPage(long pageNumber) {
-    }
-
-    public void pageSize(int pageSize) {
-        if (pagination == null) {
-            return;
-        }
-        loadPage(pagination.currentPage);
-    }
-
-    public void goRow(long rowNumber) {
-
     }
 
     @FXML

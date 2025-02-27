@@ -72,7 +72,7 @@ public abstract class Data2D extends Data2D_Operations {
         int tableRowsNumber = tableRowsNumber();
         if (isMutiplePages()) {
             row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("RowsNumberInFile"), rowsNumber + ""));
+            row.addAll(Arrays.asList(message("RowsNumberInFile"), pagination.rowsNumber + ""));
             infoTable.add(row);
         } else {
             row = new ArrayList<>();
@@ -83,14 +83,15 @@ public abstract class Data2D extends Data2D_Operations {
         row.addAll(Arrays.asList(message("ColumnsNumber"), columnsNumber() + ""));
         infoTable.add(row);
         row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("CurrentPage"), StringTools.format(currentPage + 1)
-                + " / " + StringTools.format(pagesNumber)));
+        row.addAll(Arrays.asList(message("CurrentPage"),
+                StringTools.format(pagination.currentPage + 1)
+                + " / " + StringTools.format(pagination.pagesNumber)));
         infoTable.add(row);
         if (isMutiplePages()) {
             row = new ArrayList<>();
             row.addAll(Arrays.asList(message("RowsRangeInPage"),
-                    StringTools.format(startRowOfCurrentPage + 1) + " - "
-                    + StringTools.format(startRowOfCurrentPage + tableRowsNumber)
+                    StringTools.format(pagination.startRowOfCurrentPage + 1) + " - "
+                    + StringTools.format(pagination.startRowOfCurrentPage + tableRowsNumber)
                     + " ( " + StringTools.format(tableRowsNumber) + " )"));
             infoTable.add(row);
         }

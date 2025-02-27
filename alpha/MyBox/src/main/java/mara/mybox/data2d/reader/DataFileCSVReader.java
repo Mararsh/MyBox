@@ -159,8 +159,8 @@ public class DataFileCSVReader extends Data2DReader {
             }
             sourceIndex = 0;
             long fileIndex = -1;
-            long startIndex = sourceData.startRowOfCurrentPage;
-            long endIndex = sourceData.endRowOfCurrentPage;
+            long startIndex = sourceData.pagination.startRowOfCurrentPage;
+            long endIndex = sourceData.pagination.endRowOfCurrentPage;
             while (iterator.hasNext() && !isStopped()) {
                 try {
                     readFileRecord();

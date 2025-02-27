@@ -68,10 +68,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @Override
     public void updateStatus() {
         super.updateStatus();
-        updatePagination();
-    }
-
-    public void updatePagination() {
         pagination.updatePageEnd(tableData == null ? 0 : tableData.size());
         if (paginationController != null) {
             paginationController.updateStatus();
@@ -88,6 +84,8 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
     @Override
     public void loadPage(long page) {
+        MyBoxLog.console(page);
+        MyBoxLog.console(pagination.info());
         if (isSettingValues || !checkBeforeLoadingTableData()) {
             return;
         }
@@ -99,14 +97,15 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
             @Override
             protected boolean handle() {
-                pagination.reset();
                 try (Connection conn = DerbyBase.getConnection()) {
                     pagination.goPage(readDataSize(this, conn), page);
+                    MyBoxLog.console(pagination.info());
                     if (task == null || !isWorking()) {
                         return false;
                     }
                     data = readPageData(this, conn);
                     pagination.updatePageEnd(data.size());
+                    MyBoxLog.console(pagination.info());
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -534,20 +533,17 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         pagination
      */
     protected void setPagination() {
-        try {
-            if (paginationController == null) {
-                return;
-            }
-            if (!dataSizeLoaded) {
-                paginationController.hide();
-                return;
-            }
-            paginationController.show();
+        showPaginationPane(dataSizeLoaded);
+    }
 
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+    protected void showPaginationPane(boolean show) {
+        if (paginationController == null) {
+            return;
         }
-
+        paginationController.setVisible(show);
+        if (show) {
+            paginationController.updateStatus();
+        }
     }
 
 }

@@ -354,17 +354,17 @@ public class TmpTable extends DataTable {
             return -1;
         }
         try (PreparedStatement insert = conn.prepareStatement(tableData2D.insertStatement())) {
-            rowsNumber = 0;
+            pagination.rowsNumber = 0;
             conn.setAutoCommit(false);
             for (List<String> row : importRows) {
                 Data2DRow data2DRow = makeRow(row, invalidAs);
                 if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
                     insert.addBatch();
-                    if (++rowsNumber % Database.BatchSize == 0) {
+                    if (++pagination.rowsNumber % Database.BatchSize == 0) {
                         insert.executeBatch();
                         conn.commit();
                         if (task != null) {
-                            task.setInfo(message("Inserted") + ": " + rowsNumber);
+                            task.setInfo(message("Inserted") + ": " + pagination.rowsNumber);
                         }
                     }
                 }
@@ -372,10 +372,10 @@ public class TmpTable extends DataTable {
             insert.executeBatch();
             conn.commit();
             if (task != null) {
-                task.setInfo(message("Inserted") + ": " + rowsNumber);
+                task.setInfo(message("Inserted") + ": " + pagination.rowsNumber);
             }
             conn.setAutoCommit(true);
-            return rowsNumber;
+            return pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

@@ -23,7 +23,7 @@ public class MatrixReader extends Data2DReader {
 
     @Override
     public void readTotal() {
-        sourceIndex = matrix.rowsNumber;
+        sourceIndex = matrix.pagination.rowsNumber;
     }
 
     @Override

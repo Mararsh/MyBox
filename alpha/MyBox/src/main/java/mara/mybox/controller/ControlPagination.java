@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.FlowPane;
@@ -114,7 +115,7 @@ public class ControlPagination extends BaseController {
             long start = pagination.startRowOfCurrentPage + 1;
             long end = pagination.endRowOfCurrentPage;
             String s = message("Rows") + ": " + "[" + start + "-" + end + "]"
-                    + (end - start);
+                    + (end - start + 1);
             if (pagination.rowsNumber > 0) {
                 s += "/" + pagination.rowsNumber;
             }
@@ -131,8 +132,21 @@ public class ControlPagination extends BaseController {
             selectionLabel.setText(pagination.selection);
 
             List<String> pages = new ArrayList<>();
-            for (int i = 1; i <= pagination.pagesNumber; i++) {
+            for (long i = Math.max(1, pagination.currentPage - 3);
+                    i <= Math.min(pagination.pagesNumber, pagination.currentPage + 3); i++) {
                 pages.add(i + "");
+            }
+            for (long i = 1; i <= Math.min(pagination.pagesNumber, 3); i++) {
+                String v = i + "";
+                if (!pages.contains(v)) {
+                    pages.add(v);
+                }
+            }
+            for (long i = pagination.pagesNumber; i >= Math.max(1, pagination.pagesNumber - 3); i--) {
+                String v = i + "";
+                if (!pages.contains(v)) {
+                    pages.add(v);
+                }
             }
             pageSelector.getItems().setAll(pages);
             pageSelector.setValue((pagination.currentPage + 1) + "");
@@ -192,9 +206,9 @@ public class ControlPagination extends BaseController {
             if (v == pagination.pageSize || v <= 0) {
                 return;
             }
-            pagination.pageSize = v;
+            pagination.updatePageSize(v);
             UserConfig.setInt(baseName + "PageSize", pagination.pageSize);
-            parentController.pageSize(v);
+            parentController.loadPage(pagination.currentPage);
         } catch (Exception e) {
             popError(e.toString());
         }
@@ -211,7 +225,11 @@ public class ControlPagination extends BaseController {
     public void showPagesMemu(Event event) {
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu;
+        MenuItem menu = new MenuItem(message("Page") + " "
+                + (pagination.currentPage + 1) + "/" + pagination.pagesNumber);
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
 
         if (pagination.pagesNumber > 1) {
             if (pagination.currentPage < pagination.pagesNumber - 1) {
@@ -257,6 +275,16 @@ public class ControlPagination extends BaseController {
                 goPage(value);
             });
             items.add(menu);
+
+            Menu pageMenu = new Menu(message("Page"));
+            for (String p : pageSelector.getItems()) {
+                menu = new MenuItem(message("Page") + " " + p);
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    goPage(p);
+                });
+                pageMenu.getItems().add(menu);
+            }
+            items.add(pageMenu);
         }
 
         menu = new MenuItem(message("RowsPerPage") + "...");

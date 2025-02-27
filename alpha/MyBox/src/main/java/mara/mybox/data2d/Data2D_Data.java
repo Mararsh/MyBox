@@ -32,8 +32,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         resetData();
         this.file = file;
         this.sheet = sheet;
-        this.rowsNumber = dataSize;
-        this.currentPage = currentPage;
+        pagination.rowsNumber = dataSize;
+        pagination.currentPage = currentPage;
         return this;
     }
 
@@ -72,14 +72,14 @@ public abstract class Data2D_Data extends Data2D_Attributes {
      */
     public Data2D_Data initFile(File file) {
         if (file != null && file.equals(this.file)) {
-            return initData(file, sheet, rowsNumber, currentPage);
+            return initData(file, sheet, pagination.rowsNumber, pagination.currentPage);
         } else {
             return initData(file, null, 0, 0);
         }
     }
 
     public boolean isMutiplePages() {
-        return dataLoaded && pagesNumber > 1;
+        return dataLoaded && pagination.pagesNumber > 1;
     }
 
     public boolean isDataLoaded() {
