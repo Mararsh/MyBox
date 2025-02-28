@@ -55,6 +55,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
             if (paginationController != null) {
                 paginationController.setParameters(this, pagination, ObjectType.Table);
+                paginationController.setRightOrientation(true);
             }
 
         } catch (Exception e) {
@@ -68,10 +69,8 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @Override
     public void updateStatus() {
         super.updateStatus();
-        pagination.updatePageEnd(tableData == null ? 0 : tableData.size());
-        if (paginationController != null) {
-            paginationController.updateStatus();
-        }
+
+        checkPagination();
     }
 
     public boolean checkBeforeLoadingTableData() {
@@ -84,8 +83,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
     @Override
     public void loadPage(long page) {
-        MyBoxLog.console(page);
-        MyBoxLog.console(pagination.info());
         if (isSettingValues || !checkBeforeLoadingTableData()) {
             return;
         }
@@ -99,13 +96,11 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     pagination.goPage(readDataSize(this, conn), page);
-                    MyBoxLog.console(pagination.info());
                     if (task == null || !isWorking()) {
                         return false;
                     }
                     data = readPageData(this, conn);
                     pagination.updatePageEnd(data.size());
-                    MyBoxLog.console(pagination.info());
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -150,7 +145,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (!dataSizeLoaded) {
             loadDataSize();
         }
-        setPagination();
     }
 
     public long readDataSize(FxTask currentTask, Connection conn) {
@@ -158,7 +152,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     public void loadDataSize() {
-        dataSizeLoaded = true;
     }
 
     public List<P> readPageData(FxTask currentTask, Connection conn) {
@@ -174,7 +167,11 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         tableChanged(changed);
         editNull();
         viewNull();
-        setPagination();
+    }
+
+    @Override
+    public boolean isShowPagination() {
+        return dataSizeLoaded;
     }
 
     public boolean isDataSizeLoaded() {
@@ -526,24 +523,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         }
         items.add(0, new SeparatorMenuItem());
         return items;
-    }
-
-
-    /*
-        pagination
-     */
-    protected void setPagination() {
-        showPaginationPane(dataSizeLoaded);
-    }
-
-    protected void showPaginationPane(boolean show) {
-        if (paginationController == null) {
-            return;
-        }
-        paginationController.setVisible(show);
-        if (show) {
-            paginationController.updateStatus();
-        }
     }
 
 }

@@ -91,7 +91,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
                 }
             });
 
-            paginationController.setRightOrientation();
+            paginationController.setRightOrientation(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

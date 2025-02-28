@@ -71,6 +71,8 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
         if (isSettingValues) {
             return;
         }
+        super.checkSelected();
+
         MediaList selected = selectedItem();
         if (selected == null) {
             playButton.setDisable(true);
@@ -83,7 +85,6 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
             deleteButton.setDisable(false);
             tableController.loadMedias(selected);
         }
-        checkButtons();
     }
 
     protected void clearSelection() {

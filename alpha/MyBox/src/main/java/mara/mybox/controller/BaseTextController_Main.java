@@ -306,7 +306,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
         pagination.startObjectOfCurrentPage = sourceInformation.getStartObjectOfCurrentPage();
         pagination.endObjectOfCurrentPage = sourceInformation.getEndObjectOfCurrentPage();
         pagination.selection = null;
-        paginationController.updateStatus();
+        paginationController.updateStatus(true);
     }
 
     protected void loadText(String text, boolean changed) {

@@ -29,7 +29,9 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Label fx:id="menuLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="page" wrapText="true" />
+            <Label fx:id="menuPagesLabel" layoutX="48.0" layoutY="17.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="page" wrapText="true" />
+                <Label fx:id="menuRowsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="rows" wrapText="true" />
+            <Label fx:id="menuSelectionLabel" layoutX="48.0" layoutY="17.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true" />
             </children>
         </FlowPane>
       <HBox fx:id="navigatorBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
@@ -74,7 +76,7 @@ License:    Apache License Version 2.0
                <children>
                   <Label minHeight="-Infinity" text="%Page" wrapText="true" />
                   <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
-                  <Label fx:id="pagesLabel" minHeight="-Infinity" wrapText="true" />
+                  <Label fx:id="pagesLabel" minHeight="-Infinity" text="pages" wrapText="true" />
                   <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -92,7 +94,8 @@ License:    Apache License Version 2.0
                   <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
                </children>
             </HBox>
-            <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">
+            <Label fx:id="rowsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="rows" wrapText="true" />
+            <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

@@ -86,7 +86,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             tableData2DDefinition = data2D.getTableData2DDefinition();
             tableData2DColumn = data2D.getTableData2DColumn();
             data2D.setController(this);
-            data2D.pagination = pagination.copyFrom(data2D.pagination);
+            data2D.pagination.pageSize = pagination.pageSize;
+            pagination = data2D.pagination;
+            if (paginationController != null) {
+                paginationController.pagination = data2D.pagination;
+            }
             updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);

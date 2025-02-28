@@ -114,15 +114,9 @@ public class Pagination {
                 pagesNumber++;
             }
         }
-        if (page >= pagesNumber) {
-            currentPage = pagesNumber - 1;
-        } else {
-            currentPage = page;
-        }
-        if (currentPage < 0) {
-            currentPage = 0;
-        }
+        currentPage = fixPage(page);
         startRowOfCurrentPage = pageSize * currentPage;
+        selection = null;
     }
 
     public void updatePageEnd(long tableSize) {
@@ -154,6 +148,36 @@ public class Pagination {
                 currentPage = pagesNumber - 1;
             }
         }
+    }
+
+    public boolean isValidPage(long page) {
+        return page >= 0 && page <= pagesNumber - 1;
+    }
+
+    public long fixPage(long page) {
+        if (page >= pagesNumber) {
+            return pagesNumber - 1;
+        } else if (page < 0) {
+            return 0;
+        } else {
+            return page;
+        }
+    }
+
+    public boolean multipleRows() {
+        return rowsNumber >= 2;
+    }
+
+    public boolean multiplePages() {
+        return pagesNumber >= 2;
+    }
+
+    public boolean hasNextPage() {
+        return currentPage < pagesNumber - 1;
+    }
+
+    public boolean hasPreviousPage() {
+        return currentPage > 0;
     }
 
     public String info() {

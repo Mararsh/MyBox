@@ -326,8 +326,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void pageNextAction() {
-        if (pagination == null
-                || pagination.currentPage == pagination.pagesNumber - 1) {
+        if (pagination == null || !pagination.hasNextPage()) {
             return;
         }
         loadPage(pagination.currentPage + 1);
@@ -335,8 +334,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void pagePreviousAction() {
-        if (pagination == null
-                || pagination.currentPage == 0) {
+        if (pagination == null || !pagination.hasPreviousPage()) {
             return;
         }
         loadPage(pagination.currentPage - 1);
@@ -344,8 +342,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void pageFirstAction() {
-        if (pagination == null
-                || pagination.currentPage == 0) {
+        if (pagination == null || !pagination.hasPreviousPage()) {
             return;
         }
         loadPage(0);
@@ -353,8 +350,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void pageLastAction() {
-        if (pagination == null
-                || pagination.currentPage == pagination.pagesNumber - 1) {
+        if (pagination == null || !pagination.hasNextPage()) {
             return;
         }
         loadPage(pagination.pagesNumber - 1);

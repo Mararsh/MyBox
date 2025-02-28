@@ -43,7 +43,8 @@ public class ControlPagination extends BaseController {
     @FXML
     protected Button pagesButton;
     @FXML
-    protected Label menuLabel, selectionLabel, pagesLabel;
+    protected Label menuPagesLabel, menuRowsLabel, menuSelectionLabel,
+            pagesLabel, rowsLabel, selectionLabel;
 
     public void setParameters(BaseController parent, Pagination pagi, ObjectType type) {
         try {
@@ -87,7 +88,7 @@ public class ControlPagination extends BaseController {
                 }
             });
 
-            updateStatus();
+            updateStatus(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -95,16 +96,23 @@ public class ControlPagination extends BaseController {
 
     public void reset() {
         pagination.reset();
-        updateStatus();
+        if (thisPane.isVisible()) {
+            updateStatus(true);
+        }
     }
 
     public void setSelection(String info) {
         pagination.selection = info;
-        updateStatus();
+        menuSelectionLabel.setText(info);
+        selectionLabel.setText(info);
     }
 
-    public void updateStatus() {
+    public void updateStatus(boolean show) {
         try {
+            thisPane.setVisible(show);
+            if (!show) {
+                return;
+            }
             isSettingValues = true;
             thisPane.getChildren().clear();
             if (thisPane.getWidth() > 800) {
@@ -112,23 +120,30 @@ public class ControlPagination extends BaseController {
             } else {
                 thisPane.getChildren().add(menuPane);
             }
-            long start = pagination.startRowOfCurrentPage + 1;
-            long end = pagination.endRowOfCurrentPage;
-            String s = message("Rows") + ": " + "[" + start + "-" + end + "]"
-                    + (end - start + 1);
-            if (pagination.rowsNumber > 0) {
-                s += "/" + pagination.rowsNumber;
-            }
-            if (pagination.pageSize > 0) {
-                s += "   " + message("Page") + ":" + (pagination.currentPage + 1)
-                        + "/" + pagination.pagesNumber;
-            }
-            if (pagination.selection != null && !pagination.selection.isBlank()) {
-                s += "   " + pagination.selection;
-            }
-            menuLabel.setText(s);
 
-            pagesLabel.setText("/" + pagination.pagesNumber);
+            String rows = message("Rows") + ": ";
+            if (pagination.rowsNumber > 0) {
+                long start = pagination.startRowOfCurrentPage + 1;
+                long end = pagination.endRowOfCurrentPage;
+                rows += "[" + start + "-" + end + "]"
+                        + (end - start + 1);
+                rows += "/" + pagination.rowsNumber;
+            } else {
+                rows += "0";
+            }
+            menuRowsLabel.setText(rows);
+            rowsLabel.setText(rows);
+
+            if (pagination.pageSize > 0) {
+                menuPagesLabel.setText(message("Page") + ":"
+                        + (pagination.currentPage + 1) + "/" + pagination.pagesNumber);
+                pagesLabel.setText("/" + pagination.pagesNumber);
+            } else {
+                menuPagesLabel.setText(null);
+                pagesLabel.setText(null);
+            }
+
+            menuSelectionLabel.setText(pagination.selection);
             selectionLabel.setText(pagination.selection);
 
             List<String> pages = new ArrayList<>();
@@ -152,6 +167,13 @@ public class ControlPagination extends BaseController {
             pageSelector.setValue((pagination.currentPage + 1) + "");
             pageSizeSelector.setValue(pagination.pageSize + "");
 
+            pageNextButton.setDisable(!hasNextPage());
+            pagePreviousButton.setDisable(!hasPreviousPage());
+            pageFirstButton.setDisable(!hasPreviousPage());
+            pageLastButton.setDisable(!hasNextPage());
+            pageSelector.setDisable(!multiplePages());
+            pageSizeSelector.setDisable(!multipleRows());
+
             isSettingValues = false;
 
             refreshStyle(thisPane);
@@ -161,26 +183,38 @@ public class ControlPagination extends BaseController {
         }
     }
 
-    public void setRightOrientation() {
-        menuPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-        navigatorBox.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+    public void setRightOrientation(boolean isRight) {
+        if (isRight) {
+            menuPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+            navigatorBox.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        } else {
+            menuPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+            navigatorBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+        }
     }
 
-    public void setVisible(boolean show) {
+    public void show(boolean show) {
         thisPane.setVisible(show);
-    }
-
-    public void hide() {
-        thisPane.setVisible(false);
-    }
-
-    public void show() {
-        thisPane.setVisible(true);
-        updateStatus();
     }
 
     public boolean isVisible() {
         return thisPane.isVisible();
+    }
+
+    public boolean multipleRows() {
+        return pagination.multipleRows();
+    }
+
+    public boolean multiplePages() {
+        return pagination.multiplePages();
+    }
+
+    public boolean hasNextPage() {
+        return pagination.hasNextPage();
+    }
+
+    public boolean hasPreviousPage() {
+        return pagination.hasPreviousPage();
     }
 
     protected void goPage(String value) {
@@ -190,6 +224,10 @@ public class ControlPagination extends BaseController {
                 return;
             }
             int v = Integer.parseInt(value) - 1;
+            if (!pagination.isValidPage(v)) {
+                popError(message("InvalidParameter") + ": " + message("Page"));
+                return;
+            }
             parentController.loadPage(v);
         } catch (Exception e) {
             popError(e.toString());

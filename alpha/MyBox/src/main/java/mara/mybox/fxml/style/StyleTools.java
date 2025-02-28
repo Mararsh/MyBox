@@ -180,7 +180,7 @@ public class StyleTools {
             if (style == null || style.getIconName() == null || style.getIconName().isEmpty()) {
                 return null;
             }
-            return StyleTools.getIconImageView(style.getIconName());
+            return getIconImageView(style.getIconName());
         } catch (Exception e) {
             MyBoxLog.error(e, style.getIconName());
             return null;

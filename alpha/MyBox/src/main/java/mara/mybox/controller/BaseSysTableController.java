@@ -80,15 +80,16 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
 
     @Override
     public long readDataSize(FxTask currentTask, Connection conn) {
+        long size = 0;
         if (tableDefinition != null) {
             if (queryConditions != null) {
-                return tableDefinition.conditionSize(conn, queryConditions);
+                size = tableDefinition.conditionSize(conn, queryConditions);
             } else {
-                return tableDefinition.size(conn);
+                size = tableDefinition.size(conn);
             }
-        } else {
-            return 0;
         }
+        dataSizeLoaded = true;
+        return size;
     }
 
     @Override

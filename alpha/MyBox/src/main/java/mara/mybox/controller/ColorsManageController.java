@@ -160,7 +160,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 }
             });
 
-            paginationController.setRightOrientation();
+            paginationController.setRightOrientation(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -758,11 +758,15 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
      */
     @Override
     public long readDataSize(FxTask currentTask, Connection conn) {
+        long size;
         if (palettesController.isAllColors()) {
-            return tableColor.size(conn);
+            size = tableColor.size(conn);
         } else {
-            return tableColorPalette.size(conn, palettesController.currentPaletteId());
+            size = tableColorPalette.size(conn, palettesController.currentPaletteId());
         }
+        dataSizeLoaded = true;
+        return size;
+
     }
 
     @Override
@@ -805,10 +809,11 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (isSettingValues) {
             return;
         }
+        super.checkSelected();
+
         ColorData color = selectedItem();
         copyButton.setDisable(color == null);
         displayColorInfo(color);
-        checkButtons();
     }
 
     protected void displayColorInfo(ColorData color) {

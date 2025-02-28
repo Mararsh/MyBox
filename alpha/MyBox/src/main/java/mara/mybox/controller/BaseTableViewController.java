@@ -13,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
@@ -26,10 +25,10 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
+import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -55,9 +54,6 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
     @FXML
     protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton,
             copyItemsButton, deleteItemsButton, clearItemsButton, insertItemButton;
-
-    @FXML
-    protected Label dataSizeLabel, selectedLabel;
 
     public BaseTableViewController() {
         TipsLabelKey = "TableTips";
@@ -104,8 +100,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
             tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
                 @Override
                 public void onChanged(ListChangeListener.Change c) {
-                    checkSelected();
-                    notifySelected();
+                    selectionChanged();
                 }
             });
 
@@ -236,9 +231,34 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         checkSelected();
     }
 
+    public void checkPagination() {
+        if (pagination != null) {
+            pagination.updatePageEnd(tableData == null ? 0 : tableData.size());
+            List<Integer> selectedIndices = tableView.getSelectionModel().getSelectedIndices();
+            if (selectedIndices != null && !selectedIndices.isEmpty()) {
+                pagination.selection = message("Selected") + ": " + selectedIndices.size();
+            } else {
+                pagination.selection = null;
+            }
+        }
+        if (paginationController != null) {
+            paginationController.updateStatus(isShowPagination());
+        }
+    }
+
+    public boolean isShowPagination() {
+        return true;
+    }
+
     /*
         selection
      */
+    protected void selectionChanged() {
+        checkPagination();
+        checkSelected();
+        notifySelected();
+    }
+
     public void itemClicked() {
     }
 
@@ -277,7 +297,8 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
     }
 
     public boolean isNoneSelected() {
-        return tableView.getSelectionModel().getSelectedIndices().isEmpty();
+        List<Integer> selectedIndices = tableView.getSelectionModel().getSelectedIndices();
+        return selectedIndices == null || selectedIndices.isEmpty();
     }
 
     public List<P> selectedItems() {
@@ -383,10 +404,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         if (moveDownButton != null) {
             moveDownButton.setDisable(none);
         }
-        if (selectedLabel != null) {
-            selectedLabel.setText(message("Selected") + ": "
-                    + (none ? 0 : tableView.getSelectionModel().getSelectedIndices().size()));
-        }
+
     }
 
     /*
@@ -806,6 +824,17 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        get
+     */
+    public TableView<P> getTableView() {
+        return tableView;
+    }
+
+    public void setTableView(TableView<P> tableView) {
+        this.tableView = tableView;
     }
 
 }

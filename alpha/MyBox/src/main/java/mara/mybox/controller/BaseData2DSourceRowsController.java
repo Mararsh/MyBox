@@ -112,6 +112,10 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     public void sourceChanged(Data2D data) {
         try {
             data2D = data;
+            pagination = data2D.pagination;
+            if (paginationController != null) {
+                paginationController.pagination = data2D.pagination;
+            }
             makeColumns();
             updateTable(dataController.tableData);
             isSettingValues = true;
@@ -139,17 +143,16 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             isSettingValues = true;
             if (data2D.isMutiplePages()) {
                 allPagesRadio.setDisable(false);
-                showPaginationPane(true);
-                setPagination();
             } else {
                 if (allPagesRadio.isSelected()) {
                     currentPageRadio.setSelected(true);
                 }
                 allPagesRadio.setDisable(true);
-                showPaginationPane(false);
             }
             isSettingValues = false;
             restoreSelections();
+
+            checkPagination();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

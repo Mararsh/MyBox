@@ -309,7 +309,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (pagePreviousButton != null && !pagePreviousButton.isDisabled() && pagePreviousButton.isVisible()) {
             pagePreviousAction();
             return true;
-        } else if (paginationController != null) {
+        } else if (paginationController != null && paginationController.isVisible()) {
             pagePreviousAction();
             return true;
         }
@@ -321,7 +321,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             nextAction();
         } else if (pageNextButton != null && !pageNextButton.isDisabled() && pageNextButton.isVisible()) {
             pageNextAction();
-        } else if (paginationController != null) {
+        } else if (paginationController != null && paginationController.isVisible()) {
             pageNextAction();
             return true;
         }
@@ -335,7 +335,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (pageFirstButton != null && !pageFirstButton.isDisabled() && pageFirstButton.isVisible()) {
             pageFirstAction();
             return true;
-        } else if (paginationController != null) {
+        } else if (paginationController != null && paginationController.isVisible()) {
             pageFirstAction();
             return true;
         }
@@ -349,7 +349,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (pageLastButton != null && !pageLastButton.isDisabled() && pageLastButton.isVisible()) {
             pageLastAction();
             return true;
-        } else if (paginationController != null) {
+        } else if (paginationController != null && paginationController.isVisible()) {
             pageLastAction();
             return true;
         }

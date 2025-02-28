@@ -201,7 +201,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         format
      */
     public void checkFormat(Toggle ov) {
-        switchFormat();
+        if (formatGroup.getSelectedToggle() == ov) {
+            loadContents();
+        } else {
+            switchFormat();
+        }
     }
 
     public void switchFormat() {
@@ -230,7 +234,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             } else if (tableRadio.isSelected()) {
                 showTable();
-                checkSelected();
+                checkButtons();
 
             } else if (textsRadio.isSelected()) {
                 showTexts();
@@ -240,6 +244,31 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             }
             refreshStyle(mainAreaBox);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void loadContents() {
+        try {
+            if (isSettingValues || data2D == null) {
+                return;
+            }
+
+            if (htmlRadio.isSelected()) {
+                loadHtml(false);
+
+            } else if (tableRadio.isSelected()) {
+                loadTable();
+
+            } else if (textsRadio.isSelected()) {
+                loadTexts(false);
+
+            } else if (csvRadio != null && csvRadio.isSelected()) {
+                loadCsv();
+
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -428,16 +457,10 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     @Override
-    protected void setPagination() {
-        super.setPagination();
-        switchFormat();
-    }
-
-    @Override
     public void updateTable(List<List<String>> data) {
         try {
             super.updateTable(data);
-            switchFormat();
+            loadContents();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
