@@ -66,13 +66,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     /*
         table
      */
-    @Override
-    public void updateStatus() {
-        super.updateStatus();
-
-        checkPagination();
-    }
-
     public boolean checkBeforeLoadingTableData() {
         return true;
     }

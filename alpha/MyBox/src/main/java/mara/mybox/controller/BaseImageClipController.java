@@ -213,7 +213,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
                             continue;
                         }
                         clips.add(clip);
-                        task.setInfo(item.getName());
+//                        task.setInfo(item.getName());
                     }
 
                 }

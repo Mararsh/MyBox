@@ -285,19 +285,6 @@ public class ControlWebView extends BaseController {
                 element = null;
             }
 //            MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
-            if (webViewLabel != null) {
-                String label;
-                if ("mouseover".equals(domEventType)) {
-                    label = href != null ? href : tag;
-                } else if ("mouseout".equals(domEventType)) {
-                    label = "";
-                } else {
-                    label = null;
-                }
-                if (label != null) {
-                    setWebViewLabel(label);
-                }
-            }
             if (element == null) {
                 return;
             }
@@ -309,6 +296,7 @@ public class ControlWebView extends BaseController {
 //                            MyBoxLog.console(target);
                 if ("click".equals(domEventType)) {
                     if (target != null && !target.equalsIgnoreCase("_blank")) {
+                        ev.preventDefault();
                         Platform.runLater(() -> {
                             executeScript("if ( window.frames." + target
                                     + ".document.readyState==\"complete\") control.frameNameReady('" + target + "');");
@@ -316,6 +304,7 @@ public class ControlWebView extends BaseController {
                                     + "function(){ if ( window.frames." + target
                                     + ".document.readyState==\"complete\") control.frameNameReady('" + target + "'); }");
                         });
+                        Platform.requestNextPulse();
                     } else if (!href.startsWith("javascript:")) {
                         String clickAction = UserConfig.getString("WebViewWhenLeftClickImageOrLink", "PopMenu");
                         String url = htmlElement.getDecodedAddress();
@@ -328,6 +317,7 @@ public class ControlWebView extends BaseController {
                                 Platform.runLater(() -> {
                                     popLinkMenu(htmlElement);
                                 });
+                                Platform.requestNextPulse();
                             } else if ("Load".equals(clickAction)) {
                                 loadAddress(url);
                             } else if ("System".equals(clickAction)) {
@@ -342,6 +332,7 @@ public class ControlWebView extends BaseController {
                     Platform.runLater(() -> {
                         popLinkMenu(htmlElement);
                     });
+                    Platform.requestNextPulse();
                 }
 
             } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
@@ -349,8 +340,9 @@ public class ControlWebView extends BaseController {
                 Platform.runLater(() -> {
                     popElementMenu(element);
                 });
+                Platform.requestNextPulse();
             }
-            Platform.requestNextPulse();
+
             MenuWebviewController menu = MenuWebviewController.running(webView);
             if (menu != null) {
                 menu.setElement(element);
@@ -462,21 +454,6 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    // Errors popped when call this. Do not call this.
-    private synchronized void clearListener(Document doc) {
-        try {
-            if (doc == null) {
-                return;
-            }
-            EventTarget t = (EventTarget) doc.getDocumentElement();
-            t.removeEventListener("contextmenu", docListener, true);
-            t.removeEventListener("click", docListener, true);
-            t.removeEventListener("mouseover", docListener, true);
-            t.removeEventListener("mouseout", docListener, true);
-        } catch (Exception e) {
-        }
-    }
-
     private void running() {
         try {
             pageLoadingNotify.set(!pageLoadingNotify.get());
@@ -516,7 +493,22 @@ public class ControlWebView extends BaseController {
                 return false;
             }
             ((JSObject) winObject).setMember("control", this);
-            executeScript("if ( document.addEventListener ) { control.setDocListeners(); } ");
+            String js = "if ( document.addEventListener ) "
+                    + "{ control.setListeners(); \n"
+                    + "  document.addEventListener('mouseover', (event) => {\n"
+                    + "      const link = event.target.closest('a');\n"
+                    + "      if (link && link.href) {\n"
+                    + "        try {\n"
+                    + "              const url = new URL(link.href);\n"
+                    + "              control.setWebViewLabel(url.href);\n"
+                    + "        } catch (error) {}\n"
+                    + "      }\n"
+                    + "  });"
+                    + "  document.addEventListener('mouseout', (event) => {\n"
+                    + "     control.setWebViewLabel(null);})\n"
+                    + "} ";
+
+            executeScript(js);
             if (timer != null) {
                 timer.cancel();
             }
@@ -527,14 +519,14 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    public void setDocListeners() {
-        setDocListeners(webEngine.getDocument());
+    public void setListeners() {
+        setListeners(webEngine.getDocument());
         synchronized (lock) {
             listened = true;
         }
     }
 
-    private synchronized void setDocListeners(Document doc) {
+    private synchronized void setListeners(Document doc) {
         try {
             if (doc == null) {
                 return;
@@ -542,8 +534,6 @@ public class ControlWebView extends BaseController {
             EventTarget t = (EventTarget) doc.getDocumentElement();
             t.addEventListener("contextmenu", docListener, true);
             t.addEventListener("click", docListener, true);
-            t.addEventListener("mouseover", docListener, true);
-            t.addEventListener("mouseout", docListener, true);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -654,7 +644,7 @@ public class ControlWebView extends BaseController {
             Document frame = (Document) c;
             framesDoc.put(frameIndex, frame);
 
-            setDocListeners(frame);
+            setListeners(frame);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

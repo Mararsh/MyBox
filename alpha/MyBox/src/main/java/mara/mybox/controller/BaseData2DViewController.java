@@ -201,11 +201,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         format
      */
     public void checkFormat(Toggle ov) {
-        if (formatGroup.getSelectedToggle() == ov) {
-            loadContents();
-        } else {
-            switchFormat();
-        }
+        switchFormat();
     }
 
     public void switchFormat() {
@@ -234,7 +230,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             } else if (tableRadio.isSelected()) {
                 showTable();
-                checkButtons();
 
             } else if (textsRadio.isSelected()) {
                 showTexts();
@@ -244,31 +239,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             }
             refreshStyle(mainAreaBox);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void loadContents() {
-        try {
-            if (isSettingValues || data2D == null) {
-                return;
-            }
-
-            if (htmlRadio.isSelected()) {
-                loadHtml(false);
-
-            } else if (tableRadio.isSelected()) {
-                loadTable();
-
-            } else if (textsRadio.isSelected()) {
-                loadTexts(false);
-
-            } else if (csvRadio != null && csvRadio.isSelected()) {
-                loadCsv();
-
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -297,6 +267,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (pop) {
                 popError(message("NoData"));
             } else {
+                MyBoxLog.console("here");
                 webViewController.loadContent("");
             }
             return;
@@ -430,9 +401,9 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             List<List<String>> data = new ArrayList<>();
             data.addAll(tableData);
 
-            super.makeColumns();
+            makeColumns();
 
-            super.updateTable(data);
+            setPageData(data);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -457,16 +428,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     @Override
-    public void updateTable(List<List<String>> data) {
-        try {
-            super.updateTable(data);
-            loadContents();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
     public boolean checkBeforeLoadingTableData() {
         return checkBeforeNextAction();
     }
@@ -487,6 +448,12 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void postLoadedTableData() {
+        super.postLoadedTableData();
+        switchFormat();
     }
 
     /*

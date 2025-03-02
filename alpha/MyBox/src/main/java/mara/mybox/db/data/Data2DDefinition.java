@@ -141,7 +141,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public String info() {
-        return Data2DDefinitionTools.info(this);
+        return Data2DDefinitionTools.defInfo(this);
     }
 
     public final void resetDefinition() {

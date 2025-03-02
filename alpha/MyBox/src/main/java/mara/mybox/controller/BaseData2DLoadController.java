@@ -288,9 +288,9 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             resetView(false);
             setData(data2D);
             makeColumns();
-            updateTable(rows);
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
+            updateTable(rows);
             postLoadedTableData();
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();

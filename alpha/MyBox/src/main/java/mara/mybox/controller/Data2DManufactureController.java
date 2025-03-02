@@ -821,7 +821,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (tableRadio.isSelected()) {
             tableView.scrollTo(index - 5);
         } else {
-            loadContents();
+            switchFormat();
         }
         tableChanged(true);
         return list.size();

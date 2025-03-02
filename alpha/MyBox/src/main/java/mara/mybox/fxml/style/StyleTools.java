@@ -166,7 +166,7 @@ public class StyleTools {
                 colorStyle = StyleColor.Red;
             }
             if (colorStyle == StyleColor.Customize) {
-                return new File(AppVariables.MyboxDataPath + "/buttons/").toURI().toString();
+                return AppVariables.MyboxDataPath + "/buttons/";
             } else {
                 return ButtonsSourcePath + colorStyle.name() + "/";
             }
@@ -212,7 +212,16 @@ public class StyleTools {
 
     public static ImageView getIconImageView(String stylePath, String iconName) {
         try {
-            return new ImageView(stylePath + iconName);
+            if (!stylePath.startsWith(ButtonsSourcePath)) {
+                File file = new File(stylePath + iconName);
+                if (!file.exists()) {
+                    return new ImageView(ButtonsSourcePath + iconName);
+                } else {
+                    return new ImageView(file.toURI().toString());
+                }
+            } else {
+                return new ImageView(stylePath + iconName);
+            }
         } catch (Exception e) {
             try {
                 return new ImageView(ButtonsSourcePath + iconName);

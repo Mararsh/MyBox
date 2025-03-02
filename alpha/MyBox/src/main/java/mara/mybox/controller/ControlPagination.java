@@ -306,23 +306,25 @@ public class ControlPagination extends BaseController {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("PageTo") + "...");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                String value = PopTools.askValue(parentController.getTitle(),
-                        null, message("PageTo"), pagination.currentPage + "");
-                goPage(value);
-            });
-            items.add(menu);
-
-            Menu pageMenu = new Menu(message("Page"));
-            for (String p : pageSelector.getItems()) {
-                menu = new MenuItem(message("Page") + " " + p);
+            if (pagination.pagesNumber > 1) {
+                menu = new MenuItem(message("PageTo") + "...");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    goPage(p);
+                    String value = PopTools.askValue(parentController.getTitle(),
+                            null, message("PageTo"), (pagination.pagesNumber / 2 + 1) + "");
+                    goPage(value);
                 });
-                pageMenu.getItems().add(menu);
+                items.add(menu);
+
+                Menu pageMenu = new Menu(message("Page"));
+                for (String p : pageSelector.getItems()) {
+                    menu = new MenuItem(message("Page") + " " + p);
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        goPage(p);
+                    });
+                    pageMenu.getItems().add(menu);
+                }
+                items.add(pageMenu);
             }
-            items.add(pageMenu);
         }
 
         menu = new MenuItem(message("RowsPerPage") + "...");

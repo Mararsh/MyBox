@@ -21,7 +21,7 @@ import mara.mybox.tools.FileNameTools;
 public class ImageItem {
 
     protected String name, address, comments;
-    protected int index;
+    protected int index, width;
     protected SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
 
     public ImageItem() {
@@ -46,6 +46,12 @@ public class ImageItem {
     }
 
     public int getWidth() {
+        if (width > 0) {
+            return width;
+        }
+        if (name != null && name.startsWith("icon")) {
+            return 100;
+        }
         return address != null && address.startsWith("buttons/") ? 100 : 500;
     }
 
@@ -74,10 +80,13 @@ public class ImageItem {
             }
         } catch (Exception e) {
         }
+        if (image != null) {
+            width = (int) image.getWidth();
+        }
         return image;
     }
 
-    public Node makeNode(int size) {
+    public Node makeNode(int size, boolean checkSize) {
         try {
             if (isColor()) {
                 Rectangle rect = new Rectangle();
@@ -92,10 +101,14 @@ public class ImageItem {
                 if (image == null) {
                     return null;
                 }
+                int w = size;
+                if (checkSize && w > image.getWidth()) {
+                    w = (int) image.getWidth();
+                }
                 ImageView view = new ImageView(image);
                 view.setPreserveRatio(false);
-                view.setFitWidth(size);
-                view.setFitHeight(size);
+                view.setFitWidth(w);
+                view.setFitHeight(w);
                 view.setUserData(index);
                 return view;
             }
@@ -179,6 +192,11 @@ public class ImageItem {
 
     public ImageItem setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public ImageItem setWidth(int width) {
+        this.width = width;
         return this;
     }
 

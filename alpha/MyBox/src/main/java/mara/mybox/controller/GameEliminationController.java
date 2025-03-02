@@ -1033,7 +1033,7 @@ public class GameEliminationController extends BaseController {
             for (int i = 0; i < boardSize; ++i) {
                 int index = imagesListview.getItems().get(i).getIndex();
                 ImageItem item = getImageItem(index);
-                Node node = item.makeNode(50);
+                Node node = item.makeNode(50, false);
                 CheckBox cbox = new CheckBox();
                 cbox.setGraphic(node);
                 cbox.setUserData(index);
@@ -1736,7 +1736,7 @@ public class GameEliminationController extends BaseController {
 
     protected void setImageNode(int i, int j, ImageItem item) {
         try {
-            Node node = item.makeNode(chessWidth);
+            Node node = item.makeNode(chessWidth, false);
             VBox vbox = getBox(i, j);
             vbox.getChildren().clear();
             vbox.getChildren().add(node);

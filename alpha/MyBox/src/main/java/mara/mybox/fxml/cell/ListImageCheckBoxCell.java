@@ -51,7 +51,7 @@ public class ListImageCheckBoxCell extends CheckBoxListCell<ImageItem> {
         try {
             CheckBox cb = (CheckBox) getGraphic();
             cb.setText(null);
-            cb.setGraphic(item.makeNode(imageSize));
+            cb.setGraphic(item.makeNode(imageSize, true));
         } catch (Exception e) {
             setGraphic(null);
         }

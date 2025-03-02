@@ -83,7 +83,7 @@ public class ImageExampleSelectController extends BaseInputController {
                 try {
                     items = withColors
                             ? InternalImages.allWithColors() : InternalImages.all();
-                    return true;
+                    return items != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -119,6 +119,7 @@ public class ImageExampleSelectController extends BaseInputController {
             body += "<BR>" + message(comments);
         }
         viewController.loadContent(HtmlWriteTools.html(body));
+        setTitle(baseTitle + " - " + selected.getName());
     }
 
     public ImageItem selectedItem() {

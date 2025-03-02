@@ -186,6 +186,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message(lang, "InsertFiles"), "", "iconInsertFile.png"));
             tableData.add(new ShortCut("", "", message(lang, "InsertDirectory"), "", "iconInsertPath.png"));
             tableData.add(new ShortCut("", "", message(lang, "FileBackups"), "", "iconBackup.png"));
+            tableData.add(new ShortCut("", "", message(lang, "Pagination"), "", "iconPages.png"));
             tableData.add(new ShortCut("", "", message(lang, "Anchor"), "", "iconAnchor.png"));
             tableData.add(new ShortCut("", "", message(lang, "Calculator"), "", "iconCalculator.png"));
             tableData.add(new ShortCut("", "", message(lang, "Delimiter"), "", "iconDelimiter.png"));

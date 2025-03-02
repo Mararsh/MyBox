@@ -42,7 +42,7 @@ public class ListImageItemCell extends ListCell<ImageItem> {
             setGraphic(null);
             return;
         }
-        setGraphic(item.makeNode(imageSize));
+        setGraphic(item.makeNode(imageSize, true));
     }
 
 }

@@ -227,8 +227,16 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         updateStatus();
     }
 
+    public void itemClicked() {
+    }
+
+    public void itemDoubleClicked() {
+        editAction();
+    }
+
     public void updateStatus() {
         checkSelected();
+        checkPagination();
     }
 
     public void checkPagination() {
@@ -257,13 +265,6 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         checkPagination();
         checkSelected();
         notifySelected();
-    }
-
-    public void itemClicked() {
-    }
-
-    public void itemDoubleClicked() {
-        editAction();
     }
 
     public void notifySelected() {

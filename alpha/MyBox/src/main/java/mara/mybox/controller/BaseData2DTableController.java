@@ -401,9 +401,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     public void postLoadedTableData() {
         if (data2D != null) {
             isSettingValues = true;
+            data2D.stopTask();
             sourceFile = data2D.getFile();
             data2D.setPageData(tableData);
-            data2D.stopTask();
             isSettingValues = false;
         }
         super.postLoadedTableData();

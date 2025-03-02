@@ -78,16 +78,18 @@ public class InternalImages {
             if (icons == null || icons.isEmpty()) {
                 return null;
             }
-            String name;
+            String name, comments;
             for (String icon : icons) {
                 if (!icon.startsWith("icon") || !icon.endsWith(".png") || icon.contains("_40")) {
                     continue;
                 }
                 name = icon.substring(4, icon.length() - 4);
+                comments = message(lang, "icon" + name);
                 ImageItem item = new ImageItem()
                         .setName(name + ".png")
                         .setAddress(path + icon)
-                        .setComments(message(lang, "icon" + name));
+                        .setWidth(100)
+                        .setComments(comments.startsWith("icon") ? null : comments);
                 images.add(item);
             }
         } catch (Exception e) {
