@@ -43,7 +43,7 @@ public class ControlImage extends BaseController {
 
             baseName = parent.baseName + "Image";
             defaultAddress = inDefault != null ? inDefault
-                    : StyleTools.getIconPath() + "iconAdd.png";
+                    : StyleTools.getIconFile("iconAdd.png").toString();
 
             currentAddress = inCurrent != null ? inCurrent
                     : UserConfig.getString(baseName + "Address", defaultAddress);
@@ -94,7 +94,7 @@ public class ControlImage extends BaseController {
                     inImage = item.readImage();
                     if (inImage == null) {
                         if (defaultAddress == null) {
-                            defaultAddress = StyleTools.getIconPath() + "iconAdd.png";
+                            defaultAddress = StyleTools.getIconFile("iconAdd.png").toString();
                         }
                         inAddress = defaultAddress;
                         inImage = new Image(currentAddress);
@@ -146,7 +146,7 @@ public class ControlImage extends BaseController {
     @FXML
     public void defaultAction() {
         if (defaultAddress == null) {
-            defaultAddress = InternalImages.exampleIcon();
+            defaultAddress = InternalImages.exampleImageFile().toString();
         }
         loadImageItem(new ImageItem(defaultAddress), true);
     }

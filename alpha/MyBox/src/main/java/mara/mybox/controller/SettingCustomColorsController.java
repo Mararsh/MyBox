@@ -90,7 +90,7 @@ public class SettingCustomColorsController extends BaseChildController {
                 || !light.equalsIgnoreCase(UserConfig.getString("CustomizeColorLight", null))) {
             UserConfig.setString("CustomizeColorDark", dark);
             UserConfig.setString("CustomizeColorLight", light);
-            FileDeleteTools.clearDir(null, new File(AppVariables.MyboxDataPath + "/buttons/"));
+            FileDeleteTools.clearDir(null, new File(AppVariables.MyboxDataPath + "/buttons/customized/"));
         }
         if (useCheck.isSelected() || AppVariables.ControlColor == StyleData.StyleColor.Customize) {
             StyleTools.setConfigStyleColor(parentController, "customize");

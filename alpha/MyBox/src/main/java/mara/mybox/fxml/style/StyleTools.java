@@ -125,7 +125,7 @@ public class StyleTools {
                         if (iconNames == null || iconNames.isEmpty()) {
                             return true;
                         }
-                        String targetPath = AppVariables.MyboxDataPath + "/buttons/";
+                        String targetPath = AppVariables.MyboxDataPath + "/buttons/customized/";
                         new File(targetPath).mkdirs();
                         for (String iconName : iconNames) {
                             String tname = targetPath + iconName;
@@ -163,13 +163,47 @@ public class StyleTools {
         try {
             StyleColor colorStyle = AppVariables.ControlColor;
             if (colorStyle == null) {
+                AppVariables.ControlColor = StyleColor.Red;
                 colorStyle = StyleColor.Red;
             }
             if (colorStyle == StyleColor.Customize) {
-                return AppVariables.MyboxDataPath + "/buttons/";
+                String address = AppVariables.MyboxDataPath + "/buttons/customized/";
+                if (new File(address).exists()) {
+                    return address;
+                } else {
+                    UserConfig.setString("ControlColor", "red");
+                    AppVariables.ControlColor = StyleColor.Red;
+                    return ButtonsSourcePath + "Red/";
+                }
             } else {
                 return ButtonsSourcePath + colorStyle.name() + "/";
             }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static File getIconFile(String name) {
+        try {
+            StyleColor colorStyle = AppVariables.ControlColor;
+            if (colorStyle == null) {
+                colorStyle = StyleColor.Red;
+            }
+            File file = null;
+            if (colorStyle == StyleColor.Customize) {
+                file = new File(AppVariables.MyboxDataPath + "/buttons/customized/" + name);
+                if (!file.exists()) {
+                    colorStyle = StyleColor.Red;
+                    file = null;
+                }
+            }
+            if (file == null) {
+                file = FxFileTools.getInternalFile(
+                        "/" + ButtonsSourcePath + colorStyle.name() + "/" + name,
+                        "buttons/" + colorStyle.name(),
+                        name);
+            }
+            return file;
         } catch (Exception e) {
             return null;
         }

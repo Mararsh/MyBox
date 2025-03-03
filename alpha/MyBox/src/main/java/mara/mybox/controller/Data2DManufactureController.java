@@ -200,8 +200,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             columnsLabel.setWrapText(wrapCheck.isSelected());
             isSettingValues = false;
 
-            loadCsv();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -821,7 +819,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (tableRadio.isSelected()) {
             tableView.scrollTo(index - 5);
         } else {
-            switchFormat();
+            loadContents();
         }
         tableChanged(true);
         return list.size();

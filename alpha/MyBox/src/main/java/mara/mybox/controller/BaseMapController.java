@@ -349,7 +349,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void moveCenter(GeographyCode code) {
-        if (!mapLoaded || code == null) {
+        if (!mapLoaded || code == null || webEngine == null) {
             return;
         }
         webEngine.executeScript("setCenter("
@@ -357,7 +357,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void drawLine(GeographyCode code1, GeographyCode code2) {
-        if (!mapLoaded || code1 == null || code2 == null) {
+        if (!mapLoaded || code1 == null || code2 == null || webEngine == null) {
             return;
         }
         String pColor = "'" + textRGB() + "'";
@@ -399,6 +399,9 @@ public class BaseMapController extends BaseController {
 
     public void applyMapType(String type, boolean isGeo) {
         try {
+            if (webEngine == null) {
+                return;
+            }
             mapType = type;
             isGeodetic = isGeo;
             mapLoaded = false;
@@ -468,7 +471,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void applyLanguage() {
-        if (!mapLoaded || isSettingValues || !isGaoDeMap()) {
+        if (!mapLoaded || isSettingValues || !isGaoDeMap() || webEngine == null) {
             return;
         }
         webEngine.executeScript("setLanguage(\"" + language + "\");");
@@ -489,7 +492,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void applyMapZoom(int zoom) {
-        if (!mapLoaded || isSettingValues || zoom <= 0) {
+        if (!mapLoaded || isSettingValues || zoom <= 0 || webEngine == null) {
             return;
         }
         webEngine.executeScript("setZoom(" + zoom + ");");
@@ -527,7 +530,7 @@ public class BaseMapController extends BaseController {
 
     public void applyStandardLayer() {
         try {
-            if (!mapLoaded || isSettingValues || !isGaoDeMap()) {
+            if (!mapLoaded || isSettingValues || !isGaoDeMap() || webEngine == null) {
                 return;
             }
             if (showStandardLayer) {
@@ -571,7 +574,7 @@ public class BaseMapController extends BaseController {
 
     public void applySatelliteLayer() {
         try {
-            if (!mapLoaded || isSettingValues || !isGaoDeMap()) {
+            if (!mapLoaded || isSettingValues || !isGaoDeMap() || webEngine == null) {
                 return;
             }
             if (showSatelliteLayer) {
@@ -615,7 +618,7 @@ public class BaseMapController extends BaseController {
 
     public void applyRoadLayer() {
         try {
-            if (!mapLoaded || isSettingValues || !isGaoDeMap()) {
+            if (!mapLoaded || isSettingValues || !isGaoDeMap() || webEngine == null) {
                 return;
             }
             if (showRoadLayer) {
@@ -659,7 +662,7 @@ public class BaseMapController extends BaseController {
 
     public void applyTrafficLayer() {
         try {
-            if (!mapLoaded || isSettingValues || !isGaoDeMap()) {
+            if (!mapLoaded || isSettingValues || !isGaoDeMap() || webEngine == null) {
                 return;
             }
             if (showTrafficLayer) {
@@ -686,7 +689,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void applyFitView(boolean setTrue) {
-        if (!mapLoaded || isSettingValues || !isGaoDeMap()) {
+        if (!mapLoaded || isSettingValues || !isGaoDeMap() || webEngine == null) {
             return;
         }
         if (setTrue) {
@@ -706,7 +709,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void applyShowZoom() {
-        if (!mapLoaded || isSettingValues || isGaoDeMap()) {
+        if (!mapLoaded || isSettingValues || isGaoDeMap() || webEngine == null) {
             return;
         }
         webEngine.executeScript("setControl('zoom'," + showZoomControl + ");");
@@ -724,7 +727,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void applyShowScale() {
-        if (!mapLoaded || isSettingValues || isGaoDeMap()) {
+        if (!mapLoaded || isSettingValues || isGaoDeMap() || webEngine == null) {
             return;
         }
         webEngine.executeScript("setControl('scale'," + showScaleControl + ");");
@@ -742,7 +745,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void applyShowType() {
-        if (!mapLoaded || isSettingValues || isGaoDeMap()) {
+        if (!mapLoaded || isSettingValues || isGaoDeMap() || webEngine == null) {
             return;
         }
         webEngine.executeScript("setControl('mapType'," + showTypeControl + ");");
@@ -760,7 +763,7 @@ public class BaseMapController extends BaseController {
     }
 
     public void applyShowSymbols() {
-        if (!mapLoaded || isSettingValues || isGaoDeMap()) {
+        if (!mapLoaded || isSettingValues || isGaoDeMap() || webEngine == null) {
             return;
         }
         webEngine.executeScript("setControl('symbols'," + showSymbolsControl + ");");
@@ -768,7 +771,7 @@ public class BaseMapController extends BaseController {
 
     public void readMapStyle(Connection conn) {
         try {
-            if (!mapLoaded || isSettingValues) {
+            if (!mapLoaded || isSettingValues || webEngine == null) {
                 return;
             }
             mapStyle = UserConfig.getString(conn, baseName + "MapStyle", "default");
@@ -803,7 +806,7 @@ public class BaseMapController extends BaseController {
     }
 
     public File defaultMarkerImage() {
-        return new ImageItem(StyleTools.getIconPath() + "iconLocation.png").getFile();
+        return StyleTools.getIconFile("iconLocation.png");
     }
 
     public String setMarkerImageDefault(String address) {

@@ -1,5 +1,6 @@
 package mara.mybox.db.migration;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,6 +33,7 @@ import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -93,6 +95,17 @@ public class DataMigrationFrom68 {
             exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_distance");
             exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN area_excluded");
             exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN area_data");
+
+            File dir = new File(AppVariables.MyboxDataPath + File.separator + "buttons");
+            File[] list = dir.listFiles();
+            if (list != null) {
+                for (File file : list) {
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    file.delete();
+                }
+            }
 
         } catch (Exception e) {
             MyBoxLog.console(e);

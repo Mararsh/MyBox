@@ -76,7 +76,7 @@ public class InternalImages {
         try {
             List<String> icons = FxFileTools.getResourceFiles(path);
             if (icons == null || icons.isEmpty()) {
-                return null;
+                icons = FxFileTools.getResourceFiles(StyleTools.ButtonsSourcePath + "Red/");
             }
             String name, comments;
             for (String icon : icons) {
@@ -120,10 +120,6 @@ public class InternalImages {
 
     public static File exampleImageFile() {
         return FxFileTools.getInternalFile("/" + exampleImageName(), "image", "Example.png");
-    }
-
-    public static String exampleIcon() {
-        return StyleTools.getIconPath() + "iconAdd.png";
     }
 
 }

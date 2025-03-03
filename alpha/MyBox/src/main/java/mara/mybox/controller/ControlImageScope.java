@@ -224,7 +224,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 }
             });
 
-            outlineController.setParameter(this, StyleTools.getIconPath() + "iconAdd.png", null);
+            outlineController.setParameter(this, StyleTools.getIconFile("iconAdd.png").toString(), null);
             outlineController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

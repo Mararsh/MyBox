@@ -201,7 +201,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         format
      */
     public void checkFormat(Toggle ov) {
-        switchFormat();
+        if (formatGroup.getSelectedToggle() == ov) {
+            loadContents();
+        } else {
+            switchFormat();
+        }
     }
 
     public void switchFormat() {
@@ -221,9 +225,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 columnsLabel.setText("");
             }
             isSettingValues = false;
-            if (data2D == null) {
-                return;
-            }
 
             if (htmlRadio.isSelected()) {
                 showHtml();
@@ -240,6 +241,39 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
             refreshStyle(mainAreaBox);
 
+            loadContents();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void loadContents() {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            if (data2D == null || !data2D.isValidDefinition()) {
+                mainAreaBox.setDisable(true);
+                return;
+            } else {
+                mainAreaBox.setDisable(false);
+            }
+
+            if (htmlRadio.isSelected()) {
+                loadHtml(false);
+
+            } else if (tableRadio.isSelected()) {
+                loadTable();
+
+            } else if (textsRadio.isSelected()) {
+                loadTexts(false);
+
+            } else if (csvRadio != null && csvRadio.isSelected()) {
+                loadCsv();
+
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -251,8 +285,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             pageBox.getChildren().add(htmlBox);
             VBox.setVgrow(htmlBox, Priority.ALWAYS);
 
-            loadHtml(false);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -263,11 +295,10 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadHtml(boolean pop) {
-        if (!data2D.isValidDefinition()) {
+        if (data2D == null || !data2D.isValidDefinition()) {
             if (pop) {
                 popError(message("NoData"));
             } else {
-                MyBoxLog.console("here");
                 webViewController.loadContent("");
             }
             return;
@@ -321,8 +352,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             textsArea.setWrapText(wrapCheck.isSelected());
             isSettingValues = false;
 
-            loadTexts(false);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -334,7 +363,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadTexts(boolean pop) {
-        if (!data2D.isValidDefinition()) {
+        if (data2D == null || !data2D.isValidDefinition()) {
             if (pop) {
                 popError(message("NoData"));
             } else {
@@ -384,9 +413,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             showTableButtons();
             pageBox.getChildren().add(tableBox);
             VBox.setVgrow(tableBox, Priority.ALWAYS);
-
-            loadTable();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -398,6 +424,9 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void loadTable() {
         try {
+            if (data2D == null || !data2D.isValidDefinition()) {
+                return;
+            }
             List<List<String>> data = new ArrayList<>();
             data.addAll(tableData);
 
@@ -453,7 +482,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
-        switchFormat();
+        loadContents();
     }
 
     /*
