@@ -17,18 +17,19 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import mara.mybox.image.data.ImageFileInformation;
+import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ImageViewTools;
-import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.image.ImageViewTools;
+import mara.mybox.fxml.image.TransformTools;
+import mara.mybox.image.data.ImageFileInformation;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -697,6 +698,24 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         imageInformation = null;
         imageView.setImage(canvas);
         saveAction();
+    }
+
+    @FXML
+    public void exampleAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        ImageExampleSelectController controller = ImageExampleSelectController.open(this, false);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                ImageItem item = controller.selectedItem();
+                if (item != null) {
+                    create(item.readImage());
+                }
+                controller.close();
+            }
+        });
     }
 
     @FXML

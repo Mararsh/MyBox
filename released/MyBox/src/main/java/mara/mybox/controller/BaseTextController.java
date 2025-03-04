@@ -14,7 +14,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
+import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
@@ -59,22 +61,16 @@ public abstract class BaseTextController extends BaseTextController_Actions {
 
     public final void setTextType() {
         editType = Edit_Type.Text;
-        defaultPageSize = 200;
-
         setFileType(VisitHistory.FileType.Text);
     }
 
     public final void setBytesType() {
         editType = Edit_Type.Bytes;
-        defaultPageSize = 50000;
-
         setFileType(VisitHistory.FileType.All);
     }
 
     public final void setMarkdownType() {
         editType = Edit_Type.Markdown;
-        defaultPageSize = 200;
-
         setFileType(VisitHistory.FileType.Markdown);
     }
 
@@ -95,11 +91,17 @@ public abstract class BaseTextController extends BaseTextController_Actions {
     public void initControls() {
         try {
             super.initControls();
-            initPage(null);
+            if (paginationController != null) {
+                if (editType == FileEditInformation.Edit_Type.Bytes) {
+                    paginationController.setParameters(this, pagination, ObjectType.Bytes);
+                } else {
+                    paginationController.setParameters(this, pagination, ObjectType.Text);
+                }
+            }
 
+            initPage(null);
             initMainBox();
             initPairBox();
-            initPageBar();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -129,10 +131,10 @@ public abstract class BaseTextController extends BaseTextController_Actions {
             long currentPage = sourceInformation.getCurrentPage();
             StringBuilder s = new StringBuilder();
             if (sourceFile != null) {
-                pageLineStart = sourceInformation.getCurrentPageLineStart();
+                pageLineStart = sourceInformation.getStartRowOfCurrentPage();
                 pageLineEnd = pageLineStart + pageLinesNumber;
 
-                pageObjectStart = sourceInformation.getCurrentPageObjectStart();
+                pageObjectStart = sourceInformation.getStartObjectOfCurrentPage();
                 pageObjectEnd = pageObjectStart + pageObjectsNumber;
 
                 pagesNumber = sourceInformation.getPagesNumber();
@@ -145,7 +147,7 @@ public abstract class BaseTextController extends BaseTextController_Actions {
                 s.append(editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
                         .append(": ").append(StringTools.format(sourceInformation.getObjectsNumber())).append("\n");
                 s.append(message("RowsNumberInFile"))
-                        .append(": ").append(StringTools.format(sourceInformation.getLinesNumber())).append("\n");
+                        .append(": ").append(StringTools.format(sourceInformation.getRowsNumber())).append("\n");
                 s.append(editType == Edit_Type.Bytes ? message("BytesPerPage") : message("RowsPerPage"))
                         .append(": ").append(StringTools.format(pageSize)).append("\n");
                 s.append(message("CurrentPage"))
@@ -316,7 +318,6 @@ public abstract class BaseTextController extends BaseTextController_Actions {
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
-            MyBoxLog.console(buttonsPane.isDisable());
             if (buttonsPane.isDisable()) {
                 return null;
             }

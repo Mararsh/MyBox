@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController_Attributes.StageType;
+import static mara.mybox.controller.BaseController_Attributes.StageType.Operation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.value.AppVariables;
@@ -74,29 +75,28 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
         if (stageType == null || myStage == null) {
             return;
         }
+        Stage parentStage = parent != null ? parent.getMyStage() : null;
         switch (stageType) {
+            case Operation:
+                if (parentStage != null && AppVariables.operationWindowIconifyParent) {
+                    parentStage.setIconified(true);
+                }
             case Branch: {
                 setAlwaysTop(true, false);
-                try {
-                    Stage parentStage = parent.getMyStage();
+                if (parentStage != null) {
                     parentStage.setOnHiding(new EventHandler<WindowEvent>() {
                         @Override
                         public void handle(WindowEvent event) {
                             closeStage();
                         }
                     });
-                    if (AppVariables.branchWindowIconifyParent) {
-                        parentStage.setIconified(true);
-                    }
-                } catch (Exception e) {
                 }
                 break;
             }
             case Pop: {
                 setAlwaysTop(true, false);
-                try {
-                    parent.getMyStage().setFullScreen(false);
-                } catch (Exception e) {
+                if (parentStage != null) {
+                    parentStage.setFullScreen(false);
                 }
                 break;
             }

@@ -69,6 +69,10 @@ public class StyleCheckBox {
                 return new StyleData(id, message("AlwayOnTopComments"), "CTRL+0 / ALT+0", "iconTop.png");
             case "synchronizeSwitchCheck":
                 return new StyleData(id, message("SynchronizeWhenSwitchFormat"), "", "iconSynchronize.png");
+            case "keepRatioCheck":
+                return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
+            case "scopeExcludeCheck":
+                return new StyleData(id, message("ScopeExclude"), "", "iconInvert.png");
         }
         return null;
     }
@@ -108,12 +112,6 @@ public class StyleCheckBox {
             return new StyleData(id, message("ChildWindowTips"), "", "iconWindow.png");
         }
         if (id.startsWith("scope")) {
-            if (id.startsWith("scopeExclude")) {
-                return new StyleData(id, message("ScopeExclude"), "", "iconInvert.png");
-            }
-            if (id.startsWith("scopeOutlineKeepRatio")) {
-                return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
-            }
             return new StyleData(id, message("Scope"), "", "iconTarget.png");
         }
         if (id.startsWith("csv")) {

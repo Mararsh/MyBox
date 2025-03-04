@@ -4,12 +4,12 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ColorDemos;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -79,7 +79,7 @@ public class ImageThresholdingController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageThresholdingController controller = (ImageThresholdingController) WindowTools.branchStage(
+            ImageThresholdingController controller = (ImageThresholdingController) WindowTools.operationStage(
                     parent, Fxmls.ImageThresholdingFxml);
             controller.setParameters(parent);
             return controller;

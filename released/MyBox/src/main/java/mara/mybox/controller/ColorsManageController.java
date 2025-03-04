@@ -160,6 +160,8 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 }
             });
 
+            paginationController.setRightOrientation(true);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -368,7 +370,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     public void loadPalette(String paletteName) {
-        currentPage = Integer.MAX_VALUE;
+        pagination.currentPage = Integer.MAX_VALUE;
         palettesController.loadPalette(paletteName);
         paletteTabPane.getSelectionModel().select(colorsTab);
     }
@@ -469,7 +471,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 return;
             }
             if ("page".equals(type)) {
-                filename += "_" + message("Page") + currentPage;
+                filename += "_" + message("Page") + (pagination.currentPage + 1);
             } else {
                 filename += "_" + message("All");
             }
@@ -524,7 +526,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     return;
                 }
                 if ("page".equals(type)) {
-                    title += "_" + message("Page") + (currentPage + 1);
+                    title += "_" + message("Page") + (pagination.currentPage + 1);
                     displayHtml(title, rows);
                 } else {
                     String atitle = title;
@@ -756,19 +758,25 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
      */
     @Override
     public long readDataSize(FxTask currentTask, Connection conn) {
+        long size;
         if (palettesController.isAllColors()) {
-            return tableColor.size(conn);
+            size = tableColor.size(conn);
         } else {
-            return tableColorPalette.size(conn, palettesController.currentPaletteId());
+            size = tableColorPalette.size(conn, palettesController.currentPaletteId());
         }
+        dataSizeLoaded = true;
+        return size;
+
     }
 
     @Override
     public List<ColorData> readPageData(FxTask currentTask, Connection conn) {
         if (palettesController.isAllColors()) {
-            return tableColor.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
+            return tableColor.queryConditions(conn, null, null,
+                    pagination.startRowOfCurrentPage, pagination.pageSize);
         } else {
-            return tableColorPalette.colors(conn, palettesController.currentPaletteId(), startRowOfCurrentPage, pageSize);
+            return tableColorPalette.colors(conn, palettesController.currentPaletteId(),
+                    pagination.startRowOfCurrentPage, pagination.pageSize);
         }
     }
 
@@ -801,10 +809,11 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (isSettingValues) {
             return;
         }
+        super.checkSelected();
+
         ColorData color = selectedItem();
         copyButton.setDisable(color == null);
         displayColorInfo(color);
-        checkButtons();
     }
 
     protected void displayColorInfo(ColorData color) {

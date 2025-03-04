@@ -347,7 +347,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
      */
     public static Data2DPercentageController open(BaseData2DLoadController tableController) {
         try {
-            Data2DPercentageController controller = (Data2DPercentageController) WindowTools.branchStage(
+            Data2DPercentageController controller = (Data2DPercentageController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DPercentageFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

@@ -200,8 +200,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             columnsLabel.setWrapText(wrapCheck.isSelected());
             isSettingValues = false;
 
-            loadCsv();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -314,7 +312,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     || data2D.isTmpData() || !data2D.isTableChanged());
             saveButton.setDisable(invalidData || !dataSizeLoaded);
             dataDefinitionButton.setDisable(invalidData);
-            paginationPane.setVisible(dataSizeLoaded);
+
             if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
                 if (!toolbar.getChildren().contains(fileMenuButton)) {
                     toolbar.getChildren().add(0, fileMenuButton);
@@ -740,8 +738,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     }
                     data2D.startTask(this, null);
 
-                    dataSize = data2D.savePageData(this);
-                    return dataSize >= 0;
+                    pagination.rowsNumber = data2D.savePageData(this);
+                    return pagination.rowsNumber >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -821,7 +819,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (tableRadio.isSelected()) {
             tableView.scrollTo(index - 5);
         } else {
-            switchFormat();
+            loadContents();
         }
         tableChanged(true);
         return list.size();

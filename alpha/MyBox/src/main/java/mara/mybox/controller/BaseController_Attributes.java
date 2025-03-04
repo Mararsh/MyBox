@@ -71,7 +71,7 @@ public abstract class BaseController_Attributes {
     protected Pagination pagination;
 
     public static enum StageType {
-        Normal, Branch, Child, Pop, Popup, OneOpen
+        Normal, Operation, Branch, Child, Pop, Popup, OneOpen
     }
 
     public static enum SaveAsType {

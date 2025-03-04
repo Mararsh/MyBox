@@ -81,11 +81,12 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
         if (isSettingValues) {
             return;
         }
+        super.checkSelected();
+
         TextClipboard selected = selectedItem();
         if (selected != null) {
             textArea.setText(selected.getText());
         }
-        checkButtons();
     }
 
     @Override

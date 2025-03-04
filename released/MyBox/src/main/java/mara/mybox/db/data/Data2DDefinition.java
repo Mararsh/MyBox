@@ -9,6 +9,7 @@ import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
+import mara.mybox.data.Pagination;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.dev.MyBoxLog;
@@ -30,7 +31,8 @@ public class Data2DDefinition extends BaseData {
     public File file;
     public Charset charset;
     public boolean hasHeader;
-    public long colsNumber, rowsNumber;
+    public Pagination pagination;
+    public long colsNumber;
     public short scale;
     public int maxRandom;
     public Date modifyTime;
@@ -40,6 +42,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public Data2DDefinition() {
+        pagination = new Pagination(Pagination.ObjectType.Table);
         resetDefinition();
     }
 
@@ -121,7 +124,7 @@ public class Data2DDefinition extends BaseData {
             scale = d.getScale();
             maxRandom = d.getMaxRandom();
             colsNumber = d.getColsNumber();
-            rowsNumber = d.getRowsNumber();
+            pagination.copyFrom(d.pagination);
             comments = d.getComments();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -138,7 +141,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public String info() {
-        return Data2DDefinitionTools.info(this);
+        return Data2DDefinitionTools.defInfo(this);
     }
 
     public final void resetDefinition() {
@@ -149,11 +152,12 @@ public class Data2DDefinition extends BaseData {
         hasHeader = true;
         charset = null;
         delimiter = null;
-        colsNumber = rowsNumber = -1;
+        colsNumber = -1;
         scale = 2;
         maxRandom = 1000;
         modifyTime = new Date();
         comments = null;
+        pagination.reset();
     }
 
     public boolean isValidDefinition() {
@@ -535,6 +539,15 @@ public class Data2DDefinition extends BaseData {
         return this;
     }
 
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    public Data2DDefinition setPagination(Pagination pagination) {
+        this.pagination = pagination;
+        return this;
+    }
+
     public long getColsNumber() {
         return colsNumber;
     }
@@ -545,11 +558,11 @@ public class Data2DDefinition extends BaseData {
     }
 
     public long getRowsNumber() {
-        return rowsNumber;
+        return pagination.rowsNumber;
     }
 
     public Data2DDefinition setRowsNumber(long rowsNumber) {
-        this.rowsNumber = rowsNumber;
+        pagination.setRowsNumber(rowsNumber);
         return this;
     }
 
@@ -596,6 +609,46 @@ public class Data2DDefinition extends BaseData {
     public Data2DDefinition setSheet(String sheet) {
         this.sheet = sheet;
         return this;
+    }
+
+    public long getPagesNumber() {
+        return pagination.getPagesNumber();
+    }
+
+    public void setPagesNumber(long pagesNumber) {
+        pagination.setPagesNumber(pagesNumber);
+    }
+
+    public int getPageSize() {
+        return pagination.getPageSize();
+    }
+
+    public void setPageSize(int pageSize) {
+        pagination.setPageSize(pageSize);
+    }
+
+    public long getStartRowOfCurrentPage() {
+        return pagination.getStartRowOfCurrentPage();
+    }
+
+    public void setStartRowOfCurrentPage(long startRowOfCurrentPage) {
+        pagination.setStartRowOfCurrentPage(startRowOfCurrentPage);
+    }
+
+    public long getEndRowOfCurrentPage() {
+        return pagination.getEndRowOfCurrentPage();
+    }
+
+    public void setEndRowOfCurrentPage(long endRowOfCurrentPage) {
+        pagination.setEndRowOfCurrentPage(endRowOfCurrentPage);
+    }
+
+    public long getCurrentPage() {
+        return pagination.getCurrentPage();
+    }
+
+    public void setCurrentPage(long currentPage) {
+        pagination.setCurrentPage(currentPage);
     }
 
 }

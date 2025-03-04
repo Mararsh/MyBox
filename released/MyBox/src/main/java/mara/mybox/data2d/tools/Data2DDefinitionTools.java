@@ -67,34 +67,26 @@ public class Data2DDefinitionTools {
         return columns;
     }
 
-    public static String info(Data2DDefinition def) {
+    public static String defInfo(Data2DDefinition def) {
         String info = message("ID") + ": " + def.getDataID() + "\n";
         info += message("Type") + ": " + def.getTypeName() + "\n";
         info += message("DataName") + ": " + def.getDataName() + "\n";
         info += message("Sheet") + ": " + def.getSheet() + "\n";
         info += message("File") + ": " + def.getFile() + "\n";
         info += message("ColumnsNumber") + ": " + def.getColsNumber() + "\n";
-        info += message("RowsNumber") + ": " + def.getRowsNumber();
         String des = def.getComments();
         if (des != null && !des.isBlank()) {
             info += message("Description") + ": " + des;
         }
+        info += message("Pagination") + ": \n" + def.pagination.info() + "\n";
         return info;
     }
 
-    public static String info(Data2D data2d) {
-        String info = message("ID") + ": " + data2d.getDataID() + "\n";
-        info += message("DataName") + ": " + data2d.getDataName() + "\n";
-        info += message("Type") + ": " + data2d.getTypeName() + "\n";
+    public static String dataInfo(Data2D data2d) {
+        String info = defInfo(data2d);
         info += message("DecimalScale") + ": " + data2d.getScale() + "\n";
         info += message("MaxRandom") + ": " + data2d.getMaxRandom() + "\n";
-        info += message("RowsNumber") + ": " + data2d.getRowsNumber() + "\n";
-        info += message("ColumnsNumber") + ": " + data2d.getColsNumber() + "\n";
         info += message("Columns") + ": " + data2d.columnNames();
-        String des = data2d.getComments();
-        if (des != null && !des.isBlank()) {
-            info += message("Description") + ": " + des;
-        }
         return info;
     }
 

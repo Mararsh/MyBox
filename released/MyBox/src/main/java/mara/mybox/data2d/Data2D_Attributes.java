@@ -24,9 +24,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public TableData2DColumn tableData2DColumn;
     public TableData2DStyle tableData2DStyle;
     public List<Data2DColumn> columns, savedColumns;
-    public int pageSize, newColumnIndex;
-    public long pagesNumber;
-    public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
+    public int newColumnIndex;
     public List<Data2DStyle> styles;
     public DataFilter filter;
     public ObservableList<List<String>> pageData;
@@ -43,15 +41,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
         tableData2DStyle = new TableData2DStyle();
-        pageSize = 50;
         styles = null;
         initData();
     }
 
     private void initData() {
         resetDefinition();
-        pagesNumber = 1;
-        currentPage = startRowOfCurrentPage = endRowOfCurrentPage = 0;
         columns = null;
         savedColumns = null;
         newColumnIndex = -1;
@@ -115,11 +110,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             savedColumns = d.savedColumns;
             newColumnIndex = d.newColumnIndex;
             styles = d.styles;
-            pageSize = d.pageSize;
-            pagesNumber = d.pagesNumber;
-            currentPage = d.currentPage;
-            startRowOfCurrentPage = d.startRowOfCurrentPage;
-            endRowOfCurrentPage = d.endRowOfCurrentPage;
+            pagination.copyFrom(d.pagination);
             tableChanged = d.tableChanged;
             dataLoaded = d.dataLoaded;
         } catch (Exception e) {
@@ -170,46 +161,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public Data2D_Attributes setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
         return this;
-    }
-
-    public long getPagesNumber() {
-        return pagesNumber;
-    }
-
-    public void setPagesNumber(long pagesNumber) {
-        this.pagesNumber = pagesNumber;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public long getStartRowOfCurrentPage() {
-        return startRowOfCurrentPage;
-    }
-
-    public void setStartRowOfCurrentPage(long startRowOfCurrentPage) {
-        this.startRowOfCurrentPage = startRowOfCurrentPage;
-    }
-
-    public long getEndRowOfCurrentPage() {
-        return endRowOfCurrentPage;
-    }
-
-    public void setEndRowOfCurrentPage(long endRowOfCurrentPage) {
-        this.endRowOfCurrentPage = endRowOfCurrentPage;
-    }
-
-    public long getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(long currentPage) {
-        this.currentPage = currentPage;
     }
 
     public String getError() {

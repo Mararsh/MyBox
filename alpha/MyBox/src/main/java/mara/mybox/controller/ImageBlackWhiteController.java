@@ -3,12 +3,12 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageBinary;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ColorDemos;
+import mara.mybox.image.data.ImageBinary;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -95,7 +95,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.branchStage(
+            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.operationStage(
                     parent, Fxmls.ImageBlackWhiteFxml);
             controller.setParameters(parent);
             return controller;

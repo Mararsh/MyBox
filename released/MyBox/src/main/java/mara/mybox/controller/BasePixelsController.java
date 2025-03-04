@@ -3,8 +3,8 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.data.ImageScope;
 
 /**
  * @Author Mara
@@ -13,12 +13,15 @@ import mara.mybox.fxml.FxTask;
  */
 public abstract class BasePixelsController extends BaseImageEditController {
 
+    protected ControlImageScope scopeHandler;
+
     @FXML
     protected ControlSelectPixels scopeController;
 
     @Override
     protected void initMore() {
-        scopeController.setParameters(imageController);
+        scopeHandler = scopeController.handleController;
+        scopeHandler.setImageEditor(imageController);
     }
 
     @Override
@@ -27,20 +30,20 @@ public abstract class BasePixelsController extends BaseImageEditController {
             close();
             return;
         }
-        scopeController.loadImage(srcImage());
+        scopeHandler.loadImage(srcImage());
         updateStageTitle();
     }
 
     public ImageScope scope() {
-        return scopeController.pickScopeValues();
+        return scopeHandler.pickScopeValues();
     }
 
     public boolean excludeScope() {
-        return scopeController.scopeExcludeCheck.isSelected();
+        return scopeHandler.scopeExcludeCheck.isSelected();
     }
 
     public boolean skipTransparent() {
-        return !scopeController.handleTransparentCheck.isSelected();
+        return !scopeHandler.handleTransparentCheck.isSelected();
     }
 
     @Override
@@ -56,7 +59,7 @@ public abstract class BasePixelsController extends BaseImageEditController {
     @FXML
     @Override
     public boolean menuAction() {
-        if (scopeController.menuAction()) {
+        if (scopeHandler.menuAction()) {
             return true;
         }
         return super.menuAction();
@@ -65,7 +68,7 @@ public abstract class BasePixelsController extends BaseImageEditController {
     @FXML
     @Override
     public boolean popAction() {
-        if (scopeController.popAction()) {
+        if (scopeHandler.popAction()) {
             return true;
         }
         return super.popAction();
@@ -76,7 +79,7 @@ public abstract class BasePixelsController extends BaseImageEditController {
         if (super.keyEventsFilter(event)) {
             return true;
         }
-        return scopeController.keyEventsFilter(event);
+        return scopeHandler.keyEventsFilter(event);
     }
 
 }

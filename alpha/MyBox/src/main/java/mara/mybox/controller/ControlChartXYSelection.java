@@ -24,8 +24,8 @@ public class ControlChartXYSelection extends BaseController {
     @FXML
     protected ToggleGroup chartGroup;
     @FXML
-    protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio, scatterChartRadio,
-            bubbleChartRadio, areaChartRadio, stackedAreaChartRadio;
+    protected RadioButton barChartRadio, stackedBarChartRadio, lineChartRadio,
+            scatterChartRadio, areaChartRadio, stackedAreaChartRadio;
 
     public ControlChartXYSelection() {
         TipsLabelKey = "DataChartXYTips";
@@ -72,9 +72,6 @@ public class ControlChartXYSelection extends BaseController {
             } else if (stackedAreaChartRadio.isSelected()) {
                 chartType = ChartType.StackedArea;
                 chartName = message("StackedAreaChart");
-            } else if (bubbleChartRadio.isSelected()) {
-                chartType = ChartType.Bubble;
-                chartName = message("BubbleChart");
             }
 
             typeNodify.set(!typeNodify.get());
@@ -85,21 +82,8 @@ public class ControlChartXYSelection extends BaseController {
         return chartType;
     }
 
-    public boolean isBubbleChart() {
-        return bubbleChartRadio.isSelected();
-    }
-
     public boolean needChangeData() {
         return lastType == ChartType.Bubble || chartType == ChartType.Bubble;
-    }
-
-    public void disableBubbleChart() {
-        if (bubbleChartRadio.isSelected()) {
-            barChartRadio.setSelected(true);
-        }
-        if (thisPane.getChildren().contains(bubbleChartRadio)) {
-            thisPane.getChildren().remove(bubbleChartRadio);
-        }
     }
 
 }

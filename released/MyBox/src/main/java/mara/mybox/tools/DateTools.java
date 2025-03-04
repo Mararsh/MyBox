@@ -263,10 +263,7 @@ public class DateTools {
         return string
      */
     public static String nowFileString() {
-        SimpleDateFormat formatter = new SimpleDateFormat(TimeFormats.Datetime2);
-        formatter.setTimeZone(getTimeZone());
-        String dateString = formatter.format(new Date());
-        return dateString;
+        return datetimeToString(new Date(), TimeFormats.Datetime2);
     }
 
     public static String nowString() {

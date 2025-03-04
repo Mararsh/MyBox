@@ -66,7 +66,7 @@ public class ImageLineController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageLineController controller = (ImageLineController) WindowTools.branchStage(
+            ImageLineController controller = (ImageLineController) WindowTools.operationStage(
                     parent, Fxmls.ImageLineFxml);
             controller.setParameters(parent);
             return controller;

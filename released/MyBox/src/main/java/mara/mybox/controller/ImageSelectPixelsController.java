@@ -63,7 +63,7 @@ public class ImageSelectPixelsController extends BasePixelsController {
             @Override
             protected boolean handle() {
                 try {
-                    handledImage = scopeController.selectedScope(this,
+                    handledImage = scopeHandler.selectedScope(this,
                             bgColorController.awtColor(), marginsCheck.isSelected());
                     return handledImage != null;
                 } catch (Exception e) {
@@ -98,7 +98,7 @@ public class ImageSelectPixelsController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSelectPixelsController controller = (ImageSelectPixelsController) WindowTools.branchStage(
+            ImageSelectPixelsController controller = (ImageSelectPixelsController) WindowTools.operationStage(
                     parent, Fxmls.ImageSelectPixelsFxml);
             controller.setParameters(parent);
             return controller;

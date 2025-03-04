@@ -437,7 +437,7 @@ public class ControlFindReplace extends BaseController {
         int anchor = textInput.getAnchor();
         int unit = editerController != null ? editerController.sourceInformation.getObjectUnit() : 1;
         long pageStart = editerController != null
-                ? (int) editerController.sourceInformation.getCurrentPageObjectStart() * unit : 0;
+                ? (int) editerController.sourceInformation.getStartObjectOfCurrentPage() * unit : 0;
         if (StringTools.match(selectedText, findString, regexCheck.isSelected(), dotallCheck.isSelected(),
                 multilineCheck.isSelected(), caseInsensitiveCheck.isSelected())) {
             IndexRange selectIndex = textInput.getSelection();
@@ -546,7 +546,7 @@ public class ControlFindReplace extends BaseController {
                             textInput.deselect();
                             if (findReplace.isMultiplePages()) {
                                 editerController.sourceInformation.setTotalNumberRead(false);
-                                editerController.loadPage();
+                                editerController.goPage();
                             } else {
                                 editerController.loadText(findReplace.getOutputString(), true);
                             }

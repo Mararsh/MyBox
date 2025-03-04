@@ -16,8 +16,7 @@ import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.image.tools.AlphaTools;
 import mara.mybox.image.data.ImageQuantization;
-import static mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
-import mara.mybox.image.data.ImageRGBKMeans;
+import mara.mybox.image.data.ImageRegionKMeans;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlImageQuantization;
@@ -41,6 +40,7 @@ import thridparty.miguelemosreverte.ImageTracer;
 import static thridparty.miguelemosreverte.ImageTracer.bytetrans;
 import thridparty.miguelemosreverte.SVGUtils;
 import thridparty.miguelemosreverte.VectorizingUtils;
+import static mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm.RegionKMeansClustering;
 
 /**
  * @Author Mara
@@ -643,7 +643,7 @@ public class SvgTools {
             ControlImageQuantization quantization) {
         try {
             ImageKMeans kmeans = ImageKMeans.create();
-            kmeans.setAlgorithm(KMeansClustering).
+            kmeans.setAlgorithm(RegionKMeansClustering).
                     setQuantizationSize(quantization.getQuanColors())
                     .setRegionSize(quantization.getRegionSize())
                     .setWeight1(quantization.getRgbWeight1())
@@ -708,7 +708,7 @@ public class SvgTools {
 
         public int[][] colorIndice;
         public byte[][] paletteBytes;
-        protected ImageRGBKMeans kmeans;
+        protected ImageRegionKMeans kmeans;
         protected List<java.awt.Color> paletteColors;
 
         public static ImageKMeans create() {
@@ -717,7 +717,7 @@ public class SvgTools {
 
         public ImageKMeans makePalette() {
             try {
-                kmeans = imageKMeans();
+                kmeans = imageRegionKMeans();
                 paletteColors = kmeans.getCenters();
                 int size = paletteColors.size();
                 paletteBytes = new byte[size + 1][4];

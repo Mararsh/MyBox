@@ -25,23 +25,22 @@ public class TextEditInformation extends FileEditInformation {
 
     public TextEditInformation() {
         editType = Edit_Type.Text;
-        initValues();
     }
 
-    public TextEditInformation(File file) {
+    public TextEditInformation(File file, Pagination pagi) {
         super(file);
         editType = Edit_Type.Text;
-        initValues();
+        initValues(pagi);
     }
 
     @Override
     public boolean readTotalNumbers(FxTask currentTask) {
-        if (file == null || pageSize <= 0 || lineBreakValue == null) {
+        if (file == null || pagination.pageSize <= 0 || lineBreakValue == null) {
             return false;
         }
-        objectsNumber = 0;
-        linesNumber = 0;
-        pagesNumber = 1;
+        pagination.objectsNumber = 0;
+        pagination.rowsNumber = 0;
+        pagination.pagesNumber = 1;
         long lineIndex = 0, charIndex = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
@@ -56,31 +55,33 @@ public class TextEditInformation extends FileEditInformation {
             MyBoxLog.debug(e);
             return false;
         }
-        linesNumber = lineIndex;
-        pagesNumber = linesNumber / pageSize;
-        if (linesNumber % pageSize > 0) {
-            pagesNumber++;
+        pagination.rowsNumber = lineIndex;
+        pagination.pagesNumber = pagination.rowsNumber / pagination.pageSize;
+        if (pagination.rowsNumber % pagination.pageSize > 0) {
+            pagination.pagesNumber++;
         }
-        objectsNumber = charIndex + (linesNumber > 0 ? linesNumber - 1 : 0);
+        pagination.objectsNumber = charIndex
+                + (pagination.rowsNumber > 0 ? pagination.rowsNumber - 1 : 0);
         totalNumberRead = true;
         return true;
     }
 
     @Override
     public String readPage(FxTask currentTask, long pageNumber) {
-        return readLines(currentTask, pageNumber * pageSize, pageSize);
+        return readLines(currentTask, pageNumber * pagination.pageSize, pagination.pageSize);
     }
 
     @Override
     public String readLines(FxTask currentTask, long from, long number) {
-        if (file == null || from < 0 || number <= 0 || (linesNumber > 0 && from >= linesNumber)) {
+        if (file == null || from < 0 || number <= 0
+                || (pagination.rowsNumber > 0 && from >= pagination.rowsNumber)) {
             return null;
         }
         long lineIndex = 0, charIndex = 0, lineStart = 0;
         StringBuilder pageText = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
-            lineStart = (from / pageSize) * pageSize;
-            long lineEnd = Math.max(from + number, lineStart + pageSize);
+            lineStart = (from / pagination.pageSize) * pagination.pageSize;
+            long lineEnd = Math.max(from + number, lineStart + pagination.pageSize);
             String line, fixedLine;
             boolean moreLine = false;
             while ((line = reader.readLine()) != null) {
@@ -110,17 +111,18 @@ public class TextEditInformation extends FileEditInformation {
             MyBoxLog.debug(e);
             return null;
         }
-        currentPage = lineStart / pageSize;
-        currentPageObjectStart = charIndex - pageText.length();
-        currentPageObjectEnd = charIndex;
-        currentPageLineStart = lineStart;
-        currentPageLineEnd = lineIndex;
+        pagination.currentPage = lineStart / pagination.pageSize;
+        pagination.startObjectOfCurrentPage = charIndex - pageText.length();
+        pagination.endObjectOfCurrentPage = charIndex;
+        pagination.startRowOfCurrentPage = lineStart;
+        pagination.endRowOfCurrentPage = lineIndex;
         return pageText.toString();
     }
 
     @Override
     public String readObjects(FxTask currentTask, long from, long number) {
-        if (file == null || from < 0 || number <= 0 || (objectsNumber > 0 && from >= objectsNumber)) {
+        if (file == null || from < 0 || number <= 0
+                || (pagination.objectsNumber > 0 && from >= pagination.objectsNumber)) {
             return null;
         }
         long charIndex = 0, lineIndex = 0, lineStart = 0;
@@ -145,12 +147,12 @@ public class TextEditInformation extends FileEditInformation {
                     moreLine = true;
                 }
                 charIndex += fixedLine.length();
-                if (++lineIndex == lineStart + pageSize && charIndex < from) {
+                if (++lineIndex == lineStart + pagination.pageSize && charIndex < from) {
                     lineStart = lineIndex;
                     pageText = new StringBuilder();
                     moreLine = false;
                 }
-                if (charIndex >= to && lineIndex >= lineStart + pageSize) {
+                if (charIndex >= to && lineIndex >= lineStart + pagination.pageSize) {
                     break;
                 }
 
@@ -159,11 +161,11 @@ public class TextEditInformation extends FileEditInformation {
             MyBoxLog.debug(e);
             return null;
         }
-        currentPage = lineStart / pageSize;;
-        currentPageObjectStart = charIndex - pageText.length();
-        currentPageObjectEnd = charIndex;
-        currentPageLineStart = lineStart;
-        currentPageLineEnd = lineIndex;
+        pagination.currentPage = lineStart / pagination.pageSize;
+        pagination.startObjectOfCurrentPage = charIndex - pageText.length();
+        pagination.endObjectOfCurrentPage = charIndex;
+        pagination.startRowOfCurrentPage = lineStart;
+        pagination.endRowOfCurrentPage = lineIndex;
         return pageText.toString();
     }
 
@@ -231,7 +233,7 @@ public class TextEditInformation extends FileEditInformation {
     public boolean writePage(FxTask currentTask, FileEditInformation sourceInfo, String pageText) {
         try {
             if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
-                    || sourceInfo.getPageSize() <= 0 || pageText == null
+                    || sourceInfo.pagination.pageSize <= 0 || pageText == null
                     || file == null || charset == null || lineBreakValue == null) {
                 return false;
             }
@@ -253,8 +255,8 @@ public class TextEditInformation extends FileEditInformation {
                     return false;
                 }
                 String line, text;
-                long lineIndex = 0, pageLineStart = sourceInfo.getCurrentPageLineStart(),
-                        pageLineEnd = sourceInfo.getCurrentPageLineEnd();
+                long lineIndex = 0, pageLineStart = sourceInfo.pagination.startRowOfCurrentPage,
+                        pageLineEnd = sourceInfo.pagination.endRowOfCurrentPage;
                 while ((line = reader.readLine()) != null) {
                     if (currentTask != null && !currentTask.isWorking()) {
                         return false;

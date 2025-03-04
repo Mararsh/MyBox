@@ -61,7 +61,7 @@ public class TextLocateController extends BaseChildController {
         } catch (Exception e) {
             v = -1;
         }
-        if (v > 0 && v <= fileController.sourceInformation.getLinesNumber()) {
+        if (v > 0 && v <= fileController.sourceInformation.getRowsNumber()) {
             locateLine = v - 1;  // 0-based
             return true;
         } else {
@@ -93,13 +93,13 @@ public class TextLocateController extends BaseChildController {
         if (!linesRangeRadio.isSelected()) {
             return true;
         }
-        long f, t;
+        long f, t, total = fileController.sourceInformation.getRowsNumber();
         try {
             f = Long.parseLong(lineFromInput.getText()) - 1;
         } catch (Exception e) {
             f = -1;
         }
-        if (f < 0 || f >= fileController.sourceInformation.getLinesNumber()) {
+        if (f < 0 || f >= total) {
             popError(message("InvalidParameters") + ": " + message("LinesRange"));
             return false;
         }
@@ -109,7 +109,7 @@ public class TextLocateController extends BaseChildController {
         } catch (Exception e) {
             t = -1;
         }
-        if (t < 0 || t > fileController.sourceInformation.getLinesNumber() || f > t) {
+        if (t < 0 || t > total || f > t) {
             popError(message("InvalidParameters") + ": " + message("LinesRange"));
             return false;
         }
@@ -123,13 +123,13 @@ public class TextLocateController extends BaseChildController {
         if (!objectRangeRadio.isSelected()) {
             return true;
         }
-        long f, t;
+        long f, t, total = fileController.sourceInformation.getObjectsNumber();
         try {
             f = Long.parseLong(objectFromInput.getText()) - 1;
         } catch (Exception e) {
             f = -1;
         }
-        if (f < 0 || f >= fileController.sourceInformation.getObjectsNumber()) {
+        if (f < 0 || f >= total) {
             popError(message("InvalidParameters") + ": " + objectRangeRadio.getText());
             return false;
         }
@@ -139,7 +139,7 @@ public class TextLocateController extends BaseChildController {
         } catch (Exception e) {
             t = -1;
         }
-        if (t < 0 || t > fileController.sourceInformation.getObjectsNumber() || f > t) {
+        if (t < 0 || t > total || f > t) {
             popError(message("InvalidParameters") + ": " + objectRangeRadio.getText());
             return false;
         }

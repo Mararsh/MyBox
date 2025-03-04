@@ -219,7 +219,7 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
      */
     public static Data2DRowExpressionController open(BaseData2DLoadController tableController) {
         try {
-            Data2DRowExpressionController controller = (Data2DRowExpressionController) WindowTools.branchStage(
+            Data2DRowExpressionController controller = (Data2DRowExpressionController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DRowExpressionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

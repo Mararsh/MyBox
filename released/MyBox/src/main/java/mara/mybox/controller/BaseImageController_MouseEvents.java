@@ -79,7 +79,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     protected Color pickColor(DoublePoint p, ImageView view) {
-        Color color = ImageViewTools.imagePixel(p, view);
+        Color color = ImageViewTools.viewPixel(p, view);
         if (color != null) {
             startPickingColor();
             if (paletteController != null && paletteController.getMyStage().isShowing()) {

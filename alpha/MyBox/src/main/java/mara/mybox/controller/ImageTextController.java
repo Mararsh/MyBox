@@ -8,14 +8,14 @@ import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.image.tools.ImageTextTools;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ImageViewTools;
-import mara.mybox.fxml.image.ShapeDemos;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ImageViewTools;
+import mara.mybox.fxml.image.ShapeDemos;
+import mara.mybox.image.tools.ImageTextTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -154,7 +154,7 @@ public class ImageTextController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageTextController controller = (ImageTextController) WindowTools.branchStage(
+            ImageTextController controller = (ImageTextController) WindowTools.operationStage(
                     parent, Fxmls.ImageTextFxml);
             controller.setParameters(parent);
             return controller;

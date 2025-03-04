@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageReduceColorsController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageReduceColorsController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
             <items>
@@ -57,7 +57,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </FlowPane>
-                                <fx:include fx:id="options" source="ControlImageQuantization.fxml" />
+                                <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageQuantization.fxml" VBox.vgrow="ALWAYS" />
                                 <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
                                         <Button fx:id="paletteAddButton" mnemonicParsing="false" onAction="#addColors">

@@ -1,13 +1,13 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -64,7 +64,7 @@ public class DataSelectImageScopeController extends BaseDataSelectController {
 
             @Override
             protected void whenSucceeded() {
-                pixelsController.applyScope(scope);
+                pixelsController.handleController.applyScope(scope);
                 close();
             }
         };

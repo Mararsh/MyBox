@@ -156,7 +156,7 @@ public class Data2DTransposeController extends BaseData2DTaskTargetsController {
      */
     public static Data2DTransposeController open(BaseData2DLoadController tableController) {
         try {
-            Data2DTransposeController controller = (Data2DTransposeController) WindowTools.branchStage(
+            Data2DTransposeController controller = (Data2DTransposeController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DTransposeFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

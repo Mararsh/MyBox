@@ -1,5 +1,6 @@
 package mara.mybox.db.migration;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +17,7 @@ import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
+import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeDataColumn;
@@ -31,8 +33,7 @@ import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.tools.ImageScopeTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -58,8 +59,56 @@ public class DataMigrationFrom68 {
             if (lastVersion < 6008003) {
                 updateIn683(controller, conn, lang);
             }
+            if (lastVersion < 6008005) {
+                updateIn685(controller, conn, lang);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static void updateIn685(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        try (Statement exeStatement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.8.5...");
+            controller.info("Updating tables in 6.8.5...");
+
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN shape_type VARCHAR(128)");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_algorithm VARCHAR(128)");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN shape_excluded  BOOLEAN");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  BIGINT");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_weights  VARCHAR(" + StringMaxLength + ")");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN shape_data  CLOB");
+
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_type=scope_type");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_type='Matting8' WHERE scope_type='Matting'");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_type='Whole' WHERE scope_type='COLORS'");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_algorithm=color_type");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_algorithm='RGBRoughWeightedEuclidean' "
+                    + " WHERE color_type='AllColor' OR color_type='Color' ");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_excluded=area_excluded");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_distance");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET shape_data=area_data");
+
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN scope_type");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_type");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_distance");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN area_excluded");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN area_data");
+
+            File dir = new File(AppVariables.MyboxDataPath + File.separator + "buttons");
+            File[] list = dir.listFiles();
+            if (list != null) {
+                for (File file : list) {
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    file.delete();
+                }
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 
@@ -506,8 +555,8 @@ public class DataMigrationFrom68 {
                     node.setValue("statement", info);
                     break;
                 case "Node_Image_Scope":
-                    ImageScope scope = ImageScopeTools.fromXML(null, null, info);
-                    return ImageScopeTools.toDataNode(node, scope);
+                    OldImageScope scope = OldImageScopeTools.fromXML(null, null, info);
+                    return OldImageScopeTools.toDataNode(node, scope);
                 case "Node_JShell":
                     node.setValue("codes", info);
                     break;
@@ -651,16 +700,16 @@ public class DataMigrationFrom68 {
             HashMap<String, Long> parents = new HashMap<>();
             conn.setAutoCommit(false);
             while (query.next()) {
-                ImageScope scope = new ImageScope();
+                OldImageScope scope = new OldImageScope();
                 try {
-                    ImageScope.ScopeType type = ImageScopeTools.scopeType(query.getString("scope_type"));
-                    if (ImageScopeTools.decodeAreaData(type, query.getString("area_data"), scope)
-                            && ImageScopeTools.decodeColorData(type, query.getString("color_data"), scope)
-                            && ImageScopeTools.decodeOutline(null, type, query.getString("outline"), scope)) {
+                    OldImageScope.ScopeType type = OldImageScopeTools.scopeType(query.getString("scope_type"));
+                    if (OldImageScopeTools.decodeAreaData(type, query.getString("area_data"), scope)
+                            && OldImageScopeTools.decodeColorData(type, query.getString("color_data"), scope)
+                            && OldImageScopeTools.decodeOutline(null, type, query.getString("outline"), scope)) {
                         scope.setFile(query.getString("image_location"));
                         scope.setName(query.getString("name"));
                         scope.setScopeType(type);
-                        scope.setColorScopeType(ImageScope.ColorScopeType.valueOf(query.getString("color_scope_type")));
+                        scope.setColorScopeType(OldImageScope.ColorScopeType.valueOf(query.getString("color_scope_type")));
                         scope.setColorDistance(query.getInt("color_distance"));
                         scope.setHsbDistance((float) query.getDouble("hsb_distance"));
                         scope.setAreaExcluded(query.getBoolean("area_excluded"));
@@ -678,7 +727,7 @@ public class DataMigrationFrom68 {
                 InfoNode scopeNode = new InfoNode()
                         .setCategory(InfoNode.ImageScope)
                         .setTitle(scope.getName())
-                        .setInfo(ImageScopeTools.toXML(scope, ""))
+                        .setInfo(OldImageScopeTools.toXML(scope, ""))
                         .setUpdateTime(scope.getModifyTime());
                 parentid = rootid;
                 if (file != null && !file.isBlank()) {

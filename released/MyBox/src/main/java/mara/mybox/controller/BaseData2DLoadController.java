@@ -86,8 +86,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             tableData2DDefinition = data2D.getTableData2DDefinition();
             tableData2DColumn = data2D.getTableData2DColumn();
             data2D.setController(this);
-
-            showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
+            data2D.pagination.pageSize = pagination.pageSize;
+            pagination = data2D.pagination;
+            if (paginationController != null) {
+                paginationController.pagination = data2D.pagination;
+            }
             updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -184,7 +187,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             if (readSize) {
                 loadPage(0);
             } else {
-                loadPage(currentPage);
+                loadPage(pagination.currentPage);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -285,9 +288,9 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             resetView(false);
             setData(data2D);
             makeColumns();
-            updateTable(rows);
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
+            updateTable(rows);
             postLoadedTableData();
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
@@ -752,6 +755,15 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return;
         }
         Data2DChartXYController.open(this);
+    }
+
+    @FXML
+    public void bubbleChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartBubbleController.open(this);
     }
 
     @FXML

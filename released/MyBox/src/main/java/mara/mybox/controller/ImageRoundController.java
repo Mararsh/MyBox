@@ -6,10 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxImageTools;
-import mara.mybox.fxml.image.ImageDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.fxml.image.ImageDemos;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -86,7 +86,7 @@ public class ImageRoundController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRoundController controller = (ImageRoundController) WindowTools.branchStage(
+            ImageRoundController controller = (ImageRoundController) WindowTools.operationStage(
                     parent, Fxmls.ImageRoundFxml);
             controller.setParameters(parent);
             return controller;

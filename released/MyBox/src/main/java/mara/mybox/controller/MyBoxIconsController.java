@@ -104,7 +104,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
                 tableController.addFiles(0, icons);
             }
         };
-        start(task);
+        start(task, false);
     }
 
     @Override

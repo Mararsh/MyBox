@@ -144,7 +144,7 @@ public class ImageCopyController extends ImageSelectPixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageCopyController controller = (ImageCopyController) WindowTools.branchStage(
+            ImageCopyController controller = (ImageCopyController) WindowTools.operationStage(
                     parent, Fxmls.ImageCopyFxml);
             controller.setParameters(parent);
             return controller;

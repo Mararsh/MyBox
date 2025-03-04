@@ -22,13 +22,22 @@ public class BytesEditInformation extends FileEditInformation {
 
     public BytesEditInformation() {
         editType = Edit_Type.Bytes;
-        initValues();
     }
 
     public BytesEditInformation(File file) {
         super(file);
         editType = Edit_Type.Bytes;
-        initValues();
+    }
+
+    public BytesEditInformation(Pagination pagi) {
+        editType = Edit_Type.Bytes;
+        initValues(pagi);
+    }
+
+    public BytesEditInformation(File file, Pagination pagi) {
+        super(file);
+        editType = Edit_Type.Bytes;
+        initValues(pagi);
     }
 
     @Override
@@ -37,9 +46,9 @@ public class BytesEditInformation extends FileEditInformation {
             if (file == null) {
                 return false;
             }
-            objectsNumber = 0;
-            linesNumber = 0;
-            pagesNumber = 1;
+            pagination.objectsNumber = 0;
+            pagination.rowsNumber = 0;
+            pagination.pagesNumber = 1;
 
             boolean byWidth = lineBreak == Line_Break.Width && lineBreakWidth > 0;
             if (!byWidth && lineBreakValue == null) {
@@ -63,15 +72,15 @@ public class BytesEditInformation extends FileEditInformation {
                     }
                 }
             }
-            objectsNumber = byteIndex;
-            pagesNumber = objectsNumber / pageSize;
-            if (objectsNumber % pageSize > 0) {
-                pagesNumber++;
+            pagination.objectsNumber = byteIndex;
+            pagination.pagesNumber = pagination.objectsNumber / pagination.pageSize;
+            if (pagination.objectsNumber % pagination.pageSize > 0) {
+                pagination.pagesNumber++;
             }
             if (byWidth) {
-                linesNumber = objectsNumber / lineBreakWidth + 1;
+                pagination.rowsNumber = pagination.objectsNumber / lineBreakWidth + 1;
             } else {
-                linesNumber = totalLBNumber + 1;
+                pagination.rowsNumber = totalLBNumber + 1;
             }
             totalNumberRead = true;
             return true;
@@ -83,13 +92,13 @@ public class BytesEditInformation extends FileEditInformation {
 
     @Override
     public String readPage(FxTask currentTask, long pageNumber) {
-        return readObjects(currentTask, pageNumber * pageSize, pageSize);
+        return readObjects(currentTask, pageNumber * pagination.pageSize, pagination.pageSize);
     }
 
     @Override
     public String readObjects(FxTask currentTask, long from, long number) {
-        if (file == null || pageSize <= 0 || from < 0 || number < 0
-                || (objectsNumber > 0 && from >= objectsNumber)) {
+        if (file == null || pagination.pageSize <= 0 || from < 0 || number < 0
+                || (pagination.objectsNumber > 0 && from >= pagination.objectsNumber)) {
             return null;
         }
         boolean byWidth = lineBreak == Line_Break.Width && lineBreakWidth > 0;
@@ -97,7 +106,7 @@ public class BytesEditInformation extends FileEditInformation {
             return null;
         }
         String bufHex = null;
-        long pageNumber = from / pageSize, byteIndex = 0, totalLBNumber = 0, pageLBNumber = 0, pageIndex = 0;
+        long pageNumber = from / pagination.pageSize, byteIndex = 0, totalLBNumber = 0, pageLBNumber = 0, pageIndex = 0;
         int bufLen;
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             int bufSize;
@@ -109,9 +118,9 @@ public class BytesEditInformation extends FileEditInformation {
                 }
                 isCurrentPage = pageIndex++ == pageNumber;
                 if (isCurrentPage) {
-                    bufSize = (int) (Math.max(pageSize, from - pageNumber * pageSize + number));
+                    bufSize = (int) (Math.max(pagination.pageSize, from - pageNumber * pagination.pageSize + number));
                 } else {
-                    bufSize = pageSize;
+                    bufSize = pagination.pageSize;
                 }
                 buf = new byte[bufSize];
                 bufLen = inputStream.read(buf);
@@ -147,15 +156,15 @@ public class BytesEditInformation extends FileEditInformation {
         if (bufHex == null) {
             return null;
         }
-        currentPage = pageNumber;
-        currentPageObjectStart = byteIndex - bufLen;
-        currentPageObjectEnd = byteIndex;
+        pagination.currentPage = pageNumber;
+        pagination.startObjectOfCurrentPage = byteIndex - bufLen;
+        pagination.endObjectOfCurrentPage = byteIndex;
         if (byWidth) {
-            currentPageLineStart = currentPageObjectStart / lineBreakWidth;
-            currentPageLineEnd = currentPageObjectEnd / lineBreakWidth + 1;
+            pagination.startRowOfCurrentPage = pagination.startObjectOfCurrentPage / lineBreakWidth;
+            pagination.endRowOfCurrentPage = pagination.endObjectOfCurrentPage / lineBreakWidth + 1;
         } else {
-            currentPageLineStart = totalLBNumber - pageLBNumber;
-            currentPageLineEnd = totalLBNumber + 1;
+            pagination.startRowOfCurrentPage = totalLBNumber - pageLBNumber;
+            pagination.endRowOfCurrentPage = totalLBNumber + 1;
         }
         return bufHex;
 
@@ -168,7 +177,8 @@ public class BytesEditInformation extends FileEditInformation {
 
     @Override
     public String readLines(FxTask currentTask, long from, long number) {
-        if (file == null || from < 0 || number < 0 || (linesNumber > 0 && from >= linesNumber)) {
+        if (file == null || from < 0 || number < 0
+                || (pagination.rowsNumber > 0 && from >= pagination.rowsNumber)) {
             return null;
         }
         boolean byWidth = lineBreak == Line_Break.Width && lineBreakWidth > 0;
@@ -179,14 +189,14 @@ public class BytesEditInformation extends FileEditInformation {
         String pageHex = null;
         int bufLen;
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-            byte[] buf = new byte[(int) pageSize];
-            long lbEnd = Math.min(from + number, linesNumber) - 1;
+            byte[] buf = new byte[(int) pagination.pageSize];
+            long lbEnd = Math.min(from + number, pagination.rowsNumber) - 1;
             String bufHex;
             while ((bufLen = inputStream.read(buf)) > 0) {
                 if (currentTask != null && !currentTask.isWorking()) {
                     return null;
                 }
-                if (bufLen < pageSize) {
+                if (bufLen < pagination.pageSize) {
                     buf = ByteTools.subBytes(buf, 0, bufLen);
                 }
                 bufHex = ByteTools.bytesToHexFormat(buf);
@@ -223,15 +233,15 @@ public class BytesEditInformation extends FileEditInformation {
         if (pageHex == null) {
             return null;
         }
-        currentPage = fromByteIndex / pageSize;
-        currentPageObjectStart = fromByteIndex;
-        currentPageObjectEnd = byteIndex;
+        pagination.currentPage = fromByteIndex / pagination.pageSize;
+        pagination.startObjectOfCurrentPage = fromByteIndex;
+        pagination.endObjectOfCurrentPage = byteIndex;
         if (byWidth) {
-            currentPageLineStart = fromByteIndex / lineBreakWidth;
-            currentPageLineEnd = byteIndex / lineBreakWidth + 1;
+            pagination.startRowOfCurrentPage = fromByteIndex / lineBreakWidth;
+            pagination.endRowOfCurrentPage = byteIndex / lineBreakWidth + 1;
         } else {
-            currentPageLineStart = fromLBNumber;
-            currentPageLineEnd = totalLBNumber + 1;
+            pagination.startRowOfCurrentPage = fromLBNumber;
+            pagination.endRowOfCurrentPage = totalLBNumber + 1;
         }
         return pageHex;
     }
@@ -251,14 +261,14 @@ public class BytesEditInformation extends FileEditInformation {
             try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
-                byte[] buf = new byte[(int) pageSize];
+                byte[] buf = new byte[pagination.pageSize];
                 int bufLen;
                 String pageHex;
                 while ((bufLen = inputStream.read(buf)) > 0) {
                     if (currentTask != null && !currentTask.isWorking()) {
                         return null;
                     }
-                    if (bufLen < pageSize) {
+                    if (bufLen < pagination.pageSize) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
                     pageHex = ByteTools.bytesToHexFormat(buf);
@@ -318,9 +328,9 @@ public class BytesEditInformation extends FileEditInformation {
                     || sourceInfo.getFile() == null || sourceInfo.getCharset() == null) {
                 return false;
             }
-            int psize = sourceInfo.getPageSize();
-            long pageStartByte = sourceInfo.getCurrentPageObjectStart(),
-                    pLen = sourceInfo.getCurrentPageObjectEnd() - pageStartByte;
+            int psize = sourceInfo.pagination.pageSize;
+            long pageStartByte = sourceInfo.pagination.startObjectOfCurrentPage,
+                    pLen = sourceInfo.pagination.endObjectOfCurrentPage - pageStartByte;
             if (psize <= 0 || pageStartByte < 0 || pLen <= 0) {
                 return false;
             }

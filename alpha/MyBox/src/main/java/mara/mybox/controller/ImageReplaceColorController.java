@@ -7,13 +7,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -115,7 +115,7 @@ public class ImageReplaceColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageReplaceColorController controller = (ImageReplaceColorController) WindowTools.branchStage(
+            ImageReplaceColorController controller = (ImageReplaceColorController) WindowTools.operationStage(
                     parent, Fxmls.ImageReplaceColorFxml);
             controller.setParameters(parent);
             return controller;

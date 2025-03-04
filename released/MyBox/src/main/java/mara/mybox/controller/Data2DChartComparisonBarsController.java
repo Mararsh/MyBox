@@ -11,8 +11,8 @@ import javafx.scene.paint.Color;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
@@ -282,7 +282,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
      */
     public static Data2DChartComparisonBarsController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartComparisonBarsController controller = (Data2DChartComparisonBarsController) WindowTools.branchStage(
+            Data2DChartComparisonBarsController controller = (Data2DChartComparisonBarsController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DChartComparisonBarsFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

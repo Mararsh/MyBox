@@ -4,11 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.image.data.ImageQuantization;
 import mara.mybox.image.data.ImageQuantizationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
-import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -38,15 +38,15 @@ public class ImageReduceColorsBatchController extends BaseImageEditBatchControll
     }
 
     @Override
+    public boolean makeMoreParameters() {
+        return super.makeMoreParameters() && optionsController.pickValues();
+    }
+
+    @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             ImageQuantization quantization = ImageQuantizationFactory.create(
-                    source, null, optionsController, false);
-            if (optionsController.algorithm == ImageQuantization.QuantizationAlgorithm.KMeansClustering) {
-                ImageQuantizationFactory.KMeansClusteringQuantization q
-                        = (ImageQuantizationFactory.KMeansClusteringQuantization) quantization;
-                q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
-            }
+                    currentTask, source, null, optionsController, false);
             return quantization.setTask(currentTask).start();
         } catch (Exception e) {
             displayError(e.toString());

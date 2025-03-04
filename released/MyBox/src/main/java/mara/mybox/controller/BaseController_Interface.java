@@ -611,11 +611,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void iconified() {
+    public void setIconified(boolean set) {
         try {
-            getMyStage().setIconified(true);
+            getMyStage().setIconified(set);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+//            MyBoxLog.error(e);
         }
     }
 

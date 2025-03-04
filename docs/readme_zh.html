@@ -9,21 +9,26 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是图形化计算机应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2025-1-31 版本6.8.4</p>
+  <p>2025-3-5 版本6.8.5</p>
   <ul>
    <li>改进： 
     <ul>
-     <li>调整网页的菜单。</li>
-     <li>自定义语言：若翻译为空白，可选中文/英语作为缺省值。</li>
+     <li>重新设计和实现图像的范围：由“形状的约束”和“匹配颜色列表”共同定义。</li>
+     <li>更多的匹配颜色的算法。</li>
+     <li>分页控件，可自动适应界面。</li>
+     <li>选择图像的控件，可取文件、示例、缺省。</li>
+     <li>数据图：气泡图与XY图分开设置。</li>
+     <li>Linux平台改为Mint版本。</li>
     </ul></li>
    <li>解决问题： 
     <ul>
-     <li>无法用打包好的MyBox读写WebP图片。</li>
-     <li>自定义语言的名字不应受locale定义的约束。</li>
+     <li>图像的范围：有的类型未能正确保存。</li>
+     <li>界面：定制颜色的图标未生效。</li>
+     <li>管理颜色：颜色面板中的色块值可能会混乱。</li>
+     <li>制作文档：生成树形示例时调用错误。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.4">此版本关闭的需求/问题列表</a></p>
-  <p>春节快乐！</p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.5">此版本关闭的需求/问题列表</a></p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -71,8 +76,8 @@
      <td>MyBox.exe</td>
     </tr>
     <tr>
-     <td>CentOS 7 x64</td>
-     <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz">MyBox-CentOS7-x64.tar.gz</a></td>
+     <td>Mint x64</td>
+     <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-Mint-x64.tar.gz">MyBox-Mint-x64.tar.gz</a></td>
      <td>360MB-</td>
      <td>MyBox</td>
     </tr>
@@ -87,7 +92,6 @@
   <p>双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。</p>
   <h2>Jar包</h2>
   <p>在已安装JRE或者JDK <a target=_blank href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle jdk</a>或<a target=_blank href="http://jdk.java.net/">open jdk</a>均可）的环境下，可以下载jar包。</p>
-  <p>注意：由于编译错误，Linux平台仍为Java21 + JavaFX 21。</p>
   <table>
    <thead>
     <tr>
@@ -108,7 +112,7 @@
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
      <td>280MB-</td>
-     <td>Java 21</td>
+     <td>Java 23或更高版本</td>
     </tr>
     <tr>
      <td>mac</td>
@@ -422,15 +426,15 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.8.4</td>
-     <td>2025-1-31</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
      <td>快捷键与图标</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html">html</a></td>
     </tr>
@@ -457,8 +461,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.8.4</td>
-     <td>2025-1-31</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -513,8 +517,8 @@
     </tr>
     <tr>
      <td>软件测试-测试环境</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
@@ -541,8 +545,8 @@
     </tr>
     <tr>
      <td>界面中的提示信息</td>
-     <td>6.8.4</td>
-     <td>2025-1-31</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
@@ -597,8 +601,8 @@
     </tr>
     <tr>
      <td>关于-图像的范围</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_image_scope_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_image_scope_zh.html">html</a></td>
     </tr>
@@ -653,36 +657,36 @@
     </tr>
     <tr>
      <td>示例-JShell</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JShell_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JShell_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-JEXL</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JEXL_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JEXL_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-JavaScript</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JavaScript_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JavaScript_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-数学函数</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Math_Function_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Math_Function_zh.html">html</a></td>
     </tr>
     <tr>
      <td>示例-行表达式</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_zh.html">html</a></td>
     </tr>
@@ -800,8 +804,8 @@
     </tr>
     <tr>
      <td>图片的故事</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
@@ -1149,6 +1153,11 @@
      <td>中国美术分类全集</td>
      <td>素材</td>
      <td>中国织染服饰全集-织染卷 ISBN：7-5305-231 7-1</td>
+    </tr>
+    <tr>
+     <td>DeepSeek</td>
+     <td>知识</td>
+     <td><a target=_blank href="https://www.deepseek.com/">https://www.deepseek.com/</a></td>
     </tr>
    </tbody>
   </table>

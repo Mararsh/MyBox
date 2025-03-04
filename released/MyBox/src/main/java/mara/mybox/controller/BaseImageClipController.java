@@ -24,6 +24,7 @@ import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -108,7 +109,8 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
     public List<ImageClipboard> readPageData(FxTask currentTask, Connection conn) {
         try {
             ((TableImageClipboard) tableDefinition).clearInvalid(null, conn);
-            return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
+            return tableDefinition.queryConditions(conn, queryConditions, orderColumns,
+                    pagination.startRowOfCurrentPage, pagination.pageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return new ArrayList<>();
@@ -199,7 +201,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
             @Override
             protected boolean handle() {
                 clips = new ArrayList<>();
-                for (ImageItem item : ImageItem.predefined()) {
+                for (ImageItem item : InternalImages.all()) {
                     if (task == null || isCancelled()) {
                         return true;
                     }
@@ -211,7 +213,7 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
                             continue;
                         }
                         clips.add(clip);
-                        task.setInfo(item.getName());
+//                        task.setInfo(item.getName());
                     }
 
                 }

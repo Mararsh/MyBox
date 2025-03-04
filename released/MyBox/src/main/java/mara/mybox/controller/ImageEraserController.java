@@ -8,9 +8,9 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ShapeTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ShapeTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -82,7 +82,7 @@ public class ImageEraserController extends ImagePolylinesController {
             if (parent == null) {
                 return null;
             }
-            ImageEraserController controller = (ImageEraserController) WindowTools.branchStage(
+            ImageEraserController controller = (ImageEraserController) WindowTools.operationStage(
                     parent, Fxmls.ImageEraserFxml);
             controller.setParameters(parent);
             return controller;

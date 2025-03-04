@@ -1,11 +1,11 @@
 package mara.mybox.controller;
 
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageGray;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.image.data.ImageGray;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -52,7 +52,7 @@ public class ImageGreyController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageGreyController controller = (ImageGreyController) WindowTools.branchStage(
+            ImageGreyController controller = (ImageGreyController) WindowTools.operationStage(
                     parent, Fxmls.ImageGreyFxml);
             controller.setParameters(parent);
             return controller;

@@ -1,29 +1,20 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.fxml.style.StyleData;
-import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -52,17 +43,16 @@ public class MapOptionsController extends BaseController {
     @FXML
     protected RadioButton tiandituRadio, gaodeRadio, cgcs2000Radio, gcj02Radio,
             mercatorRadio, geodeticRadio, chineseEnglishRadio, chineseRadio, englishRadio,
-            styleDefaultRadio, styleIndigoRadio, styleBlackRadio,
-            markerPointRadio, markerCircleRadio, markerImageRadio;
-    @FXML
-    protected TextField markerImageInput;
+            styleDefaultRadio, styleIndigoRadio, styleBlackRadio;
     @FXML
     protected VBox optionsBox, mapBox, languageBox, controlsBox, layersBox, sizeBox,
             markerTextBox, markerImageBox;
     @FXML
-    protected FlowPane baseTextPane, textColorPane, markerImagePane;
+    protected FlowPane baseTextPane, textColorPane;
     @FXML
     protected ControlColorSet colorSetController;
+    @FXML
+    protected ControlImage imageController;
 
     public MapOptionsController() {
         baseTitle = message("MapOptions");
@@ -82,6 +72,9 @@ public class MapOptionsController extends BaseController {
             }
             mapController = controller;
             mapController.optionsController = this;
+            imageController.setParameter(this,
+                    mapController.defaultMarkerImage,
+                    mapController.markerImage.getAbsolutePath());
 
             setControlListeners();
 
@@ -153,41 +146,12 @@ public class MapOptionsController extends BaseController {
 //                        mapController.setMapStyle(style);
 //                    }
 //            );
-            markerImageGroup.selectedToggleProperty().addListener(
-                    (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                        if (isSettingValues || mapController == null) {
-                            return;
-                        }
-                        File file;
-                        if (markerCircleRadio.isSelected()) {
-                            file = circleImage();
-                        } else if (markerImageRadio.isSelected()) {
-                            String v = markerImageInput.getText();
-                            if (v == null || v.isBlank()) {
-                                file = pointImage();
-                            } else {
-                                file = new File(v);
-                                if (!file.exists() || !file.isFile()) {
-                                    file = pointImage();
-                                }
-                            }
-                        } else {
-                            file = pointImage();
-                        }
-                        mapController.setMarkerImageFile(file);
-                    });
-
-            markerImageInput.textProperty().addListener(
-                    (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                        if (isSettingValues || mapController == null) {
-                            return;
-                        }
-                        String v = markerImageInput.getText();
-                        if (v == null || v.isEmpty()) {
-                            return;
-                        }
-                        mapController.setMarkerImageFile(new File(v));
-                    });
+            imageController.notify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    mapController.applyMarkerImage(imageController.currentAddress);
+                }
+            });
 
             standardLayerCheck.selectedProperty().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -310,13 +274,13 @@ public class MapOptionsController extends BaseController {
                     });
 
             colorSetController.init(this, baseName + "Color", Color.BLACK);
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            colorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (isSettingValues || mapController == null) {
                         return;
                     }
-                    mapController.setTextColor((Color) nv);
+                    mapController.setTextColor(colorSetController.color());
                 }
             });
 
@@ -406,22 +370,10 @@ public class MapOptionsController extends BaseController {
             mapSizeSelector.setValue(mapController.mapZoom + "");
 
             markerSizeSelector.setValue(mapController.markerSize + "");
-            markerImageInput.setText(mapController.markerImageFile + "");
             textSizeSelector.setValue(mapController.textSize + "");
             markerLabelCheck.setSelected(mapController.isMarkLabel);
             markerCoordinateCheck.setSelected(mapController.isMarkCoordinate);
             boldCheck.setSelected(mapController.isBold);
-
-            File file = mapController.markerImageFile;
-            if (file == null || !file.exists() || !file.isFile()) {
-                markerPointRadio.setSelected(true);
-            } else if (file.equals(circleImage())) {
-                markerCircleRadio.setSelected(true);
-            } else if (file.equals(pointImage())) {
-                markerPointRadio.setSelected(true);
-            } else {
-                markerImageRadio.setSelected(true);
-            }
 
             popInfoCheck.setSelected(mapController.isPopInfo);
             fitViewCheck.setSelected(mapController.isFitView);
@@ -613,108 +565,9 @@ public class MapOptionsController extends BaseController {
 
     }
 
-    public void initImageFile(File file) {
-        try {
-            if (isSettingValues || mapController == null
-                    || file == null || !file.exists()) {
-                return;
-            }
-            isSettingValues = true;
-            markerImageRadio.setSelected(true);
-            markerImageInput.setText(file.getAbsolutePath());
-            isSettingValues = false;
-            mapController.setMarkerImageFile(file);
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void selectMarkerImage() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            selectMarkerImage(FxFileTools.selectFile(this));
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
-        }
-    }
-
-    public void selectMarkerImage(File file) {
-        try {
-            if (isSettingValues || file == null || !file.exists()) {
-                return;
-            }
-            markerImageInput.setText(file.getAbsolutePath());
-            recordFileOpened(file);
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
-        }
-    }
-
-    public void showMarkerImageMenu(Event event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event, false) {
-
-            @Override
-            public void handleSelect() {
-                selectMarkerImage();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    selectMarkerImage();
-                    return;
-                }
-                selectMarkerImage(file);
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void pickMarkerImage(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
-            selectMarkerImage();
-        } else {
-            showMarkerImageMenu(event);
-        }
-    }
-
-    @FXML
-    public void popMarkerImage(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
-            showMarkerImageMenu(event);
-        }
-    }
-
     @FXML
     public void aboutCoordinateSystem() {
         mapController.aboutCoordinateSystem();
-    }
-
-    public File circleImage() {
-        if (AppVariables.ControlColor == StyleData.StyleColor.Customize) {
-            return new File(AppVariables.MyboxDataPath + "/buttons/iconCircle.png");
-        } else {
-            return FxFileTools.getInternalFile("/" + StyleTools.getIconPath() + "iconCircle.png", "map",
-                    AppVariables.ControlColor.name() + "Circle.png");
-        }
-    }
-
-    public File pointImage() {
-        if (AppVariables.ControlColor == StyleData.StyleColor.Customize) {
-            return new File(AppVariables.MyboxDataPath + "/buttons/iconLocation.png");
-        } else {
-            return FxFileTools.getInternalFile("/" + StyleTools.getIconPath() + "iconLocation.png", "map",
-                    AppVariables.ControlColor.name() + "Point.png");
-        }
     }
 
     @Override

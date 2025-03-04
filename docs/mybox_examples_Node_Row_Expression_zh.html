@@ -67,7 +67,7 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>isNaN(#{某列} - 1)</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>isNaN(#{某列} - 1)</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -79,7 +79,7 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>#{数字列1} != 0 || #{数字列1} < #{数字列2}</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数字列1} != 0 || #{数字列1} < #{数字列2}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -91,7 +91,7 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>#{数字列} < #{数字列-均值}</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数字列} < #{数字列-均值}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -107,10 +107,10 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if (#{时间列} != null)
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
    new Date(#{时间列}.getTime()
 else
-   -1;</CODE></TD></TR>
+   -1;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -122,7 +122,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>#{时间列} == '2016-05-19 11:34:28'</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{时间列} == '2016-05-19 11:34:28'</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -134,10 +134,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if (#{时间列} != null)
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
    #{时间列}.startsWith('2016-05-19 09')
 else
-   undefined;</CODE></TD></TR>
+   undefined;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -149,10 +149,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if (#{时间列} != null)
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
    new Date(#{时间列}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
 else
-   undefined;</CODE></TD></TR>
+   undefined;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -164,7 +164,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>function formatDate(date) {
+                <TR><TD>行表达式</TD><TD><PRE><CODE>function formatDate(date) {
      var y = date.getFullYear();
      var m = date.getMonth() + 1;
      m = m < 10 ? ('0' + m) : m;
@@ -181,7 +181,7 @@ else
 if (#{时间列} != null)
    formatDate(new Date(#{时间列}));
 else
-   null;</CODE></TD></TR>
+   null;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -193,10 +193,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if (#{时间列} != null)
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
    new Date(#{时间列}).getDay() == 0
 else
-   undefined;</CODE></TD></TR>
+   undefined;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -212,7 +212,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>#{字符串列} == ''</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{字符串列} == ''</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -224,7 +224,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>#{字符串列} != null</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{字符串列} != null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -236,10 +236,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if ( #{字符串列} != null ) 
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
     #{字符串列}.length
 else
-    -1</CODE></TD></TR>
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -251,10 +251,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if ( #{字符串列} != null ) 
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
     #{字符串列}.search(/昔去雪如花/ig)
 else
-    -1</CODE></TD></TR>
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -266,10 +266,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if ( #{字符串列} != null ) 
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
     #{字符串列}.indexOf('今来花似雪')
 else
-    -1</CODE></TD></TR>
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -281,7 +281,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>#{字符串列} === '只恐夜深花睡去'</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{字符串列} === '只恐夜深花睡去'</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -293,10 +293,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if ( #{字符串列} != null ) 
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
     #{字符串列}.replace("敲门", "推门");
 else
-   null</CODE></TD></TR>
+   null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -308,10 +308,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if ( #{字符串列} != null ) 
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
     #{字符串列}.replace(/怨年华/g, "鸟惊心");
 else
-   null</CODE></TD></TR>
+   null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -323,10 +323,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if ( #{字符串列} != null ) 
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
     #{字符串列}.startsWith('君不见')
 else
-   undefined</CODE></TD></TR>
+   undefined</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -338,10 +338,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>if ( #{字符串列} != null ) 
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
     #{字符串列}.endsWith('需尽欢')
 else
-   undefined</CODE></TD></TR>
+   undefined</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -353,8 +353,8 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><CODE>var array = [ 'A', 'B', 'C', 'D' ];
-array.includes(#{字符串列})</CODE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>var array = [ 'A', 'B', 'C', 'D' ];
+array.includes(#{字符串列})</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 

@@ -6,10 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxImageTools;
-import mara.mybox.fxml.image.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.fxml.image.PixelDemos;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -90,7 +90,7 @@ public class ImageShadowController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageShadowController controller = (ImageShadowController) WindowTools.branchStage(
+            ImageShadowController controller = (ImageShadowController) WindowTools.operationStage(
                     parent, Fxmls.ImageShadowFxml);
             controller.setParameters(parent);
             return controller;

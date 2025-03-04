@@ -3,9 +3,9 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -53,7 +53,7 @@ public class ImageMirrorController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageMirrorController controller = (ImageMirrorController) WindowTools.branchStage(
+            ImageMirrorController controller = (ImageMirrorController) WindowTools.operationStage(
                     parent, Fxmls.ImageMirrorFxml);
             controller.setParameters(parent);
             return controller;

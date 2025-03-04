@@ -359,7 +359,7 @@ public class Data2DConvertTools {
                 }
                 List<String> htmlRow = new ArrayList<>();
                 for (String v : csvRecord) {
-                    htmlRow.add(v);
+                    htmlRow.add(v != null ? "<PRE><CODE>" + v + "</PRE></CODE>" : null);
                 }
                 table.add(htmlRow);
             }

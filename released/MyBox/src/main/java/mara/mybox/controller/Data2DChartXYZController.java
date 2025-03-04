@@ -276,7 +276,7 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
      */
     public static Data2DChartXYZController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartXYZController controller = (Data2DChartXYZController) WindowTools.branchStage(
+            Data2DChartXYZController controller = (Data2DChartXYZController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DChartXYZFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

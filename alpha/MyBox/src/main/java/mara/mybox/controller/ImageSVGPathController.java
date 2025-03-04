@@ -103,7 +103,7 @@ public class ImageSVGPathController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageSVGPathController controller = (ImageSVGPathController) WindowTools.branchStage(
+            ImageSVGPathController controller = (ImageSVGPathController) WindowTools.operationStage(
                     parent, Fxmls.ImageSVGPathFxml);
             if (pathData != null) {
                 controller.setInitData(pathData);

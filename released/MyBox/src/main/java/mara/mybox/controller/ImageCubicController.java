@@ -67,7 +67,7 @@ public class ImageCubicController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageCubicController controller = (ImageCubicController) WindowTools.branchStage(
+            ImageCubicController controller = (ImageCubicController) WindowTools.operationStage(
                     parent, Fxmls.ImageCubicFxml);
             controller.setParameters(parent);
             return controller;

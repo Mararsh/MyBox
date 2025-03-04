@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPagination">
+    <children>
+        <FlowPane fx:id="menuPane" alignment="CENTER_LEFT" hgap="2.0" nodeOrientation="LEFT_TO_RIGHT" vgap="2.0">
+            <children>
+                <Button fx:id="pagesButton" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#showPagesMemu" onMouseEntered="#popPagesMemu">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconPages.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <Label fx:id="menuPagesLabel" layoutX="48.0" layoutY="17.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="page" wrapText="true" />
+                <Label fx:id="menuRowsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="rows" wrapText="true" />
+            <Label fx:id="menuSelectionLabel" layoutX="48.0" layoutY="17.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true" />
+            </children>
+        </FlowPane>
+      <HBox fx:id="navigatorBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+         <children>
+            <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconNext.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPrevious.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconLast.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconFirst.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%Page" wrapText="true" />
+                  <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
+                  <Label fx:id="pagesLabel" minHeight="-Infinity" text="pages" wrapText="true" />
+                  <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconGo.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+               <children>
+                  <Label text="%RowsPerPage" wrapText="true" />
+                  <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
+               </children>
+            </HBox>
+            <Label fx:id="rowsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="rows" wrapText="true" />
+            <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+
+    </children>
+</VBox>

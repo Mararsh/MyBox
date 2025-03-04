@@ -87,21 +87,6 @@ public class DataMigration {
                         }
                     }
 
-                    dir = new File(AppVariables.MyboxDataPath + File.separator + "buttons");
-                    list = dir.listFiles();
-                    if (list != null) {
-                        for (File file : list) {
-                            if (file.isDirectory()) {
-                                continue;
-                            }
-                            file.delete();
-//                            String name = file.getName();
-//                            if (name.startsWith("icon") && name.endsWith(".png")) {
-//                                file.delete();
-//                            }
-                        }
-                    }
-
                     dir = new File(AppVariables.MyboxDataPath + File.separator + "data");
                     list = dir.listFiles();
                     if (list != null) {

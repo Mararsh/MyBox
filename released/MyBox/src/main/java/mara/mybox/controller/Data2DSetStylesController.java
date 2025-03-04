@@ -175,7 +175,7 @@ public class Data2DSetStylesController extends BaseController {
         try {
             String sv = sequenceInput.getText();
             if (sv == null || sv.isBlank()) {
-                updatedStyle.setSequence(listController.dataSize + 1);
+                updatedStyle.setSequence(listController.pagination.rowsNumber + 1);
             } else {
                 updatedStyle.setSequence(Float.parseFloat(sv));
             }
@@ -205,7 +205,7 @@ public class Data2DSetStylesController extends BaseController {
         selectNoneColumn();
         filterController.load(null, true);
         editController.loadNull(currentStyle);
-        sequenceInput.setText((listController.dataSize + 1) + "");
+        sequenceInput.setText((listController.pagination.rowsNumber + 1) + "");
         abnormalCheck.setSelected(false);
         isSettingValues = false;
         checkStyle();
@@ -272,7 +272,7 @@ public class Data2DSetStylesController extends BaseController {
         currentStyle = updatedStyle.cloneAll();
         currentStyle.setStyleID(-1);
         updatedStyle = currentStyle;
-        sequenceInput.setText((listController.dataSize + 1) + "");
+        sequenceInput.setText((listController.pagination.rowsNumber + 1) + "");
         checkStyle();
     }
 
@@ -412,7 +412,7 @@ public class Data2DSetStylesController extends BaseController {
      */
     public static Data2DSetStylesController open(BaseData2DLoadController tableController) {
         try {
-            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.branchStage(
+            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DSetStylesFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

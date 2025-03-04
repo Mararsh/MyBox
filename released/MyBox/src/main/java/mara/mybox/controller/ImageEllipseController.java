@@ -66,7 +66,7 @@ public class ImageEllipseController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageEllipseController controller = (ImageEllipseController) WindowTools.branchStage(
+            ImageEllipseController controller = (ImageEllipseController) WindowTools.operationStage(
                     parent, Fxmls.ImageEllipseFxml);
             controller.setParameters(parent);
             return controller;

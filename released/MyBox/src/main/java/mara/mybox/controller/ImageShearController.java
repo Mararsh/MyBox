@@ -5,10 +5,10 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ImageDemos;
-import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ImageDemos;
+import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -68,7 +68,7 @@ public class ImageShearController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageShearController controller = (ImageShearController) WindowTools.branchStage(
+            ImageShearController controller = (ImageShearController) WindowTools.operationStage(
                     parent, Fxmls.ImageShearFxml);
             controller.setParameters(parent);
             return controller;

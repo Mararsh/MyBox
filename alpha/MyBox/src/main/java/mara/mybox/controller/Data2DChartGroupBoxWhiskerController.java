@@ -109,7 +109,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
      */
     public static Data2DChartGroupBoxWhiskerController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartGroupBoxWhiskerController controller = (Data2DChartGroupBoxWhiskerController) WindowTools.branchStage(
+            Data2DChartGroupBoxWhiskerController controller = (Data2DChartGroupBoxWhiskerController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DChartGroupBoxWhiskerFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

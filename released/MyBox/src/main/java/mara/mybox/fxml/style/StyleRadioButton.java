@@ -126,6 +126,14 @@ public class StyleRadioButton {
                 return new StyleData(id, message("HtmlTextsFormatComment"), "", "iconTxt.png");
             case "htmlRadio":
                 return new StyleData(id, message("Html"), "", "iconHtml.png");
+            case "wholeRadio":
+                return new StyleData(id, message("WholeImage"), "", "iconSelectAll.png");
+            case "matting4Radio":
+                return new StyleData(id, message("Matting4"), "", "iconColorFill4.png");
+            case "matting8Radio":
+                return new StyleData(id, message("Matting8"), "", "iconColorFill.png");
+            case "outlineRadio":
+                return new StyleData(id, message("Outline"), "", "iconButterfly.png");
         }
         return null;
     }
@@ -163,28 +171,6 @@ public class StyleRadioButton {
         }
         if (id.startsWith("json")) {
             return new StyleData(id, "json", "", "iconJSON.png");
-        }
-        if (id.startsWith("scope")) {
-            switch (id) {
-                case "scopeWholeRadio":
-                    return new StyleData(id, message("WholeImage"), "", "iconSelectAll.png");
-                case "scopeMattingRadio":
-                    return new StyleData(id, message("Matting"), "", "iconColorFill.png");
-                case "scopeRectangleRadio":
-                    return new StyleData(id, message("Rectangle"), "", "iconRectangle.png");
-                case "scopeCircleRadio":
-                    return new StyleData(id, message("Circle"), "", "iconCircle.png");
-                case "scopeEllipseRadio":
-                    return new StyleData(id, message("Ellipse"), "", "iconEllipse.png");
-                case "scopePolygonRadio":
-                    return new StyleData(id, message("Polygon"), "", "iconStar.png");
-                case "scopeColorRadio":
-                    return new StyleData(id, message("ColorMatching"), "", "iconColor.png");
-                case "scopeOutlineRadio":
-                    return new StyleData(id, message("Outline"), "", "iconButterfly.png");
-                case "scopeOutlineKeepRatioCheck":
-                    return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
-            }
         }
         return null;
     }

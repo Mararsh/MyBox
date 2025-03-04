@@ -5,14 +5,14 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -93,7 +93,7 @@ public class ImageBlendColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageBlendColorController controller = (ImageBlendColorController) WindowTools.branchStage(
+            ImageBlendColorController controller = (ImageBlendColorController) WindowTools.operationStage(
                     parent, Fxmls.ImageBlendColorFxml);
             controller.setParameters(parent);
             return controller;

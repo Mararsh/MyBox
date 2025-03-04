@@ -67,7 +67,7 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>isNaN(#{stringColumn} - 1)</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>isNaN(#{stringColumn} - 1)</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -79,7 +79,7 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>#{numberColumn1} != 0 || #{numberColumn1} < #{numberColumn2}</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{numberColumn1} != 0 || #{numberColumn1} < #{numberColumn2}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -91,7 +91,7 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>#{numberColumn} < #{numberColumn-Mean}</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{numberColumn} < #{numberColumn-Mean}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -107,10 +107,10 @@
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if (#{dateColumn} != null)
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
    new Date(#{dateColumn}.getTime()
 else
-   -1;</CODE></TD></TR>
+   -1;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -122,7 +122,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>#{dateColumn} == '2016-05-19 11:34:28'</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{dateColumn} == '2016-05-19 11:34:28'</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -134,10 +134,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if (#{dateColumn} != null)
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
    #{dateColumn}.startsWith('2016-05-19 09')
 else
-   undefined;</CODE></TD></TR>
+   undefined;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -149,10 +149,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if (#{dateColumn} != null)
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
    new Date(#{dateColumn}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
 else
-   undefined;</CODE></TD></TR>
+   undefined;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -164,7 +164,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>function formatDate(date) {
+                <TR><TD>Row expression</TD><TD><PRE><CODE>function formatDate(date) {
      var y = date.getFullYear();
      var m = date.getMonth() + 1;
      m = m < 10 ? ('0' + m) : m;
@@ -181,7 +181,7 @@ else
 if (#{dateColumn} != null)
    formatDate(new Date(#{dateColumn}));
 else
-   null;</CODE></TD></TR>
+   null;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -193,10 +193,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if (#{dateColumn} != null)
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
    new Date(#{dateColumn}).getDay() == 0
 else
-   undefined;</CODE></TD></TR>
+   undefined;</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -212,7 +212,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>#{stringColumn} == ''</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{stringColumn} == ''</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -224,7 +224,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>#{stringColumn} != null</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{stringColumn} != null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -236,10 +236,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if ( #{stringColumn} != null ) 
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
     #{stringColumn}.length
 else
-    -1</CODE></TD></TR>
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -251,10 +251,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if ( #{stringColumn} != null ) 
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
     #{stringColumn}.search(/hello/ig)
 else
-    -1</CODE></TD></TR>
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -266,10 +266,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if ( #{stringColumn} != null ) 
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
     #{stringColumn}.indexOf('hello')
 else
-    -1</CODE></TD></TR>
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -281,7 +281,7 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>#{stringColumn} === 'hello'</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{stringColumn} === 'hello'</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -293,10 +293,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if ( #{stringColumn} != null ) 
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
     #{stringColumn}.replace("hello", "Hello");
 else
-   null</CODE></TD></TR>
+   null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -308,10 +308,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if ( #{stringColumn} != null ) 
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
     #{stringColumn}.replace(/hello/g, "Hello");
 else
-   null</CODE></TD></TR>
+   null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -323,10 +323,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if ( #{stringColumn} != null ) 
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
     #{stringColumn}.startsWith('Hello')
 else
-   undefined</CODE></TD></TR>
+   undefined</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -338,10 +338,10 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>if ( #{stringColumn} != null ) 
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
     #{stringColumn}.endsWith('hello')
 else
-   undefined</CODE></TD></TR>
+   undefined</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
@@ -353,8 +353,8 @@ else
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><CODE>var array = [ 'A', 'B', 'C', 'D' ];
-array.includes('#{stringColumn}')</CODE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>var array = [ 'A', 'B', 'C', 'D' ];
+array.includes('#{stringColumn}')</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 

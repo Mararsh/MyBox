@@ -52,51 +52,60 @@
         <h2>1. Usages of Image Scope</h2>
         <p>When handle image, scope can be used to select pixels to be operated. It is set of conditions to manufacture part of image.</p>
         <h2>2. Define Scope</h2>
-        <h3>2.1 Area</h3>
+        <P>Scope is determined by both "Shape Constraints" and "Match Colors List".</P>
+        <h3>2.1 Shape Constraints</h3>
         <ol>
-            <li>"Area" limits coordinates of pixels.</li>
-            <li>Option "Area exclude" means pixels outside the area.</li>
+            <li>"Shape" limits coordinates of pixels.</li>
+            <li>Option "Shape exclude" means pixels outside the shape.</li>
         </ol>
-        <h3>2.2 Colors</h3>
+        <h4>2.1.1 Whole Image</h4>
+        <P>All pixels of the image.</P>
+        <h4>2.1.2 Rectangle, Circle, Ellipse, Polygon</h4>
         <ol>
-            <li>"Colors" matches pixels selected by "Area".</li>
+            <li>Drag anchors to adjust shape. </li>
+            <li>Drag shape to translate it.</li>
+            <li>Right click image to pop menu of shape.</li>
+            <li>For polygon, left click image to add points for the polygon. </li>
+        </ol>
+        <h4>2.1.3 Matting</h4>
+        <ol>
+            <li>Click image to add points into start points for matting.</li>
+            <li>There are Eight-neighbor Matting and Four-neighbor Matting.</li>
+        </ol>
+        <h4>2.1.4 Outline</h4>
+        <ol>
+            <li>Select a picture with transparent background and its outline is fetched as "Shape".</li>
+            <li>Width and height of the outline can be adjusted.</li>
+        </ol>
+
+        <h3>2.2 Match Colors List</h3>
+        <ol>
+            <li>Pixels selected by "Shape Constraints" are matched to the colors list.</li>
+            <li>Option "Color exclude" means not matching any color of the list.</li>
+        </ol>
+        <h4>2.2.1 Define Colors List</h4>
+        <ol>
+            <li>If colors list is empty, then the result of matching is always true.</li>
             <li>To add colors, click button Color to pop palette, or check "Pick color" and click image.</li>
-            <li>Option "Color exclude" means not matching any color in "Colors" list.</li>
-            <li>Options about how to match colors.</li>
         </ol>
-        <h3>2.3 Other Options to Select Pixels</h3>
+        <h4>2.2.2 Algorithms of Matching Colors</h4>
+        <ol>
+            <li>When difference of two colors, that is called "Color Distance", is less than the threshold, the colors are "matched"</li>
+            <li>Multiple algorithms can be selected to calculate color distance. Some are more accurate while some are less costed. </li>
+            <li>Weights can be set for some algorithms. Notice whether they are positive or negative.</li>
+            <li>When compare an image pixel with colors list, their relationship is "OR",
+                which means result is TRUE when the pixel matches any color in the list.</li>
+        </ol>
+
+        <h3>2.3 Other Options</h3>
         <ol>
             <li>Background image. Can be any image or empty.<br>
                 It does not affect usage of scope. That is, scope defined against an image can be applied to any other image.</li>
             <li>Option "Scope exclude" means pixels outside the scope.</li>
             <li>Option "Handle transparent".</li>
         </ol>
-        <h2>3. Types of Scope</h2>
-        <h3>3.1 Rectangle, Circle, Ellipse, Polygon</h3>
-        <ol>
-            <li>Drag anchors to adjust shape. </li>
-            <li>Drag shape to translate it.</li>
-            <li>Right click image to pop menu of shape.</li>
-            <li>Set Colors list and options about how to match colors. Empty list means not limiting colors.</li>
-            <li>For polygon, left click image to add points for the polygon. </li>
-        </ol>
-        <h3>3.2 Matting</h3>
-        <ol>
-            <li>"Area" is a list of start points for matting. .</li>
-            <li>Click image to add points</li>
-            <li>The algorithm only matches colors in the image itself, so need not colors list. </li>
-        </ol>
-        <h3>3.3 Colors</h3>
-        <ol>
-            <li>"Area" is all pixels.</li>
-            <li>Select pixels by matching the Colors list.</li>
-        </ol>
-        <h3>3.4 Outline</h3>
-        <ol>
-            <li>Select a picture with transparent background and its outline is fetched as "Area".</li>
-            <li>Not matching colors, so need not colors list.</li>
-        </ol>
-        <h2>4. Display Scope</h2>
+
+        <h2>3. Display Scope</h2>
         <p>To indicate selected pixels obviously, "masked image" is displayed:</p>
         <ol>
             <li>Selected pixels are displayed as their orignial colors.</li>
@@ -105,7 +114,8 @@
             <li>For image mostly in light colors, suggest dark color as mask color. </li>
             <li>Click button "Pop"(CTRL+P) to show source image, selected pixels, and masked image.</li>
         </ol>
-        <h2>5. Manage Scopes</h2>
+
+        <h2>4. Manage Scopes</h2>
         <ol>
             <li>When handle image, conditions of selecting pixels can be saved as scope.</li>
             <li>When handle image, saved scope can be applied as conditions to select pixels.</li>

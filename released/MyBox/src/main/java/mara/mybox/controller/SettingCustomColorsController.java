@@ -8,10 +8,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -46,20 +45,20 @@ public class SettingCustomColorsController extends BaseChildController {
 
             darkColor = Colors.customizeColorDark();
             darkColorSetController.init(this, baseName + "DarkColor", darkColor).setColor(darkColor);
-            darkColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            darkColorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
-                    darkColor = (Color) nv;
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    darkColor = darkColorSetController.color();
                     updateView();
                 }
             });
 
             lightColor = Colors.customizeColorLight();
             lightColorSetController.init(this, baseName + "LightColor", lightColor).setColor(lightColor);
-            lightColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            lightColorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
-                    lightColor = (Color) nv;
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    lightColor = lightColorSetController.color();
                     updateView();
                 }
             });
@@ -91,7 +90,7 @@ public class SettingCustomColorsController extends BaseChildController {
                 || !light.equalsIgnoreCase(UserConfig.getString("CustomizeColorLight", null))) {
             UserConfig.setString("CustomizeColorDark", dark);
             UserConfig.setString("CustomizeColorLight", light);
-            FileDeleteTools.clearDir(null, new File(AppVariables.MyboxDataPath + "/buttons/"));
+            FileDeleteTools.clearDir(null, new File(AppVariables.MyboxDataPath + "/buttons/customized/"));
         }
         if (useCheck.isSelected() || AppVariables.ControlColor == StyleData.StyleColor.Customize) {
             StyleTools.setConfigStyleColor(parentController, "customize");

@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import mara.mybox.data.Pagination;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -43,7 +44,6 @@ import mara.mybox.fxml.cell.TableDataDateEditCell;
 import mara.mybox.fxml.cell.TableDataDisplayCell;
 import mara.mybox.fxml.cell.TableDataEditCell;
 import mara.mybox.fxml.cell.TableDataEnumCell;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
@@ -77,6 +77,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         statusNotify = new SimpleBooleanProperty(false);
         readOnly = true;
         styleFilter = new DataFilter();
+        pagination = new Pagination(Pagination.ObjectType.Table);
     }
 
     @Override
@@ -164,6 +165,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
+
+        updateInterfaceStatus();
+
         notifyLoaded();
     }
 
@@ -182,13 +186,24 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     @Override
     public void updateStatus() {
         try {
+            updateInterfaceStatus();
+
+            statusNotify.set(!statusNotify.get());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void updateInterfaceStatus() {
+        try {
             super.updateStatus();
 
             sourceFile = data2D != null ? data2D.getFile() : null;
             if (dataManufactureButton != null) {
-                dataManufactureButton.setDisable(data2D == null);
+                dataManufactureButton.setDisable(!isValidData());
             }
-            checkSelected();
+
             if (dataLabel != null) {
                 dataLabel.setText(data2D != null ? data2D.displayName() : "");
             }
@@ -207,27 +222,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             }
             myStage.setTitle(title);
 
-            if (statusNotify != null) {
-                statusNotify.set(!statusNotify.get());
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public void setDataSizeLabel() {
-        if (dataSizeLabel == null || data2D == null) {
-            return;
-        }
-        int tsize = tableData == null ? 0 : tableData.size();
-        long start = data2D.getStartRowOfCurrentPage();
-        long end = data2D.getEndRowOfCurrentPage();
-        dataSizeLabel.setText(message("Rows") + ": "
-                + "[" + start + "-" + end + "]" + tsize
-                + (data2D.isTableChanged() ? "*" : "")
-                + (dataSize > 0 ? "/" + dataSize : ""));
     }
 
     public boolean isValidData() {
@@ -401,47 +398,27 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     @Override
-    protected void countPagination(FxTask currentTask, Connection conn, long page) {
-        if (data2D.isMatrix()) {
-            pageSize = Integer.MAX_VALUE;
-            dataSize = data2D.getRowsNumber();
-            pagesNumber = 1;
-            currentPage = 0;
-            startRowOfCurrentPage = 0;
-            dataSizeLoaded = true;
-            data2D.setDataLoaded(true);
-        } else {
-            pageSize = UserConfig.getInt(conn, baseName + "PageSize", 50);
-            super.countPagination(currentTask, conn, page);
-        }
-        data2D.setPageSize(pageSize);
-        data2D.setPagesNumber(pagesNumber);
-        data2D.setCurrentPage(currentPage);
-        data2D.setStartRowOfCurrentPage(startRowOfCurrentPage);
-    }
-
-    @Override
     public void postLoadedTableData() {
-        super.postLoadedTableData();
         if (data2D != null) {
             isSettingValues = true;
+            data2D.stopTask();
             sourceFile = data2D.getFile();
             data2D.setPageData(tableData);
-            data2D.stopTask();
             isSettingValues = false;
         }
+        super.postLoadedTableData();
     }
 
     @Override
     public long readDataSize(FxTask currentTask, Connection conn) {
-        return data2D.getRowsNumber();
+        return pagination.rowsNumber;
     }
 
     @Override
     public void loadDataSize() {
         if (!isValidData() || dataSizeLoaded
                 || data2D.isTmpData() || data2D.isMatrix()) {
-            afterLoaded(false);
+            afterLoaded();
             return;
         }
         if (backgroundTask != null) {
@@ -451,8 +428,8 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         data2D.setRowsNumber(-1);
         dataSizeLoaded = false;
         data2D.setDataLoaded(false);
-        if (paginationPane != null) {
-            paginationPane.setVisible(false);
+        if (paginationController != null) {
+            paginationController.show(false);
         }
         if (saveButton != null) {
             saveButton.setDisable(true);
@@ -488,41 +465,19 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             protected void finalAction() {
                 super.finalAction();
                 data2D.setBackgroundTask(null);
-                afterLoaded(true);
+                afterLoaded();
             }
 
         };
         start(backgroundTask, false);
     }
 
-    protected void afterLoaded(boolean paginate) {
-        dataSizeLoaded = true;
-        data2D.setDataLoaded(true);
-        correctDataSize();
-        if (paginationPane != null) {
-            if (paginate) {
-                showPaginationPane(true);
-                countPagination(null, null, currentPage);
-                setPagination();
-                updateStatus();
-            } else {
-                showPaginationPane(false);
-            }
-        }
-        if (saveButton != null) {
-            saveButton.setDisable(false);
-        }
-        notifyLoaded();
-    }
-
-    public void correctDataSize() {
-        if (data2D == null || data2D.isTmpData()
-                || data2D.getColumns() == null
-                || data2D.getColsNumber() == data2D.getColumns().size()) {
+    protected void afterLoaded() {
+        if (!isValidData() || data2D.isTmpData()) {
+            setLoaded();
             return;
         }
         FxTask updateTask = new FxTask<Void>(this) {
-
             @Override
             protected boolean handle() {
                 data2D.countPageSize();
@@ -531,60 +486,41 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
             @Override
             protected void whenSucceeded() {
-                updateStatus();
-            }
-
-            @Override
-            protected void whenFailed() {
+                setLoaded();
             }
 
         };
         start(updateTask, false);
     }
 
-    @Override
-    protected void setPagination() {
-        try {
-            if (data2D == null || data2D.isMatrix() || data2D.isTmpData() || !dataSizeLoaded) {
-                showPaginationPane(false);
-                return;
-            }
-            super.setPagination();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+    protected void setLoaded() {
+        dataSizeLoaded = true;
+        data2D.setDataLoaded(true);
+        if (saveButton != null) {
+            saveButton.setDisable(false);
         }
-
-    }
-
-    protected void showPaginationPane(boolean show) {
-        if (paginationPane == null) {
-            return;
-        }
-        paginationPane.setVisible(show);
-        if (dataBox != null) {
-            if (show) {
-                if (!dataBox.getChildren().contains(paginationPane)) {
-                    dataBox.getChildren().add(paginationPane);
-                }
-            } else {
-                if (dataBox.getChildren().contains(paginationPane)) {
-                    dataBox.getChildren().remove(paginationPane);
-                }
-            }
-            NodeStyleTools.refreshStyle(dataBox);
+        if (data2D.isMatrix()) {
+            pagination.pageSize = Integer.MAX_VALUE;
+            pagination.pagesNumber = 1;
+            pagination.currentPage = 0;
+            pagination.startRowOfCurrentPage = 0;
         } else {
-            if (show) {
-                if (!thisPane.getChildren().contains(paginationPane)) {
-                    thisPane.getChildren().add(paginationPane);
-                    NodeStyleTools.refreshStyle(paginationPane);
-                }
-            } else {
-                if (thisPane.getChildren().contains(paginationPane)) {
-                    thisPane.getChildren().remove(paginationPane);
-                }
-            }
+            pagination.goPage(pagination.rowsNumber, pagination.currentPage);
         }
+        updateStatus();
+        notifyLoaded();
     }
+
+    public void correctDataSize() {
+
+    }
+
+    @Override
+    public boolean isShowPagination() {
+        return isValidData() && dataSizeLoaded
+                && !data2D.isMatrix() && !data2D.isTmpData();
+    }
+
 
     /*
         interface

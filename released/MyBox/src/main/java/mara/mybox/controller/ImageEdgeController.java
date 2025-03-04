@@ -4,13 +4,13 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageConvolution;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.PixelDemos;
+import mara.mybox.image.data.ImageConvolution;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -82,7 +82,7 @@ public class ImageEdgeController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageEdgeController controller = (ImageEdgeController) WindowTools.branchStage(
+            ImageEdgeController controller = (ImageEdgeController) WindowTools.operationStage(
                     parent, Fxmls.ImageEdgeFxml);
             controller.setParameters(parent);
             return controller;

@@ -4,9 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.MarginTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.MarginTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -154,7 +154,7 @@ public class ImageMarginsController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageMarginsController controller = (ImageMarginsController) WindowTools.branchStage(
+            ImageMarginsController controller = (ImageMarginsController) WindowTools.operationStage(
                     parent, Fxmls.ImageMarginsFxml);
             controller.setParameters(parent);
             return controller;

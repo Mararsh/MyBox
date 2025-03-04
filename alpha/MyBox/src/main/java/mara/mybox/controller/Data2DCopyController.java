@@ -31,7 +31,7 @@ public class Data2DCopyController extends BaseData2DTaskTargetsController {
      */
     public static Data2DCopyController open(BaseData2DLoadController tableController) {
         try {
-            Data2DCopyController controller = (Data2DCopyController) WindowTools.branchStage(
+            Data2DCopyController controller = (Data2DCopyController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DCopyFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

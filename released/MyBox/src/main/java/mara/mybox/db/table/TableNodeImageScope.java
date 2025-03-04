@@ -30,14 +30,15 @@ public class TableNodeImageScope extends BaseNodeTable {
 
     public final TableNodeImageScope defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("scope_type", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("color_type", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("area_excluded", ColumnType.Boolean));
+        addColumn(new ColumnDefinition("shape_type", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("color_algorithm", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("shape_excluded", ColumnType.Boolean));
         addColumn(new ColumnDefinition("color_excluded", ColumnType.Boolean));
-        addColumn(new ColumnDefinition("color_distance", ColumnType.Integer));
+        addColumn(new ColumnDefinition("color_threshold", ColumnType.Double));
+        addColumn(new ColumnDefinition("color_weights", ColumnType.String));
         addColumn(new ColumnDefinition("background_file", ColumnType.File));
         addColumn(new ColumnDefinition("outline_file", ColumnType.File));
-        addColumn(new ColumnDefinition("area_data", ColumnType.Clob));
+        addColumn(new ColumnDefinition("shape_data", ColumnType.Clob));
         addColumn(new ColumnDefinition("color_data", ColumnType.Clob));
         return this;
     }
@@ -48,22 +49,24 @@ public class TableNodeImageScope extends BaseNodeTable {
             return name;
         }
         switch (name) {
-            case "scope_type":
-                return message("ScopeType");
-            case "color_type":
-                return message("ScopeColorType");
-            case "area_excluded":
-                return message("AreaExcluded");
+            case "shape_type":
+                return message("ShapeType");
+            case "color_algorithm":
+                return message("ColorMatchAlgorithm");
+            case "shape_excluded":
+                return message("ShapeExcluded");
             case "color_excluded":
                 return message("ColorExcluded");
-            case "color_distance":
-                return message("ColorDistance");
+            case "color_threshold":
+                return message("ColorMatchThreshold");
+            case "color_weights":
+                return message("ColorWeights");
             case "background_file":
                 return message("Background");
             case "outline_file":
                 return message("Outline");
-            case "area_data":
-                return message("Area");
+            case "shape_data":
+                return message("Shape");
             case "color_data":
                 return message("Colors");
         }

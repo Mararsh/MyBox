@@ -303,6 +303,20 @@ public class WindowTools {
         }
     }
 
+    public static BaseController operationStage(BaseController parent, String newFxml) {
+        try {
+            BaseController c = openStage(newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Operation);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static BaseController popStage(BaseController parent, String newFxml) {
         try {
             BaseController c = parent != null

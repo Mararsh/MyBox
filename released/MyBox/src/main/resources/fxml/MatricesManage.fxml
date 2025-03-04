@@ -9,8 +9,6 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -114,62 +112,11 @@ License:    Apache License Version 2.0
                                     <TableColumn fx:id="modifyColumn" prefWidth="160.0" text="%ModifyTime" />
                                  </columns>
                               </TableView>
-                              <FlowPane fx:id="paginationPane" hgap="2.0" vgap="2.0">
-                                 <children>
-                                    <Label text="%Page" />
-                                    <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
-                                    <Label fx:id="pageLabel" />
-                                    <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconGo.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconPrevious.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconNext.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconFirst.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconLast.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Label text="%PageSize" />
-                                    <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
-                                    <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true" />
-                                    <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true" />
-                                 </children>
-                              </FlowPane>
+                                    <HBox fx:id="paginationBox" nodeOrientation="LEFT_TO_RIGHT">
+                                       <children>
+                                          <fx:include fx:id="pagination" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" source="ControlPagination.fxml" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
                            </children>
                         </VBox>
                      </content>

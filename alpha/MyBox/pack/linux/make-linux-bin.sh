@@ -18,5 +18,5 @@ mv MyBox.jar.gz  MyBox-linux.jar.gz
 cd  app
 tar cfz  MyBox-Mint-x64.tar.gz  MyBox
 cd ..
-mv app/MyBox-CentOS7-x64.tar.gz  .
+mv app/MyBox-Mint-x64.tar.gz  .
 rm -rf ../../target

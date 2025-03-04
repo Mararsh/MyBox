@@ -15,15 +15,16 @@ import mara.mybox.fxml.FxTask;
  */
 public class ListKMeans<T> {
 
-    protected List<T> data;
     protected List<T> centers;
     protected List<Integer>[] clusters;
-    protected int k = 1, maxIteration = 10000, loopCount;
+    protected int k, maxIteration, loopCount;
     protected long cost;
     protected Map<T, T> dataMap;
     protected FxTask task;
 
     public ListKMeans() {
+        k = 1;
+        maxIteration = 10000;
     }
 
     public static ListKMeans create() {
@@ -34,13 +35,43 @@ public class ListKMeans<T> {
 
     }
 
+    public boolean isDataEmpty() {
+        return true;
+    }
+
+    public int dataSize() {
+        return 0;
+    }
+
+    public T getData(int index) {
+        return null;
+    }
+
+    public List<T> allData() {
+        return null;
+    }
+
+    public int centerSize() {
+        return centers != null ? centers.size() : 0;
+    }
+
     public void initCenters() {
         try {
             centers = new ArrayList<>();
-            int dataSize = data.size();
+            int dataSize = dataSize();
             if (dataSize < k) {
-                centers.addAll(data);
+                centers.addAll(allData());
                 return;
+            }
+            int mod = dataSize / k;
+            for (int i = 0; i < dataSize; i = i + mod) {
+                if (task != null && !task.isWorking()) {
+                    return;
+                }
+                centers.add(getData(i));
+                if (centers.size() == k) {
+                    return;
+                }
             }
             Random random = new Random();
             while (centers.size() < k) {
@@ -48,7 +79,7 @@ public class ListKMeans<T> {
                     return;
                 }
                 int index = random.nextInt(dataSize);
-                T d = data.get(index);
+                T d = getData(index);
                 if (!centers.contains(d)) {
                     centers.add(d);
                 }
@@ -75,9 +106,9 @@ public class ListKMeans<T> {
         if (k <= 0) {
             return false;
         }
-        if (data == null || data.isEmpty()) {
+        if (isDataEmpty()) {
             initData();
-            if (data == null || data.isEmpty()) {
+            if (isDataEmpty()) {
                 return false;
             }
         }
@@ -87,7 +118,7 @@ public class ListKMeans<T> {
                 return false;
             }
         }
-        int dataSize = data.size();
+        int dataSize = dataSize();
         if (dataSize < k) {
             clusters = new ArrayList[dataSize];
             for (int i = 0; i < dataSize; ++i) {
@@ -98,7 +129,10 @@ public class ListKMeans<T> {
         }
         clusters = new ArrayList[k];
         try {
-//            MyBoxLog.console("data: " + data.size() + " k:" + k + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
+            if (task != null) {
+                task.setInfo("data: " + dataSize() + " k:" + k
+                        + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
+            }
             while (true) {
                 if (task != null && !task.isWorking()) {
                     return false;
@@ -110,7 +144,7 @@ public class ListKMeans<T> {
                     if (task != null && !task.isWorking()) {
                         return false;
                     }
-                    T p = data.get(i);
+                    T p = getData(i);
                     double min = Double.MAX_VALUE;
                     int index = 0;
                     for (int j = 0; j < centers.size(); ++j) {
@@ -142,9 +176,14 @@ public class ListKMeans<T> {
                 if (!centerchange || loopCount >= maxIteration) {
                     break;
                 }
+                if (task != null && (loopCount % 100 == 0)) {
+                    task.setInfo("loopCount:" + loopCount);
+                }
             }
-//            MyBoxLog.console("loopCount: " + loopCount);
-//            MyBoxLog.console("centers: " + centers.size() + "   clusters: " + clusters.length);
+            if (task != null) {
+                task.setInfo("loopCount:" + loopCount);
+                task.setInfo("centers: " + centers.size() + "   clusters: " + clusters.length);
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -153,7 +192,7 @@ public class ListKMeans<T> {
     }
 
     public boolean makeMap() {
-        if (data == null || centers == null || clusters == null) {
+        if (isDataEmpty() || centers == null || clusters == null) {
             return false;
         }
         dataMap = new HashMap<>();
@@ -167,25 +206,91 @@ public class ListKMeans<T> {
                 if (task != null && !task.isWorking()) {
                     return false;
                 }
-                dataMap.put(data.get(index), centerData);
+                dataMap.put(getData(index), centerData);
             }
         }
 //        MyBoxLog.debug("dataMap: " + dataMap.size());
         return true;
     }
 
+    public T belongCenter(T value) {
+        if (isDataEmpty() || value == null || clusters == null) {
+            return value;
+        }
+        for (int i = 0; i < clusters.length; ++i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            List<Integer> cluster = clusters[i];
+            T centerData = centers.get(i);
+            for (Integer index : cluster) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                if (getData(index) == value) {
+                    return centerData;
+                }
+            }
+        }
+        return null;
+    }
+
+    public T preProcess(T value) {
+        return value;
+    }
+
+    public T nearestCenter(T value) {
+        try {
+            if (value == null) {
+                return value;
+            }
+            T targetValue = value;
+            double minDistance = Double.MAX_VALUE;
+            for (int i = 0; i < centers.size(); ++i) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                T centerValue = centers.get(i);
+                double distance = distance(value, centerValue);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    targetValue = centerValue;
+                }
+            }
+            return targetValue;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public T map(T value) {
+        try {
+            if (value == null) {
+                return value;
+            }
+            T targetValue = preProcess(value);
+            T mappedValue;
+            if (dataMap == null) {
+                mappedValue = belongCenter(value);
+            } else {
+                mappedValue = dataMap.get(targetValue);
+            }
+            // Some new colors maybe generated outside regions due to dithering again
+            if (mappedValue == null) {
+                mappedValue = nearestCenter(targetValue);
+//                dataMap.put(targetValue, mappedValue);
+            }
+            return mappedValue;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     /*
         get/set
      */
-    public List<T> getData() {
-        return data;
-    }
-
-    public ListKMeans setData(List<T> data) {
-        this.data = data;
-        return this;
-    }
-
     public List<T> getCenters() {
         return centers;
     }

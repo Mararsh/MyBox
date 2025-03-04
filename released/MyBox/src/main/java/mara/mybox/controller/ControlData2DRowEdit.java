@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -24,16 +25,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -244,13 +244,14 @@ public class ControlData2DRowEdit extends BaseController {
             rectangle.setStrokeWidth(1);
             rectangle.setStroke(Color.BLACK);
             rectangle.setFill(color);
-            rectangle.fillProperty().addListener(new ChangeListener<Paint>() {
+            SimpleBooleanProperty setNotify = new SimpleBooleanProperty(false);
+            setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setString(baseName, ((Color) newValue).toString());
+                    UserConfig.setString(baseName, ((Color) rectangle.getFill()).toString());
                 }
             });
             line.getChildren().add(rectangle);
@@ -269,6 +270,7 @@ public class ControlData2DRowEdit extends BaseController {
                             Pane pane = fxmlLoader.load();
                             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
                             controller.load(myController, rectangle);
+                            setNotify.bind(controller.setNotify);
 
                             popup = makePopup();
                             popup.getContent().add(pane);

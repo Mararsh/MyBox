@@ -25,7 +25,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartXYController">
+<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DChartXYController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
@@ -83,17 +83,11 @@ License:    Apache License Version 2.0
                                                                                         <ComboBox fx:id="categoryColumnSelector" prefWidth="200.0" />
                                                                                     </children>
                                                                                 </FlowPane>
-                                                                                <FlowPane fx:id="valueColumnPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                                                                    <children>
-                                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%ValueColumn" />
-                                                                                        <ComboBox fx:id="valueColumnSelector" prefWidth="200.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
                                                                                 <VBox fx:id="columnCheckBoxsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                                                     <children>
                                                                                         <FlowPane hgap="2.0" vgap="2.0">
                                                                                             <children>
-                                                                                                <Label fx:id="valuesLabel" text="%ColumnsCalculated" />
+                                                                                                <Label fx:id="valuesLabel" text="%ValueColumns" />
                                                                                                 <Label text="%NoSelectionMeansAll" />
                                                                                                 <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
                                                                                                     <graphic>

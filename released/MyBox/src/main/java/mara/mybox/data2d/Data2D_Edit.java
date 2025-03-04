@@ -164,11 +164,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public long readTotal() {
-        rowsNumber = -1;
+        pagination.rowsNumber = -1;
         Data2DOperate opearte = Data2DReadTotal.create(this)
                 .setTask(backgroundTask).start();
         if (opearte != null) {
-            rowsNumber = opearte.getSourceRowIndex();
+            pagination.rowsNumber = opearte.getSourceRowIndex();
         }
         try (Connection conn = DerbyBase.getConnection()) {
             tableData2DDefinition.updateData(conn, this);
@@ -178,27 +178,27 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
             MyBoxLog.error(e);
         }
-        return rowsNumber;
+        return pagination.rowsNumber;
     }
 
     public List<List<String>> readPageData(Connection conn) {
         if (!isValidDefinition()) {
-            startRowOfCurrentPage = endRowOfCurrentPage = 0;
+            pagination.startRowOfCurrentPage = pagination.endRowOfCurrentPage = 0;
             return null;
         }
-        if (startRowOfCurrentPage < 0) {
-            startRowOfCurrentPage = 0;
+        if (pagination.startRowOfCurrentPage < 0) {
+            pagination.startRowOfCurrentPage = 0;
         }
-        endRowOfCurrentPage = startRowOfCurrentPage;
+        pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage;
         Data2DReadPage reader = Data2DReadPage.create(this).setConn(conn);
         if (reader == null) {
-            startRowOfCurrentPage = endRowOfCurrentPage = 0;
+            pagination.startRowOfCurrentPage = pagination.endRowOfCurrentPage = 0;
             return null;
         }
         reader.setTask(task).start();
         List<List<String>> rows = reader.getRows();
         if (rows != null) {
-            endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
+            pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage + rows.size();
         }
         readPageStyles(conn);
         return rows;
@@ -206,7 +206,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public void readPageStyles(Connection conn) {
         styles = new ArrayList<>();
-        if (dataID < 0 || startRowOfCurrentPage >= endRowOfCurrentPage) {
+        if (dataID < 0 || pagination.startRowOfCurrentPage >= pagination.endRowOfCurrentPage) {
             return;
         }
         try (PreparedStatement statement = conn.prepareStatement(TableData2DStyle.QueryStyles)) {
@@ -247,7 +247,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public void countPageSize() {
         try {
-            rowsNumber = rowsNumber + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
+            pagination.rowsNumber = pagination.rowsNumber + (tableRowsNumber()
+                    - (pagination.endRowOfCurrentPage - pagination.startRowOfCurrentPage));
             colsNumber = tableColsNumber();
             if (colsNumber <= 0) {
                 hasHeader = false;
@@ -293,11 +294,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
-            attributes.rowsNumber = operate.rowsCount();
+            attributes.pagination.rowsNumber = operate.rowsCount();
             attributes.tableChanged = false;
-            attributes.currentPage = currentPage;
+            attributes.pagination.currentPage = pagination.currentPage;
             cloneData(attributes);
-            return attributes.rowsNumber;
+            return attributes.pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

@@ -137,6 +137,72 @@ public class WebBrowserController extends BaseController {
 
             int index = tabPane.getTabs().indexOf(tab);
 
+            if (tab == initTab) {
+                Menu exampleMenu = new Menu(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
+
+                menu = new MenuItem("https://sci-hub.se");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://sci-hub.se", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://zm-digicol.dpm.org.cn");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://zm-digicol.dpm.org.cn", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://bing.com");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://bing.com", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://baidu.com");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://baidu.com", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://weibo.com");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://weibo.com", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://www.kunnu.com");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://www.kunnu.com", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("http://nga.178.com");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("http://nga.178.com", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://www.radio.cn");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://www.radio.cn", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://openjfx.io/javadoc/23/");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://openjfx.io/javadoc/23/", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://docs.oracle.com/en/java/javase/23/docs/api/index.html");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://docs.oracle.com/en/java/javase/23/docs/api/index.html", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                items.add(exampleMenu);
+            }
+
             menu = new MenuItem(message("AddAtRight"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 newTab(index + 1, true);

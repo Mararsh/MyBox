@@ -8,9 +8,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.TransformTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -115,7 +115,7 @@ public class ImageRotateController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRotateController controller = (ImageRotateController) WindowTools.branchStage(
+            ImageRotateController controller = (ImageRotateController) WindowTools.operationStage(
                     parent, Fxmls.ImageRotateFxml);
             controller.setParameters(parent);
             return controller;

@@ -18,15 +18,15 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import mara.mybox.image.data.PixelsOperation;
-import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Colors.color;
@@ -79,23 +79,9 @@ public class StyleTools {
         if (node == null) {
             return;
         }
-        setStyle(node, node.getId());
-    }
-
-    public static void setStyle(Node node, String id) {
-        setStyle(node, id, false);
-    }
-
-    public static void setStyle(Node node, String id, boolean mustStyle) {
-        if (node == null) {
-            return;
-        }
         StyleData style = getStyleData(node);
         setTips(node, style);
         setIcon(node, StyleTools.getIconImageView(style));
-        //        if (mustStyle || AppVariables.ControlColor != ColorStyle.Default) {
-        //            setStyleColor(node, style, AppVariables.ControlColor);
-        //        }
         setTextStyle(node, style, AppVariables.ControlColor);
     }
 
@@ -139,7 +125,7 @@ public class StyleTools {
                         if (iconNames == null || iconNames.isEmpty()) {
                             return true;
                         }
-                        String targetPath = AppVariables.MyboxDataPath + "/buttons/";
+                        String targetPath = AppVariables.MyboxDataPath + "/buttons/customized/";
                         new File(targetPath).mkdirs();
                         for (String iconName : iconNames) {
                             String tname = targetPath + iconName;
@@ -174,19 +160,50 @@ public class StyleTools {
         Icon
      */
     public static String getIconPath() {
-        return getIconPath(AppVariables.ControlColor);
-    }
-
-    public static String getIconPath(StyleColor colorStyle) {
         try {
+            StyleColor colorStyle = AppVariables.ControlColor;
             if (colorStyle == null) {
+                AppVariables.ControlColor = StyleColor.Red;
                 colorStyle = StyleColor.Red;
             }
             if (colorStyle == StyleColor.Customize) {
-                return AppVariables.MyboxDataPath + "/buttons/";
+                String address = AppVariables.MyboxDataPath + "/buttons/customized/";
+                if (new File(address).exists()) {
+                    return address;
+                } else {
+                    UserConfig.setString("ControlColor", "red");
+                    AppVariables.ControlColor = StyleColor.Red;
+                    return ButtonsSourcePath + "Red/";
+                }
             } else {
                 return ButtonsSourcePath + colorStyle.name() + "/";
             }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static File getIconFile(String name) {
+        try {
+            StyleColor colorStyle = AppVariables.ControlColor;
+            if (colorStyle == null) {
+                colorStyle = StyleColor.Red;
+            }
+            File file = null;
+            if (colorStyle == StyleColor.Customize) {
+                file = new File(AppVariables.MyboxDataPath + "/buttons/customized/" + name);
+                if (!file.exists()) {
+                    colorStyle = StyleColor.Red;
+                    file = null;
+                }
+            }
+            if (file == null) {
+                file = FxFileTools.getInternalFile(
+                        "/" + ButtonsSourcePath + colorStyle.name() + "/" + name,
+                        "buttons/" + colorStyle.name(),
+                        name);
+            }
+            return file;
         } catch (Exception e) {
             return null;
         }
@@ -197,7 +214,7 @@ public class StyleTools {
             if (style == null || style.getIconName() == null || style.getIconName().isEmpty()) {
                 return null;
             }
-            return StyleTools.getIconImageView(style.getIconName());
+            return getIconImageView(style.getIconName());
         } catch (Exception e) {
             MyBoxLog.error(e, style.getIconName());
             return null;
@@ -229,10 +246,19 @@ public class StyleTools {
 
     public static ImageView getIconImageView(String stylePath, String iconName) {
         try {
-            return new ImageView(ButtonsSourcePath + iconName);
+            if (!stylePath.startsWith(ButtonsSourcePath)) {
+                File file = new File(stylePath + iconName);
+                if (!file.exists()) {
+                    return new ImageView(ButtonsSourcePath + iconName);
+                } else {
+                    return new ImageView(file.toURI().toString());
+                }
+            } else {
+                return new ImageView(stylePath + iconName);
+            }
         } catch (Exception e) {
             try {
-                return new ImageView(stylePath + iconName);
+                return new ImageView(ButtonsSourcePath + iconName);
             } catch (Exception ex) {
                 try {
                     return new ImageView(ButtonsSourcePath + "Red/" + iconName);

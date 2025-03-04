@@ -47,6 +47,20 @@ public abstract class Data2DOperate {
         closeConn = true;
     }
 
+    public String info() {
+        String s = getClass().toString() + "\n";
+        if (controller != null) {
+            s += "controller: " + controller.getClass() + "\n";
+        }
+        if (reader != null) {
+            s += "reader: " + reader.getClass() + "\n";
+        }
+        if (sourceData != null) {
+            s += sourceData.info();
+        }
+        return s;
+    }
+
 
     /*
         reader
@@ -292,7 +306,7 @@ public abstract class Data2DOperate {
 
     public void stop() {
         stopped = true;
-        showInfo(message("Stopped"));
+//        showInfo(message("Stopped"));
     }
 
     public boolean isStopped() {

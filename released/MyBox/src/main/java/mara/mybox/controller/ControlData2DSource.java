@@ -18,19 +18,6 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DSource extends BaseData2DRowsColumnsController {
 
     @Override
-    public void updateStatus() {
-        try {
-            super.updateStatus();
-            if (dataManufactureButton != null) {
-                dataManufactureButton.setDisable(!isValidData());
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
             if (data2D == null || !data2D.isDataFile()) {

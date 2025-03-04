@@ -14,17 +14,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.paint.Color;
-import mara.mybox.image.tools.ColorConvertTools;
+import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.image.FxColorTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.image.data.ImageQuantization;
 import mara.mybox.image.data.ImageQuantization.ColorCount;
 import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.image.data.ImageQuantizationFactory;
-import mara.mybox.image.data.ImageQuantizationFactory.KMeansClusteringQuantization;
-import mara.mybox.data.StringTable;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
-import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageQuantizationFactory.RegionKMeansClusteringQuantization;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.FloatTools;
 import static mara.mybox.value.Languages.message;
 
@@ -42,7 +42,6 @@ public class ImageAnalyseDominantController extends BaseController {
     protected ControlImageQuantization quantizationController;
     @FXML
     protected Button paletteButton;
-
     @FXML
     protected Tab colorTab, pieTab;
     @FXML
@@ -80,10 +79,14 @@ public class ImageAnalyseDominantController extends BaseController {
     @FXML
     @Override
     public void goAction() {
+
         loadDominantData(null);
     }
 
     public void loadDominantData(BufferedImage inImage) {
+        if (!quantizationController.pickValues()) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -105,11 +108,7 @@ public class ImageAnalyseDominantController extends BaseController {
                     task.setInfo(message("CalculatingDominantColors"));
 
                     quantization = ImageQuantizationFactory.create(
-                            image, null, quantizationController, true);
-                    if (quantizationController.algorithm == QuantizationAlgorithm.KMeansClustering) {
-                        KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
-                        q.getKmeans().setMaxIteration(quantizationController.kmeansLoop);
-                    }
+                            this, image, null, quantizationController, true);
                     if (quantization == null) {
                         return false;
                     }
@@ -180,9 +179,9 @@ public class ImageAnalyseDominantController extends BaseController {
             }
 
             colorsController.loadContent(html);
-            if (quantizationController.algorithm == QuantizationAlgorithm.KMeansClustering) {
+            if (quantizationController.algorithm == QuantizationAlgorithm.RegionKMeansClustering) {
                 quantizationController.resultsLabel.setText(message("ActualLoop") + ":"
-                        + ((KMeansClusteringQuantization) quantization).getKmeans().getLoopCount());
+                        + ((RegionKMeansClusteringQuantization) quantization).getKmeans().getLoopCount());
             }
 
         } catch (Exception e) {

@@ -62,8 +62,7 @@ public class GameMineController extends BaseWebViewController {
     protected ChessStatus[][] chessStatus;
     protected Random random;
     protected DropShadow dropShadow;
-    protected String mineImage;
-    protected long startTime, cost;
+    protected long fromTime, cost;
 
     protected enum ChessStatus {
         Disclosed, Closed, Marked, Suspected
@@ -90,6 +89,8 @@ public class GameMineController extends BaseWebViewController {
     protected Label timeLabel, minesLabel;
     @FXML
     protected CheckBox miaowCheck;
+    @FXML
+    protected ControlImage imageController;
 
     public GameMineController() {
         baseTitle = message("GameMine");
@@ -102,7 +103,6 @@ public class GameMineController extends BaseWebViewController {
             super.initValues();
             random = new Random();
             dropShadow = new DropShadow();
-            mineImage = StyleTools.getIconPath() + "iconClear.png";
 
             spacing = 0;
             chessSize = UserConfig.getInt(baseName + "ChessSize", 20);
@@ -141,6 +141,8 @@ public class GameMineController extends BaseWebViewController {
                     UserConfig.setBoolean(baseName + "Miaow", miaowCheck.isSelected());
                 }
             });
+
+            imageController.setParameter(this, StyleTools.getIconFile("iconClear.png").toString(), null);
 
             loadRecords();
             createAction();
@@ -303,8 +305,8 @@ public class GameMineController extends BaseWebViewController {
             timer.cancel();
             timer = null;
         }
-        if (startTime <= 0) {
-            startTime = new Date().getTime();
+        if (fromTime <= 0) {
+            fromTime = new Date().getTime();
         }
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -316,7 +318,7 @@ public class GameMineController extends BaseWebViewController {
                         if (timer == null) {
                             return;
                         }
-                        cost = new Date().getTime() - startTime;
+                        cost = new Date().getTime() - fromTime;
                         timeLabel.setText(DateTools.timeMsDuration(cost) + "");
                     }
                 });
@@ -338,8 +340,8 @@ public class GameMineController extends BaseWebViewController {
         displayChess(v, h);
         ++disclosed;
         minesLabel.setText(disclosed + "/" + total);
-        if (startTime > 0) {
-            cost = new Date().getTime() - startTime;
+        if (fromTime > 0) {
+            cost = new Date().getTime() - fromTime;
             timeLabel.setText(DateTools.timeMsDuration(cost));
         }
         if (disclosed == total) {
@@ -528,7 +530,7 @@ public class GameMineController extends BaseWebViewController {
         switch (status) {
             case Disclosed:
                 if (value < 0) {
-                    ImageView view = new ImageView(mineImage);
+                    ImageView view = new ImageView(imageController.getImage());
                     view.setFitWidth(chessSize - 1);
                     view.setFitHeight(chessSize - 1);
                     apane.getChildren().add(view);
@@ -566,7 +568,7 @@ public class GameMineController extends BaseWebViewController {
             case Marked:
                 rect.setFill(Color.LIGHTGRAY);
 //                rect.setEffect(dropShadow);
-                ImageView view = new ImageView(mineImage);
+                ImageView view = new ImageView(imageController.getImage());
                 view.setFitWidth(chessSize - 1);
                 view.setFitHeight(chessSize - 1);
                 apane.getChildren().add(view);
@@ -609,7 +611,7 @@ public class GameMineController extends BaseWebViewController {
             timer.cancel();
             timer = null;
         }
-        startTime = 0;
+        fromTime = 0;
         disclosed = 0;
         minesLabel.setText(0 + "/" + total);
         timeLabel.setText("");

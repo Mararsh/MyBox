@@ -50,7 +50,7 @@ public class DataTableReader extends Data2DReader {
 
     @Override
     public void readPage() {
-        sourceIndex = sourceData.startRowOfCurrentPage;
+        sourceIndex = sourceData.pagination.startRowOfCurrentPage;
         String sql = readerTable.pageQuery();
 //        showInfo(sql);
         try (PreparedStatement statement = conn().prepareStatement(sql);
@@ -70,8 +70,8 @@ public class DataTableReader extends Data2DReader {
     public void readRows() {
         sourceIndex = 0;
         long tableIndex = 0;
-        long startIndex = sourceData.startRowOfCurrentPage;
-        long endIndex = sourceData.endRowOfCurrentPage;
+        long startIndex = sourceData.pagination.startRowOfCurrentPage;
+        long endIndex = sourceData.pagination.endRowOfCurrentPage;
         String sql = "SELECT * FROM " + readerTable.getSheet();
 //        showInfo(sql);
         try (PreparedStatement statement = conn().prepareStatement(sql);

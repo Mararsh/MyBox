@@ -1,27 +1,24 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import mara.mybox.image.data.ImageScope;
-import static mara.mybox.image.data.ImageScope.ColorScopeType.Blue;
-import static mara.mybox.image.data.ImageScope.ColorScopeType.Brightness;
-import static mara.mybox.image.data.ImageScope.ColorScopeType.Color;
-import static mara.mybox.image.data.ImageScope.ColorScopeType.Green;
-import static mara.mybox.image.data.ImageScope.ColorScopeType.Hue;
-import static mara.mybox.image.data.ImageScope.ColorScopeType.Red;
-import static mara.mybox.image.data.ImageScope.ColorScopeType.Saturation;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+import mara.mybox.color.ColorMatch;
+import mara.mybox.color.ColorMatch.MatchAlgorithm;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageScope;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -32,231 +29,251 @@ import mara.mybox.value.UserConfig;
 public class ControlColorMatch extends BaseController {
 
     protected SimpleBooleanProperty changeNotify;
-    protected int distance, max;
+    protected ColorMatch colorMatch;
 
     @FXML
-    protected ToggleGroup matchGroup;
+    protected ToggleGroup algorithmGroup;
     @FXML
-    protected RadioButton colorRGBRadio, colorGreenRadio, colorRedRadio, colorBlueRadio,
-            colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
+    protected TextField thresholdInput, hueWeightInput,
+            saturationWeightInput, brightnessWeightInput;
     @FXML
-    protected ComboBox<String> distanceSelector;
+    protected VBox weightsBox;
     @FXML
-    protected CheckBox squareRootCheck;
+    protected Label weightsLabel;
+    @FXML
+    protected FlowPane huePane;
 
     public ControlColorMatch() {
         TipsLabelKey = "ColorMatchComments";
-    }
-
-    public void changeNotify() {
-        changeNotify.set(!changeNotify.get());
+        changeNotify = new SimpleBooleanProperty(false);
+        colorMatch = new ColorMatch();
     }
 
     @Override
     public void initControls() {
-        try {
+        try (Connection conn = DerbyBase.getConnection()) {
             super.initControls();
 
-            changeNotify = new SimpleBooleanProperty(false);
-            distance = UserConfig.getInt(baseName + "Distance", 20);
-            if (distance <= 0) {
-                distance = 20;
-            }
-            max = 100;
-
-            matchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            String a = UserConfig.getString(conn, baseName + "Algorithm",
+                    message(ColorMatch.DefaultAlgorithm.name()));
+            setAlgorithm(a);
+            algorithmGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    setDistanceValue();
-                    changeNotify();
+                    algorithmChanged();
                 }
             });
 
-            int colorDistance = UserConfig.getInt(baseName + "ColorDistance", 20);
-            colorDistance = colorDistance <= 0 ? 20 : colorDistance;
-            distanceSelector.setValue(colorDistance + "");
-            distanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (!isSettingValues) {
-                        changeNotify();
-                    }
-                }
-            });
+            double threshold = UserConfig.getDouble(conn, baseName + "Threshold", 1.0d);
+            if (threshold < 0) {
+                threshold = 1.0d;
+            }
+            thresholdInput.setText(threshold + "");
 
-            squareRootCheck.setSelected(UserConfig.getBoolean(baseName + "ColorDistanceSquare", false));
-            squareRootCheck.visibleProperty().bind(colorRGBRadio.selectedProperty());
-            squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues || !colorRGBRadio.isSelected()) {
-                        return;
-                    }
-                    changeNotify();
-                }
-            });
+            double hw = UserConfig.getDouble(conn, baseName + "HueWeight", 1.0d);
+            if (hw < 0) {
+                hw = 1.0d;
+            }
+            hueWeightInput.setText(hw + "");
 
-            setDistanceValue();
+            double sw = UserConfig.getDouble(conn, baseName + "SaturationWeight", 1.0d);
+            if (sw < 0) {
+                sw = 1.0d;
+            }
+            saturationWeightInput.setText(sw + "");
+
+            double bw = UserConfig.getDouble(conn, baseName + "BrightnessWeight", 1.0d);
+            if (bw < 0) {
+                bw = 1.0d;
+            }
+            brightnessWeightInput.setText(bw + "");
+
+            algorithmChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    protected void setDistanceValue() {
+    public void setAlgorithm(String a) {
         try {
-            if (colorSaturationRadio.isSelected() || colorHueRadio.isSelected()) {
-                max = 100;
-            } else if (colorHueRadio.isSelected()) {
-                max = 360;
-            } else {
-                max = 255;
-            }
-
-            NodeStyleTools.setTooltip(distanceSelector, new Tooltip("0~" + max));
-            List<String> vList = new ArrayList<>();
-            for (int i = 0; i <= max; i += 10) {
-                vList.add(i + "");
-            }
-            isSettingValues = true;
-            distanceSelector.getItems().setAll(vList);
-            distanceSelector.getSelectionModel().select(distance + "");
-            isSettingValues = false;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    protected void setDistanceValue(ImageScope scope) {
-        if (scope != null) {
-            if (colorSaturationRadio.isSelected() || colorHueRadio.isSelected()) {
-                distance = (int) (scope.getHsbDistance() * 100);
-            } else if (colorHueRadio.isSelected()) {
-                distance = (int) (scope.getHsbDistance() * 360);
-            } else {
-                distance = scope.getColorDistance();
-            }
-        }
-        UserConfig.setInt(baseName + "Distance", distance);
-        setDistanceValue();
-    }
-
-    protected boolean isSquare() {
-        return squareRootCheck.isSelected() && colorRGBRadio.isSelected();
-    }
-
-    protected boolean pickValues(ImageScope scope, int defaultDistance) {
-        if (scope == null) {
-            return false;
-        }
-        boolean valid = true;
-        int v = distance;
-        try {
-            if (colorRGBRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-
-            } else if (colorRedRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Red);
-
-            } else if (colorGreenRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Green);
-
-            } else if (colorBlueRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Blue);
-
-            } else if (colorSaturationRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Saturation);
-
-            } else if (colorHueRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
-
-            } else if (colorBrightnessRadio.isSelected()) {
-                scope.setColorScopeType(ImageScope.ColorScopeType.Brightness);
-            }
-
-            try {
-                v = Integer.parseInt(distanceSelector.getValue());
-            } catch (Exception e) {
-                v = defaultDistance;
-                valid = false;
-            }
-            switch (scope.getColorScopeType()) {
-                case Hue:
-                    if (v >= 0 && v <= 360) {
-                        scope.setHsbDistance(v / 360.0f);
-                    } else {
-                        valid = false;
-                    }
+            for (Toggle button : algorithmGroup.getToggles()) {
+                RadioButton rbutton = (RadioButton) button;
+                if (rbutton.getText().equals(a) || rbutton.getText().equals(message(a))) {
+                    rbutton.setSelected(true);
                     break;
-                case Brightness:
-                case Saturation:
-                    if (v >= 0 && v <= 100) {
-                        scope.setHsbDistance(v / 100.0f);
-                    } else {
-                        valid = false;
-                    }
-                    break;
-                default:
-                    if (isSquare()) {
-                        if (v >= 0 && v <= 255 * 255) {
-                            scope.setColorDistanceSquare(v);
-                        } else {
-                            valid = false;
-                        }
-                    } else {
-                        if (v >= 0 && v <= 255) {
-                            scope.setColorDistance(v);
-                        } else {
-                            valid = false;
-                        }
-                    }
+                }
             }
         } catch (Exception e) {
-            valid = false;
+            MyBoxLog.error(e);
         }
-        if (valid) {
-            distance = v;
-            UserConfig.setInt(baseName + "Distance", distance);
-        }
-        return valid;
     }
 
-    protected void show(ImageScope scope) {
+    public MatchAlgorithm selectedAlgorithm() {
         try {
-            if (scope == null) {
+            return ColorMatch.algorithm(((RadioButton) algorithmGroup.getSelectedToggle()).getText());
+        } catch (Exception e) {
+            return ColorMatch.DefaultAlgorithm;
+        }
+    }
+
+    protected void algorithmChanged() {
+        try {
+            if (isSettingValues) {
                 return;
             }
-            isSettingValues = true;
-            switch (scope.getColorScopeType()) {
-                case Color:
-                    colorRGBRadio.setSelected(true);
-                    break;
-                case Red:
-                    colorRedRadio.setSelected(true);
-                    break;
-                case Green:
-                    colorGreenRadio.setSelected(true);
-                    break;
-                case Blue:
-                    colorBlueRadio.setSelected(true);
-                    break;
-                case Hue:
-                    colorHueRadio.setSelected(true);
-                    break;
-                case Brightness:
-                    colorBrightnessRadio.setSelected(true);
-                    break;
-                case Saturation:
-                    colorSaturationRadio.setSelected(true);
-                    break;
+            MatchAlgorithm a = selectedAlgorithm();
+            if (a == null) {
+                return;
             }
+            if (ColorMatch.supportWeights(a)) {
+                weightsBox.setVisible(true);
+                if (!thisPane.getChildren().contains(weightsBox)) {
+                    thisPane.getChildren().add(weightsBox);
+                }
+                huePane.setVisible(a != MatchAlgorithm.CMC);
+                if (a == MatchAlgorithm.HSBEuclidean) {
+                    weightsLabel.setText(message("LargerWeightMeansMoreContribution"));
+                } else {
+                    weightsLabel.setText(message("LargerWeightMeansLessContribution"));
+                }
+            } else {
+                weightsBox.setVisible(false);
+            }
+            double s = ColorMatch.suggestedThreshold(a);
+            NodeStyleTools.setTooltip(thresholdInput, message("SuggestedRange") + ": "
+                    + "0~" + s);
+            thresholdInput.setText(s + "");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public boolean pickValues() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return pickValues(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean pickValues(Connection conn) {
+        try {
+            if (conn == null) {
+                return false;
+            }
+            double threshold = -1d;
+            try {
+                threshold = Double.parseDouble(thresholdInput.getText());
+            } catch (Exception e) {
+            }
+            if (threshold < 0) {
+                popError(message("InvalidParameter") + ": " + message("Threshold"));
+                return false;
+            }
+
+            MatchAlgorithm a = selectedAlgorithm();
+            if (a == null) {
+                popError(message("InvalidParameter") + ": " + message("Algorithm"));
+                return false;
+            }
+            if (a == MatchAlgorithm.CIE94 || a == MatchAlgorithm.CIEDE2000) {
+                double hw, sw, bw;
+                try {
+                    hw = Double.parseDouble(hueWeightInput.getText());
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("HueWeight"));
+                    return false;
+                }
+                try {
+                    sw = Double.parseDouble(saturationWeightInput.getText());
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("SaturationWeight"));
+                    return false;
+                }
+                try {
+                    bw = Double.parseDouble(brightnessWeightInput.getText());
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("BrightnessWeight"));
+                    return false;
+                }
+                colorMatch.setHueWeight(hw);
+                colorMatch.setSaturationWeight(sw);
+                colorMatch.setBrightnessWeight(bw);
+
+                UserConfig.setDouble(conn, baseName + "HueWeight", hw);
+                UserConfig.setDouble(conn, baseName + "SaturationWeight", sw);
+                UserConfig.setDouble(conn, baseName + "BrightnessWeight", bw);
+            }
+
+            colorMatch.setAlgorithm(a);
+            colorMatch.setThreshold(threshold);
+
+            UserConfig.setString(conn, baseName + "Algorithm", a.name());
+            UserConfig.setDouble(conn, baseName + "Threshold", threshold);
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @FXML
+    public void defaultAction() {
+        try {
+            isSettingValues = true;
+            thresholdInput.setText(ColorMatch.suggestedThreshold(selectedAlgorithm()) + "");
+            hueWeightInput.setText("1.0");
+            saturationWeightInput.setText("1.0");
+            brightnessWeightInput.setText("1.0");
             isSettingValues = false;
-            setDistanceValue(scope);
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            isSettingValues = false;
+        }
+    }
+
+    public void defaultMatch() {
+        try {
+            setAlgorithm(ColorMatch.DefaultAlgorithm.name());
+            defaultAction();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            isSettingValues = false;
+        }
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        if (pickValues()) {
+            changeNotify.set(!changeNotify.get());
+        }
+    }
+
+    public boolean pickValuesTo(ImageScope scope) {
+        if (scope == null || !pickValues()) {
+            return false;
+        }
+        colorMatch.copyTo(scope.getColorMatch());
+        return true;
+    }
+
+    public boolean loadValuesFrom(ImageScope scope) {
+        try {
+            scope.getColorMatch().copyTo(colorMatch);
+            setAlgorithm(colorMatch.getAlgorithm().name());
+            thresholdInput.setText(colorMatch.getThreshold() + "");
+            hueWeightInput.setText(colorMatch.getHueWeight() + "");
+            saturationWeightInput.setText(colorMatch.getSaturationWeight() + "");
+            brightnessWeightInput.setText(colorMatch.getBrightnessWeight() + "");
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
         }
     }
 

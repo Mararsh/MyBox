@@ -9,12 +9,12 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import mara.mybox.image.data.ImageConvolution;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.image.data.ImageConvolution;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -87,7 +87,7 @@ public class ImageConvolutionController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.branchStage(
+            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.operationStage(
                     parent, Fxmls.ImageConvolutionFxml);
             controller.setParameters(parent);
             return controller;

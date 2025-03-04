@@ -80,6 +80,9 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                 default:
                     break;
             }
+            if (xyChart == null) {
+                return null;
+            }
             initXYChart();
             styleChart();
         } catch (Exception e) {
@@ -160,6 +163,9 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
 
     public void initXYChart() {
         try {
+            if (xyChart == null) {
+                return;
+            }
             xyChart.setAlternativeRowFillVisible(altRowsFill);
             xyChart.setAlternativeColumnFillVisible(altColumnsFill);
             xyChart.setVerticalGridLinesVisible(displayVlines);

@@ -30,6 +30,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import mara.mybox.data.Pagination;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableFileBackup;
@@ -67,9 +68,10 @@ public abstract class BaseController_Attributes {
     protected StageType stageType;
     protected SaveAsType saveAsType;
     protected TableFileBackup tableFileBackup;
+    protected Pagination pagination;
 
     public static enum StageType {
-        Normal, Branch, Child, Pop, Popup, OneOpen
+        Normal, Operation, Branch, Child, Pop, Popup, OneOpen
     }
 
     public static enum SaveAsType {
@@ -124,6 +126,8 @@ public abstract class BaseController_Attributes {
     protected ComboBox<String> dpiSelector;
     @FXML
     protected TabPane tabPane;
+    @FXML
+    protected ControlPagination paginationController;
 
     public void setFileType() {
         setFileType(FileType.All);

@@ -9,21 +9,26 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2025-1-31 v6.8.4</p>
+  <p>2025-3-5 v6.8.5</p>
   <ul>
    <li>Improve: 
     <ul>
-     <li>Adjust menu of html.</li>
-     <li>When define language, option to set blank translation as Chinese or English.</li>
+     <li>Redesign and implement “Image Scope”, which is determined by both “Shape Constraints” and “Match Colors List”.</li>
+     <li>More algorithms about “Matching colors”.</li>
+     <li>Control of pagination, which can self-adapt interfaces.</li>
+     <li>Control of selecting image, which can pick file, example, and default.</li>
+     <li>Data charts: Bubble chart is separated from XY charts.</li>
+     <li>Linux Mint is used.</li>
     </ul></li>
    <li>Solved problems: 
     <ul>
-     <li>Fail to read/write WebP image with packed MyBox.</li>
-     <li>When define language, its name should not be limited by definition of locale.</li>
+     <li>Image scope: Values of some types are saved incorrectly.</li>
+     <li>Interface: Icons of customized color do not work.</li>
+     <li>Manage colors: Color blocks may be messed.</li>
+     <li>Make documents: Wrong calls when generate tree examples.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.4">Closed requirements/bugs in this version</a></p>
-  <p>Happy Chinese New Year!</p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.5">Closed requirements/bugs in this version</a></p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -71,8 +76,8 @@
      <td>MyBox.exe</td>
     </tr>
     <tr>
-     <td>CentOS 7 x64</td>
-     <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz">MyBox-CentOS7-x64.tar.gz</a></td>
+     <td>Mint x64</td>
+     <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-Mint-x64.tar.gz">MyBox-Mint-x64.tar.gz</a></td>
      <td>360MB-</td>
      <td>MyBox</td>
     </tr>
@@ -87,7 +92,6 @@
   <p>User can double click the launcher to start MyBox or run it by command line. The default “Open Method” of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file’s name.</p>
   <h2>Jar</h2>
   <p>When JRE or JDK(<a target=_blank href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle jdk</a> or <a target=_blank href="http://jdk.java.net/">open jdk</a>) is installed, jar can run.</p>
-  <p>Notice: Due to compile failure, env on Linux is still Java 21 + JavaFX 21.</p>
   <table>
    <thead>
     <tr>
@@ -422,15 +426,15 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8.4</td>
-     <td>2025-1-31</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Shortcuts and Icons</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html">html</a></td>
     </tr>
@@ -457,8 +461,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8.4</td>
-     <td>2025-1-31</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -513,8 +517,8 @@
     </tr>
     <tr>
      <td>Software Testing - Test Environment</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
@@ -541,8 +545,8 @@
     </tr>
     <tr>
      <td>Tips in Interfaces</td>
-     <td>6.8.4</td>
-     <td>2025-1-31</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
@@ -597,8 +601,8 @@
     </tr>
     <tr>
      <td>About - Image Scope</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_image_scope_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_image_scope_zh.html">html</a></td>
     </tr>
@@ -653,36 +657,36 @@
     </tr>
     <tr>
      <td>Examples - JShell</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JShell_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JShell_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - JEXL</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JEXL_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JEXL_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - JavaScript</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JavaScript_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JavaScript_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - Math Function</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Math_Function_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Math_Function_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - Row Expression</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_zh.html">html</a></td>
     </tr>
@@ -800,8 +804,8 @@
     </tr>
     <tr>
      <td>Stories of Images</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.5</td>
+     <td>2025-3-5</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
@@ -1149,6 +1153,11 @@
      <td>Book</td>
      <td>Materials</td>
      <td>ISBN:7-5305-231 7-1</td>
+    </tr>
+    <tr>
+     <td>DeepSeek</td>
+     <td>Knowledge</td>
+     <td><a target=_blank href="https://www.deepseek.com/">https://www.deepseek.com/</a></td>
     </tr>
    </tbody>
   </table>

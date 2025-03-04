@@ -7,6 +7,7 @@ import javafx.scene.chart.Axis;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.chart.XYChartMaker;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -49,7 +50,10 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
         this.columns = columns;
         this.data = data;
         chartMaker.setPalette(makePalette());
-        chartMaker.makeChart();
+        if (chartMaker.makeChart() == null) {
+            popError(message("InvalidParameter"));
+            return;
+        }
         setChart(chartMaker.getXyChart());
         chartMaker.writeXYChart(columns, data, catgoryCol, valueCols);
         if (optionsController != null && optionsController.isShowing()

@@ -28,7 +28,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
@@ -298,9 +297,9 @@ public class ChromaticityDiagramController extends BaseImageController {
 
     private void initDiagram() {
         try {
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            colorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     calculateColor();
                 }
             });

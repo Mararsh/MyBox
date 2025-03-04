@@ -332,6 +332,7 @@ public class Fxmls {
     public static final String Data2DFrequencyFxml = "/fxml/Data2DFrequency.fxml";
     public static final String Data2DChartPieFxml = "/fxml/Data2DChartPie.fxml";
     public static final String Data2DChartXYFxml = "/fxml/Data2DChartXY.fxml";
+    public static final String Data2DChartBubbleFxml = "/fxml/Data2DChartBubble.fxml";
     public static final String Data2DChartXYZFxml = "/fxml/Data2DChartXYZ.fxml";
     public static final String Data2DChartBoxWhiskerFxml = "/fxml/Data2DChartBoxWhisker.fxml";
     public static final String Data2DChartSelfComparisonBarsFxml = "/fxml/Data2DChartSelfComparisonBars.fxml";
@@ -511,6 +512,7 @@ public class Fxmls {
     public static final String HtmlStyleInputFxml = "/fxml/HtmlStyleInput.fxml";
     public static final String FileBackupFxml = "/fxml/FileBackup.fxml";
     public static final String FileBrowseFxml = "/fxml/FileBrowse.fxml";
+    public static final String ImageExampleSelectFxml = "/fxml/ImageExampleSelect.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

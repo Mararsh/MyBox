@@ -38,7 +38,7 @@ public class ColorData extends BaseData {
             appleRGBLinear, calculatedCMYK, eciCMYK, adobeCMYK, xyz, cieLab,
             lchab, cieLuv, lchuv;
     protected float[] adobeRGBValues, appleRGBValues, eciRGBValues, eciCmykValues, adobeCmykValues;
-    protected double[] cmyk, xyzValues, cieLabValues, lchabValues, cieLuvValues, lchuvValues;
+    protected double[] cmyk, xyzD50, cieLabValues, lchabValues, cieLuvValues, lchuvValues;
     protected boolean isSettingValues;
     protected long paletteid, cpid;
     protected float orderNumner, ryb;
@@ -226,12 +226,12 @@ public class ColorData extends BaseData {
                 + Math.round(adobeCmykValues[2] * 100) + vSeparator
                 + Math.round(adobeCmykValues[3] * 100);
 
-        xyzValues = SRGB.toXYZd50(ColorConvertTools.converColor(color));
-        xyz = DoubleTools.scale(xyzValues[0], 6) + vSeparator
-                + DoubleTools.scale(xyzValues[1], 6) + vSeparator
-                + DoubleTools.scale(xyzValues[2], 6);
+        xyzD50 = SRGB.SRGBtoXYZd50(ColorConvertTools.converColor(color));
+        xyz = DoubleTools.scale(xyzD50[0], 6) + vSeparator
+                + DoubleTools.scale(xyzD50[1], 6) + vSeparator
+                + DoubleTools.scale(xyzD50[2], 6);
 
-        cieLabValues = CIEColorSpace.XYZd50toCIELab(xyzValues[0], xyzValues[1], xyzValues[2]);
+        cieLabValues = CIEColorSpace.XYZd50toCIELab(xyzD50[0], xyzD50[1], xyzD50[2]);
         cieLab = DoubleTools.scale(cieLabValues[0], 2) + vSeparator
                 + DoubleTools.scale(cieLabValues[1], 2) + vSeparator
                 + DoubleTools.scale(cieLabValues[2], 2);
@@ -241,7 +241,7 @@ public class ColorData extends BaseData {
                 + DoubleTools.scale(lchabValues[1], 2) + vSeparator
                 + DoubleTools.scale(lchabValues[2], 2);
 
-        cieLuvValues = CIEColorSpace.XYZd50toCIELuv(xyzValues[0], xyzValues[1], xyzValues[2]);
+        cieLuvValues = CIEColorSpace.XYZd50toCIELuv(xyzD50[0], xyzD50[1], xyzD50[2]);
         cieLuv = DoubleTools.scale(cieLuvValues[0], 2) + vSeparator
                 + DoubleTools.scale(cieLuvValues[1], 2) + vSeparator
                 + DoubleTools.scale(cieLuvValues[2], 2);
@@ -774,12 +774,12 @@ public class ColorData extends BaseData {
         this.cmyk = cmyk;
     }
 
-    public double[] getXyzValues() {
-        return xyzValues;
+    public double[] getXyzD50() {
+        return xyzD50;
     }
 
-    public void setXyzValues(double[] xyzValues) {
-        this.xyzValues = xyzValues;
+    public void setXyzD50(double[] xyzD50) {
+        this.xyzD50 = xyzD50;
     }
 
     public double[] getCieLabValues() {

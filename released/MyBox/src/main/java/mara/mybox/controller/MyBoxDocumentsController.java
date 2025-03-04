@@ -371,30 +371,40 @@ public class MyBoxDocumentsController extends BaseTaskController {
     }
 
     protected void finishNotify() {
+        AppVariables.isTesting = false;
         finishNotify.set(!finishNotify.get());
     }
 
     protected boolean treeHtml(String tableName, String lang) {
         try {
+            AppVariables.isTesting = true;
             CurrentLangName = lang;
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
             BaseNodeTable nodeTable = BaseNodeTable.create(tableName);
             nodeTable.truncate();
             DataTreeController treeController;
             if (tableName.equals("GeographyCode")) {
+                treeController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+            } else {
                 treeController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
                 treeController.initDataTree(nodeTable);
-            } else {
-                treeController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
             }
+            if (treeController == null) {
+                finishNotify();
+                return false;
+            }
+//            treeController.setIconified(true);
             DataNode rootNode = nodeTable.getRoot();
             if (rootNode == null) {
+                finishNotify();
                 return false;
             }
             TreeItem rootItem = new TreeItem(rootNode);
             treeController.treeView.setRoot(rootItem);
+//            popInformation(message("Handling") + ": " + tableName);
             DataTreeImportController importController = (DataTreeImportController) WindowTools
                     .openStage(Fxmls.DataTreeImportFxml);
+//            importController.setIconified(true);
             importController.miaoCheck.setSelected(false);
             importController.importExamples(treeController, rootItem, nodeTable.exampleFileLang(lang));
             importController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
@@ -404,6 +414,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                         importController.close();
                         DataTreeExportController exportController = (DataTreeExportController) WindowTools
                                 .openStage(Fxmls.DataTreeExportFxml);
+//                        exportController.setIconified(true);
                         exportController.setParamters(treeController, rootItem);
                         exportController.selectAllFormat(false);
                         exportController.treeHtmlCheck.setSelected(true);
@@ -439,6 +450,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
             return true;
         } catch (Exception e) {
             error = e.toString();
+            finishNotify();
             return false;
         }
     }

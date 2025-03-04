@@ -57,7 +57,9 @@ public class TableNodeJavaScript extends BaseNodeTable {
     @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
-            return node.getStringValue("script");
+            String text = node.getStringValue("script");
+            return text == null || text.isBlank() ? null
+                    : ("<PRE><CODE>" + text + "</CODE></PRE>");
         } catch (Exception e) {
             return null;
         }

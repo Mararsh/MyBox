@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -131,19 +130,20 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             String dname = data2D.getName();
 
-            File file = null;
+            String address = null;
             if (dname != null) {
                 dname = dname.replaceAll("\"", "");
                 if (Languages.matchIgnoreCase("ChineseHistoricalCapitals", dname)) {
-                    file = mapController.chineseHistoricalCapitalsImage();
+                    address = "img/jade.png";
                 } else if (Languages.matchIgnoreCase("AutumnMovementPatternsOfEuropeanGadwalls", dname)) {
-                    file = mapController.europeanGadwallsImage();
+                    address = "img/Gadwalls.png";
                 } else if (Languages.matchIgnoreCase("SpermWhalesGulfOfMexico", dname)) {
-                    file = mapController.spermWhalesImage();
+                    address = "img/SpermWhale.png";
                 }
             }
-            if (file != null) {
-                mapController.setMarkerImageFile(file);
+            if (address != null) {
+                mapController.setMarkerImageDefault(address);
+                mapController.applyMarkerImage(address);
             }
 
         } catch (Exception e) {
@@ -180,7 +180,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 return false;
             }
             dataColsIndices.add(col);
-            MyBoxLog.console(labelCol);
 
             longCol = longitudeSelector.getValue();
             col = data2D.colOrder(longCol);
@@ -521,7 +520,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
      */
     public static Data2DLocationDistributionController open(BaseData2DLoadController tableController) {
         try {
-            Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.branchStage(
+            Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DLocationDistributionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

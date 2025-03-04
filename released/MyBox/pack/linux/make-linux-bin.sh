@@ -1,8 +1,6 @@
 # Unzip source package. Edit this script to change JAVA_HOME as your env.
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
-export JAVA_HOME="/usr/java/jdk-21"
-
-cp pom.xml ../../
+export JAVA_HOME="/usr/java/jdk-23.0.1"
 
 rm -rf app/*
 rm -rf jar/*
@@ -18,7 +16,7 @@ mv jar/MyBox.jar  .
 gzip MyBox.jar
 mv MyBox.jar.gz  MyBox-linux.jar.gz
 cd  app
-tar cfz  MyBox-CentOS7-x64.tar.gz  MyBox
+tar cfz  MyBox-Mint-x64.tar.gz  MyBox
 cd ..
-mv app/MyBox-CentOS7-x64.tar.gz  .
+mv app/MyBox-Mint-x64.tar.gz  .
 rm -rf ../../target

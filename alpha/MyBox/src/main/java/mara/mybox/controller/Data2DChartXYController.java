@@ -6,7 +6,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -37,9 +36,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
     @FXML
     protected VBox columnsBox, columnCheckBoxsBox;
     @FXML
-    protected Label valuesLabel;
-    @FXML
-    protected FlowPane valueColumnPane, categoryColumnsPane;
+    protected FlowPane categoryColumnsPane;
     @FXML
     protected ControlData2DChartXY chartController;
 
@@ -91,17 +88,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
             if (columnsBox == null) {
                 return;
             }
-            columnsBox.getChildren().clear();
-
-            if (chartTypesController.isBubbleChart()) {
-                columnsBox.getChildren().addAll(categoryColumnsPane, valueColumnPane, columnCheckBoxsBox);
-                valuesLabel.setText(message("SizeColumns"));
-
-            } else {
-                columnsBox.getChildren().addAll(categoryColumnsPane, columnCheckBoxsBox);
-                valuesLabel.setText(message("ValueColumns"));
-            }
-
             changeChartAsType();
 
         } catch (Exception e) {
@@ -141,22 +127,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
             categoryIndex = showRowNumber() ? 1 : 0;
 
             valueIndices = new ArrayList<>();
-            if (chartTypesController.isBubbleChart()) {
-                int valueCol = data2D.colOrder(selectedValue);
-                if (valueCol < 0) {
-                    popError(message("SelectToHandle") + ": " + message("Column"));
-                    tabPane.getSelectionModel().select(optionsTab);
-                    return false;
-                }
-                int pos = dataColsIndices.indexOf(valueCol);
-                if (pos >= 0) {
-                    valueIndices.add(pos + categoryIndex);
-                } else {
-                    valueIndices.add(dataColsIndices.size() + categoryIndex);
-                    dataColsIndices.add(valueCol);
-                }
-            }
-
             for (int col : checkedColsIndices) {
                 int pos = dataColsIndices.indexOf(col);
                 if (pos >= 0) {
@@ -177,9 +147,6 @@ public class Data2DChartXYController extends BaseData2DChartController {
     @Override
     public String baseChartTitle() {
         String title = selectedCategory;
-        if (chartTypesController.isBubbleChart()) {
-            title += " - " + selectedValue;
-        }
         title += " - " + checkedColsNames;
         return title;
     }
@@ -201,11 +168,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
                     .setDefaultCategoryLabel(selectedCategory)
                     .setInvalidAs(invalidAs);
             chartMaker.setIsXY(!xyReverseCheck.isSelected());
-            if (chartTypesController.isBubbleChart()) {
-                chartMaker.setDefaultValueLabel(selectedValue);
-            } else if (checkedColsNames != null) {
-                chartMaker.setDefaultValueLabel(checkedColsNames.toString());
-            }
+            chartMaker.setDefaultValueLabel(checkedColsNames.toString());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -239,7 +202,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
      */
     public static Data2DChartXYController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartXYController controller = (Data2DChartXYController) WindowTools.branchStage(
+            Data2DChartXYController controller = (Data2DChartXYController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DChartXYFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

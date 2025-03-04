@@ -1,4 +1,4 @@
 Title,Hardwares,CPU,Memory,OS,Softwares,Language,Target,Comments
 Win,Desktop,Intel(R) Core(TM) i7-7700 3.60GHz,24 GB,Windows 10,JDK 23 + JavaFx 24 + Derby 10.17.1.0,Chinese,MyBox 6.8.3,
-Linux,Laptop,Intel(R) Core i5 2.40GHz,4 GB,Mint 22.1,JDK 23 + JavaFx 24 + Derby 10.17.1.0,英文,MyBox 6.8.5,
+Linux,Laptop,Intel(R) Core i5 2.40GHz,4 GB,Mint 22.1,JDK 23 + JavaFx 24 + Derby 10.17.1.0,English,MyBox 6.8.5,
 Mac,Mac mini,Intel(R) Core i5 2.60GHz,8 GB,macOS Monterey 12.7.6,JDK 23 + JavaFx 24 + Derby 10.17.1.0,Chinese,MyBox 6.8.3,

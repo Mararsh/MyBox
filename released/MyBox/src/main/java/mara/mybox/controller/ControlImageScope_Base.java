@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -13,24 +14,24 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import mara.mybox.image.tools.ColorConvertTools;
-import mara.mybox.image.data.ImageScope;
-import static mara.mybox.image.data.ImageScope.ScopeType.Circle;
-import static mara.mybox.image.data.ImageScope.ScopeType.Ellipse;
-import static mara.mybox.image.data.ImageScope.ScopeType.Matting;
-import static mara.mybox.image.data.ImageScope.ScopeType.Outline;
-import static mara.mybox.image.data.ImageScope.ScopeType.Polygon;
-import static mara.mybox.image.data.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ScopeTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
+import mara.mybox.fxml.image.ScopeTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageScope;
+import static mara.mybox.image.data.ImageScope.ShapeType.Circle;
+import static mara.mybox.image.data.ImageScope.ShapeType.Ellipse;
+import static mara.mybox.image.data.ImageScope.ShapeType.Polygon;
+import static mara.mybox.image.data.ImageScope.ShapeType.Rectangle;
+import mara.mybox.image.tools.ColorConvertTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -38,24 +39,25 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class BaseImageScope_Base extends BaseShapeController {
+public abstract class ControlImageScope_Base extends BaseShapeController {
 
     protected ImageScope scope;
     protected TableColor tableColor;
     protected java.awt.Color maskColor;
     protected float maskOpacity;
     protected SimpleBooleanProperty showNotify, changedNotify;
+    protected String background;
 
     @FXML
-    protected ToggleGroup scopeTypeGroup;
+    protected ToggleGroup shapeTypeGroup;
     @FXML
-    protected Tab areaTab, colorsTab, matchTab, pixTab;
+    protected Tab shapeTab, colorsTab, matchTab, controlsTab;
     @FXML
-    protected VBox viewBox, areaBox, rectangleBox, circleBox, pointsBox;
+    protected VBox viewBox, shapeBox, rectangleBox, circleBox, pointsBox, outlineBox;
     @FXML
     protected ComboBox<String> opacitySelector;
     @FXML
-    protected ListView<Image> outlinesList;
+    protected ImageView outlineView;
     @FXML
     protected ControlColorSet colorController, maskColorController;
     @FXML
@@ -65,25 +67,23 @@ public abstract class BaseImageScope_Base extends BaseShapeController {
     @FXML
     protected ControlColorMatch matchController;
     @FXML
-    protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeExcludeCheck,
-            handleTransparentCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
-            clearDataWhenLoadImageCheck;
+    protected ControlOutline outlineController;
+    @FXML
+    protected CheckBox shapeExcludedCheck, colorExcludedCheck, scopeExcludeCheck,
+            handleTransparentCheck, clearDataWhenLoadImageCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button shapeButton, goScopeButton, popScopeButton,
-            scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
-            clearColorsButton, deleteColorsButton, saveColorsButton, fileMenuButton;
+    protected Button shapeButton, goShapeButton, popScopeButton,
+            clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
-    protected RadioButton scopeWholeRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
-            scopeEllipseRadio, scopePolygonRadio, scopeColorRadio, scopeOutlineRadio;
+    protected RadioButton wholeRadio, matting4Radio, matting8Radio, rectangleRadio, circleRadio,
+            ellipseRadio, polygonRadio, outlineRadio;
     @FXML
     protected Label scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
     @FXML
-    protected FlowPane opPane;
-    @FXML
-    protected HBox pickColorBox;
+    protected FlowPane shapeOperationsPane;
 
     public Image srcImage() {
         return image;
@@ -125,51 +125,37 @@ public abstract class BaseImageScope_Base extends BaseShapeController {
 
     public ImageScope pickScopeValues() {
         try {
-            if (!pickBaseValues()) {
+            if (!pickEnvValues()) {
                 return null;
             }
-            boolean valid = true;
-            switch (scope.getScopeType()) {
-                case Matting:
+            switch (scope.getShapeType()) {
+                case Matting4:
+                case Matting8:
                     scope.clearPoints();
                     for (DoublePoint p : pointsController.tableData) {
                         scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
                     }
-                    valid = matchController.pickValues(scope, 50);
                     break;
 
                 case Rectangle:
                     scope.setRectangle(maskRectangleData.copy());
-                    valid = pickColorValues();
                     break;
 
                 case Circle:
                     scope.setCircle(maskCircleData.copy());
-                    valid = pickColorValues();
                     break;
 
                 case Ellipse:
                     scope.setEllipse(maskEllipseData.copy());
-                    valid = pickColorValues();
                     break;
 
                 case Polygon:
                     maskPolygonData = new DoublePolygon();
                     maskPolygonData.setAll(pointsController.getPoints());
                     scope.setPolygon(maskPolygonData.copy());
-                    valid = pickColorValues();
                     break;
-
-                case Colors:
-                    valid = pickColorValues();
-                    break;
-
-                case Outline:
-                    break;
-
             }
-
-            if (!valid) {
+            if (!pickColorValues()) {
                 popError(message("InvalidParameters"));
                 return null;
             }
@@ -180,22 +166,23 @@ public abstract class BaseImageScope_Base extends BaseShapeController {
         }
     }
 
-    public boolean pickBaseValues() {
+    public boolean pickEnvValues() {
         try {
             image = srcImage();
             if (image == null || scope == null) {
                 return false;
             }
             scope.setImage(image)
-                    .setAreaExcluded(areaExcludedCheck.isSelected())
+                    .setShapeExcluded(shapeExcludedCheck.isSelected())
                     .setColorExcluded(colorExcludedCheck.isSelected())
-                    .setEightNeighbor(eightNeighborCheck.isSelected())
                     .setMaskColor(maskColor)
                     .setMaskOpacity(maskOpacity);
-            if (sourceFile != null && sourceFile.exists()) {
-                scope.setFile(sourceFile.getAbsolutePath());
+            if (background != null) {
+                scope.setBackground(background);
+            } else if (sourceFile != null && sourceFile.exists()) {
+                scope.setBackground(sourceFile.getAbsolutePath());
             } else {
-                scope.setFile("Unknown");
+                scope.setBackground(null);
             }
             return true;
         } catch (Exception e) {
@@ -205,24 +192,27 @@ public abstract class BaseImageScope_Base extends BaseShapeController {
     }
 
     public boolean pickColorValues() {
-        if (!isValidScope()) {
-            return false;
-        }
         try {
-            List<Color> colors = colorsList.getItems();
-            if (colors == null || colors.isEmpty()) {
-                scope.clearColors();
-                return true;
+            List<Color> list = colorsList.getItems();
+            int size = list.size();
+            colorsSizeLabel.setText(message("Count") + ": " + size);
+            if (size > 100) {
+                colorsSizeLabel.setStyle(NodeStyleTools.redTextStyle());
             } else {
-                for (Color color : colors) {
-                    scope.addColor(ColorConvertTools.converColor(color));
-                }
-                boolean valid = matchController.pickValues(scope, 50);
-                if (!valid) {
-                    popError(message("InvalidParameters"));
-                }
-                return valid;
+                colorsSizeLabel.setStyle(NodeStyleTools.blueTextStyle());
             }
+            clearColorsButton.setDisable(size == 0);
+            if (list.isEmpty()) {
+                scope.clearColors();
+            } else {
+                List<java.awt.Color> colors = new ArrayList<>();
+                for (Color color : list) {
+                    colors.add(FxColorTools.toAwtColor(color));
+                }
+                scope.setColors(colors);
+            }
+            scope.setColorExcluded(colorExcludedCheck.isSelected());
+            return matchController.pickValuesTo(scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

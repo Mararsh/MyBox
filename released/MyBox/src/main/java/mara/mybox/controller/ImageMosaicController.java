@@ -4,12 +4,12 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageMosaic;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.PixelDemos;
+import mara.mybox.image.data.ImageMosaic;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -79,7 +79,7 @@ public class ImageMosaicController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageMosaicController controller = (ImageMosaicController) WindowTools.branchStage(
+            ImageMosaicController controller = (ImageMosaicController) WindowTools.operationStage(
                     parent, Fxmls.ImageMosaicFxml);
             controller.setParameters(parent);
             return controller;

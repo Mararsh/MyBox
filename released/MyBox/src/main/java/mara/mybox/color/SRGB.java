@@ -6,8 +6,8 @@ import java.awt.color.ICC_Profile;
 import static mara.mybox.color.AppleRGB.XYZtoAppleRGB;
 import static mara.mybox.color.RGBColorSpace.linearSRGB;
 import mara.mybox.fxml.image.FxColorTools;
-import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.image.data.ImageColorSpace;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.DoubleMatrixTools;
 
 /**
@@ -50,13 +50,12 @@ public class SRGB {
         return xyz;
     }
 
-    public static double[] toXYZd65(Color color) {
+    public static double[] SRGBtoXYZd65(Color color) {
         return SRGBd65toXYZd65(ColorBase.array(color));
     }
 
     public static double[] SRGBd65toXYZd65(double[] srgb) {
         double[] linearRGB = SRGBtoLinearSRGB(srgb);
-
         double[][] matrix = {
             {0.4124564, 0.3575761, 0.1804375},
             {0.2126729, 0.7151522, 0.0721750},
@@ -66,7 +65,17 @@ public class SRGB {
         return xyz;
     }
 
-    public static double[] toXYZd50(Color color) {
+    public static double[] SRGBtoXYZd50(Color color) {
+        return SRGBd65toXYZd50(color);
+    }
+
+//    public static double[] SRGBd65toXYZd50(Color color) {
+//        ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+//        float[] xyzD50 = cs.toCIEXYZ(ColorBase.arrayFloat(color));
+//        return ColorBase.arrayDouble(xyzD50);
+//    }
+//
+    public static double[] SRGBd65toXYZd50(Color color) {
         return SRGBd65toXYZd50(ColorBase.array(color));
     }
 
@@ -83,6 +92,11 @@ public class SRGB {
     public static double[] SRGBtoAppleRGB(double[] srgb) {
         double[] xyz = SRGBd65toXYZd65(srgb);
         return XYZtoAppleRGB(xyz);
+    }
+
+    public static double[] SRGBtoCIELab(Color color) {
+        double[] xyzD50 = SRGBd65toXYZd50(color);
+        return CIEColorSpace.XYZd50toCIELab(xyzD50[0], xyzD50[1], xyzD50[2]);
     }
 
     public static float[] srgb2profile(ICC_Profile profile, Color color) {

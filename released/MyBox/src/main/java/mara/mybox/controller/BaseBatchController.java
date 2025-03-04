@@ -23,7 +23,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
-import mara.mybox.data.ImageItem;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -38,6 +37,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.FileFilters;
+import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -525,7 +525,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 }
             }
             if (onlyOne && files.isEmpty()) {
-                files.add(ImageItem.exampleImageFile());
+                files.add(InternalImages.exampleImageFile());
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

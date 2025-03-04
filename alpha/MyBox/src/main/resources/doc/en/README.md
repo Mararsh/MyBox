@@ -7,19 +7,19 @@ This is compute application to provide simple and easy functions. It's free and 
 2025-3-5 v6.8.5               
                                                                                                                  
 * Improve:                                      
-     - Redesign and implement "Image Scope". It is determined by both "Shape Constraints" and "Match Colors List".                                                                                                           
+     - Redesign and implement "Image Scope", which is determined by both "Shape Constraints" and "Match Colors List".                                                                                                           
      - More algorithms about "Matching colors".                                                                                                         
-     - Consistent control of pagination, which can self-adapt interfaces.                                                                                                         
-     - Consistent control of selection image, which can pick file, example, and default.                                                                                                         
+     - Control of pagination, which can self-adapt interfaces.                                                                                                         
+     - Control of selecting image, which can pick file, example, and default.                                                                                                         
+     - Data charts: Bubble chart is separated from XY charts.                                                                                                         
      - Linux Mint is used.                                                                                                         
 * Solved problems:                                
      - Image scope: Values of some types are saved incorrectly.                                                                                                                       
      - Interface: Icons of customized color do not work.                 
      - Manage colors: Color blocks may be messed.               
+     - Make documents: Wrong calls when generate tree examples.               
                       
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.5)                                                
-
-Happy Chinese New Year!                        
 
 ## Notice         
 Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        

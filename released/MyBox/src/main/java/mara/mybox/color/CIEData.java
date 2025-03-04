@@ -41,12 +41,12 @@ public class CIEData {
     }
 
     public CIEData(Color color) {
-        double[] xyz = SRGB.toXYZd50(color);
+        double[] xyz = SRGB.SRGBtoXYZd50(color);
         setTristimulusValues(xyz[0], xyz[1], xyz[2]);
     }
 
     public CIEData(javafx.scene.paint.Color color) {
-        double[] xyz = SRGB.toXYZd50(new Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue()));
+        double[] xyz = SRGB.SRGBtoXYZd50(new Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue()));
         setTristimulusValues(xyz[0], xyz[1], xyz[2]);
     }
 

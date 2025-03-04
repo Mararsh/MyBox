@@ -68,7 +68,7 @@ public class ImageArcController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageArcController controller = (ImageArcController) WindowTools.branchStage(
+            ImageArcController controller = (ImageArcController) WindowTools.operationStage(
                     parent, Fxmls.ImageArcFxml);
             controller.setParameters(parent);
             return controller;

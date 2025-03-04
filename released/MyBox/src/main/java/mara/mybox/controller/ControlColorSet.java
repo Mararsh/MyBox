@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -13,9 +14,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -34,6 +35,7 @@ public class ControlColorSet extends BaseController {
     protected Object data;
     protected Color defaultColor;
     protected Connection conn;
+    protected SimpleBooleanProperty setNotify;
 
     @FXML
     protected Rectangle rect;
@@ -47,6 +49,7 @@ public class ControlColorSet extends BaseController {
         try {
             super.initValues();
             tableColor = new TableColor();
+            setNotify = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -114,6 +117,10 @@ public class ControlColorSet extends BaseController {
         return (Color) rect.getFill();
     }
 
+    public String name() {
+        return color().toString();
+    }
+
     public java.awt.Color awtColor() {
         return FxColorTools.toAwtColor(color());
     }
@@ -155,6 +162,7 @@ public class ControlColorSet extends BaseController {
                     WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.CurrentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
+            setNotify.bind(controller.setNotify);
             controller.load(this, rect);
 
             popup = makePopup();

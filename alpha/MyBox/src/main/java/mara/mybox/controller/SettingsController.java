@@ -70,7 +70,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected ToggleGroup langGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
-    protected CheckBox closeCurrentCheck, branchWindowIconifyParentCheck,
+    protected CheckBox closeCurrentCheck, operationWindowIconifyParentCheck,
             recordWindowsSizeLocationCheck, clearExpiredCheck,
             controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
             lostFocusCommitCheck, copyCurrentDataPathCheck, clearCurrentRootCheck,
@@ -150,7 +150,7 @@ public class SettingsController extends BaseController {
             clearExpiredCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
-            branchWindowIconifyParentCheck.setSelected(AppVariables.branchWindowIconifyParent);
+            operationWindowIconifyParentCheck.setSelected(AppVariables.operationWindowIconifyParent);
 
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
@@ -260,11 +260,11 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            branchWindowIconifyParentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            operationWindowIconifyParentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    UserConfig.setBoolean("BranchWindowIconifyParent", branchWindowIconifyParentCheck.isSelected());
-                    AppVariables.branchWindowIconifyParent = branchWindowIconifyParentCheck.isSelected();
+                    UserConfig.setBoolean("OperationWindowIconifyParent", operationWindowIconifyParentCheck.isSelected());
+                    AppVariables.operationWindowIconifyParent = operationWindowIconifyParentCheck.isSelected();
                 }
             });
 

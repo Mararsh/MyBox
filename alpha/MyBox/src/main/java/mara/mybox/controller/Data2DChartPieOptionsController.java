@@ -73,7 +73,7 @@ public class Data2DChartPieOptionsController extends BaseData2DChartFxOptionsCon
             if (chartController == null) {
                 return null;
             }
-            Data2DChartPieOptionsController controller = (Data2DChartPieOptionsController) WindowTools.branchStage(
+            Data2DChartPieOptionsController controller = (Data2DChartPieOptionsController) WindowTools.operationStage(
                     chartController, Fxmls.Data2DChartPieOptionsFxml);
             controller.setParameters(chartController);
             return controller;

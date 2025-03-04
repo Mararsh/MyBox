@@ -39,7 +39,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DTaskController extends BaseBranchController {
+public abstract class BaseData2DTaskController extends BaseOperationController {
 
     protected BaseData2DLoadController dataController;
     protected Data2D data2D;

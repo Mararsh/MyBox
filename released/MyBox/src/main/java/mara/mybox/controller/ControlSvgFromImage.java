@@ -160,6 +160,9 @@ public class ControlSvgFromImage extends BaseController {
 
     protected boolean pickValues() {
         try {
+            if (!quantizationController.pickValues()) {
+                return false;
+            }
             options = new HashMap<>();
 
             if (colorSamplingCheck.isSelected()) {

@@ -88,7 +88,7 @@ public class ImagePolylineController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImagePolylineController controller = (ImagePolylineController) WindowTools.branchStage(
+            ImagePolylineController controller = (ImagePolylineController) WindowTools.operationStage(
                     parent, Fxmls.ImagePolylineFxml);
             controller.setParameters(parent);
             return controller;

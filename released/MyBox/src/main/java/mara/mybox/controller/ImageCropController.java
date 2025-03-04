@@ -7,12 +7,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ScopeTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ScopeTools;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -132,7 +132,7 @@ public class ImageCropController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageCropController controller = (ImageCropController) WindowTools.branchStage(
+            ImageCropController controller = (ImageCropController) WindowTools.operationStage(
                     parent, Fxmls.ImageCropFxml);
             controller.setParameters(parent);
             return controller;

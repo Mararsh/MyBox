@@ -117,6 +117,22 @@ public class FxFileTools {
             }
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL dirURL = classLoader.getResource(path);
+            if (dirURL == null) {
+                File filePath = new File(path);
+                if (!filePath.exists()) {
+                    MyBoxLog.error(path);
+                    return files;
+                }
+                File[] list = filePath.listFiles();
+                if (list != null) {
+                    for (File file : list) {
+                        if (file.isFile()) {
+                            files.add(file.getName());
+                        }
+                    }
+                }
+                return files;
+            }
             if (dirURL.getProtocol().equals("jar")) {
                 String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
                 try (final JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {

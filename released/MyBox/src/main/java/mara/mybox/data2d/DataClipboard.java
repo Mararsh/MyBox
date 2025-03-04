@@ -31,7 +31,7 @@ public class DataClipboard extends DataFileCSV {
     @Override
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
-            dataName = rowsNumber + "x" + colsNumber;
+            dataName = pagination.rowsNumber + "x" + colsNumber;
         }
         return true;
     }

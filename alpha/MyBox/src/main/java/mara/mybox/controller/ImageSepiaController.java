@@ -3,13 +3,13 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -87,7 +87,7 @@ public class ImageSepiaController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSepiaController controller = (ImageSepiaController) WindowTools.branchStage(
+            ImageSepiaController controller = (ImageSepiaController) WindowTools.operationStage(
                     parent, Fxmls.ImageSepiaFxml);
             controller.setParameters(parent);
             return controller;

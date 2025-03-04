@@ -326,22 +326,45 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void pageNextAction() {
-
+        if (pagination == null || !pagination.hasNextPage()) {
+            return;
+        }
+        loadPage(pagination.currentPage + 1);
     }
 
     @FXML
     public void pagePreviousAction() {
-
+        if (pagination == null || !pagination.hasPreviousPage()) {
+            return;
+        }
+        loadPage(pagination.currentPage - 1);
     }
 
     @FXML
     public void pageFirstAction() {
-
+        if (pagination == null || !pagination.hasPreviousPage()) {
+            return;
+        }
+        loadPage(0);
     }
 
     @FXML
     public void pageLastAction() {
+        if (pagination == null || !pagination.hasNextPage()) {
+            return;
+        }
+        loadPage(pagination.pagesNumber - 1);
+    }
 
+    @FXML
+    public void goPage() {
+        if (pagination == null) {
+            return;
+        }
+        loadPage(pagination.currentPage);
+    }
+
+    public void loadPage(long pageNumber) {
     }
 
     @FXML

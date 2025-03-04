@@ -18,7 +18,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -140,9 +139,9 @@ public class ImageOptionsController extends BaseChildController {
             viewBox.getChildren().remove(stepPane);
 
             rulerColorController.init(this, "RulerColor", Color.RED);
-            rulerColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            rulerColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (isSettingValues) {
                         return;
                     }
@@ -151,9 +150,9 @@ public class ImageOptionsController extends BaseChildController {
             });
 
             gridColorController.init(this, "GridLinesColor", Color.LIGHTGRAY);
-            gridColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            gridColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (isSettingValues) {
                         return;
                     }
@@ -258,11 +257,10 @@ public class ImageOptionsController extends BaseChildController {
             });
 
             alphaColorSetController.init(this, "AlphaAsColor", Color.WHITE);
-            alphaColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            alphaColorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
-                    if (!Color.WHITE.equals((Color) newValue)) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (!Color.WHITE.equals(alphaColorSetController.color())) {
                         alphaLabel.setText(message("AlphaReplaceComments"));
                         alphaLabel.setStyle(NodeStyleTools.darkRedTextStyle());
                     } else {

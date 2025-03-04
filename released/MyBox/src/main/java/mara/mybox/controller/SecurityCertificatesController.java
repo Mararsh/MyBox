@@ -92,6 +92,8 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         if (isSettingValues) {
             return;
         }
+        super.checkSelected();
+
         CertificateEntry selected = selectedItem();
         if (selected == null) {
             certArea.setText("");
@@ -101,7 +103,6 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
             certArea.setText(selected.getCertificates());
             deleteButton.setDisable(false);
         }
-        checkButtons();
     }
 
     @Override

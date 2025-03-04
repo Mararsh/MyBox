@@ -1,7 +1,5 @@
 package mara.mybox.image.data;
 
-import mara.mybox.image.tools.ColorConvertTools;
-import mara.mybox.image.tools.AlphaTools;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -11,6 +9,8 @@ import javafx.scene.image.Image;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.tools.AlphaTools;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.FloatMatrixTools;
 
 /**
@@ -83,7 +83,7 @@ public class ImageConvolution extends PixelsOperation {
         if (image == null || operationType == null) {
             return image;
         }
-        if (scope == null || scope.getScopeType() == null) {
+        if (scope == null || scope.isWhole()) {
             return applyConvolution(task, image, kernel);
 
         }

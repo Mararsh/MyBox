@@ -4,8 +4,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController_Attributes.StageType;
+import static mara.mybox.controller.BaseController_Attributes.StageType.Operation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.value.AppVariables;
@@ -67,42 +69,37 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
     }
 
     public void setParent(BaseController parent, StageType stageType) {
-        try {
-            this.parentController = parent;
-            this.stageType = stageType;
-            myStage = getMyStage();
-            if (stageType == null || myStage == null) {
-                return;
-            }
-            switch (stageType) {
-                case Branch: {
-                    setAlwaysTop(true, false);
-                    if (parent == null) {
-                        return;
-                    }
-                    if (parent.getMyWindow() != null) {
-                        parent.getMyWindow().setOnHiding(new EventHandler<WindowEvent>() {
-                            @Override
-                            public void handle(WindowEvent event) {
-                                closeStage();
-                            }
-                        });
-                    }
-                    if (parent.getMyStage() != null) {
-                        parent.getMyStage().setFullScreen(false);
-                    }
-                    break;
+        this.parentController = parent;
+        this.stageType = stageType;
+        myStage = getMyStage();
+        if (stageType == null || myStage == null) {
+            return;
+        }
+        Stage parentStage = parent != null ? parent.getMyStage() : null;
+        switch (stageType) {
+            case Operation:
+                if (parentStage != null && AppVariables.operationWindowIconifyParent) {
+                    parentStage.setIconified(true);
                 }
-                case Pop: {
-                    setAlwaysTop(true, false);
-                    if (parent != null && parent.getMyStage() != null) {
-                        parent.getMyStage().setFullScreen(false);
-                    }
-                    break;
+            case Branch: {
+                setAlwaysTop(true, false);
+                if (parentStage != null) {
+                    parentStage.setOnHiding(new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent event) {
+                            closeStage();
+                        }
+                    });
                 }
+                break;
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+            case Pop: {
+                setAlwaysTop(true, false);
+                if (parentStage != null) {
+                    parentStage.setFullScreen(false);
+                }
+                break;
+            }
         }
     }
 

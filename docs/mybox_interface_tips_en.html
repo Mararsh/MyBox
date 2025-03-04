@@ -217,12 +217,11 @@ Colors number of the result may be different from the expected value:
 It may improve image quality after color quantization(Reduce colors in palette).</PRE>
     <H3>Color matching</H3>
     <PRE>How to match colors: 
-1) "Color Distance" indicates the difference between 2 colors.
-   "Color difference" can be referred in "https://en.wikipedia.org/wiki/Color_difference" 
-2) When the distance is less than the defined distance value, it means the 2 colors are "Matched".  
-3) When the distance is defined as zero, it means color must be matched accurately.
-4) When select multiple colors to compare with pixels in image, their relationship is "OR", 
-which means result is TRUE when pixel' color matches any of the selected color.</PRE>
+1) When difference of two colors, that is called "Color Distance", is less than the threshold, the colors are "matched".
+2) Multiple algorithms can be selected to calculate color distance. Some are more accurate while some are less costed. 
+3) Weights can be set for some algorithms. Notice whether they are positive or negative.
+4) When compare an image pixel with colors list, their relationship is "OR", 
+which means result is TRUE when the pixel matches any color in the list.</PRE>
     <H3>Premultiplied alpha</H3>
     <PRE>Some image formats like png/tiff save pixels opacity in separated Alpha channel, called "Straight Alpha".
 "Premultiplied Alpha" is that RGB channels are premultiplied by alpha value, 

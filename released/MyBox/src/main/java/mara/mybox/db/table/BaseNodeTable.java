@@ -652,7 +652,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             }
             List<String> row = new ArrayList<>();
             row.add(label(name));
-            row.add("<CODE>" + value + "</CODE>");
+            row.add("<PRE><CODE>" + value + "</CODE></PRE>");
             table.add(row);
         }
         if (table.isEmpty()) {

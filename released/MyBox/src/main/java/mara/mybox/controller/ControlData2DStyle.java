@@ -13,7 +13,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -56,9 +55,9 @@ public class ControlData2DStyle extends BaseController {
             });
             fontColorController.thisPane.disableProperty().bind(colorDefaultRadio.selectedProperty());
             fontColorController.init(this, baseName + "Color", Color.BLACK);
-            fontColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            fontColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     checkStyle(currentStyle);
                 }
             });
@@ -71,9 +70,9 @@ public class ControlData2DStyle extends BaseController {
             });
             bgColorController.thisPane.disableProperty().bind(bgDefaultRadio.selectedProperty());
             bgColorController.init(this, baseName + "BgColor", Color.TRANSPARENT);
-            bgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            bgColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     checkStyle(currentStyle);
                 }
             });

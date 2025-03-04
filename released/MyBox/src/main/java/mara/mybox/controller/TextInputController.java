@@ -48,6 +48,9 @@ public class TextInputController extends BaseInputController {
         return textArea.getText();
     }
 
+    /*
+        static
+     */
     public static TextInputController open(BaseController parent, String title, String initValue) {
         try {
             TextInputController controller = (TextInputController) WindowTools.childStage(

@@ -26,7 +26,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
@@ -71,7 +70,8 @@ public class SettingsController extends BaseController {
     @FXML
     protected ToggleGroup langGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
-    protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
+    protected CheckBox closeCurrentCheck, operationWindowIconifyParentCheck,
+            recordWindowsSizeLocationCheck, clearExpiredCheck,
             controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
             lostFocusCommitCheck, copyCurrentDataPathCheck, clearCurrentRootCheck,
             stopAlarmCheck;
@@ -150,6 +150,7 @@ public class SettingsController extends BaseController {
             clearExpiredCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
+            operationWindowIconifyParentCheck.setSelected(AppVariables.operationWindowIconifyParent);
 
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
@@ -259,6 +260,14 @@ public class SettingsController extends BaseController {
                 }
             });
 
+            operationWindowIconifyParentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    UserConfig.setBoolean("OperationWindowIconifyParent", operationWindowIconifyParentCheck.isSelected());
+                    AppVariables.operationWindowIconifyParent = operationWindowIconifyParentCheck.isSelected();
+                }
+            });
+
             recordWindowsSizeLocationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -357,36 +366,36 @@ public class SettingsController extends BaseController {
             });
 
             popBgColorController.init(this, "PopTextBgColor", Color.BLACK);
-            popBgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            popBgColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setString("PopTextBgColor", popBgColorController.css());
                     popSuccessful();
                 }
             });
 
             popInfoColorController.init(this, "PopInfoColor", Color.WHITE);
-            popInfoColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            popInfoColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setString("PopInfoColor", popInfoColorController.css());
                     popSuccessful();
                 }
             });
 
             popErrorColorController.init(this, "PopErrorColor", Color.AQUA);
-            popErrorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            popErrorColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setString("PopErrorColor", popErrorColorController.css());
                     popSuccessful();
                 }
             });
 
             popWarnColorController.init(this, "PopWarnColor", Color.ORANGE);
-            popWarnColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            popWarnColorController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setString("PopWarnColor", popWarnColorController.css());
                     popSuccessful();
                 }

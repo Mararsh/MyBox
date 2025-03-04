@@ -377,8 +377,9 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     @Override
     public void saveAction() {
         if (parentNode == null || parentNode.getNodeid() < 0) {
-            tabPane.getSelectionModel().select(nodeTab);
             popError(message("Invalid") + ": " + message("ParentNode"));
+            tabPane.getSelectionModel().select(nodeTab);
+            selectParent();
             return;
         }
         DataNode attributes = pickAttributes();

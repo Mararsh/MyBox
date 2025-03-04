@@ -554,6 +554,12 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("BubbleChart"), StyleTools.getIconImageView("iconBubbleChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.bubbleChart();
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("PieChart"), StyleTools.getIconImageView("iconPieChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 controller.pieChart();

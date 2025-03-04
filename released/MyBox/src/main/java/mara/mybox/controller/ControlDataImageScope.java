@@ -6,13 +6,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageScope;
-import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.InternalImages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -27,9 +31,14 @@ public class ControlDataImageScope extends BaseDataValuesController {
     protected ControlImageScope scopeController;
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
+    }
+
+    @Override
     public void initEditor() {
         try {
-            scopeController.setEditor(this);
+            scopeController.setDataEditor(this);
             scopeController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
@@ -77,25 +86,18 @@ public class ControlDataImageScope extends BaseDataValuesController {
             return;
         }
         scopeController.scope = scope.cloneValues();
-        File file = null;
-        if (scope.getFile() != null) {
-            file = new File(scope.getFile());
-        }
-        if (file == null || !file.exists()) {
-            file = ImageItem.exampleImageFile();
-        }
-        scopeController.sourceFileChanged(file);
+        loadAddress(scope.getBackground());
     }
 
     protected void loadScope(ImageScope scope) {
         if (isSettingValues
-                || scope == null || scope.getScopeType() == null) {
+                || scope == null || scope.getShapeType() == null) {
             return;
         }
         nodeEditor.editNull();
         nodeEditor.isSettingValues = true;
-        nodeEditor.titleInput.setText(
-                scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
+        nodeEditor.titleInput.setText(message(scope.getShapeType().name())
+                + "_" + DateTools.datetimeToString(new Date()));
         nodeEditor.isSettingValues = false;
         setScopeControls(scope);
     }
@@ -103,6 +105,71 @@ public class ControlDataImageScope extends BaseDataValuesController {
     @FXML
     public void clearValue() {
         scopeController.resetScope();
+    }
+
+    @Override
+    public void sourceFileChanged(File file) {
+        if (file == null) {
+            return;
+        }
+        sourceFile = file;
+        loadAddress(file.getAbsolutePath());
+    }
+
+    public void loadAddress(String address) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String background;
+            private Image image;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    ImageItem item = new ImageItem(address);
+                    image = item.readImage();
+                    if (image != null) {
+                        background = address;
+                    } else {
+                        background = InternalImages.exampleImageName();
+                        image = new Image(background);
+                    }
+                    return image != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                srcImage = image;
+                scopeController.background = background;
+                scopeController.applyScope(scopeController.scope);
+            }
+
+        };
+        start(task);
+    }
+
+    @FXML
+    public void exampleAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        ImageExampleSelectController controller = ImageExampleSelectController.open(this, false);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                sourceFile = null;
+                ImageItem item = controller.selectedItem();
+                if (item != null) {
+                    loadAddress(item.getAddress());
+                }
+                controller.close();
+            }
+        });
     }
 
     /*

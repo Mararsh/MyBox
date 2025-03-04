@@ -244,8 +244,8 @@ public class ImageEditorController extends BaseImageController {
                             .setObjectType(info)
                             .setOperationTime(new Date());
                     if (scope != null) {
-                        if (scope.getScopeType() != null) {
-                            his.setScopeType(scope.getScopeType().name());
+                        if (scope.getShapeType() != null) {
+                            his.setScopeType(scope.getShapeType().name());
                         }
                         if (scope.getName() != null) {
                             his.setScopeName(scope.getName());

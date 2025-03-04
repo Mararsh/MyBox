@@ -107,7 +107,7 @@ public class Data2DGroupController extends BaseData2DTaskController {
      */
     public static Data2DGroupController open(BaseData2DLoadController tableController) {
         try {
-            Data2DGroupController controller = (Data2DGroupController) WindowTools.branchStage(
+            Data2DGroupController controller = (Data2DGroupController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DGroupFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

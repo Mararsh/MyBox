@@ -4,6 +4,10 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsOperation;
 import static mara.mybox.image.data.PixelsOperation.OperationType.Blue;
@@ -18,10 +22,6 @@ import static mara.mybox.image.data.PixelsOperation.OperationType.Red;
 import static mara.mybox.image.data.PixelsOperation.OperationType.Saturation;
 import static mara.mybox.image.data.PixelsOperation.OperationType.Yellow;
 import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -106,7 +106,7 @@ public class ImageAdjustColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageAdjustColorController controller = (ImageAdjustColorController) WindowTools.branchStage(
+            ImageAdjustColorController controller = (ImageAdjustColorController) WindowTools.operationStage(
                     parent, Fxmls.ImageAdjustColorFxml);
             controller.setParameters(parent);
             return controller;

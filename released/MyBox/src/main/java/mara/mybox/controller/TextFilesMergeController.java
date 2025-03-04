@@ -166,7 +166,7 @@ public class TextFilesMergeController extends FilesMergeController {
     @Override
     public String handleFile(FxTask currentTask, File file) {
         try {
-            TextEditInformation sourceInfo = new TextEditInformation(file);
+            TextEditInformation sourceInfo = new TextEditInformation(file, null);
             if (sourceEncodingAutoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInfo);
                 if (!ok) {

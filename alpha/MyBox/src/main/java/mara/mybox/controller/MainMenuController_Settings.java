@@ -84,7 +84,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         checkIconSize();
         controlTextCheck.setSelected(AppVariables.controlDisplayText);
         closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
-        branchIconifyCheck.setSelected(AppVariables.branchWindowIconifyParent);
+        branchIconifyCheck.setSelected(AppVariables.operationWindowIconifyParent);
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
@@ -325,8 +325,8 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
 
     @FXML
     protected void branchIconifyParent() {
-        UserConfig.setBoolean("BranchWindowIconifyParent", branchIconifyCheck.isSelected());
-        AppVariables.branchWindowIconifyParent = branchIconifyCheck.isSelected();
+        UserConfig.setBoolean("OperationWindowIconifyParent", branchIconifyCheck.isSelected());
+        AppVariables.operationWindowIconifyParent = branchIconifyCheck.isSelected();
     }
 
     @FXML

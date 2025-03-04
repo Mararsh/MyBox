@@ -112,17 +112,19 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     public void sourceChanged(Data2D data) {
         try {
             data2D = data;
-            makeColumns();
-            updateTable(dataController.tableData);
-            isSettingValues = true;
-            currentPage = dataController.currentPage;
-            startRowOfCurrentPage = dataController.startRowOfCurrentPage;
-            pageSize = dataController.pageSize;
-            pagesNumber = dataController.pagesNumber;
-            dataSize = dataController.dataSize;
+            pagination = data2D.pagination;
+            if (paginationController != null) {
+                paginationController.pagination = data2D.pagination;
+            }
+            pagination.currentPage = dataController.pagination.currentPage;
+            pagination.startRowOfCurrentPage = dataController.pagination.startRowOfCurrentPage;
+            pagination.pageSize = dataController.pagination.pageSize;
+            pagination.pagesNumber = dataController.pagination.pagesNumber;
+            pagination.rowsNumber = dataController.pagination.rowsNumber;
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
-            isSettingValues = false;
+            makeColumns();
+            updateTable(dataController.tableData);
             postLoadedTableData();
             refreshControls();
             notifyLoaded();
@@ -139,17 +141,16 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             isSettingValues = true;
             if (data2D.isMutiplePages()) {
                 allPagesRadio.setDisable(false);
-                showPaginationPane(true);
-                setPagination();
             } else {
                 if (allPagesRadio.isSelected()) {
                     currentPageRadio.setSelected(true);
                 }
                 allPagesRadio.setDisable(true);
-                showPaginationPane(false);
             }
             isSettingValues = false;
             restoreSelections();
+
+            checkPagination();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

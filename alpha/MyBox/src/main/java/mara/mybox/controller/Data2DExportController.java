@@ -198,7 +198,7 @@ public class Data2DExportController extends BaseData2DTaskController {
      */
     public static Data2DExportController open(BaseData2DLoadController tableController) {
         try {
-            Data2DExportController controller = (Data2DExportController) WindowTools.branchStage(
+            Data2DExportController controller = (Data2DExportController) WindowTools.operationStage(
                     tableController, Fxmls.Data2DExportFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

@@ -107,6 +107,9 @@ public class StyleButton {
                     return new StyleData(id, message("Add"), "", "iconAdd.png");
             }
         }
+        if (id.startsWith("pages")) {
+            return new StyleData(id, message("Pages"), "", "iconPages.png");
+        }
         if (id.startsWith("makeDirectory")) {
             return new StyleData(id, message("MakeDirectory"), "", "iconNewItem.png");
         }

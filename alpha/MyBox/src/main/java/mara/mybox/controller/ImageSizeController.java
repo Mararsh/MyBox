@@ -435,7 +435,7 @@ public class ImageSizeController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageSizeController controller = (ImageSizeController) WindowTools.branchStage(
+            ImageSizeController controller = (ImageSizeController) WindowTools.operationStage(
                     parent, Fxmls.ImageSizeFxml);
             controller.setParameters(parent);
             return controller;

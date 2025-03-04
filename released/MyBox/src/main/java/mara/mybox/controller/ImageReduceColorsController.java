@@ -7,18 +7,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import mara.mybox.image.tools.ColorConvertTools;
-import mara.mybox.image.data.ImageQuantization;
-import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
-import mara.mybox.image.data.ImageQuantizationFactory;
-import mara.mybox.image.data.ImageQuantizationFactory.KMeansClusteringQuantization;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageQuantization;
+import mara.mybox.image.data.ImageQuantizationFactory;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -68,7 +66,7 @@ public class ImageReduceColorsController extends BasePixelsController {
 
     @Override
     public boolean checkOptions() {
-        if (!super.checkOptions()) {
+        if (!super.checkOptions() || !optionsController.pickValues()) {
             return false;
         }
         try {
@@ -88,20 +86,14 @@ public class ImageReduceColorsController extends BasePixelsController {
     @Override
     protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
-            quantization = ImageQuantizationFactory.createFX(inImage, inScope,
+            quantization = ImageQuantizationFactory.createFX(currentTask, inImage, inScope,
                     optionsController, calData);
             quantization.setImage(inImage).setScope(inScope)
                     .setExcludeScope(excludeScope())
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             opInfo = optionsController.algorithm.name();
-            if (optionsController.algorithm == QuantizationAlgorithm.KMeansClustering) {
-                KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
-                q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
-                handledImage = q.startFx();
-            } else {
-                handledImage = quantization.startFx();
-            }
+            handledImage = quantization.startFx();
 
             String name = null;
             if (imageController.sourceFile != null) {
@@ -176,7 +168,7 @@ public class ImageReduceColorsController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.branchStage(
+            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.operationStage(
                     parent, Fxmls.ImageReduceColorsFxml);
             controller.setParameters(parent);
             return controller;

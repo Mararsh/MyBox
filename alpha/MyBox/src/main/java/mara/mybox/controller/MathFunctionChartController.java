@@ -161,7 +161,7 @@ public class MathFunctionChartController extends MathFunctionDataController {
      */
     public static MathFunctionChartController open(ControlDataMathFunction editorController) {
         try {
-            MathFunctionChartController controller = (MathFunctionChartController) WindowTools.branchStage(
+            MathFunctionChartController controller = (MathFunctionChartController) WindowTools.operationStage(
                     editorController.nodeEditor, Fxmls.MathFunctionChartFxml);
             controller.setParameters(editorController);
             controller.requestMouse();

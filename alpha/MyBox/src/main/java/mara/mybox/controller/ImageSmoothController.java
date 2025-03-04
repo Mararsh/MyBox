@@ -3,13 +3,13 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageConvolution;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.PixelDemos;
+import mara.mybox.image.data.ImageConvolution;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -89,7 +89,7 @@ public class ImageSmoothController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSmoothController controller = (ImageSmoothController) WindowTools.branchStage(
+            ImageSmoothController controller = (ImageSmoothController) WindowTools.operationStage(
                     parent, Fxmls.ImageSmoothFxml);
             controller.setParameters(parent);
             return controller;
