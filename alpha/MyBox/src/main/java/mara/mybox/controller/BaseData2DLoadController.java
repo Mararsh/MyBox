@@ -830,6 +830,15 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     @FXML
+    public void groupBubbleChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartGroupBubbleController.open(this);
+    }
+
+    @FXML
     public void groupPieChart() {
         if (!isValidPageData()) {
             popError(message("InvalidData"));

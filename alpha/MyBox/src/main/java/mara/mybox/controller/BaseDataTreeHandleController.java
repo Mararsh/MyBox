@@ -44,6 +44,7 @@ public abstract class BaseDataTreeHandleController extends BaseTaskController {
     @FXML
     public void manageAction() {
         DataTreeController.open(null, false, nodeTable);
+        setIconified(true);
     }
 
 }

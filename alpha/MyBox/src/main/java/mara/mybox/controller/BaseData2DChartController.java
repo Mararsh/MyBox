@@ -539,9 +539,6 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
             if (playController != null) {
                 playController.clear();
             }
-            if (groupDataController != null) {
-                groupDataController.loadNull();
-            }
         } catch (Exception e) {
         }
         super.cleanPane();

@@ -9,21 +9,24 @@ import java.util.Map;
 import java.util.Random;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
@@ -66,12 +69,20 @@ public abstract class BaseData2DChartFx extends BaseController {
         }
     }
 
-    public void setChart(Chart chart) {
+    public void setChart(Chart c) {
         try {
-            this.chart = chart;
+            this.chart = c;
             chartPane.getChildren().clear();
             if (chart != null) {
                 chartPane.getChildren().add(chart);
+                chart.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            menuAction();
+                        }
+                    }
+                });
             }
             buttonsPane.setDisable(chart == null);
 

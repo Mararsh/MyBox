@@ -619,6 +619,12 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("GroupData") + " - " + message("BubbleChart"), StyleTools.getIconImageView("iconBubbleChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.groupBubbleChart();
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("GroupData") + " - " + message("PieChart"), StyleTools.getIconImageView("iconPieChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 controller.groupPieChart();

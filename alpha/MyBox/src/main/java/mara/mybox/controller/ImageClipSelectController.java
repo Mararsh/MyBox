@@ -124,6 +124,7 @@ public class ImageClipSelectController extends BaseImageClipController {
     @FXML
     public void manageAction() {
         ImageInMyBoxClipboardController.oneOpen();
+        setIconified(true);
     }
 
     @FXML

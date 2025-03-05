@@ -174,6 +174,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             } else if (valueRangeRadio.isSelected()) {
                 groupBox.getChildren().addAll(columnBox, valueSplitBox, labelBox);
                 commentsLabel.setText(message("GroupRangeComments"));
+                valueSplitController.refreshStyle();
                 loadColumnNames();
 
             } else if (timeRadio.isSelected()) {
@@ -189,6 +190,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             } else if (expressionRadio.isSelected()) {
                 groupBox.getChildren().addAll(expressionBox, labelBox);
                 commentsLabel.setText(message("GroupExpressionComments"));
+                expressionController.refreshStyle();
 
             } else if (conditionsRadio.isSelected()) {
                 groupBox.getChildren().addAll(conditionsBox, labelBox);

@@ -200,6 +200,12 @@ public class WebBrowserController extends BaseController {
                 });
                 exampleMenu.getItems().add(menu);
 
+                menu = new MenuItem("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html", true);
+                });
+                exampleMenu.getItems().add(menu);
+
                 items.add(exampleMenu);
             }
 

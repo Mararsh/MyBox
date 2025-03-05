@@ -176,6 +176,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
     @FXML
     public void manageAction() {
         DataTreeTagsController.edit(this);
+        setIconified(true);
     }
 
     @Override
