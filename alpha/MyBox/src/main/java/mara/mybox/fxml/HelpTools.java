@@ -308,6 +308,7 @@ public class HelpTools {
             table.newLinkRow(message(lang, "DecimalFormat"), decimalFormatLink());
             table.newLinkRow(message(lang, "DateFormat"), simpleDateFormatLink());
             table.newLinkRow(message(lang, "Charset"), charsetLink());
+            table.newLinkRow(message(lang, "Color"), colorLink());
             table.newLinkRow("URI", uriLink());
             table.newLinkRow("URL", urlLink());
             table.newLinkRow("Full list of Math functions", javaMathLink());
@@ -667,6 +668,10 @@ public class HelpTools {
 
     public static String charsetLink() {
         return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/nio/charset/Charset.html";
+    }
+
+    public static String colorLink() {
+        return "https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/paint/Color.html";
     }
 
     public static String uriLink() {

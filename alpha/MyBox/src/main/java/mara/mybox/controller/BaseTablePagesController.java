@@ -55,7 +55,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
             if (paginationController != null) {
                 paginationController.setParameters(this, pagination, ObjectType.Table);
-                paginationController.setRightOrientation(true);
             }
 
         } catch (Exception e) {

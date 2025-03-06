@@ -464,7 +464,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             browseURI(new URI(url));
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            popError(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 

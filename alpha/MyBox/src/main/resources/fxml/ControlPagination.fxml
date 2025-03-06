@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -90,16 +91,17 @@ License:    Apache License Version 2.0
             </HBox>
             <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                <children>
-                  <Label text="%RowsPerPage" wrapText="true" />
+                  <Label fx:id="perPageLabel" text="%RowsPerPage" wrapText="true" />
                   <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
                </children>
             </HBox>
-            <Label fx:id="rowsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="rows" wrapText="true" />
-            <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true" HBox.hgrow="ALWAYS">
+            <Label fx:id="rowsLabel" minHeight="-Infinity" minWidth="-Infinity" text="rows" wrapText="true" />
+            <Label fx:id="selectionLabel" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Label>
+            <CheckBox fx:id="leftCheck" mnemonicParsing="false" text="%Left" />
          </children>
       </HBox>
 
