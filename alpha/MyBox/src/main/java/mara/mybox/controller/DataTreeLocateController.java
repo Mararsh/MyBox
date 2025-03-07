@@ -260,7 +260,7 @@ public class DataTreeLocateController extends BaseChildController {
      */
     public static DataTreeLocateController open(BaseDataTreeViewController parent) {
         try {
-            DataTreeLocateController controller = (DataTreeLocateController) WindowTools.branchStage(
+            DataTreeLocateController controller = (DataTreeLocateController) WindowTools.childStage(
                     parent, Fxmls.DataTreeLocateFxml);
             controller.setParameters(parent);
             controller.requestMouse();

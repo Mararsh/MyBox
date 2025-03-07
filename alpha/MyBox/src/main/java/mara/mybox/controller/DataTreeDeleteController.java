@@ -88,7 +88,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
      */
     public static DataTreeDeleteController open(DataTreeController parent, DataNode node) {
         DataTreeDeleteController controller
-                = (DataTreeDeleteController) WindowTools.openStage(Fxmls.DataTreeDeleteFxml);
+                = (DataTreeDeleteController) WindowTools.childStage(parent, Fxmls.DataTreeDeleteFxml);
         controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;

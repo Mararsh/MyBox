@@ -62,8 +62,29 @@ public class DataMigrationFrom68 {
             if (lastVersion < 6008005) {
                 updateIn685(controller, conn, lang);
             }
+            if (lastVersion < 6008006) {
+                updateIn686(controller, conn, lang);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static void updateIn686(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        try (Statement exeStatement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.8.6...");
+            controller.info("Updating tables in 6.8.6...");
+
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold_tmp  DOUBLE");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold_tmp=color_threshold");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  DOUBLE");
+            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_threshold_tmp");
+            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold_tmp");
+
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 

@@ -2,9 +2,12 @@ package mara.mybox.image.data;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javax.imageio.ImageIO;
 import mara.mybox.color.ColorMatch;
 import mara.mybox.color.ColorMatch.MatchAlgorithm;
 import mara.mybox.data.DoubleCircle;
@@ -87,8 +90,25 @@ public class ImageScope {
             ImageScopeTools.decodeShapeData(this);
         }
         if (outlineName != null) {
-            ImageScopeTools.decodeOutline(task, this);
+            decodeOutline(task);
         }
+    }
+
+    public BufferedImage decodeOutline(FxTask task) {
+        outlineSource = null;
+        outline = null;
+        try {
+            if (outlineName.startsWith("img/") || outlineName.startsWith("buttons/")) {
+                outlineSource = SwingFXUtils.fromFXImage(new Image(outlineName), null);
+            } else {
+                File file = new File(outlineName);
+                if (file.exists()) {
+                    outlineSource = ImageIO.read(file);
+                }
+            }
+        } catch (Exception e) {
+        }
+        return outlineSource;
     }
 
     public void encode(FxTask task) {

@@ -117,7 +117,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
      */
     public static DataTreeCopyController open(DataTreeController parent, DataNode node) {
         DataTreeCopyController controller
-                = (DataTreeCopyController) WindowTools.openStage(Fxmls.DataTreeCopyFxml);
+                = (DataTreeCopyController) WindowTools.childStage(parent, Fxmls.DataTreeCopyFxml);
         controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;
