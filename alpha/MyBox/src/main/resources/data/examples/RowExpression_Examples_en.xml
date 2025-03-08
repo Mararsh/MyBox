@@ -5,25 +5,326 @@
             <![CDATA[Row expression]]>
         </title>
     </NodeAttributes>
-    <TreeNode>
+        <TreeNode>
         <NodeAttributes>
             <title>
-                <![CDATA[Row filter]]>
+                <![CDATA[Example]]>
             </title>
         </NodeAttributes>
-        <TreeNode>
+            <TreeNode>
             <NodeAttributes>
                 <title>
-                    <![CDATA[Examples]]>
+                    <![CDATA[Row calculation]]>
                 </title>
             </NodeAttributes>
+                <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Numbers]]>
+                    </title>
+                </NodeAttributes>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Data row number]]>
+                        </title>
+                        <script>
+                            <![CDATA[#{DataRowNumber}]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Table row number]]>
+                        </title>
+                        <script>
+                            <![CDATA[#{TableRowNumber}]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Math calculation]]>
+                        </title>
+                        <script>
+                            <![CDATA[Math.abs(#{numberColumn1}) + Math.PI * Math.sqrt(#{numberColumn2})]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Calculation including statistic]]>
+                        </title>
+                        <script>
+                            <![CDATA[#{numberColumn1} - #{numberColumn2-Mean}}]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                </TreeNode>
+                <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[String]]>
+                    </title>
+                </NodeAttributes>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Length]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.length
+else
+    -1]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Lowercase]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.toLowerCase()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Split]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.split(',')
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[contain sub-string]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.search(/hello/ig)
+else
+    -1]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Position of sub-string]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.indexOf('hello')
+else
+    -1]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[replace first]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace("hello", "Hello");
+else
+   null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[replace all]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace(/hello/g, "Hello");
+else
+   null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Replace in case-insensitive]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace(/hello/ig,'Hello')
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Special values]]>
+                        </title>
+                        <script>
+                            <![CDATA[var array = [ 'A', 'B', 'C', 'D' ];
+array.includes('#{stringColumn}')]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                </TreeNode>
+                <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Date]]>
+                    </title>
+                </NodeAttributes>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Format]]>
+                        </title>
+                        <script>
+                            <![CDATA[function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{dateColumn} != null)
+   formatDate(new Date(#{dateColumn}));
+else
+   null;]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Year]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getFullYear()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Month]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getMonth() + 1
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Date]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getDate()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Hors]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getHours()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Minutes]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getMinutes()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Second]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getSeconds()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[Day]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getDay()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                </TreeNode>
+            </TreeNode>
             <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Row Filter]]>
+                </title>
+            </NodeAttributes>
+                <TreeNode>
                 <NodeAttributes>
                     <title>
                         <![CDATA[Number]]>
                     </title>
                 </NodeAttributes>
-                <TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[Is not number]]>
@@ -32,8 +333,8 @@
                             <![CDATA[isNaN(#{stringColumn} - 1)]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[Compare]]>
@@ -42,8 +343,8 @@
                             <![CDATA[#{numberColumn1} != 0 || #{numberColumn1} < #{numberColumn2}]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[Compare with statistic]]>
@@ -52,15 +353,15 @@
                             <![CDATA[#{numberColumn} < #{numberColumn-Mean}]]>
                         </script>
                     </NodeAttributes>
+                    </TreeNode>
                 </TreeNode>
-            </TreeNode>
-            <TreeNode>
+                <TreeNode>
                 <NodeAttributes>
                     <title>
                         <![CDATA[Date]]>
                     </title>
                 </NodeAttributes>
-                <TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[value of date]]>
@@ -72,8 +373,8 @@ else
    -1;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[Special time]]>
@@ -82,8 +383,8 @@ else
                             <![CDATA[#{dateColumn} == '2016-05-19 11:34:28']]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[Match time]]>
@@ -95,8 +396,8 @@ else
    undefined;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[Compare time]]>
@@ -108,8 +409,8 @@ else
    undefined;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[Format Date]]>
@@ -135,8 +436,8 @@ else
    null;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[whether Sunday]]>
@@ -148,15 +449,15 @@ else
    undefined;]]>
                         </script>
                     </NodeAttributes>
+                    </TreeNode>
                 </TreeNode>
-            </TreeNode>
-            <TreeNode>
+                <TreeNode>
                 <NodeAttributes>
                     <title>
                         <![CDATA[String]]>
                     </title>
                 </NodeAttributes>
-                <TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[string is empty]]>
@@ -165,8 +466,8 @@ else
                             <![CDATA[#{stringColumn} == '']]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[string is not null]]>
@@ -175,47 +476,8 @@ else
                             <![CDATA[#{stringColumn} != null]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[string length]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{stringColumn} != null ) 
-    #{stringColumn}.length
-else
-    -1]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[contain sub-string]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{stringColumn} != null ) 
-    #{stringColumn}.search(/hello/ig)
-else
-    -1]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[Position of sub-string]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{stringColumn} != null ) 
-    #{stringColumn}.indexOf('hello')
-else
-    -1]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[compare strings]]>
@@ -224,34 +486,8 @@ else
                             <![CDATA[#{stringColumn} === 'hello']]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[replace first]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{stringColumn} != null ) 
-    #{stringColumn}.replace("hello", "Hello");
-else
-   null]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[replace all]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{stringColumn} != null ) 
-    #{stringColumn}.replace(/hello/g, "Hello");
-else
-   null]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[starts with]]>
@@ -263,8 +499,8 @@ else
    undefined]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[ends with]]>
@@ -276,19 +512,8 @@ else
    undefined]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[Special values]]>
-                        </title>
-                        <script>
-                            <![CDATA[var array = [ 'A', 'B', 'C', 'D' ];
-array.includes('#{stringColumn}')]]>
-                        </script>
-                    </NodeAttributes>
+                    </TreeNode>
                 </TreeNode>
             </TreeNode>
         </TreeNode>
-    </TreeNode>
 </Node_Row_Expression>

@@ -82,4 +82,10 @@ public abstract class BasePixelsController extends BaseImageEditController {
         return scopeHandler.keyEventsFilter(event);
     }
 
+    @Override
+    public boolean controlAltT() {
+        scopeController.selectAction();
+        return true;
+    }
+
 }

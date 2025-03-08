@@ -48,32 +48,32 @@ License:    Apache License Version 2.0
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                      <children>
-                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
                               <Label fx:id="idLabel" minHeight="-Infinity" text="%ID" wrapText="true" />
                               <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="42.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="42.0" spacing="5.0">
                            <children>
                               <Label fx:id="idLabel1" minHeight="-Infinity" text="%OrderNumber" wrapText="true" />
                               <TextField fx:id="orderInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="38.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="38.0" spacing="5.0">
                            <children>
                               <Label fx:id="idLabel11" minHeight="-Infinity" text="%OrderNumber" visible="false" wrapText="true" />
                               <Label minHeight="-Infinity" text="%NodeOrderComments" wrapText="true" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <HBox alignment="CENTER_RIGHT" spacing="5.0">
                            <children>
                               <Label fx:id="timeLabel" minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
                               <TextField fx:id="timeInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                         <Separator prefWidth="200.0" />
-                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
                               <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ParentNode" wrapText="true" HBox.hgrow="ALWAYS" />
                               <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectParent">

@@ -1313,6 +1313,7 @@ public class ColumnDefinition extends BaseData {
 
     public static boolean isDBStringType(ColumnType type) {
         return type == ColumnType.String
+                || type == ColumnType.Clob
                 || type == ColumnType.File
                 || type == ColumnType.Image
                 || type == ColumnType.Enumeration
