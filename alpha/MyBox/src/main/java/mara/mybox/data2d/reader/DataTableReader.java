@@ -25,11 +25,6 @@ public class DataTableReader extends Data2DReader {
     }
 
     @Override
-    public void scanFile() {
-        operate.handleData();
-    }
-
-    @Override
     public void readColumnNames() {
         try {
             names = readerTable.columnNames();
@@ -50,7 +45,7 @@ public class DataTableReader extends Data2DReader {
 
     @Override
     public void readPage() {
-        sourceIndex = sourceData.pagination.startRowOfCurrentPage;
+        sourceIndex = readerTable.pagination.startRowOfCurrentPage;
         String sql = readerTable.pageQuery();
 //        showInfo(sql);
         try (PreparedStatement statement = conn().prepareStatement(sql);

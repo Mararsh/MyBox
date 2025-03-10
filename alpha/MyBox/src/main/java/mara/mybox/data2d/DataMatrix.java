@@ -2,7 +2,6 @@ package mara.mybox.data2d;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.SetValue;
@@ -18,6 +17,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
+import org.apache.commons.math3.linear.AbstractRealMatrix;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.linear.OpenMapRealMatrix;
 
 /**
  * @Author Mara
@@ -26,15 +29,36 @@ import mara.mybox.tools.NumberTools;
  */
 public class DataMatrix extends Data2D {
 
-    protected TableData2DCell tableData2DCell;
+    public TableData2DCell tableData2DCell;
 
     public DataMatrix() {
         dataType = DataType.Matrix;
         tableData2DCell = new TableData2DCell();
+
     }
 
     public int type() {
         return type(DataType.Matrix);
+    }
+
+    public boolean isBig() {
+        return colsNumber > 30;
+    }
+
+    public boolean isSparse() {
+        return tableData2DCell.size() < pagination.rowsNumber * colsNumber * 0.05d;
+    }
+
+    public AbstractRealMatrix realMatrix(Connection conn) {
+        int rows = (int) pagination.rowsNumber;
+        int cols = (int) colsNumber;
+        if (cols > 30) {
+            return new BlockRealMatrix(rows, cols);
+        } else if (tableData2DCell.size(conn) < rows * cols * 0.05d) {
+            return new OpenMapRealMatrix(rows, cols);
+        } else {
+            return new Array2DRowRealMatrix(rows, cols);
+        }
     }
 
     public void cloneAll(DataMatrix d) {
@@ -83,36 +107,11 @@ public class DataMatrix extends Data2D {
         return names;
     }
 
-    @Override
-    public List<List<String>> readPageData(Connection conn) {
-        if (pagination.startRowOfCurrentPage < 0) {
-            pagination.startRowOfCurrentPage = 0;
-        }
-        pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage;
-        List<List<String>> rows = new ArrayList<>();
-        if (dataID >= 0 && pagination.rowsNumber > 0 && colsNumber > 0) {
-            double[][] matrix = new double[(int) pagination.rowsNumber][(int) colsNumber];
-            try (PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
-                query.setLong(1, dataID);
-                ResultSet results = query.executeQuery();
-                while (results.next()) {
-                    Data2DCell cell = tableData2DCell.readData(results);
-                    if (cell.getColumnID() < colsNumber && cell.getRowID() < pagination.rowsNumber) {
-                        matrix[(int) cell.getRowID()][(int) cell.getColumnID()] = toDouble(cell.getValue());
-                    }
-                }
-                rows = toTableData(matrix);
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.console(e);
-            }
-        }
-        pagination.rowsNumber = rows.size();
-        pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage + pagination.rowsNumber;
-        readPageStyles(conn);
-        return rows;
+    public String pageQuery() {
+        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + dataID
+                + " AND row >" + (pagination.startRowOfCurrentPage + 1)
+                + " AND row < " + (pagination.startRowOfCurrentPage + pagination.pageSize);
+        return sql;
     }
 
     @Override
