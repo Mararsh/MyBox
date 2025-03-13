@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.DataMatrix;
 import static mara.mybox.data2d.DataMatrix.toDouble;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import static mara.mybox.value.Languages.message;
-import org.apache.commons.math3.linear.AbstractRealMatrix;
 
 /**
  * @Author Mara
@@ -30,48 +30,53 @@ public class DataMatrixSetValue extends DataMatrixModify {
     @Override
     public boolean go() {
         handledCount = 0;
-        int rowsNumber = (int) sourceMatrix.pagination.rowsNumber;
-        int colsNumber = (int) sourceMatrix.colsNumber;
-        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + sourceMatrix.dataID;
+        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + sourceMatrix.dataID
+                + " AND row=?";
         showInfo(sql);
-        AbstractRealMatrix values = sourceMatrix.realMatrix(conn());
-        try (PreparedStatement statement = conn().prepareStatement(sql);
-                ResultSet results = statement.executeQuery()) {
-            int cellCol, cellRow;
-            while (results.next() && !isStopped()) {
-                Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
-                cellRow = (int) cell.getRowID();
-                cellCol = (int) cell.getColumnID();
-                if (cellCol > -1 && cellCol < colsNumber) {
-                    values.addToEntry(cellRow, cellCol, toDouble(cell.getValue()));
-                }
-            }
-        } catch (Exception e) {
-            showError(e.toString());
-            setFailed();
-        }
-        try (Connection dconn = DerbyBase.getConnection();
-                PreparedStatement dUpdate = dconn.prepareStatement(sourceMatrix.tableData2DCell.updateStatement())) {
-            conn = dconn;
+        try (Connection rconn = DerbyBase.getConnection();
+                PreparedStatement query = rconn.prepareStatement(sql)) {
+            conn = rconn;
             conn.setAutoCommit(false);
-            update = dUpdate;
-            for (int r = 0; r < rowsNumber; r++) {
-                sourceRow = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    sourceRow.add(values.getEntry(r, c) + "");
+
+            long cellCol;
+            for (sourceRowIndex = 0; sourceRowIndex < rowsNum; sourceRowIndex++) {
+                if (stopped) {
+                    break;
                 }
-                sourceRowIndex++;
+                sourceRow = new ArrayList<>();
+                for (long c = 0; c < colsNum; c++) {
+                    sourceRow.add("0");
+                }
+                query.setLong(1, sourceRowIndex);
+                try (ResultSet results = query.executeQuery()) {
+                    while (results.next()) {
+                        if (stopped) {
+                            break;
+                        }
+                        Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
+                        cellCol = cell.getColumnID();
+                        if (cellCol > -1 && cellCol < colsNum) {
+                            sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
+                        }
+                    }
+                } catch (Exception e) {
+                    showError(e.toString());
+                    setFailed();
+                }
+                if (stopped) {
+                    break;
+                }
                 setValue(sourceRow, sourceRowIndex);
             }
+
             if (!stopped) {
-                update.executeBatch();
                 conn.commit();
-                updateMatrix();
             }
             showInfo(message("Updated") + ": " + handledCount);
             conn.close();
             conn = null;
             return true;
+
         } catch (Exception e) {
             failStop(e.toString());
             return false;
@@ -85,20 +90,25 @@ public class DataMatrixSetValue extends DataMatrixModify {
                     || targetRow == null || targetRow.isEmpty()) {
                 return;
             }
-//            Data2DRow data2DRow = tableData2D.newRow();
-//            for (int i = 0; i < columnsNumber; ++i) {
-//                column = columns.get(i);
-//                columnName = column.getColumnName();
-//                data2DRow.setValue(columnName, column.fromString(targetRow.get(i), invalidAs));
-//            }
-//            if (tableData2D.setUpdateStatement(conn, update, data2DRow)) {
-//                update.addBatch();
-//                if (handledCount % Database.BatchSize == 0) {
-//                    update.executeBatch();
-//                    conn.commit();
-//                    showInfo(message("Updated") + ": " + handledCount);
-//                }
-//            }
+            for (int c = 0; c < columnsNumber; ++c) {
+                column = columns.get(c);
+                columnName = column.getColumnName();
+                Object v = column.fromString(targetRow.get(c), invalidAs);
+                if (v == null || (double) v == 0d) {
+                    continue;
+                }
+                Data2DCell cell = Data2DCell.create()
+                        .setDataID(dataID)
+                        .setRowID(sourceRowIndex)
+                        .setColumnID(c)
+                        .setValue(v + "");
+                if (tableData2DCell.writeData(conn, cell) != null) {
+                    if (handledCount % Database.BatchSize == 0) {
+                        conn.commit();
+                        showInfo(message("Updated") + ": " + handledCount);
+                    }
+                }
+            }
         } catch (Exception e) {
             showError(e.toString());
         }

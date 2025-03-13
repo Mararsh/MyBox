@@ -213,7 +213,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     // without data row number
     public List<String> dataRow(int rowIndex) {
-        return Data2D_Data.this.dataRow(rowIndex, false);
+        return dataRow(rowIndex, false);
     }
 
     public List<String> dataRow(int rowIndex, boolean formatData) {

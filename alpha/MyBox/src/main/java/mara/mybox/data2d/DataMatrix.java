@@ -4,11 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.data.SetValue;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.MatrixWriter;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -17,6 +15,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
+import static mara.mybox.value.AppVariables.blockMatrixThreshold;
+import static mara.mybox.value.AppVariables.sparseMatrixThreshold;
 import org.apache.commons.math3.linear.AbstractRealMatrix;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.BlockRealMatrix;
@@ -52,9 +52,9 @@ public class DataMatrix extends Data2D {
     public AbstractRealMatrix realMatrix(Connection conn) {
         int rows = (int) pagination.rowsNumber;
         int cols = (int) colsNumber;
-        if (cols > 30) {
+        if (cols > blockMatrixThreshold) {
             return new BlockRealMatrix(rows, cols);
-        } else if (tableData2DCell.size(conn) < rows * cols * 0.05d) {
+        } else if (tableData2DCell.size(conn) < rows * cols * sparseMatrixThreshold) {
             return new OpenMapRealMatrix(rows, cols);
         } else {
             return new Array2DRowRealMatrix(rows, cols);
@@ -170,17 +170,6 @@ public class DataMatrix extends Data2D {
             rows.add(row);
         }
         return rows;
-    }
-
-    @Override
-    public long setValue(FxTask task, List<Integer> cols,
-            SetValue value, ColumnDefinition.InvalidAs invalidAs) {
-        return -1;
-    }
-
-    @Override
-    public long deleteRows(FxTask task) {
-        return -1;
     }
 
     @Override

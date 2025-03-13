@@ -2,6 +2,7 @@ package mara.mybox.data2d.modify;
 
 import java.sql.PreparedStatement;
 import mara.mybox.data2d.DataMatrix;
+import mara.mybox.db.table.TableData2DCell;
 
 /**
  * @Author Mara
@@ -11,6 +12,9 @@ import mara.mybox.data2d.DataMatrix;
 public abstract class DataMatrixModify extends Data2DModify {
 
     protected DataMatrix sourceMatrix;
+    protected TableData2DCell tableData2DCell;
+    protected long dataID;
+    protected int rowsNum, colsNum = (int) sourceMatrix.colsNumber;
     protected PreparedStatement update;
 
     public boolean setSourceMatrix(DataMatrix data) {
@@ -18,33 +22,11 @@ public abstract class DataMatrixModify extends Data2DModify {
             return false;
         }
         sourceMatrix = data;
+        tableData2DCell = sourceMatrix.tableData2DCell;
+        dataID = sourceMatrix.dataID;
+        rowsNum = (int) sourceMatrix.pagination.rowsNumber;
+        colsNum = (int) sourceMatrix.colsNumber;
         return true;
-    }
-
-    public boolean updateMatrix() {
-        try {
-            if (stopped || sourceMatrix == null || conn == null) {
-                return false;
-            }
-//            String sql = "SELECT count(*) FROM " + tableName;
-//            showInfo(sql);
-//            try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
-//                if (query.next()) {
-//                    rowsNumber = query.getLong(1);
-//                }
-//            }
-//            sourceData.setRowsNumber(rowsNumber);
-//            if (stopped) {
-//                return false;
-//            }
-//            sourceData.saveAttributes(conn);
-//            showInfo(message("DataTable") + ": " + tableName + "  "
-//                    + message("RowsNumber") + ": " + rowsNumber);
-            return true;
-        } catch (Exception e) {
-            showError(e.toString());
-            return false;
-        }
     }
 
     @Override

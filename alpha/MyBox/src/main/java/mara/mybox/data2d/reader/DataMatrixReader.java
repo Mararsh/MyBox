@@ -1,12 +1,13 @@
 package mara.mybox.data2d.reader;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import mara.mybox.data2d.DataMatrix;
 import static mara.mybox.data2d.DataMatrix.toDouble;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
-import org.apache.commons.math3.linear.AbstractRealMatrix;
 
 /**
  * @Author Mara
@@ -34,90 +35,98 @@ public class DataMatrixReader extends Data2DReader {
 
     @Override
     public void readPage() {
-        int rowsNumber = (int) sourceMatrix.pagination.pageSize;
-        int colsNumber = (int) sourceMatrix.colsNumber;
-        int endRow = -1;
-        sourceIndex = sourceMatrix.pagination.startRowOfCurrentPage;
         String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + sourceMatrix.dataID
-                + " AND row >" + (sourceIndex - 1)
-                + " AND row < " + (sourceIndex + rowsNumber);
+                + " AND row=?";
         showInfo(sql);
-        AbstractRealMatrix values = sourceMatrix.realMatrix(conn());
-        try (PreparedStatement statement = conn().prepareStatement(sql);
-                ResultSet results = statement.executeQuery()) {
-            int cellCol, cellRow;
-            while (results.next() && !isStopped()) {
-                Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
-                cellRow = (int) cell.getRowID();
-                cellCol = (int) cell.getColumnID();
-                if (cellCol > -1 && cellCol < colsNumber) {
-                    values.addToEntry(cellRow, cellCol, toDouble(cell.getValue()));
-                    if (cellRow > endRow) {
-                        endRow = cellRow;
-                    }
-                }
+        try (Connection rconn = DerbyBase.getConnection();
+                PreparedStatement statement = rconn.prepareStatement(sql)) {
+            rconn.setAutoCommit(false);
+            long cellCol;
+            long colsNum = sourceMatrix.colsNumber;
+            long startIndex = sourceMatrix.pagination.startRowOfCurrentPage;
+            long endIndex = startIndex + sourceMatrix.pagination.pageSize;
+            if (endIndex > sourceMatrix.pagination.rowsNumber) {
+                endIndex = sourceMatrix.pagination.rowsNumber;
             }
-
+            for (sourceIndex = startIndex; sourceIndex < endIndex; sourceIndex++) {
+                if (isStopped()) {
+                    return;
+                }
+                sourceRow = new ArrayList<>();
+                for (long c = 0; c < colsNum; c++) {
+                    sourceRow.add("0");
+                }
+                statement.setLong(1, sourceIndex);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results.next()) {
+                        if (isStopped()) {
+                            return;
+                        }
+                        Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
+                        cellCol = cell.getColumnID();
+                        if (cellCol > -1 && cellCol < colsNum) {
+                            sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
+                        }
+                    }
+                } catch (Exception e) {
+                    showError(e.toString());
+                    setFailed();
+                }
+                makePageRow();
+            }
         } catch (Exception e) {
             showError(e.toString());
             setFailed();
-        }
-        for (int r = (int) sourceIndex; r < endRow; r++) {
-            sourceRow = new ArrayList<>();
-            for (int c = 0; c < colsNumber; c++) {
-                sourceRow.add(values.getEntry(r, c) + "");
-            }
-            sourceIndex++;
-            makePageRow();
         }
     }
 
     @Override
     public void readRows() {
-        int rowsNumber = (int) sourceMatrix.pagination.rowsNumber;
-        int colsNumber = (int) sourceMatrix.colsNumber;
-        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + sourceMatrix.dataID;
+        sourceIndex = 0;
+        long startIndex = sourceMatrix.pagination.startRowOfCurrentPage;
+        long endIndex = sourceMatrix.pagination.endRowOfCurrentPage;
+        long rowsNum = sourceMatrix.pagination.rowsNumber;
+        long colsNum = sourceMatrix.colsNumber;
+        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + sourceMatrix.dataID
+                + " AND row=?";
         showInfo(sql);
-        AbstractRealMatrix values = sourceMatrix.realMatrix(conn());
-        try (PreparedStatement statement = conn().prepareStatement(sql);
-                ResultSet results = statement.executeQuery()) {
-            int cellCol, cellRow;
-            while (results.next() && !isStopped()) {
-                Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
-                cellRow = (int) cell.getRowID();
-                cellCol = (int) cell.getColumnID();
-                if (cellCol > -1 && cellCol < colsNumber) {
-                    values.addToEntry(cellRow, cellCol, toDouble(cell.getValue()));
+        try (Connection rconn = DerbyBase.getConnection();
+                PreparedStatement statement = rconn.prepareStatement(sql)) {
+            rconn.setAutoCommit(false);
+            long cellCol;
+            for (long tableIndex = 0; tableIndex < rowsNum; tableIndex++) {
+                if (isStopped()) {
+                    return;
                 }
-            }
-        } catch (Exception e) {
-            showError(e.toString());
-            setFailed();
-        }
-        try {
-            sourceIndex = 0;
-            long startIndex = sourceMatrix.pagination.startRowOfCurrentPage;
-            long endIndex = sourceMatrix.pagination.endRowOfCurrentPage;
-            int tableIndex = 0;
-            while (tableIndex < rowsNumber && !isStopped()) {
-                try {
-                    if (tableIndex < startIndex || tableIndex >= endIndex) {
-                        sourceRow = new ArrayList<>();
-                        for (int c = 0; c < colsNumber; c++) {
-                            sourceRow.add(values.getEntry(tableIndex, c) + "");
-                        }
-                        ++sourceIndex;
-                        handleRow();
 
-                    } else if (tableIndex == startIndex) {
-                        scanPage();
+                if (tableIndex < startIndex || tableIndex >= endIndex) {
+                    sourceRow = new ArrayList<>();
+                    for (long c = 0; c < colsNum; c++) {
+                        sourceRow.add("0");
                     }
+                    statement.setLong(1, tableIndex);
+                    try (ResultSet results = statement.executeQuery()) {
+                        while (results.next()) {
+                            if (isStopped()) {
+                                return;
+                            }
+                            Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
+                            cellCol = cell.getColumnID();
+                            if (cellCol > -1 && cellCol < colsNum) {
+                                sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
+                            }
+                        }
+                    } catch (Exception e) {
+                        showError(e.toString());
+                        setFailed();
+                    }
+                    ++sourceIndex;
+                    handleRow();
 
-                    tableIndex++;
-                } catch (Exception e) {  // skip  bad lines
-//                    showError(e.toString());
-//                    setFailed();
+                } else if (tableIndex == startIndex) {
+                    scanPage();
                 }
+
             }
         } catch (Exception e) {
             showError(e.toString());
