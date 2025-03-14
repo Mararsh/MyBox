@@ -37,8 +37,17 @@ public class TableData2DCell extends BaseTable<Data2DCell> {
     public static final String QueryData
             = "SELECT * FROM Data2D_Cell WHERE dcdid=?";
 
+    public static final String QueryRow
+            = "SELECT * FROM Data2D_Cell WHERE dcdid=? AND row=?";
+
     public static final String ClearData
             = "DELETE FROM Data2D_Cell WHERE dcdid=?";
+
+    public static final String DeleteRow
+            = "DELETE FROM Data2D_Cell WHERE dcdid=? AND row=?";
+
+    public static final String DeleteCell
+            = "DELETE FROM Data2D_Cell WHERE dcdid=? AND row=? AND col=?";
 
     @Override
     public boolean setValue(Data2DCell data, String column, Object value) {

@@ -10,11 +10,12 @@ import static mara.mybox.data2d.DataMatrix.toDouble;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
+import mara.mybox.db.table.TableData2DCell;
 import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2022-1-29
+ * @CreateDate 2025-3-12
  * @License Apache License Version 2.0
  */
 public class DataMatrixSetValue extends DataMatrixModify {
@@ -30,32 +31,35 @@ public class DataMatrixSetValue extends DataMatrixModify {
     @Override
     public boolean go() {
         handledCount = 0;
-        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + sourceMatrix.dataID
-                + " AND row=?";
-        showInfo(sql);
         try (Connection rconn = DerbyBase.getConnection();
-                PreparedStatement query = rconn.prepareStatement(sql)) {
+                PreparedStatement query = rconn.prepareStatement(TableData2DCell.QueryRow);
+                PreparedStatement delete = rconn.prepareStatement(TableData2DCell.DeleteRow);
+                PreparedStatement insert = rconn.prepareStatement(tableData2DCell.insertStatement())) {
             conn = rconn;
             conn.setAutoCommit(false);
-
+            deleteRowStatement = delete;
+            insertCellStatement = insert;
+            showInfo(TableData2DCell.QueryRow);
             long cellCol;
-            for (sourceRowIndex = 0; sourceRowIndex < rowsNum; sourceRowIndex++) {
+            for (sourceRowIndex = 0; sourceRowIndex < rowsNumber; sourceRowIndex++) {
                 if (stopped) {
                     break;
                 }
                 sourceRow = new ArrayList<>();
-                for (long c = 0; c < colsNum; c++) {
+                for (long c = 0; c < colsNumber; c++) {
                     sourceRow.add("0");
                 }
-                query.setLong(1, sourceRowIndex);
+
+                query.setLong(1, dataID);
+                query.setLong(2, sourceRowIndex);
                 try (ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         if (stopped) {
                             break;
                         }
-                        Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
+                        Data2DCell cell = tableData2DCell.readData(results);
                         cellCol = cell.getColumnID();
-                        if (cellCol > -1 && cellCol < colsNum) {
+                        if (cellCol > -1 && cellCol < colsNumber) {
                             sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
                         }
                     }
@@ -90,9 +94,11 @@ public class DataMatrixSetValue extends DataMatrixModify {
                     || targetRow == null || targetRow.isEmpty()) {
                 return;
             }
+            deleteRowStatement.setLong(1, dataID);
+            deleteRowStatement.setLong(2, sourceRowIndex);
+            deleteRowStatement.addBatch();
             for (int c = 0; c < columnsNumber; ++c) {
                 column = columns.get(c);
-                columnName = column.getColumnName();
                 Object v = column.fromString(targetRow.get(c), invalidAs);
                 if (v == null || (double) v == 0d) {
                     continue;
@@ -102,12 +108,15 @@ public class DataMatrixSetValue extends DataMatrixModify {
                         .setRowID(sourceRowIndex)
                         .setColumnID(c)
                         .setValue(v + "");
-                if (tableData2DCell.writeData(conn, cell) != null) {
-                    if (handledCount % Database.BatchSize == 0) {
-                        conn.commit();
-                        showInfo(message("Updated") + ": " + handledCount);
-                    }
+                if (tableData2DCell.setInsertStatement(conn, insertCellStatement, cell)) {
+                    insertCellStatement.addBatch();
                 }
+            }
+            if (handledCount % Database.BatchSize == 0) {
+                deleteRowStatement.executeBatch();
+                insertCellStatement.executeBatch();
+                conn.commit();
+                showInfo(message("Updated") + ": " + handledCount);
             }
         } catch (Exception e) {
             showError(e.toString());

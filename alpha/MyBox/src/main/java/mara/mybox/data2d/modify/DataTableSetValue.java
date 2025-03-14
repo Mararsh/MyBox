@@ -32,8 +32,8 @@ public class DataTableSetValue extends DataTableModify {
         String sql = "SELECT * FROM " + tableName;
         showInfo(sql);
         try (Connection dconn = DerbyBase.getConnection();
-                PreparedStatement statement = dconn.prepareStatement(sql);
-                ResultSet results = statement.executeQuery();
+                PreparedStatement query = dconn.prepareStatement(sql);
+                ResultSet results = query.executeQuery();
                 PreparedStatement dUpdate = dconn.prepareStatement(tableData2D.updateStatement())) {
             conn = dconn;
             conn.setAutoCommit(false);

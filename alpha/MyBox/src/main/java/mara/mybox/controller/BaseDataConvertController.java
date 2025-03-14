@@ -28,7 +28,7 @@ import mara.mybox.data2d.writer.DataFileTextWriter;
 import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.data2d.writer.HtmlWriter;
 import mara.mybox.data2d.writer.JsonWriter;
-import mara.mybox.data2d.writer.MatrixWriter;
+import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.data2d.writer.MyBoxClipboardWriter;
 import mara.mybox.data2d.writer.PdfWriter;
 import mara.mybox.data2d.writer.SystemClipboardWriter;
@@ -239,7 +239,7 @@ public class BaseDataConvertController extends BaseTaskController {
                     writer = new DataTableWriter();
                     break;
                 case Matrix:
-                    writer = new MatrixWriter();
+                    writer = new DataMatrixWriter();
                     break;
                 case MyBoxClipboard:
                     writer = new MyBoxClipboardWriter();

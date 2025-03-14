@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.data2d.writer.MatrixWriter;
+import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
@@ -17,6 +17,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.AppVariables.blockMatrixThreshold;
 import static mara.mybox.value.AppVariables.sparseMatrixThreshold;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.linear.AbstractRealMatrix;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.BlockRealMatrix;
@@ -34,7 +35,6 @@ public class DataMatrix extends Data2D {
     public DataMatrix() {
         dataType = DataType.Matrix;
         tableData2DCell = new TableData2DCell();
-
     }
 
     public int type() {
@@ -42,11 +42,12 @@ public class DataMatrix extends Data2D {
     }
 
     public boolean isBig() {
-        return colsNumber > 30;
+        return colsNumber > blockMatrixThreshold;
     }
 
     public boolean isSparse() {
-        return tableData2DCell.size() < pagination.rowsNumber * colsNumber * 0.05d;
+        return tableData2DCell.size()
+                < pagination.rowsNumber * colsNumber * sparseMatrixThreshold;
     }
 
     public AbstractRealMatrix realMatrix(Connection conn) {
@@ -68,6 +69,9 @@ public class DataMatrix extends Data2D {
             }
             super.cloneData(d);
             tableData2DCell = d.tableData2DCell;
+            if (tableData2DCell == null) {
+                tableData2DCell = new TableData2DCell();
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -82,7 +86,8 @@ public class DataMatrix extends Data2D {
     @Override
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
-            dataName = pagination.rowsNumber + "x" + colsNumber;
+            dataName = message("Matrix") + " "
+                    + pagination.rowsNumber + "x" + colsNumber;
         }
         return true;
     }
@@ -90,11 +95,6 @@ public class DataMatrix extends Data2D {
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
         return tableData2DDefinition.queryID(conn, dataID);
-    }
-
-    @Override
-    public long readTotal() {
-        return pagination.rowsNumber;
     }
 
     @Override
@@ -173,23 +173,8 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long clearData(FxTask task) {
-        long count = -1;
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
-            clear.setLong(1, dataID);
-            count = clear.executeUpdate();
-
-            conn.commit();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return count;
-    }
-
-    @Override
     public Data2DWriter selfWriter() {
-        MatrixWriter writer = new MatrixWriter();
+        DataMatrixWriter writer = new DataMatrixWriter();
         writer.setMatrix(this)
                 .setTargetData(this)
                 .setRecordTargetFile(false)
