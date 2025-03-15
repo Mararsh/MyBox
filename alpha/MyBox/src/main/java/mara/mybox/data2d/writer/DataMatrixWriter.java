@@ -4,9 +4,9 @@ import java.sql.PreparedStatement;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.db.Database;
-import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.data.MatrixCell;
+import mara.mybox.db.table.TableMatrixCell;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -17,7 +17,7 @@ import static mara.mybox.value.Languages.message;
 public class DataMatrixWriter extends Data2DWriter {
 
     protected DataMatrix targetMatrix;
-    protected TableData2DCell tableData2DCell;
+    protected TableMatrixCell tableData2DCell;
     protected long dataID, rowsNumber, colsNumber;
     protected Data2DColumn column;
     protected PreparedStatement insert;
@@ -47,7 +47,7 @@ public class DataMatrixWriter extends Data2DWriter {
             if (dataID < 0) {
                 return false;
             }
-            tableData2DCell = targetMatrix.tableData2DCell;
+            tableData2DCell = targetMatrix.tableMatrixCell;
             rowsNumber = targetMatrix.pagination.rowsNumber;
             colsNumber = columns.size();
 
@@ -78,11 +78,11 @@ public class DataMatrixWriter extends Data2DWriter {
                 if (v == null || (double) v == 0d) {
                     continue;
                 }
-                Data2DCell cell = Data2DCell.create()
+                MatrixCell cell = MatrixCell.create()
                         .setDataID(dataID)
                         .setRowID(targetRowIndex)
                         .setColumnID(c)
-                        .setValue(v + "");
+                        .setValue((double) v);
                 if (tableData2DCell.setInsertStatement(conn, insert, cell)) {
                     insert.addBatch();
                     if (++targetRowIndex % Database.BatchSize == 0) {

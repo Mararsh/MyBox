@@ -416,8 +416,13 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public void loadDataSize() {
-        if (!isValidData() || dataSizeLoaded
-                || data2D.isTmpData() || data2D.isMatrix()) {
+        if (!isValidData() || data2D.isTmpData()) {
+            setLoaded();
+            return;
+        }
+        if (dataSizeLoaded || data2D.isMatrix()) {
+            dataSizeLoaded = true;
+            data2D.setDataLoaded(true);
             afterLoaded();
             return;
         }
@@ -499,14 +504,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (saveButton != null) {
             saveButton.setDisable(false);
         }
-        if (data2D.isMatrix()) {
-            pagination.pageSize = Integer.MAX_VALUE;
-            pagination.pagesNumber = 1;
-            pagination.currentPage = 0;
-            pagination.startRowOfCurrentPage = 0;
-        } else {
-            pagination.goPage(pagination.rowsNumber, pagination.currentPage);
-        }
+        pagination.goPage(pagination.rowsNumber, pagination.currentPage);
         updateStatus();
         notifyLoaded();
     }
@@ -517,8 +515,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public boolean isShowPagination() {
-        return isValidData() && dataSizeLoaded
-                && !data2D.isMatrix() && !data2D.isTmpData();
+        return isValidData() && dataSizeLoaded && !data2D.isTmpData();
     }
 
 

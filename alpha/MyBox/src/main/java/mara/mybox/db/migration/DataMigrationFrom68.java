@@ -15,11 +15,13 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
+import mara.mybox.db.data.MatrixCell;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
+import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.db.table.TableNodeDataColumn;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.db.table.TableNodeHtml;
@@ -72,17 +74,53 @@ public class DataMigrationFrom68 {
 
     public static void updateIn686(MyBoxLoadingController controller,
             Connection conn, String lang) {
-        try (Statement exeStatement = conn.createStatement()) {
-            MyBoxLog.info("Updating tables in 6.8.6...");
-            controller.info("Updating tables in 6.8.6...");
+        MyBoxLog.info("Updating tables in 6.8.6...");
+        controller.info("Updating tables in 6.8.6...");
 
-            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold_tmp  DOUBLE");
-            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold_tmp=color_threshold");
-            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold");
-            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  DOUBLE");
-            exeStatement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_threshold_tmp");
-            exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold_tmp");
+        TableMatrixCell tableMatrixCell = new TableMatrixCell();
+        try (Statement statement = conn.createStatement();
+                ResultSet result = statement.executeQuery("select * from Data2D_Cell");
+                PreparedStatement insert = conn.prepareStatement(tableMatrixCell.insertStatement())) {
+            conn.setAutoCommit(false);
+            int count = 0;
+            while (result.next()) {
+                try {
+                    MatrixCell cell = MatrixCell.create()
+                            .setDataID(result.getLong("dcdid"))
+                            .setRowID(result.getLong("row"))
+                            .setColumnID(result.getLong("col"))
+                            .setValue(result.getDouble("value"));
 
+                    if (tableMatrixCell.setInsertStatement(conn, insert, cell)) {
+                        insert.addBatch();
+                        if (++count % Database.BatchSize == 0) {
+                            insert.executeBatch();
+                            conn.commit();
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                }
+            }
+            result.close();
+            insert.executeBatch();
+            insert.clearBatch();
+            conn.commit();
+            controller.info("Moved table Matrix_cell. Count:" + count);
+
+            statement.executeUpdate("DROP TABLE Data2D_Cell");
+
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+
+        try (Statement statement = conn.createStatement()) {
+            statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold_tmp  DOUBLE");
+            statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold_tmp=color_threshold");
+            statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold");
+            statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  DOUBLE");
+            statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_threshold_tmp");
+            statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold_tmp");
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

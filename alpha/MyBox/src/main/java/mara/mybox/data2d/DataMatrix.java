@@ -7,10 +7,10 @@ import java.util.List;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.data.MatrixCell;
+import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
@@ -30,11 +30,11 @@ import org.apache.commons.math3.linear.OpenMapRealMatrix;
  */
 public class DataMatrix extends Data2D {
 
-    public TableData2DCell tableData2DCell;
+    public TableMatrixCell tableMatrixCell;
 
     public DataMatrix() {
         dataType = DataType.Matrix;
-        tableData2DCell = new TableData2DCell();
+        tableMatrixCell = new TableMatrixCell();
     }
 
     public int type() {
@@ -46,7 +46,7 @@ public class DataMatrix extends Data2D {
     }
 
     public boolean isSparse() {
-        return tableData2DCell.size()
+        return tableMatrixCell.size()
                 < pagination.rowsNumber * colsNumber * sparseMatrixThreshold;
     }
 
@@ -55,7 +55,7 @@ public class DataMatrix extends Data2D {
         int cols = (int) colsNumber;
         if (cols > blockMatrixThreshold) {
             return new BlockRealMatrix(rows, cols);
-        } else if (tableData2DCell.size(conn) < rows * cols * sparseMatrixThreshold) {
+        } else if (tableMatrixCell.size(conn) < rows * cols * sparseMatrixThreshold) {
             return new OpenMapRealMatrix(rows, cols);
         } else {
             return new Array2DRowRealMatrix(rows, cols);
@@ -68,9 +68,9 @@ public class DataMatrix extends Data2D {
                 return;
             }
             super.cloneData(d);
-            tableData2DCell = d.tableData2DCell;
-            if (tableData2DCell == null) {
-                tableData2DCell = new TableData2DCell();
+            tableMatrixCell = d.tableMatrixCell;
+            if (tableMatrixCell == null) {
+                tableMatrixCell = new TableMatrixCell();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -98,6 +98,11 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
+    public long readTotal() {
+        return pagination.rowsNumber;
+    }
+
+    @Override
     public List<String> readColumnNames() {
         checkForLoad();
         List<String> names = new ArrayList<>();
@@ -108,7 +113,7 @@ public class DataMatrix extends Data2D {
     }
 
     public String pageQuery() {
-        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + dataID
+        String sql = "SELECT * FROM Matrix_Cell WHERE mcdid=" + dataID
                 + " AND row >" + (pagination.startRowOfCurrentPage + 1)
                 + " AND row < " + (pagination.startRowOfCurrentPage + pagination.pageSize);
         return sql;
@@ -203,7 +208,7 @@ public class DataMatrix extends Data2D {
         if (conn == null || matrix == null || cols == null || rows == null) {
             return -1;
         }
-        TableData2DCell tableData2DCell = matrix.tableData2DCell;
+        TableMatrixCell tableData2DCell = matrix.tableMatrixCell;
         try {
             matrix.setColsNumber(cols.size());
             matrix.setRowsNumber(rows.size());
@@ -212,7 +217,7 @@ public class DataMatrix extends Data2D {
             if (dataid < 0) {
                 return -2;
             }
-            try (PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
+            try (PreparedStatement clear = conn.prepareStatement(TableMatrixCell.ClearData)) {
                 clear.setLong(1, dataid);
                 clear.executeUpdate();
             } catch (Exception e) {
@@ -231,8 +236,8 @@ public class DataMatrix extends Data2D {
                     if (d == 0 || DoubleTools.invalidDouble(d)) {
                         continue;
                     }
-                    Data2DCell cell = Data2DCell.create().setDataID(dataid)
-                            .setRowID(r).setColumnID(c).setValue(d + "");
+                    MatrixCell cell = MatrixCell.create().setDataID(dataid)
+                            .setRowID(r).setColumnID(c).setValue(d);
                     tableData2DCell.insertData(conn, cell);
                 }
                 num++;
@@ -248,8 +253,8 @@ public class DataMatrix extends Data2D {
         }
     }
 
-    public TableData2DCell getTableData2DCell() {
-        return tableData2DCell;
+    public TableMatrixCell getTableMatrixCell() {
+        return tableMatrixCell;
     }
 
 }

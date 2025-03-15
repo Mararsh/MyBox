@@ -3,7 +3,7 @@ package mara.mybox.data2d.modify;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import mara.mybox.data2d.DataMatrix;
-import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.table.TableMatrixCell;
 
 /**
  * @Author Mara
@@ -13,7 +13,7 @@ import mara.mybox.db.table.TableData2DCell;
 public abstract class DataMatrixModify extends Data2DModify {
 
     protected DataMatrix sourceMatrix;
-    protected TableData2DCell tableData2DCell;
+    protected TableMatrixCell tableMatrixCell;
     protected long dataID, colsNumber;
     protected PreparedStatement insertCellStatement, deleteRowStatement;
     protected Statement dbStatement;
@@ -23,7 +23,7 @@ public abstract class DataMatrixModify extends Data2DModify {
             return false;
         }
         sourceMatrix = data;
-        tableData2DCell = sourceMatrix.tableData2DCell;
+        tableMatrixCell = sourceMatrix.tableMatrixCell;
         dataID = sourceMatrix.dataID;
         rowsNumber = sourceMatrix.pagination.rowsNumber;
         colsNumber = sourceMatrix.colsNumber;

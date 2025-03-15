@@ -5,10 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import mara.mybox.data2d.DataMatrix;
-import static mara.mybox.data2d.DataMatrix.toDouble;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DCell;
-import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.data.MatrixCell;
+import mara.mybox.db.table.TableMatrixCell;
 
 /**
  * @Author Mara
@@ -18,13 +17,13 @@ import mara.mybox.db.table.TableData2DCell;
 public class DataMatrixReader extends Data2DReader {
 
     protected DataMatrix sourceMatrix;
-    protected TableData2DCell tableData2DCell;
+    protected TableMatrixCell tableData2DCell;
     protected long dataID, rowsNumber, colsNumber;
 
     public DataMatrixReader(DataMatrix data) {
         sourceMatrix = data;
         sourceData = data;
-        tableData2DCell = sourceMatrix.tableData2DCell;
+        tableData2DCell = sourceMatrix.tableMatrixCell;
         dataID = sourceMatrix.dataID;
         rowsNumber = sourceMatrix.pagination.rowsNumber;
         colsNumber = sourceMatrix.colsNumber;
@@ -43,7 +42,7 @@ public class DataMatrixReader extends Data2DReader {
     @Override
     public void readPage() {
         try (Connection rconn = DerbyBase.getConnection();
-                PreparedStatement query = rconn.prepareStatement(TableData2DCell.QueryRow)) {
+                PreparedStatement query = rconn.prepareStatement(TableMatrixCell.QueryRow)) {
             rconn.setAutoCommit(false);
             long cellCol;
             long startIndex = sourceMatrix.pagination.startRowOfCurrentPage;
@@ -59,7 +58,7 @@ public class DataMatrixReader extends Data2DReader {
                 for (long c = 0; c < colsNumber; c++) {
                     sourceRow.add("0");
                 }
-                showInfo(TableData2DCell.QueryRow + "\ndata ID:" + dataID
+                showInfo(TableMatrixCell.QueryRow + "\ndata ID:" + dataID
                         + "\nrow:" + sourceIndex);
                 query.setLong(1, dataID);
                 query.setLong(2, sourceIndex);
@@ -68,10 +67,10 @@ public class DataMatrixReader extends Data2DReader {
                         if (isStopped()) {
                             return;
                         }
-                        Data2DCell cell = tableData2DCell.readData(results);
+                        MatrixCell cell = tableData2DCell.readData(results);
                         cellCol = cell.getColumnID();
                         if (cellCol > -1 && cellCol < colsNumber) {
-                            sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
+                            sourceRow.set((int) cellCol, cell.getValue() + "");
                         }
                     }
                 } catch (Exception e) {
@@ -91,11 +90,11 @@ public class DataMatrixReader extends Data2DReader {
         sourceIndex = 0;
         long startIndex = sourceMatrix.pagination.startRowOfCurrentPage;
         long endIndex = sourceMatrix.pagination.endRowOfCurrentPage;
-        String sql = "SELECT * FROM Data2D_Cell WHERE dcdid=" + sourceMatrix.dataID
+        String sql = "SELECT * FROM Matrix_Cell WHERE mcdid=" + sourceMatrix.dataID
                 + " AND row=?";
         showInfo(sql);
         try (Connection rconn = DerbyBase.getConnection();
-                PreparedStatement query = rconn.prepareStatement(TableData2DCell.QueryRow)) {
+                PreparedStatement query = rconn.prepareStatement(TableMatrixCell.QueryRow)) {
             rconn.setAutoCommit(false);
             long cellCol;
             for (long rowIndex = 0; rowIndex < rowsNumber; rowIndex++) {
@@ -108,7 +107,7 @@ public class DataMatrixReader extends Data2DReader {
                     for (long c = 0; c < colsNumber; c++) {
                         sourceRow.add("0");
                     }
-                    showInfo(TableData2DCell.QueryRow + "\ndata ID:" + dataID
+                    showInfo(TableMatrixCell.QueryRow + "\ndata ID:" + dataID
                             + "\nrow:" + rowIndex);
                     query.setLong(1, dataID);
                     query.setLong(2, rowIndex);
@@ -117,10 +116,10 @@ public class DataMatrixReader extends Data2DReader {
                             if (isStopped()) {
                                 return;
                             }
-                            Data2DCell cell = sourceMatrix.tableData2DCell.readData(results);
+                            MatrixCell cell = sourceMatrix.tableMatrixCell.readData(results);
                             cellCol = cell.getColumnID();
                             if (cellCol > -1 && cellCol < colsNumber) {
-                                sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
+                                sourceRow.set((int) cellCol, cell.getValue() + "");
                             }
                         }
                     } catch (Exception e) {

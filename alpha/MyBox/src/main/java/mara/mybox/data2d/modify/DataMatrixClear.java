@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.table.TableMatrixCell;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -21,8 +21,8 @@ public class DataMatrixClear extends DataMatrixModify {
     @Override
     public boolean go() {
         try (Connection dconn = DerbyBase.getConnection();
-                PreparedStatement clear = dconn.prepareStatement(TableData2DCell.ClearData)) {
-            showInfo(TableData2DCell.ClearData + "\ndata ID: " + dataID);
+                PreparedStatement clear = dconn.prepareStatement(TableMatrixCell.ClearData)) {
+            showInfo(TableMatrixCell.ClearData + "\ndata ID: " + dataID);
             clear.setLong(1, dataID);
             handledCount = clear.executeUpdate();
             if (handledCount >= 0) {

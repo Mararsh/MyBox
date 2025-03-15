@@ -7,11 +7,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.DataMatrix;
-import static mara.mybox.data2d.DataMatrix.toDouble;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DCell;
-import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.data.MatrixCell;
+import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -30,15 +29,15 @@ public class DataMatrixDelete extends DataMatrixModify {
     public boolean go() {
         handledCount = 0;
         try (Connection dconn = DerbyBase.getConnection();
-                PreparedStatement query = dconn.prepareStatement(TableData2DCell.QueryRow);
-                PreparedStatement delete = dconn.prepareStatement(TableData2DCell.DeleteRow);
+                PreparedStatement query = dconn.prepareStatement(TableMatrixCell.QueryRow);
+                PreparedStatement delete = dconn.prepareStatement(TableMatrixCell.DeleteRow);
                 Statement statement = dconn.createStatement()) {
             conn = dconn;
             conn.setAutoCommit(false);
             deleteRowStatement = delete;
             dbStatement = statement;
 
-            showInfo(TableData2DCell.QueryRow);
+            showInfo(TableMatrixCell.QueryRow);
 
             long cellCol;
             for (sourceRowIndex = 0; sourceRowIndex < rowsNumber; sourceRowIndex++) {
@@ -56,10 +55,10 @@ public class DataMatrixDelete extends DataMatrixModify {
                         if (stopped || reachMaxFiltered) {
                             break;
                         }
-                        Data2DCell cell = tableData2DCell.readData(results);
+                        MatrixCell cell = tableMatrixCell.readData(results);
                         cellCol = cell.getColumnID();
                         if (cellCol > -1 && cellCol < colsNumber) {
-                            sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
+                            sourceRow.set((int) cellCol, cell.getValue() + "");
                         }
                     }
                 } catch (Exception e) {
@@ -100,8 +99,8 @@ public class DataMatrixDelete extends DataMatrixModify {
                 deleteRowStatement.setLong(1, dataID);
                 deleteRowStatement.setLong(2, sourceRowIndex);
                 deleteRowStatement.executeUpdate();
-                dbStatement.executeUpdate("UPDATE Data2D_Cell SET row=row-1 WHERE "
-                        + " dcdid=" + dataID + " AND row>" + sourceRowIndex);
+                dbStatement.executeUpdate("UPDATE Matrix_Cell SET row=row-1 WHERE "
+                        + " mcdid=" + dataID + " AND row>" + sourceRowIndex);
                 if (++handledCount % Database.BatchSize == 0) {
                     conn.commit();
                     showInfo(message("Deleted") + ": " + handledCount);

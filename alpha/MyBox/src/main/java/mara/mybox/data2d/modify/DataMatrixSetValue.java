@@ -6,11 +6,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.DataMatrix;
-import static mara.mybox.data2d.DataMatrix.toDouble;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DCell;
-import mara.mybox.db.table.TableData2DCell;
+import mara.mybox.db.data.MatrixCell;
+import mara.mybox.db.table.TableMatrixCell;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -32,14 +31,14 @@ public class DataMatrixSetValue extends DataMatrixModify {
     public boolean go() {
         handledCount = 0;
         try (Connection rconn = DerbyBase.getConnection();
-                PreparedStatement query = rconn.prepareStatement(TableData2DCell.QueryRow);
-                PreparedStatement delete = rconn.prepareStatement(TableData2DCell.DeleteRow);
-                PreparedStatement insert = rconn.prepareStatement(tableData2DCell.insertStatement())) {
+                PreparedStatement query = rconn.prepareStatement(TableMatrixCell.QueryRow);
+                PreparedStatement delete = rconn.prepareStatement(TableMatrixCell.DeleteRow);
+                PreparedStatement insert = rconn.prepareStatement(tableMatrixCell.insertStatement())) {
             conn = rconn;
             conn.setAutoCommit(false);
             deleteRowStatement = delete;
             insertCellStatement = insert;
-            showInfo(TableData2DCell.QueryRow);
+            showInfo(TableMatrixCell.QueryRow);
             long cellCol;
             for (sourceRowIndex = 0; sourceRowIndex < rowsNumber; sourceRowIndex++) {
                 if (stopped) {
@@ -57,10 +56,10 @@ public class DataMatrixSetValue extends DataMatrixModify {
                         if (stopped) {
                             break;
                         }
-                        Data2DCell cell = tableData2DCell.readData(results);
+                        MatrixCell cell = tableMatrixCell.readData(results);
                         cellCol = cell.getColumnID();
                         if (cellCol > -1 && cellCol < colsNumber) {
-                            sourceRow.set((int) cellCol, toDouble(cell.getValue()) + "");
+                            sourceRow.set((int) cellCol, cell.getValue() + "");
                         }
                     }
                 } catch (Exception e) {
@@ -103,12 +102,12 @@ public class DataMatrixSetValue extends DataMatrixModify {
                 if (v == null || (double) v == 0d) {
                     continue;
                 }
-                Data2DCell cell = Data2DCell.create()
+                MatrixCell cell = MatrixCell.create()
                         .setDataID(dataID)
                         .setRowID(sourceRowIndex)
                         .setColumnID(c)
-                        .setValue(v + "");
-                if (tableData2DCell.setInsertStatement(conn, insertCellStatement, cell)) {
+                        .setValue((double) v);
+                if (tableMatrixCell.setInsertStatement(conn, insertCellStatement, cell)) {
                     insertCellStatement.addBatch();
                 }
             }
