@@ -15,6 +15,7 @@ import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
@@ -38,7 +39,9 @@ public class Data2DDefinition extends BaseData {
     public Date modifyTime;
 
     public static enum DataType {
-        Texts, CSV, Excel, MyBoxClipboard, Matrix, DatabaseTable, InternalTable
+        Texts, CSV, Excel, MyBoxClipboard, DoubleMatrix,
+        DatabaseTable, InternalTable,
+        FloatMatrix, IntMatrix
     }
 
     public Data2DDefinition() {
@@ -76,13 +79,14 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public void cloneDef(Data2DDefinition d) {
+    public Data2DDefinition cloneDef(Data2DDefinition d) {
         try {
             cloneDefBase(d);
             cloneValueAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+        return this;
     }
 
     public void cloneDefBase(Data2DDefinition d) {
@@ -207,7 +211,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean isMatrix() {
-        return dataType == DataType.Matrix;
+        return dataType == DataType.DoubleMatrix;
     }
 
     public boolean isClipboard() {
@@ -225,18 +229,23 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean isDataFile() {
-        return dataType == DataType.CSV || dataType == DataType.Excel || dataType == DataType.Texts;
+        return dataType == DataType.CSV
+                || dataType == DataType.Excel
+                || dataType == DataType.Texts
+                || dataType == DataType.DoubleMatrix;
     }
 
     public boolean isTable() {
-        return dataType == DataType.DatabaseTable || dataType == DataType.InternalTable;
+        return dataType == DataType.DatabaseTable
+                || dataType == DataType.InternalTable;
     }
 
     public boolean isTextFile() {
         return file != null && file.exists()
                 && (dataType == DataType.CSV
                 || dataType == DataType.MyBoxClipboard
-                || dataType == DataType.Texts);
+                || dataType == DataType.Texts
+                || dataType == DataType.DoubleMatrix);
     }
 
     public String getTitle() {
@@ -291,7 +300,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean alwayRejectInvalid() {
-        return dataType == DataType.Matrix
+        return dataType == DataType.DoubleMatrix
                 || dataType == DataType.DatabaseTable
                 || dataType == DataType.InternalTable;
     }
@@ -437,6 +446,9 @@ public class Data2DDefinition extends BaseData {
             case "csv":
                 return DataType.CSV;
         }
+        if (file.getAbsolutePath().startsWith(AppPaths.getMatrixPath() + File.separator)) {
+            return DataType.DoubleMatrix;
+        }
         return DataType.Texts;
     }
 
@@ -464,7 +476,7 @@ public class Data2DDefinition extends BaseData {
                 return Data2DManufactureController.openDef(def);
             case MyBoxClipboard:
                 return DataInMyBoxClipboardController.open(def);
-            case Matrix:
+            case DoubleMatrix:
                 return MatricesManageController.open(def);
             case InternalTable:
                 return MyBoxTablesController.open(def);

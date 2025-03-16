@@ -291,17 +291,19 @@ public class Data2DMenuTools {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (data2D.isCSV()) {
-                    DataFileCSVFormatController.open(dataController);
-                } else if (data2D.isTexts()) {
-                    DataFileTextFormatController.open(dataController);
-                } else if (data2D.isExcel()) {
-                    DataFileExcelFormatController.open(dataController);
-                }
-            });
-            items.add(menu);
+            if (!data2D.isMatrix()) {
+                menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (data2D.isCSV()) {
+                        DataFileCSVFormatController.open(dataController);
+                    } else if (data2D.isTexts() || data2D.isMatrix()) {
+                        DataFileTextFormatController.open(dataController);
+                    } else if (data2D.isExcel()) {
+                        DataFileExcelFormatController.open(dataController);
+                    }
+                });
+                items.add(menu);
+            }
 
             CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
             backItem.setSelected(UserConfig.getBoolean("Data2DFileBackupWhenSave", true));
@@ -328,7 +330,7 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            if (data2D.isTexts() || data2D.isCSV()) {
+            if (data2D.isTextFile()) {
                 menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     dataController.editTextFile();
@@ -741,7 +743,7 @@ public class Data2DMenuTools {
 
             menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.Matrix);
+                Data2DManufactureController.create(DataType.DoubleMatrix);
             });
             items.add(menu);
 

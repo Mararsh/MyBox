@@ -420,8 +420,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             setLoaded();
             return;
         }
-        if (dataSizeLoaded || data2D.isMatrix()) {
-            dataSizeLoaded = true;
+        if (dataSizeLoaded) {
             data2D.setDataLoaded(true);
             afterLoaded();
             return;

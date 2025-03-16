@@ -16,7 +16,6 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
-import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
@@ -31,6 +30,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DoubleMatrix;
 
 /**
  * @Author Mara
@@ -246,13 +246,11 @@ public abstract class Data2DWriter {
                     writer = new DataFileExcelWriter();
                     break;
                 case Text:
+                case DoubleMatrix:
                     writer = new DataFileTextWriter();
                     break;
                 case DatabaseTable:
                     writer = new DataTableWriter();
-                    break;
-                case Matrix:
-                    writer = new DataMatrixWriter();
                     break;
                 case MyBoxClipboard:
                     writer = new MyBoxClipboardWriter();

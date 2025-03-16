@@ -18,7 +18,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Data2DStyle;
-import mara.mybox.db.data.MatrixCell;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.migration.DataMigration.alterColumnLength;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -28,7 +27,6 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -856,11 +854,11 @@ public class DataMigrationFrom65to67 {
 
             try (ResultSet mquery = conn.createStatement().executeQuery("SELECT * FROM Matrix")) {
                 conn.setAutoCommit(false);
-                TableMatrixCell tableData2DCell = new TableMatrixCell();
+                TableData2DCell tableData2DCell = new TableData2DCell();
                 while (mquery.next()) {
                     long mxid = mquery.getLong("mxid");
                     Data2DDefinition def = Data2DDefinition.create()
-                            .setType(Data2DDefinition.DataType.Matrix)
+                            .setType(Data2DDefinition.DataType.DoubleMatrix)
                             .setDataName(mquery.getString("name"))
                             .setScale(mquery.getShort("scale"))
                             .setColsNumber(mquery.getInt("columns_number"))
@@ -873,10 +871,10 @@ public class DataMigrationFrom65to67 {
                     try (ResultSet cquery = conn.createStatement()
                             .executeQuery("SELECT * FROM Matrix_Cell WHERE mcxid=" + mxid)) {
                         while (cquery.next()) {
-                            MatrixCell cell = MatrixCell.create().setDataID(d2did)
+                            Data2DCell cell = Data2DCell.create().setDataID(d2did)
                                     .setColumnID(cquery.getInt("col"))
                                     .setRowID(cquery.getInt("row"))
-                                    .setValue(cquery.getDouble("value"));
+                                    .setValue(cquery.getDouble("value") + "");
                             tableData2DCell.insertData(conn, cell);
                         }
                     } catch (Exception e) {

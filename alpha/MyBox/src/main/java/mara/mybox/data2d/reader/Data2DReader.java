@@ -54,7 +54,7 @@ public abstract class Data2DReader {
         } else if (data instanceof DataTable) {
             return new DataTableReader((DataTable) data);
         } else if (data instanceof DataMatrix) {
-            return new DataMatrixReader((DataMatrix) data);
+            return new DataFileTextReader((DataFileText) data);
         }
         return null;
     }

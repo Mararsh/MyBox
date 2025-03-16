@@ -15,7 +15,6 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
-import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
@@ -28,7 +27,6 @@ import mara.mybox.data2d.writer.DataFileTextWriter;
 import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.data2d.writer.HtmlWriter;
 import mara.mybox.data2d.writer.JsonWriter;
-import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.data2d.writer.MyBoxClipboardWriter;
 import mara.mybox.data2d.writer.PdfWriter;
 import mara.mybox.data2d.writer.SystemClipboardWriter;
@@ -38,6 +36,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DoubleMatrix;
 
 /**
  * @Author Mara
@@ -233,13 +232,11 @@ public class BaseDataConvertController extends BaseTaskController {
                     writer = pickExcelWriter();
                     break;
                 case Text:
+                case DoubleMatrix:
                     writer = pickTextWriter();
                     break;
                 case DatabaseTable:
                     writer = new DataTableWriter();
-                    break;
-                case Matrix:
-                    writer = new DataMatrixWriter();
                     break;
                 case MyBoxClipboard:
                     writer = new MyBoxClipboardWriter();

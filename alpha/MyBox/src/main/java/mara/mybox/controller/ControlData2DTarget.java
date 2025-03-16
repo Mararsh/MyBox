@@ -26,7 +26,6 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
-import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
@@ -45,6 +44,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DoubleMatrix;
 
 /**
  * @Author Mara
@@ -162,7 +162,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                     case Text:
                         textsRadio.setSelected(true);
                         break;
-                    case Matrix:
+                    case DoubleMatrix:
                         matrixRadio.setSelected(true);
                         break;
                     case SystemClipboard:
@@ -264,7 +264,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 optionsBox.getChildren().add(textBox);
 
             } else if (matrixRadio.isSelected()) {
-                format = TargetType.Matrix;
+                format = TargetType.DoubleMatrix;
 
             } else if (systemClipboardRadio.isSelected()) {
                 format = TargetType.SystemClipboard;
@@ -567,7 +567,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (format == TargetType.DatabaseTable) {
                 writer = dbController.pickTableWriter();
             } else {
-                if (format != TargetType.Matrix) {
+                if (format != TargetType.DoubleMatrix) {
                     targetFile = file();
                     if (targetFile == null) {
                         targetFile = Data2DConvertTools.targetFile(targetName, format);

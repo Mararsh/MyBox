@@ -42,7 +42,7 @@ public class ControlData2DSource extends BaseData2DRowsColumnsController {
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 if (data2D.isCSV()) {
                     DataFileCSVFormatController.open(this);
-                } else if (data2D.isTexts()) {
+                } else if (data2D.isTexts() || data2D.isMatrix()) {
                     DataFileTextFormatController.open(this);
                 } else if (data2D.isExcel()) {
                     DataFileExcelFormatController.open(this);
@@ -52,7 +52,7 @@ public class ControlData2DSource extends BaseData2DRowsColumnsController {
 
             items.add(new SeparatorMenuItem());
 
-            if (data2D.isTexts() || data2D.isCSV()) {
+            if (data2D.isTexts() || data2D.isCSV() || data2D.isMatrix()) {
                 menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     editTextFile();

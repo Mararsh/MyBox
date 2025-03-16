@@ -1,5 +1,6 @@
-package mara.mybox.db.data;
+package mara.mybox.db.migration;
 
+import mara.mybox.db.data.BaseData;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -7,19 +8,21 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-10-17
  * @License Apache License Version 2.0
  */
-public class MatrixCell extends BaseData {
+public class Data2DCell extends BaseData {
 
-    protected long dataID, columnID, rowID;
-    protected double value;
+    protected long cellID, dataID;
+    protected long columnID, rowID;
+    protected String value;
 
     private void init() {
+        cellID = -1;
         dataID = -1;
         columnID = -1;
         rowID = -1;
-        value = Double.NaN;
+        value = null;
     }
 
-    public MatrixCell() {
+    public Data2DCell() {
         init();
     }
 
@@ -41,31 +44,34 @@ public class MatrixCell extends BaseData {
     /*
         static methods
      */
-    public static MatrixCell create() {
-        return new MatrixCell();
+    public static Data2DCell create() {
+        return new Data2DCell();
     }
 
-    public static boolean valid(MatrixCell data) {
+    public static boolean valid(Data2DCell data) {
         return data != null && data.getColumnID() >= 0 && data.getRowID() >= 0;
     }
 
-    public static boolean setValue(MatrixCell data, String column, Object value) {
+    public static boolean setValue(Data2DCell data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
         try {
             switch (column) {
-                case "mcdid":
+                case "dceid":
+                    data.setCellID(value == null ? -1 : (long) value);
+                    return true;
+                case "dcdid":
                     data.setDataID(value == null ? -1 : (long) value);
                     return true;
                 case "col":
-                    data.setColumnID(value == null ? -1 : (long) value);
+                    data.setColumnID(value == null ? 3 : (long) value);
                     return true;
                 case "row":
-                    data.setRowID(value == null ? -1 : (long) value);
+                    data.setRowID(value == null ? 3 : (long) value);
                     return true;
                 case "value":
-                    data.setValue(value == null ? Double.NaN : (double) value);
+                    data.setValue(value == null ? null : (String) value);
                     return true;
 
             }
@@ -75,13 +81,15 @@ public class MatrixCell extends BaseData {
         return false;
     }
 
-    public static Object getValue(MatrixCell data, String column) {
+    public static Object getValue(Data2DCell data, String column) {
         if (data == null || column == null) {
             return null;
         }
         try {
             switch (column) {
-                case "mcdid":
+                case "dceid":
+                    return data.getCellID();
+                case "dcdid":
                     return data.getDataID();
                 case "row":
                     return data.getRowID();
@@ -99,20 +107,29 @@ public class MatrixCell extends BaseData {
     /*
         get/set
      */
+    public long getCellID() {
+        return cellID;
+    }
+
+    public Data2DCell setCellID(long dceid) {
+        this.cellID = dceid;
+        return this;
+    }
+
     public long getDataID() {
         return dataID;
     }
 
-    public MatrixCell setDataID(long dataid) {
+    public Data2DCell setDataID(long dataid) {
         this.dataID = dataid;
         return this;
     }
 
-    public double getValue() {
+    public String getValue() {
         return value;
     }
 
-    public MatrixCell setValue(double value) {
+    public Data2DCell setValue(String value) {
         this.value = value;
         return this;
     }
@@ -121,7 +138,7 @@ public class MatrixCell extends BaseData {
         return columnID;
     }
 
-    public MatrixCell setColumnID(long col) {
+    public Data2DCell setColumnID(long col) {
         this.columnID = col;
         return this;
     }
@@ -130,7 +147,7 @@ public class MatrixCell extends BaseData {
         return rowID;
     }
 
-    public MatrixCell setRowID(long row) {
+    public Data2DCell setRowID(long row) {
         this.rowID = row;
         return this;
     }

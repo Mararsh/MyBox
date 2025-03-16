@@ -124,7 +124,7 @@ public abstract class Data2D extends Data2D_Operations {
             case Texts:
                 data = new DataFileText();
                 break;
-            case Matrix:
+            case DoubleMatrix:
                 data = new DataMatrix();
                 break;
             case MyBoxClipboard:

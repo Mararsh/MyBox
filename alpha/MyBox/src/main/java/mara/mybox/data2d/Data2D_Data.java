@@ -116,14 +116,14 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean supportMultipleLine() {
-        return dataType != DataType.Texts && dataType != DataType.Matrix;
+        return dataType != DataType.Texts && dataType != DataType.DoubleMatrix;
     }
 
     /*
         matrix
      */
     public boolean isSquareMatrix() {
-        return dataType == DataType.Matrix && tableColsNumber() == tableRowsNumber();
+        return dataType == DataType.DoubleMatrix && tableColsNumber() == tableRowsNumber();
     }
 
     /*
@@ -311,6 +311,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             case CSV:
             case Excel:
             case Texts:
+            case DoubleMatrix:
                 return file == null;
             case DatabaseTable:
             case InternalTable:
@@ -335,7 +336,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         for (int i = 0; i < rows; i++) {
             List<String> row = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
-                if (dataType == DataType.Matrix) {
+                if (dataType == DataType.DoubleMatrix) {
                     row.add(randomDouble(random, true));
                 } else {
                     row.add(randomString(random));

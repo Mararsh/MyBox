@@ -30,7 +30,6 @@ public class BaseTableTools {
                 put("FLOAT_MATRIX", new TableFloatMatrix());
                 put("IMAGE_CLIPBOARD", new TableImageClipboard());
                 put("IMAGE_EDIT_HISTORY", new TableImageEditHistory());
-                put("MATRIX_CELL", new TableMatrixCell());
                 put("MEDIA", new TableMedia());
                 put("MEDIA_LIST", new TableMediaList());
                 put("MYBOX_LOG", new TableMyBoxLog());

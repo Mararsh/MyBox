@@ -26,7 +26,7 @@ public class MatricesManageController extends BaseData2DListController {
     @Override
     public void setConditions() {
         try {
-            queryConditions = " data_type = " + Data2D.type(Data2DDefinition.DataType.Matrix);
+            queryConditions = " data_type = " + Data2D.type(Data2DDefinition.DataType.DoubleMatrix);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -36,7 +36,7 @@ public class MatricesManageController extends BaseData2DListController {
     @FXML
     @Override
     public void createAction() {
-        Data2DManufactureController.create(Data2DDefinition.DataType.Matrix);
+        Data2DManufactureController.create(Data2DDefinition.DataType.DoubleMatrix);
     }
 
     /*
@@ -71,7 +71,7 @@ public class MatricesManageController extends BaseData2DListController {
 
     public static MatricesManageController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         MatricesManageController controller = oneOpen();
-        controller.viewController.loadType(Data2DDefinition.DataType.Matrix, name, cols, data);
+        controller.viewController.loadType(Data2DDefinition.DataType.DoubleMatrix, name, cols, data);
         return controller;
     }
 
