@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
@@ -15,15 +16,18 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataFileCSVWriter;
 import mara.mybox.data2d.writer.DataFileExcelWriter;
 import mara.mybox.data2d.writer.DataFileTextWriter;
+import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.data2d.writer.HtmlWriter;
 import mara.mybox.data2d.writer.JsonWriter;
@@ -36,7 +40,6 @@ import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import static mara.mybox.data2d.Data2D_Attributes.TargetType.DoubleMatrix;
 
 /**
  * @Author Mara
@@ -57,12 +60,15 @@ public class BaseDataConvertController extends BaseTaskController {
     protected ControlTextOptions textWriteOptionsController;
     @FXML
     protected ControlPdfWriteOptions pdfOptionsController;
+    @FXML
+    protected ControlMatrixOptions matrixOptionsController;
 
     public void initControls(String name) {
-        baseName = name + "_" + baseName;
+        baseName = name;
         initCSV();
         initExcel();
         initTexts();
+        initMatrix();
         initPDF();
         initHtml();
     }
@@ -85,6 +91,12 @@ public class BaseDataConvertController extends BaseTaskController {
     private void initTexts() {
         if (textWriteOptionsController != null) {
             textWriteOptionsController.setControls(baseName + "TextWrite", false, true);
+        }
+    }
+
+    private void initMatrix() {
+        if (matrixOptionsController != null) {
+            matrixOptionsController.setParameters(baseName);
         }
     }
 
@@ -154,6 +166,22 @@ public class BaseDataConvertController extends BaseTaskController {
                         .setWriteHeader(textWriteOptionsController.withName());
             }
 
+            return writer;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public DataMatrixWriter pickMatrixWriter() {
+        try {
+            DataMatrixWriter writer = new DataMatrixWriter();
+            String type = matrixOptionsController != null
+                    ? matrixOptionsController.type() : "Double";
+            writer.setDataType(type)
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(DataMatrix.MatrixDelimiter)
+                    .setWriteHeader(false);
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -232,8 +260,10 @@ public class BaseDataConvertController extends BaseTaskController {
                     writer = pickExcelWriter();
                     break;
                 case Text:
-                case DoubleMatrix:
                     writer = pickTextWriter();
+                    break;
+                case Matrix:
+                    writer = pickMatrixWriter();
                     break;
                 case DatabaseTable:
                     writer = new DataTableWriter();

@@ -435,7 +435,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
             if (columnsController != null
                     && columnsController.data2D != null && columnsController.data2D.isMatrix()) {
-                column.setType(ColumnType.Double).setFormat(format);
+                column.setType(columnsController.data2D.defaultColumnType())
+                        .setFormat(format);
             } else if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String).setFormat(null);
             } else if (doubleRadio.isSelected()) {

@@ -2,8 +2,16 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Date;
+import java.util.Random;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.IntTools;
+import mara.mybox.tools.LongTools;
 import mara.mybox.tools.NumberTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -18,13 +26,14 @@ public class DataMatrix extends DataFileText {
     public static final String MatrixDelimiter = "|";
 
     public DataMatrix() {
-        dataType = DataType.DoubleMatrix;
+        dataType = DataType.Matrix;
+        sheet = "Double";
         delimiter = MatrixDelimiter;
         hasHeader = false;
     }
 
     public int type() {
-        return type(DataType.DoubleMatrix);
+        return type(DataType.Matrix);
     }
 
 //    public AbstractRealMatrix realMatrix(Connection conn) {
@@ -65,6 +74,60 @@ public class DataMatrix extends DataFileText {
         return true;
     }
 
+    @Override
+    public boolean defaultColNotNull() {
+        return true;
+    }
+
+    @Override
+    public String defaultColValue() {
+        return "0";
+    }
+
+    @Override
+    public ColumnDefinition.ColumnType defaultColumnType() {
+        if (sheet == null) {
+            sheet = "Double";
+        }
+        switch (sheet.toLowerCase()) {
+            case "float":
+                return ColumnType.Float;
+            case "integer":
+                return ColumnType.Integer;
+            case "long":
+                return ColumnType.Long;
+            case "short":
+                return ColumnType.Short;
+            case "boolean":
+                return ColumnType.Boolean;
+            case "double":
+            default:
+                return ColumnType.Double;
+        }
+    }
+
+    @Override
+    public String randomString(Random random, boolean nonNegative) {
+        if (sheet == null) {
+            sheet = "Double";
+        }
+        switch (sheet) {
+            case "float":
+                return NumberTools.format(FloatTools.random(random, maxRandom, nonNegative), scale);
+            case "integer":
+                return StringTools.format(IntTools.random(random, maxRandom, nonNegative));
+            case "long":
+                return StringTools.format(LongTools.random(random, maxRandom, nonNegative));
+            case "short":
+                return StringTools.format((short) IntTools.random(random, maxRandom, nonNegative));
+            case "boolean":
+                return random.nextInt(2) + "";
+            case "double":
+            default:
+                return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
+        }
+    }
+
     public String toString(double d) {
         if (DoubleTools.invalidDouble(d)) {
             return Double.NaN + "";
@@ -81,13 +144,17 @@ public class DataMatrix extends DataFileText {
         }
     }
 
-    public String filename() {
-        return filename(dataID);
+    public static String filename() {
+        try {
+            return filename(new Date().getTime() + "");
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    public static String filename(long dataid) {
+    public static String filename(String name) {
         try {
-            return AppPaths.getMatrixPath() + File.separator + dataid + ".txt";
+            return AppPaths.getMatrixPath() + File.separator + name + ".txt";
         } catch (Exception e) {
             return null;
         }

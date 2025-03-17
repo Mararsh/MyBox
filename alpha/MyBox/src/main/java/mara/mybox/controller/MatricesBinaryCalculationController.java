@@ -59,7 +59,7 @@ public class MatricesBinaryCalculationController extends BaseController {
         try {
             super.initValues();
 
-            resultController.createData(Data2D.DataType.DoubleMatrix);
+            resultController.createData(Data2D.DataType.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {

@@ -38,21 +38,23 @@ public class ControlData2DSource extends BaseData2DRowsColumnsController {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (data2D.isCSV()) {
-                    DataFileCSVFormatController.open(this);
-                } else if (data2D.isTexts() || data2D.isMatrix()) {
-                    DataFileTextFormatController.open(this);
-                } else if (data2D.isExcel()) {
-                    DataFileExcelFormatController.open(this);
-                }
-            });
-            items.add(menu);
+            if (!data2D.isMatrix()) {
+                menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (data2D.isCSV()) {
+                        DataFileCSVFormatController.open(this);
+                    } else if (data2D.isTexts()) {
+                        DataFileTextFormatController.open(this);
+                    } else if (data2D.isExcel()) {
+                        DataFileExcelFormatController.open(this);
+                    }
+                });
+                items.add(menu);
+            }
 
             items.add(new SeparatorMenuItem());
 
-            if (data2D.isTexts() || data2D.isCSV() || data2D.isMatrix()) {
+            if (data2D.isTextFile()) {
                 menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     editTextFile();

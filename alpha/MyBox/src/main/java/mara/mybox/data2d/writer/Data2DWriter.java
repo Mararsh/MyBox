@@ -30,7 +30,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import static mara.mybox.data2d.Data2D_Attributes.TargetType.DoubleMatrix;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
 
 /**
  * @Author Mara
@@ -246,7 +246,7 @@ public abstract class Data2DWriter {
                     writer = new DataFileExcelWriter();
                     break;
                 case Text:
-                case DoubleMatrix:
+                case Matrix:
                     writer = new DataFileTextWriter();
                     break;
                 case DatabaseTable:

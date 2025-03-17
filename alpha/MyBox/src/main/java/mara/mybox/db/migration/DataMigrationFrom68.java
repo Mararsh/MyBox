@@ -90,15 +90,14 @@ public class DataMigrationFrom68 {
                 String line;
                 ResultSet rowResult;
                 double[] row;
-                Charset charset = Charset.forName("utf-8");
+                Charset charset = Charset.forName("UTF-8");
                 while (defResult.next()) {
                     try {
                         Data2DDefinition def = tableData2DDefinition.readData(defResult);
                         long dataid = def.getDataID();
                         long colsNumber = def.getColsNumber();
                         long rowsNumber = def.getRowsNumber();
-                        File file = new File(DataMatrix.filename(dataid));
-                        file.getParentFile().mkdirs();
+                        File file = new File(DataMatrix.filename(dataid + ""));
                         rowQuery.setLong(1, dataid);
                         controller.info("Moving matrix:" + file);
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, charset, false))) {
@@ -125,10 +124,9 @@ public class DataMigrationFrom68 {
                             writer.flush();
                         } catch (Exception ex) {
                         }
-                        def.setFile(file)
-                                .setCharset(charset)
-                                .setDelimiter(DataMatrix.MatrixDelimiter)
-                                .setHasHeader(false);
+                        def.setFile(file).setSheet("Double")
+                                .setCharset(charset).setHasHeader(false)
+                                .setDelimiter(DataMatrix.MatrixDelimiter);
                         tableData2DDefinition.updateData(conn, def);
                         conn.commit();
                     } catch (Exception e) {
@@ -136,7 +134,26 @@ public class DataMigrationFrom68 {
                 }
                 defResult.close();
 
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+
+            conn.setAutoCommit(true);
+
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE  Data2D_Cell DROP CONSTRAINT  Data2D_Cell_fk");
                 statement.executeUpdate("DROP TABLE Data2D_Cell");
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold_tmp  DOUBLE");
+                statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold_tmp=color_threshold");
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold");
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  DOUBLE");
+                statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_threshold_tmp");
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold_tmp");
             } catch (Exception e) {
                 MyBoxLog.console(e);
             }
@@ -144,16 +161,6 @@ public class DataMigrationFrom68 {
             MyBoxLog.console(e);
         }
 
-        try (Statement statement = conn.createStatement()) {
-            statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold_tmp  DOUBLE");
-            statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold_tmp=color_threshold");
-            statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold");
-            statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  DOUBLE");
-            statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_threshold_tmp");
-            statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold_tmp");
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
     }
 
     public static void updateIn685(MyBoxLoadingController controller,

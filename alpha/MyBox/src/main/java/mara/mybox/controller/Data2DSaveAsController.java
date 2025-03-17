@@ -15,7 +15,7 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import static mara.mybox.db.data.Data2DDefinition.DataType.DoubleMatrix;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
 
 /**
  * @Author Mara
@@ -69,8 +69,8 @@ public class Data2DSaveAsController extends BaseTaskController {
                 case MyBoxClipboard:
                     ttype = TargetType.MyBoxClipboard;
                     break;
-                case DoubleMatrix:
-                    ttype = TargetType.DoubleMatrix;
+                case Matrix:
+                    ttype = TargetType.Matrix;
                     break;
                 case DatabaseTable:
                     ttype = TargetType.DatabaseTable;

@@ -39,9 +39,8 @@ public class Data2DDefinition extends BaseData {
     public Date modifyTime;
 
     public static enum DataType {
-        Texts, CSV, Excel, MyBoxClipboard, DoubleMatrix,
-        DatabaseTable, InternalTable,
-        FloatMatrix, IntMatrix
+        Texts, CSV, Excel, MyBoxClipboard, Matrix,
+        DatabaseTable, InternalTable
     }
 
     public Data2DDefinition() {
@@ -211,7 +210,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean isMatrix() {
-        return dataType == DataType.DoubleMatrix;
+        return dataType == DataType.Matrix;
     }
 
     public boolean isClipboard() {
@@ -228,16 +227,16 @@ public class Data2DDefinition extends BaseData {
                 && BaseTableTools.isInternalTable(sheet));
     }
 
+    public boolean isTable() {
+        return dataType == DataType.DatabaseTable
+                || dataType == DataType.InternalTable;
+    }
+
     public boolean isDataFile() {
         return dataType == DataType.CSV
                 || dataType == DataType.Excel
                 || dataType == DataType.Texts
-                || dataType == DataType.DoubleMatrix;
-    }
-
-    public boolean isTable() {
-        return dataType == DataType.DatabaseTable
-                || dataType == DataType.InternalTable;
+                || dataType == DataType.Matrix;
     }
 
     public boolean isTextFile() {
@@ -245,7 +244,7 @@ public class Data2DDefinition extends BaseData {
                 && (dataType == DataType.CSV
                 || dataType == DataType.MyBoxClipboard
                 || dataType == DataType.Texts
-                || dataType == DataType.DoubleMatrix);
+                || dataType == DataType.Matrix);
     }
 
     public String getTitle() {
@@ -300,7 +299,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean alwayRejectInvalid() {
-        return dataType == DataType.DoubleMatrix
+        return dataType == DataType.Matrix
                 || dataType == DataType.DatabaseTable
                 || dataType == DataType.InternalTable;
     }
@@ -447,7 +446,7 @@ public class Data2DDefinition extends BaseData {
                 return DataType.CSV;
         }
         if (file.getAbsolutePath().startsWith(AppPaths.getMatrixPath() + File.separator)) {
-            return DataType.DoubleMatrix;
+            return DataType.Matrix;
         }
         return DataType.Texts;
     }
@@ -476,7 +475,7 @@ public class Data2DDefinition extends BaseData {
                 return Data2DManufactureController.openDef(def);
             case MyBoxClipboard:
                 return DataInMyBoxClipboardController.open(def);
-            case DoubleMatrix:
+            case Matrix:
                 return MatricesManageController.open(def);
             case InternalTable:
                 return MyBoxTablesController.open(def);

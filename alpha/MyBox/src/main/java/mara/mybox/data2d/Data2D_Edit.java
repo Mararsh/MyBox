@@ -24,7 +24,6 @@ import mara.mybox.data2d.operate.Data2DReadPage;
 import mara.mybox.data2d.operate.Data2DReadTotal;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -137,7 +136,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                         column.setIsPrimaryKey(false);
                     }
                     if (isMatrix()) {
-                        column.setType(ColumnDefinition.ColumnType.Double);
+                        column.setType(defaultColumnType());
                     }
                 }
                 colsNumber = columns.size();
@@ -572,7 +571,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                             column.setAuto(false);
                         }
                         if (d.isMatrix()) {
-                            column.setType(ColumnDefinition.ColumnType.Double);
+                            column.setType(d.defaultColumnType());
                         }
                         targetColumns.add(column);
                     }

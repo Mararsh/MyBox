@@ -296,7 +296,7 @@ public class Data2DMenuTools {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     if (data2D.isCSV()) {
                         DataFileCSVFormatController.open(dataController);
-                    } else if (data2D.isTexts() || data2D.isMatrix()) {
+                    } else if (data2D.isTexts()) {
                         DataFileTextFormatController.open(dataController);
                     } else if (data2D.isExcel()) {
                         DataFileExcelFormatController.open(dataController);
@@ -743,7 +743,7 @@ public class Data2DMenuTools {
 
             menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.DoubleMatrix);
+                Data2DManufactureController.create(DataType.Matrix);
             });
             items.add(menu);
 

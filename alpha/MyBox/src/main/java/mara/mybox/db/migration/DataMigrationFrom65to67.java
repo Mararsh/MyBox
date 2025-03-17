@@ -858,7 +858,7 @@ public class DataMigrationFrom65to67 {
                 while (mquery.next()) {
                     long mxid = mquery.getLong("mxid");
                     Data2DDefinition def = Data2DDefinition.create()
-                            .setType(Data2DDefinition.DataType.DoubleMatrix)
+                            .setType(Data2DDefinition.DataType.Matrix)
                             .setDataName(mquery.getString("name"))
                             .setScale(mquery.getShort("scale"))
                             .setColsNumber(mquery.getInt("columns_number"))

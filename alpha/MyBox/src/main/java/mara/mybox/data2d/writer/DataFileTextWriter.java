@@ -89,6 +89,15 @@ public class DataFileTextWriter extends Data2DWriter {
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.Text);
+            recordTargetData();
+            created = true;
+        } catch (Exception e) {
+            showError(e.toString());
+        }
+    }
+
+    public void recordTargetData() {
+        try {
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.Texts);
@@ -103,7 +112,6 @@ public class DataFileTextWriter extends Data2DWriter {
                         .setRowsNumber(targetRowIndex);
                 Data2D.saveAttributes(conn(), targetData, columns);
             }
-            created = true;
         } catch (Exception e) {
             showError(e.toString());
         }

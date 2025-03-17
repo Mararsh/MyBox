@@ -33,7 +33,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public String error;
 
     public enum TargetType {
-        CSV, Excel, Text, DoubleMatrix, DatabaseTable, SystemClipboard, MyBoxClipboard,
+        CSV, Excel, Text, Matrix, DatabaseTable, SystemClipboard, MyBoxClipboard,
         JSON, XML, HTML, PDF, Replace, Insert, Append
     }
 
