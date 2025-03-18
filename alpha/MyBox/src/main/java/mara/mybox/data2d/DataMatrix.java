@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Random;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.tools.DoubleTools;
@@ -126,6 +128,44 @@ public class DataMatrix extends DataFileText {
             default:
                 return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
         }
+    }
+
+    @Override
+    public String getTypeName() {
+        if (sheet == null) {
+            sheet = "Double";
+        }
+        switch (sheet.toLowerCase()) {
+            case "float":
+                return message("FloatMatrix");
+            case "integer":
+                return message("IntegerMatrix");
+            case "long":
+                return message("LongMatrix");
+            case "short":
+                return message("ShortMatrix");
+            case "boolean":
+                return message("BooleanMatrix");
+            case "double":
+            default:
+                return message("DoubleMatrix");
+        }
+    }
+
+    @Override
+    public Data2DWriter selfWriter() {
+        DataMatrixWriter writer = new DataMatrixWriter();
+        writer.setDataType(sheet)
+                .setCharset(Charset.forName("utf-8"))
+                .setDelimiter(DataMatrix.MatrixDelimiter)
+                .setWriteHeader(false)
+                .setTargetData(this)
+                .setPrintFile(file)
+                .setColumns(columns)
+                .setHeaderNames(columnNames())
+                .setRecordTargetFile(true)
+                .setRecordTargetData(true);
+        return writer;
     }
 
     public String toString(double d) {

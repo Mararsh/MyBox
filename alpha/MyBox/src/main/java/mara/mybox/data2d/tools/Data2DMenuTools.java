@@ -741,21 +741,51 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.Matrix);
+                Data2DManufactureController.create(DataType.DatabaseTable);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("DoubleMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Double");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("FloatMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Float");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("LongMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Long");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("IntegerMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Integer");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ShortMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Short");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BooleanMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Boolean");
             });
             items.add(menu);
 
             menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 Data2DManufactureController.create(DataType.MyBoxClipboard);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.DatabaseTable);
             });
             items.add(menu);
 

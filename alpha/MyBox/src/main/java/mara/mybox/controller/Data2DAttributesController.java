@@ -152,7 +152,7 @@ public class Data2DAttributesController extends BaseChildController {
             isSettingValues = true;
             idInput.setText(data2D.getDataID() >= 0 ? data2D.getDataID() + "" : message("NewData"));
             timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
-            dataTypeInput.setText(message(data2D.getType().name()));
+            dataTypeInput.setText(data2D.getTypeName());
             dataNameInput.setText(data2D.getDataName());
             scaleSelector.setValue(data2D.getScale() + "");
             randomSelector.setValue(data2D.getMaxRandom() + "");

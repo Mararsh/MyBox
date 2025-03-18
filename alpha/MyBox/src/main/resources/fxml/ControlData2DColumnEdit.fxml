@@ -98,25 +98,21 @@ License:    Apache License Version 2.0
                         <TextArea fx:id="enumInput" minHeight="100.0" prefHeight="100.0" wrapText="true" />
                     </children>
                 </VBox>
-            </children>
-        </VBox>
-        <FlowPane hgap="2.0" layoutX="15.0" layoutY="440.0" vgap="2.0">
-            <children>
-                <Label text="%DecimalScale" />
-                <TextField fx:id="scaleInput" prefWidth="100.0" text="8" />
                 <FlowPane fx:id="lengthPane" hgap="2.0" vgap="2.0">
                     <children>
-                        <Label text="%Length">
-                            <padding>
-                                <Insets left="10.0" />
-                            </padding>
-                        </Label>
+                        <Label text="%Length" />
                         <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
                         <Label fx:id="lengthLabel" text="(&lt;= 32672)" />
                     </children>
                 </FlowPane>
+              <FlowPane fx:id="decimalPane" hgap="2.0" vgap="2.0">
+                  <children>
+                      <Label text="%DecimalScale" />
+                      <TextField fx:id="scaleInput" prefWidth="100.0" text="8" />
+                  </children>
+              </FlowPane>
             </children>
-        </FlowPane>
+        </VBox>
         <FlowPane hgap="2.0" vgap="2.0">
             <children>
                 <Label text="%Color" />

@@ -78,9 +78,18 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
         Stage parentStage = parent != null ? parent.getMyStage() : null;
         switch (stageType) {
             case Operation:
-                if (parentStage != null && AppVariables.operationWindowIconifyParent) {
-                    parentStage.setIconified(true);
+                if (parentStage != null) {
+                    parentStage.setOnHiding(new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent event) {
+                            closeStage();
+                        }
+                    });
+                    if (AppVariables.operationWindowIconifyParent) {
+                        parentStage.setIconified(true);
+                    }
                 }
+
             case Branch: {
                 setAlwaysTop(true, false);
                 if (parentStage != null) {
@@ -93,6 +102,7 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
                 }
                 break;
             }
+
             case Pop: {
                 setAlwaysTop(true, false);
                 if (parentStage != null) {

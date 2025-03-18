@@ -150,11 +150,13 @@ public class Data2DDefinition extends BaseData {
     public final void resetDefinition() {
         dataID = -1;
         file = null;
-        sheet = null;
+        if (!isMatrix()) {
+            sheet = null;
+            hasHeader = true;
+            charset = null;
+            delimiter = null;
+        }
         dataName = null;
-        hasHeader = true;
-        charset = null;
-        delimiter = null;
         colsNumber = -1;
         scale = 2;
         maxRandom = 1000;
@@ -287,7 +289,7 @@ public class Data2DDefinition extends BaseData {
 
     public String displayName() {
         String name = getTitle();
-        name = message(dataType.name()) + (dataID >= 0 ? " - " + dataID : "") + (name != null ? " - " + name : "");
+        name = getTypeName() + (dataID >= 0 ? " - " + dataID : "") + (name != null ? " - " + name : "");
         return name;
     }
 

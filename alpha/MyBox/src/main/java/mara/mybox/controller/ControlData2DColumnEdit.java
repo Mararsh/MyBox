@@ -67,7 +67,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected HBox formatBox;
     @FXML
-    protected FlowPane typesPane, fixPane, centuryPane;
+    protected FlowPane typesPane, fixPane, centuryPane, decimalPane, lengthPane;
     @FXML
     protected Label lengthLabel, enumLabel;
 
@@ -139,7 +139,19 @@ public class ControlData2DColumnEdit extends BaseChildController {
             enumLabel.setText(null);
             fixYearCheck.setSelected(false);
 
-            if (enumRadio.isSelected()
+            if (stringRadio.isSelected()) {
+                optionsBox.getChildren().add(lengthPane);
+                lengthInput.setText("32672");
+                lengthInput.setDisable(false);
+                lengthLabel.setText("(<= 32672)");
+
+            } else if (clobRadio.isSelected()) {
+                optionsBox.getChildren().add(lengthPane);
+                lengthInput.setText("2G");
+                lengthInput.setDisable(true);
+                lengthLabel.setText("");
+
+            } else if (enumRadio.isSelected()
                     || enumEditableRadio.isSelected()
                     || enumShortRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
@@ -163,20 +175,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 formatInput.setText(TimeFormats.DateA + " G");
 
             } else if (doubleRadio.isSelected() || floatRadio.isSelected()
-                    || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
-                optionsBox.getChildren().add(formatBox);
+                    || longRadio.isSelected() || intRadio.isSelected()
+                    || shortRadio.isSelected()) {
+                optionsBox.getChildren().addAll(formatBox, decimalPane);
                 formatInput.setText(message("GroupInThousands"));
 
-            }
-
-            if (clobRadio.isSelected()) {
-                lengthInput.setText("2G");
-                lengthInput.setDisable(true);
-                lengthLabel.setText("");
-            } else {
-                lengthInput.setText("32672");
-                lengthInput.setDisable(false);
-                lengthLabel.setText("(<= 32672)");
             }
 
         } catch (Exception e) {
@@ -195,7 +198,30 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
             if (columnsController.isMatrix()) {
                 typesPane.setDisable(true);
-                doubleRadio.setSelected(true);
+                String dataType = columnsController.data2D.getSheet();
+                if (dataType == null) {
+                    dataType = "Double";
+                }
+                switch (dataType.toLowerCase()) {
+                    case "float":
+                        floatRadio.setSelected(true);
+                        break;
+                    case "integer":
+                        intRadio.setSelected(true);
+                        break;
+                    case "long":
+                        longRadio.setSelected(true);
+                        break;
+                    case "short":
+                        shortRadio.setSelected(true);
+                        break;
+                    case "boolean":
+                        booleanRadio.setSelected(true);
+                        break;
+                    case "double":
+                    default:
+                        doubleRadio.setSelected(true);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
