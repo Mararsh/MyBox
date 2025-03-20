@@ -779,7 +779,7 @@ public class Data2DMenuTools {
 
             menu = new MenuItem(message("BooleanMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.createMatrix("Boolean");
+                Data2DManufactureController.createMatrix("NumberBoolean");
             });
             items.add(menu);
 

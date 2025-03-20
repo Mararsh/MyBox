@@ -52,6 +52,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="intRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Integer" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="shortRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Short" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="booleanRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Boolean" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="numberBooleanRadio" layoutX="380.0" layoutY="12.0" minWidth="-Infinity" mnemonicParsing="false" text="%NumberBoolean" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="datetimeRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Datetime" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="dateRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Date" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="eraRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Era" toggleGroup="$typeGroup" />

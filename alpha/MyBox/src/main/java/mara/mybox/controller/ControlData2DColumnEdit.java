@@ -52,7 +52,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
+    protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio,
+            booleanRadio, numberBooleanRadio,
             datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio,
             enumRadio, enumEditableRadio, enumShortRadio,
             colorRadio, clobRadio;
@@ -215,8 +216,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     case "short":
                         shortRadio.setSelected(true);
                         break;
-                    case "boolean":
-                        booleanRadio.setSelected(true);
+                    case "numberboolean":
+                        numberBooleanRadio.setSelected(true);
                         break;
                     case "double":
                     default:
@@ -260,6 +261,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     break;
                 case Boolean:
                     booleanRadio.setSelected(true);
+                    break;
+                case NumberBoolean:
+                    numberBooleanRadio.setSelected(true);
                     break;
                 case Datetime:
                     datetimeRadio.setSelected(true);
@@ -477,6 +481,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Short).setFormat(format);
             } else if (booleanRadio.isSelected()) {
                 column.setType(ColumnType.Boolean).setFormat(null);
+            } else if (numberBooleanRadio.isSelected()) {
+                column.setType(ColumnType.NumberBoolean).setFormat(null);
             } else if (datetimeRadio.isSelected()) {
                 column.setType(ColumnType.Datetime).setFormat(format);
             } else if (dateRadio.isSelected()) {

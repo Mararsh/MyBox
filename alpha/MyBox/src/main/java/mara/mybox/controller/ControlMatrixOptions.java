@@ -36,7 +36,34 @@ public class ControlMatrixOptions extends BaseController {
         }
     }
 
-    public String type() {
+    public void setType(String type) {
+        if (type == null) {
+            type = "Double";
+        }
+        switch (type.toLowerCase()) {
+            case "float":
+                floatRadio.setSelected(true);
+                break;
+            case "integer":
+                intRadio.setSelected(true);
+                break;
+            case "long":
+                longRadio.setSelected(true);
+                break;
+            case "short":
+                shortRadio.setSelected(true);
+                break;
+            case "numberboolean":
+                booleanRadio.setSelected(true);
+                break;
+            case "double":
+            default:
+                doubleRadio.setSelected(true);
+                break;
+        }
+    }
+
+    public String pickType() {
         if (floatRadio.isSelected()) {
             return "Float";
         } else if (longRadio.isSelected()) {
@@ -46,7 +73,7 @@ public class ControlMatrixOptions extends BaseController {
         } else if (shortRadio.isSelected()) {
             return "Short";
         } else if (booleanRadio.isSelected()) {
-            return "Boolean";
+            return "NumberBoolean";
         } else {
             return "Double";
         }

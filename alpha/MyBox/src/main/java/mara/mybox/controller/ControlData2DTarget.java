@@ -115,6 +115,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (tableController != null) {
                 data2D = tableController.data2D.cloneAll().setController(parent);
                 dbController.setParameters(this, data2D);
+                if (matrixOptionsController != null) {
+                    matrixOptionsController.setType(data2D.getSheet());
+                }
             } else {
                 data2D = null;
                 databaseRadio.setDisable(true);
@@ -142,6 +145,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 };
                 tableController.statusNotify.addListener(tableStatusListener);
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -405,6 +409,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
         }
         if (internalFormatPane != null) {
             internalFormatPane.setDisable(true);
+        }
+        if (matrixOptionsController != null && tableController != null) {
+            matrixBox.setDisable(true);
         }
     }
 

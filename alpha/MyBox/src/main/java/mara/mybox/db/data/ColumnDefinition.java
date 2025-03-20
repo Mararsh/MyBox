@@ -56,7 +56,7 @@ public class ColumnDefinition extends BaseData {
         Datetime, Date, Era, // Looks Derby does not support date of BC(before Christ)
         Clob, // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
         Blob, // BLOB is handled as InputStream internally
-        Longitude, Latitude, EnumeratedShort
+        Longitude, Latitude, EnumeratedShort, NumberBoolean
     }
 
     public static enum OnDelete {
@@ -392,6 +392,8 @@ public class ColumnDefinition extends BaseData {
             case Short:
                 return StringTools.format((short) IntTools.random(random, maxRandom, nonNegative));
             case Boolean:
+                return random.nextInt(2) > 0 ? "true" : "false";
+            case NumberBoolean:
                 return random.nextInt(2) + "";
             case Datetime:
             case Date:
@@ -555,6 +557,24 @@ public class ColumnDefinition extends BaseData {
                     }
                 case Boolean:
                     return StringTools.isTrue(o + "");
+                case NumberBoolean:
+                    String s = o + "";
+                    if (StringTools.isTrue(s)) {
+                        return 1;
+                    }
+                    if (StringTools.isFalse(s)) {
+                        return 0;
+                    }
+                    try {
+                        double d = Double.parseDouble(s);
+                        if (d > 0) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    } catch (Exception e) {
+                        return 0;
+                    }
                 case Datetime:
                     return toDate(o + "");
                 case Date:
@@ -599,11 +619,18 @@ public class ColumnDefinition extends BaseData {
                     }
                     break;
                 case Float:
-                    Float f = Float.valueOf(string.replaceAll(",", ""));
-                    if (!FloatTools.invalidFloat(f)) {
-                        return f;
+                    Double df = Double.valueOf(string.replaceAll(",", ""));
+//                    MyBoxLog.console(string + "    ---  " + df);
+                    if (!DoubleTools.invalidDouble(df)) {
+                        return df;
                     }
-                    break;
+//                    Float.valueOf may lose precision
+//                    Float f = Float.valueOf(string.replaceAll(",", ""));
+//                    MyBoxLog.console(string + "    ---  " + f);
+//                    if (!FloatTools.invalidFloat(f)) {
+//                        return f;
+//                    }
+//                    break;
                 case Long:
                     Long l = Long.valueOf(string.replaceAll(",", ""));
                     if (!LongTools.invalidLong(l)) {
@@ -630,6 +657,21 @@ public class ColumnDefinition extends BaseData {
                     break;
                 case Boolean:
                     return StringTools.isTrue(string);
+                case NumberBoolean:
+                    if (StringTools.isTrue(string)) {
+                        return 1;
+                    }
+                    if (StringTools.isFalse(string)) {
+                        return 0;
+                    }
+                    double n = Double.parseDouble(string.replaceAll(",", ""));
+                    if (!DoubleTools.invalidDouble(n)) {
+                        if (n > 0) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
                 case Datetime:
                 case Date:
                     Date t = stringToDate(string, fixTwoDigitYear, century);
@@ -883,11 +925,9 @@ public class ColumnDefinition extends BaseData {
                     return "0";
                 }
             case Boolean:
-                if (v != null) {
-                    return v + "";
-                } else {
-                    return "false";
-                }
+                return StringTools.isTrue(v + "") + "";
+            case NumberBoolean:
+                return StringTools.isTrue(v + "") ? "1" : "0";
             case Datetime:
                 if (v != null) {
                     return "'" + defaultValue + "'";
@@ -929,6 +969,19 @@ public class ColumnDefinition extends BaseData {
                     return toDate(string).getTime() + 0d;
                 case Boolean:
                     return StringTools.isTrue(string) ? 1 : 0;
+                case NumberBoolean:
+                    if (StringTools.isTrue(string)) {
+                        return 1;
+                    }
+                    if (StringTools.isFalse(string)) {
+                        return 0;
+                    }
+                    double n = Double.parseDouble(string.replaceAll(",", ""));
+                    if (n > 0) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
                 default:
                     return Double.parseDouble(string.replaceAll(",", ""));
             }
@@ -959,6 +1012,8 @@ public class ColumnDefinition extends BaseData {
                 return "0";
             case Boolean:
                 return "false";
+            case NumberBoolean:
+                return "0";
             case Datetime:
                 return DateTools.nowString();
             case Date:
@@ -1302,7 +1357,8 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Integer
                 || type == ColumnType.Long
                 || type == ColumnType.Short
-                || type == ColumnType.EnumeratedShort;
+                || type == ColumnType.EnumeratedShort
+                || type == ColumnType.NumberBoolean;
     }
 
     public static boolean isDBNumberType(ColumnType type) {

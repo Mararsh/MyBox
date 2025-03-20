@@ -1,6 +1,8 @@
 package mara.mybox.data2d;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Random;
@@ -8,6 +10,7 @@ import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.IntTools;
@@ -31,6 +34,7 @@ public class DataMatrix extends DataFileText {
         dataType = DataType.Matrix;
         sheet = "Double";
         delimiter = MatrixDelimiter;
+        charset = Charset.forName("UTF-8");
         hasHeader = false;
     }
 
@@ -100,8 +104,8 @@ public class DataMatrix extends DataFileText {
                 return ColumnType.Long;
             case "short":
                 return ColumnType.Short;
-            case "boolean":
-                return ColumnType.Boolean;
+            case "numberboolean":
+                return ColumnType.NumberBoolean;
             case "double":
             default:
                 return ColumnType.Double;
@@ -113,7 +117,7 @@ public class DataMatrix extends DataFileText {
         if (sheet == null) {
             sheet = "Double";
         }
-        switch (sheet) {
+        switch (sheet.toLowerCase()) {
             case "float":
                 return NumberTools.format(FloatTools.random(random, maxRandom, nonNegative), scale);
             case "integer":
@@ -122,7 +126,7 @@ public class DataMatrix extends DataFileText {
                 return StringTools.format(LongTools.random(random, maxRandom, nonNegative));
             case "short":
                 return StringTools.format((short) IntTools.random(random, maxRandom, nonNegative));
-            case "boolean":
+            case "numberboolean":
                 return random.nextInt(2) + "";
             case "double":
             default:
@@ -144,7 +148,7 @@ public class DataMatrix extends DataFileText {
                 return message("LongMatrix");
             case "short":
                 return message("ShortMatrix");
-            case "boolean":
+            case "numberboolean":
                 return message("BooleanMatrix");
             case "double":
             default:
@@ -176,6 +180,9 @@ public class DataMatrix extends DataFileText {
         }
     }
 
+    /*
+        static
+     */
     public static double toDouble(String d) {
         try {
             return Double.parseDouble(d.replaceAll(",", ""));
@@ -195,6 +202,36 @@ public class DataMatrix extends DataFileText {
     public static String filename(String name) {
         try {
             return AppPaths.getMatrixPath() + File.separator + name + ".txt";
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static DataMatrix makeMatrix(String type, int colsNumber, int rowsNumber, short scale, int max) {
+        try {
+
+            String dataName = type + "_" + colsNumber + "x" + rowsNumber;
+            File file = new File(DataMatrix.filename(dataName + "_" + new Date().getTime()));
+            DataMatrix matrix = new DataMatrix();
+            matrix.setFile(file).setSheet(type)
+                    .setScale(scale).setMaxRandom(max)
+                    .setColsNumber(colsNumber)
+                    .setRowsNumber(rowsNumber);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, matrix.getCharset(), false))) {
+                String line;
+                Random random = new Random();
+                for (int i = 0; i < rowsNumber; i++) {
+                    line = matrix.randomString(random, false);
+                    for (int j = 1; j < colsNumber; j++) {
+                        line += DataMatrix.MatrixDelimiter + matrix.randomString(random, false);
+                    }
+                    writer.write(line + "\n");
+                }
+                writer.flush();
+            } catch (Exception ex) {
+            }
+            new TableData2DDefinition().updateData(matrix);
+            return matrix;
         } catch (Exception e) {
             return null;
         }
