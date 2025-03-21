@@ -634,12 +634,6 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
     public void columnSelected() {
     }
 
-    public boolean isSquare() {
-        return sourceController.selectedRowsIndices != null && checkedColsIndices != null
-                && !sourceController.selectedRowsIndices.isEmpty()
-                && sourceController.selectedRowsIndices.size() == checkedColsIndices.size();
-    }
-
     /*
         run
      */

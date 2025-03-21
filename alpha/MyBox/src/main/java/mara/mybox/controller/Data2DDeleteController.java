@@ -78,7 +78,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public void ouputRows() {
+    public void outputRows() {
         try {
             int count = sourceController.tableData.size() - outputData.size();
             sourceController.selectedRowsIndices = null;

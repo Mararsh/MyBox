@@ -203,7 +203,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             @Override
             protected void whenSucceeded() {
-                ouputRows();
+                outputRows();
             }
 
             @Override
@@ -229,7 +229,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
         }
     }
 
-    public void ouputRows() {
+    public void outputRows() {
         if (targetController == null || targetController.inTable()) {
             updateTable();
         } else {
