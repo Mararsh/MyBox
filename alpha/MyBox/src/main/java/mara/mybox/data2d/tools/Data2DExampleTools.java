@@ -501,6 +501,20 @@ public class Data2DExampleTools {
             });
             locationMenu.getItems().add(menu);
 
+            menu = new MenuItem(message(lang, "DoubleMatrix") + " 500*500");
+            menu.setOnAction((ActionEvent event) -> {
+                DataMatrix matrix = DataMatrix.makeMatrix("Double", 500, 500, scale1, max);
+                controller.loadDef(matrix);
+            });
+            locationMenu.getItems().add(menu);
+
+            menu = new MenuItem(message(lang, "DoubleMatrix") + " 1000*1000");
+            menu.setOnAction((ActionEvent event) -> {
+                DataMatrix matrix = DataMatrix.makeMatrix("Double", 1000, 1000, scale1, max);
+                controller.loadDef(matrix);
+            });
+            locationMenu.getItems().add(menu);
+
             menu = new MenuItem(message(lang, "FloatMatrix") + " 50*50");
             menu.setOnAction((ActionEvent event) -> {
                 DataMatrix matrix = DataMatrix.makeMatrix("Float", 50, 50, scale1, max);

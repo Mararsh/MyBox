@@ -15,6 +15,7 @@ import mara.mybox.controller.DataFileExcelFormatController;
 import mara.mybox.controller.DataFileExcelSheetsController;
 import mara.mybox.controller.DataFileTextFormatController;
 import mara.mybox.controller.FileBrowseController;
+import mara.mybox.controller.MatrixUnaryCalculationController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
@@ -477,8 +478,23 @@ public class Data2DMenuTools {
             if (!controller.isValidData()) {
                 return null;
             }
+            Data2D data2D = controller.getData2D();
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
+
+            if (data2D.isMatrix()) {
+                menu = new MenuItem(message("MatrixUnaryCalculation"), StyleTools.getIconImageView("iconMatrix.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    MatrixUnaryCalculationController.open(controller);
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("MatricesBinaryCalculation"), StyleTools.getIconImageView("iconMatrix.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    MatrixUnaryCalculationController.open(controller);
+                });
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("RowExpression"), StyleTools.getIconImageView("iconNewItem.png"));
             menu.setOnAction((ActionEvent event) -> {

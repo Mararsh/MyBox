@@ -3,9 +3,7 @@ package mara.mybox.controller;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
@@ -14,7 +12,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -42,6 +39,8 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
     protected double number, resultValue;
 
     @FXML
+    protected ControlData2DSource matrixController;
+    @FXML
     protected ToggleGroup opGroup;
     @FXML
     protected VBox setBox, xyBox, normalizeBox;
@@ -62,9 +61,29 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
     }
 
     @Override
-    public void initOptions() {
+    public void initValues() {
         try {
-            super.initOptions();
+            super.initValues();
+
+            stageType = StageType.Normal;
+
+            sourceController = matrixController;
+            filterController = matrixController.filterController;
+            dataController = matrixController;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initParameters() {
+        setParameters(matrixController);
+    }
+
+    @Override
+    public void setParameters(BaseData2DLoadController controller) {
+        try {
+            super.setParameters(controller);
 
             targetController.setTarget(TargetType.Matrix);
 
@@ -121,9 +140,9 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
 
             opGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
-                        checkParameters();
+                        checkControls();
                     });
-            checkParameters();
+            checkControls();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -219,12 +238,9 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
         }
     }
 
-    @Override
-    public boolean checkOptions() {
+    public boolean checkControls() {
         try {
-            if (!super.checkOptions()) {
-                return false;
-            }
+            setBox.getChildren().clear();
             colsNumber = checkedColsIndices.size();
             rowsNumber = sourceController.allPagesRadio.isSelected()
                     ? (int) data2D.getRowsNumber()
@@ -276,10 +292,16 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
     }
 
     @Override
+    public boolean checkParameters() {
+        return super.checkParameters() && checkControls();
+    }
+
+    @Override
     protected void startOperation() {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
             private String op, resultInfo;
             private DataMatrix resultMatrix;
@@ -350,6 +372,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
                                 + "_" + op + "_" + new Date().getTime()));
                         resultMatrix = new DataMatrix();
                         resultMatrix.setFile(targetFile).setSheet("Double")
+                                .setDataName(data2D.getDataName() + "_" + op)
                                 .setColsNumber(colsNumber)
                                 .setRowsNumber(rowsNumber);
                         try (BufferedWriter writer = new BufferedWriter(
@@ -365,66 +388,73 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
                             writer.flush();
                         } catch (Exception ex) {
                         }
-                        new TableData2DDefinition().updateData(resultMatrix);
+                        resultMatrix = (DataMatrix) new TableData2DDefinition().insertData(resultMatrix);
+                        taskSuccessed = true;
 
                     } else if (!DoubleTools.invalidDouble(resultValue)) {
-//                        resultInfo =
+                        resultInfo = op + ":\n" + resultValue;
+                        taskSuccessed = true;
 
+                    } else {
+                        taskSuccessed = false;
                     }
                 } catch (Exception e) {
                     error = e.toString();
-                    return false;
+                    taskSuccessed = false;
                 }
-                return true;
+                return taskSuccessed;
             }
 
             @Override
             protected void whenSucceeded() {
                 cost = new Date().getTime() - startTime.getTime();
                 showLogs(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-//                resultLabel.setText();
-//                if (result != null) {
-//                    resultBox.getChildren().add(resultTablePane);
-//                    resultController.loadMatrix(result);
-//                } else if (!DoubleTools.invalidDouble(resultValue)) {
-//                    resultBox.getChildren().add(resultArea);
-//                    resultArea.setText(resultValue + "");
-//                }
                 tabPane.getSelectionModel().select(logsTab);
+                if (resultMatrix != null) {
+                    Data2DManufactureController.openDef(resultMatrix).setAlwaysOnTop();
+                } else if (resultInfo != null) {
+                    TextPopController.loadText(resultInfo);
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
 
     /*
         static
      */
-    public static MatrixUnaryCalculationController oneOpen() {
-        MatrixUnaryCalculationController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof MatrixUnaryCalculationController) {
-                try {
-                    controller = (MatrixUnaryCalculationController) object;
-                    break;
-                } catch (Exception e) {
-                }
-            }
+    public static MatrixUnaryCalculationController open() {
+        try {
+            MatrixUnaryCalculationController controller
+                    = (MatrixUnaryCalculationController) WindowTools.openStage(Fxmls.MatrixUnaryCalculationFxml);
+            controller.initParameters();
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        if (controller == null) {
-            controller = (MatrixUnaryCalculationController) WindowTools.openStage(Fxmls.MatrixUnaryCalculationFxml);
-        }
-        controller.requestMouse();
-        return controller;
     }
 
-    public static MatrixUnaryCalculationController open() {
-        MatrixUnaryCalculationController controller = oneOpen();
-        return controller;
+    public static MatrixUnaryCalculationController open(BaseData2DLoadController tableController) {
+        try {
+            MatrixUnaryCalculationController controller = (MatrixUnaryCalculationController) WindowTools.operationStage(
+                    tableController, Fxmls.MatrixUnaryCalculationFxml);
+            controller.setParameters(tableController);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

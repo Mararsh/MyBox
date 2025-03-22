@@ -12,6 +12,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.LongTools;
@@ -201,7 +202,7 @@ public class DataMatrix extends DataFileText {
 
     public static String filename(String name) {
         try {
-            return AppPaths.getMatrixPath() + File.separator + name + ".txt";
+            return AppPaths.getMatrixPath() + File.separator + FileNameTools.filter(name) + ".txt";
         } catch (Exception e) {
             return null;
         }
