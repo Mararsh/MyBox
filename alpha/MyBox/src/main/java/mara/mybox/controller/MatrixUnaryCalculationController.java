@@ -12,7 +12,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -32,7 +31,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-17
  * @License Apache License Version 2.0
  */
-public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsController {
+public class MatrixUnaryCalculationController extends BaseData2DTaskController {
 
     protected int rowsNumber, colsNumber;
     protected int column, row, power;
@@ -76,67 +75,32 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
         }
     }
 
-    public void initParameters() {
-        setParameters(matrixController);
-    }
-
     @Override
-    public void setParameters(BaseData2DLoadController controller) {
+    public void initControls() {
         try {
-            super.setParameters(controller);
+            super.initControls();
 
-            targetController.setTarget(TargetType.Matrix);
+            sourceController.setParameters(this);
 
-            row = UserConfig.getInt(baseName + "Row", 1);
+            row = UserConfig.getInt(interfaceName + "Row", 1);
             rowInput.setText(row + "");
-            rowInput.textProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkXY();
-                    });
 
-            column = UserConfig.getInt(baseName + "Column", 1);
+            column = UserConfig.getInt(interfaceName + "Column", 1);
             columnInput.setText(column + "");
-            columnInput.textProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkXY();
-                    });
 
             try {
-                number = Double.parseDouble(UserConfig.getString(baseName + "Number", "2"));
+                number = Double.parseDouble(UserConfig.getString(interfaceName + "Number", "2"));
             } catch (Exception e) {
                 number = 2d;
             }
             numberInput.setText(number + "");
-            numberInput.textProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                try {
-                    number = Double.parseDouble(newValue);
-                    numberInput.setStyle(null);
-                    UserConfig.setString(baseName + "Number", number + "");
-                } catch (Exception e) {
-                    numberInput.setStyle(UserConfig.badStyle());
-                }
-            });
 
             try {
-                power = UserConfig.getInt(baseName + "Power", 2);
+                power = UserConfig.getInt(interfaceName + "Power", 2);
             } catch (Exception e) {
                 power = 2;
             }
             powerInput.setText(power + "");
-            powerInput.textProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                try {
-                    int v = Integer.parseInt(newValue);
-                    if (v > 1) {
-                        power = v;
-                        powerInput.setStyle(null);
-                        UserConfig.setInt(baseName + "Power", power);
-                    } else {
-                        powerInput.setStyle(UserConfig.badStyle());
-                    }
-                } catch (Exception e) {
-                    powerInput.setStyle(UserConfig.badStyle());
-                }
-            });
 
             opGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
@@ -156,35 +120,27 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
         boolean valid = true;
         try {
             if (!setBox.getChildren().contains(xyBox)) {
-                rowInput.setStyle(null);
-                columnInput.setStyle(null);
                 return true;
             }
             int v = Integer.parseInt(rowInput.getText().trim());
             if (v > 0 && v <= data2D.getRowsNumber()) {
                 row = v;
-                rowInput.setStyle(null);
-                UserConfig.setInt(baseName + "Row", v);
+                UserConfig.setInt(interfaceName + "Row", v);
             } else {
-                rowInput.setStyle(UserConfig.badStyle());
                 valid = false;
             }
         } catch (Exception e) {
-            rowInput.setStyle(UserConfig.badStyle());
             valid = false;
         }
         try {
             int v = Integer.parseInt(columnInput.getText().trim());
             if (v > 0 && v <= data2D.getColsNumber()) {
                 column = v;
-                columnInput.setStyle(null);
-                UserConfig.setInt(baseName + "Column", v);
+                UserConfig.setInt(interfaceName + "Column", v);
             } else {
-                columnInput.setStyle(UserConfig.badStyle());
                 valid = false;
             }
         } catch (Exception e) {
-            columnInput.setStyle(UserConfig.badStyle());
             valid = false;
         }
         return valid;
@@ -196,19 +152,17 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
         }
         try {
             if (!setBox.getChildren().contains(numberBox)) {
-                numberInput.setStyle(null);
                 return true;
             }
-            number = Double.parseDouble(numberInput.getText().trim());
-            if (DivideNumberRadio.isSelected() && number == 0) {
-                numberInput.setStyle(UserConfig.badStyle());
+            double v = Double.parseDouble(numberInput.getText().trim());
+            if (DivideNumberRadio.isSelected() && v == 0) {
                 return false;
+            } else {
+                number = v;
+                UserConfig.setDouble(interfaceName + "Number", number);
+                return true;
             }
-            numberInput.setStyle(null);
-            UserConfig.setString(baseName + "Number", number + "");
-            return true;
         } catch (Exception e) {
-            numberInput.setStyle(UserConfig.badStyle());
             return false;
         }
     }
@@ -219,21 +173,17 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
         }
         try {
             if (!setBox.getChildren().contains(powerBox)) {
-                powerInput.setStyle(null);
                 return true;
             }
             int v = Integer.parseInt(powerInput.getText().trim());
             if (v > 1) {
                 power = v;
-                powerInput.setStyle(null);
-                UserConfig.setInt(baseName + "Power", power);
+                UserConfig.setInt(interfaceName + "Power", power);
                 return true;
             } else {
-                powerInput.setStyle(UserConfig.badStyle());
                 return false;
             }
         } catch (Exception e) {
-            powerInput.setStyle(UserConfig.badStyle());
             return false;
         }
     }
@@ -241,6 +191,11 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
     public boolean checkControls() {
         try {
             setBox.getChildren().clear();
+
+            if (data2D == null) {
+                return false;
+            }
+
             colsNumber = checkedColsIndices.size();
             rowsNumber = sourceController.allPagesRadio.isSelected()
                     ? (int) data2D.getRowsNumber()
@@ -288,6 +243,19 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
+        }
+    }
+
+    @Override
+    public void setParameters(BaseData2DLoadController controller) {
+        try {
+            dataController.data2D = controller.data2D.cloneAll();
+            dataController.tableData.setAll(controller.tableData);
+
+            sourceLoaded();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -431,19 +399,6 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskTargetsContr
     /*
         static
      */
-    public static MatrixUnaryCalculationController open() {
-        try {
-            MatrixUnaryCalculationController controller
-                    = (MatrixUnaryCalculationController) WindowTools.openStage(Fxmls.MatrixUnaryCalculationFxml);
-            controller.initParameters();
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public static MatrixUnaryCalculationController open(BaseData2DLoadController tableController) {
         try {
             MatrixUnaryCalculationController controller = (MatrixUnaryCalculationController) WindowTools.operationStage(

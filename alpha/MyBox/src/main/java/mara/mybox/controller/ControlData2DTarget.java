@@ -88,7 +88,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
     @FXML
     protected ControlNewDataTable dbController;
     @FXML
-    protected FlowPane extFormatPane, internalFormatPane;
+    protected FlowPane invalidAsPane, extFormatPane, internalFormatPane;
 
     public boolean isInvalid() {
         if (tableController == null) {
@@ -462,6 +462,11 @@ public class ControlData2DTarget extends BaseDataConvertController {
     public void setNotInTable(boolean notInTable) {
         this.notInTable = notInTable;
         checkTarget();
+    }
+
+    public void setNoFormat() {
+        thisPane.getChildren().clear();
+        thisPane.getChildren().add(invalidAsPane);
     }
 
     public boolean inTable() {

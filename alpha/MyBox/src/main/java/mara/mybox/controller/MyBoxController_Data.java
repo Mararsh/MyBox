@@ -129,7 +129,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem MatrixUnaryCalculation = new MenuItem(message("MatrixUnaryCalculation"));
         MatrixUnaryCalculation.setOnAction((ActionEvent event1) -> {
-            MatrixUnaryCalculationController c = (MatrixUnaryCalculationController) loadScene(Fxmls.MatrixUnaryCalculationFxml);
+            loadScene(Fxmls.MatrixUnaryCalculationFxml);
         });
 
         MenuItem MatricesBinaryCalculation = new MenuItem(message("MatricesBinaryCalculation"));

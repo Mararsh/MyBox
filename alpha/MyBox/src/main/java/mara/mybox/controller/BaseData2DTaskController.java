@@ -133,6 +133,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    MyBoxLog.console("sourceLoaded");
                     sourceLoaded();
                 }
             };

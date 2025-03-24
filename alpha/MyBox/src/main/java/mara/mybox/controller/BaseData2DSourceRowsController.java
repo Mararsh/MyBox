@@ -109,9 +109,9 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
         }
     }
 
-    public void sourceChanged(Data2D data) {
+    public void sourceChanged(Data2D data2d) {
         try {
-            data2D = data;
+            data2D = data2d;
             pagination = data2D.pagination;
             if (paginationController != null) {
                 paginationController.pagination = data2D.pagination;
@@ -123,8 +123,10 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             pagination.rowsNumber = dataController.pagination.rowsNumber;
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
+            List<List<String>> data = new ArrayList<>();
+            data.addAll(dataController.tableData);
             makeColumns();
-            updateTable(dataController.tableData);
+            updateTable(data);
             postLoadedTableData();
             refreshControls();
             notifyLoaded();
