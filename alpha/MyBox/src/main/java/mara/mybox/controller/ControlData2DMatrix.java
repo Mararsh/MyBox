@@ -25,7 +25,7 @@ public class ControlData2DMatrix extends ControlData2DSource {
     }
 
     public double[][] pickMatrix(FxTask task) {
-        List<List<String>> data = selectedData(task, checkedColsIndices, false);
+        List<List<String>> data = selectedData(task, false);
         if (data == null || data.isEmpty()) {
             return null;
         }

@@ -332,7 +332,8 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
         }
     }
 
-    public List<List<String>> selectedData(FxTask task, List<Integer> cols, boolean formatValues) {
+    public List<List<String>> selectedData(FxTask task, List<Integer> cols,
+            boolean formatValues, boolean hasHeaders) {
         try {
             if (data2D == null || cols == null) {
                 return null;
@@ -347,7 +348,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                 List<Data2DColumn> targetColumns = data2D.targetColumns(cols, false);
                 writer.setColumns(targetColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                        .setWriteHeader(true)
+                        .setWriteHeader(hasHeaders)
                         .setFormatValues(formatValues);
                 data2D.copy(task, writer, cols,
                         false, ColumnDefinition.InvalidAs.Empty);

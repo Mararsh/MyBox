@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
+import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
@@ -33,7 +34,6 @@ import mara.mybox.value.UserConfig;
  */
 public class MatrixUnaryCalculationController extends BaseData2DTaskController {
 
-    protected int rowsNumber, colsNumber;
     protected int column, row, power;
     protected double number, resultValue;
 
@@ -196,11 +196,6 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
                 return false;
             }
 
-            colsNumber = checkedColsIndices.size();
-            rowsNumber = sourceController.allPagesRadio.isSelected()
-                    ? (int) data2D.getRowsNumber()
-                    : sourceController.filteredRowsIndices.size();
-
             if (DeterminantByEliminationRadio.isSelected()
                     || DeterminantByComplementMinorRadio.isSelected()
                     || InverseMatrixByEliminationRadio.isSelected()
@@ -208,6 +203,10 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
                     || MatrixRankRadio.isSelected()
                     || AdjointMatrixRadio.isSelected()
                     || PowerRadio.isSelected()) {
+                int colsNumber = checkedColsIndices.size();
+                int rowsNumber = sourceController.allPagesRadio.isSelected()
+                        ? (int) data2D.getRowsNumber()
+                        : sourceController.filteredRowsIndices.size();
                 if (colsNumber != rowsNumber) {
                     popError(message("MatricesCannotCalculateShouldSqure"));
                     return false;
@@ -247,6 +246,12 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     }
 
     @Override
+    public InvalidAs checkInvalidAs() {
+        invalidAs = InvalidAs.Fail;
+        return invalidAs;
+    }
+
+    @Override
     public void setParameters(BaseData2DLoadController controller) {
         try {
             dataController.data2D = controller.data2D.cloneAll();
@@ -277,16 +282,19 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
             @Override
             protected boolean handle() {
                 try {
-                    outputData = filteredData(checkedColsIndices, false);
-                    if (outputData == null) {
+                    List<List<String>> data = matrixController.selectedData(task, false);
+                    if (data == null) {
                         return false;
                     }
-                    rowsNumber = outputData.size();
-                    colsNumber = outputColumns.size();
+                    int rowsNumber = data.size();
+                    int colsNumber = data.get(0).size();
+                    if (rowsNumber <= 0 || colsNumber <= 0) {
+                        return false;
+                    }
                     double[][] sourceMatrix = new double[rowsNumber][colsNumber];
                     for (int r = 0; r < rowsNumber; r++) {
                         for (int c = 0; c < colsNumber; c++) {
-                            sourceMatrix[r][c] = DoubleTools.toDouble(outputData.get(r).get(c), invalidAs);
+                            sourceMatrix[r][c] = DoubleTools.toDouble(data.get(r).get(c), invalidAs);
                         }
                     }
                     double[][] result = null;
@@ -336,6 +344,8 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
 
                     }
                     if (result != null) {
+                        rowsNumber = result.length;
+                        colsNumber = result[0].length;
                         targetFile = new File(DataMatrix.filename(data2D.getDataName()
                                 + "_" + op + "_" + new Date().getTime()));
                         resultMatrix = new DataMatrix();

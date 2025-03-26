@@ -107,7 +107,7 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
             }
             super.makeColumns();
 
-            for (int i = 2; i < tableView.getColumns().size(); i++) {
+            for (int i = tableColumnStartIndex(); i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = new CheckBox(tableColumn.getText());
                 cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -205,8 +205,8 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
         return rowsFiltered(checkedColsIndices, showRowNumber);
     }
 
-    public List<List<String>> selectedData(FxTask task) {
-        return selectedData(task, checkedColsIndices, false);
+    public List<List<String>> selectedData(FxTask task, boolean hasHeaders) {
+        return selectedData(task, checkedColsIndices, false, hasHeaders);
     }
 
     /*

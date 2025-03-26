@@ -266,12 +266,18 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     /*
         table
      */
+    public int tableColumnStartIndex() {
+        return rowsSelectionColumn != null
+                && tableView.getColumns().contains(rowsSelectionColumn)
+                ? 2 : 1;
+    }
+
     public void makeColumns() {
         try {
             isSettingValues = true;
             tableData.clear();
             tableView.getColumns().remove(
-                    rowsSelectionColumn != null && tableView.getColumns().contains(rowsSelectionColumn) ? 2 : 1,
+                    tableColumnStartIndex(),
                     tableView.getColumns().size());
             tableView.setItems(tableData);
             isSettingValues = false;
