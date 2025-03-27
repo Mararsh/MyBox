@@ -93,7 +93,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label minWidth="-Infinity" text="%BinaryThreshold" />
                                                                 <ComboBox fx:id="binarySelector" editable="true" prefWidth="100.0" />
-                                                                <Button fx:id="clearThreadholdButton1" mnemonicParsing="false" onAction="#clearThreadhold">
+                                                                <Button fx:id="clearThreadholdButton" mnemonicParsing="false" onAction="#clearThreadhold">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -202,7 +202,7 @@ License:    Apache License Version 2.0
                                                 <Label text="%MaxCharacters" />
                                                 <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
                                                 <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                                                <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

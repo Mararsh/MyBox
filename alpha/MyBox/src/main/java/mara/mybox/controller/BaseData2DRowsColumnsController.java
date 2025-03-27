@@ -127,6 +127,9 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
     // If none selected then select all
     public boolean checkColumns() {
         try {
+            if (data2D == null) {
+                return false;
+            }
             checkedColsIndices = new ArrayList<>();
             checkedColsNames = new ArrayList<>();
             checkedColumns = new ArrayList<>();

@@ -78,7 +78,7 @@ License:    Apache License Version 2.0
                                                                               <children>
                                                                                   <Label minHeight="-Infinity" text="%IndependentVariablesCandidates" wrapText="true" />
                                                                                   <Label minHeight="-Infinity" text="%NoSelectionMeansAll" wrapText="true" />
-                                                                                  <Button fx:id="selectAllColumnsButton1" mnemonicParsing="false" onAction="#selectAllColumns">
+                                                                                  <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
                                                                                       <graphic>
                                                                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                               <image>
@@ -87,7 +87,7 @@ License:    Apache License Version 2.0
                                                                                           </ImageView>
                                                                                       </graphic>
                                                                                   </Button>
-                                                                                  <Button fx:id="selectNoneColumnsButton1" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                                                                  <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
                                                                                       <graphic>
                                                                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                               <image>
@@ -154,7 +154,7 @@ License:    Apache License Version 2.0
                                         </Tab>
                               <Tab fx:id="logsTab" text="%Logs">
                                  <content>
-                                    <VBox fx:id="logsBox1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                        <padding>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
@@ -165,7 +165,7 @@ License:    Apache License Version 2.0
                                                 <Label text="%MaxCharacters" />
                                                 <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
                                                 <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                                                <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>

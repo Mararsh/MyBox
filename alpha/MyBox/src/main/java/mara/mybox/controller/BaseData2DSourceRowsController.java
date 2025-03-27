@@ -198,6 +198,9 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     // If none selected then select all
     public boolean checkedRows() {
         try {
+            if (data2D == null) {
+                return false;
+            }
             selectedRowsIndices = new ArrayList<>();
             DataFilter filter = data2D.filter;
             if (filter != null) {

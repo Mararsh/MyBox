@@ -3,17 +3,10 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.stage.Window;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -29,26 +22,15 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-12-22
  * @License Apache License Version 2.0
  */
-public class MatricesBinaryCalculationController extends BaseController {
-
-    protected DataMatrix resultMatrix;
-    protected double[][] sourceA, sourceB, result;
+public class MatricesBinaryCalculationController extends MatrixUnaryCalculationController {
 
     @FXML
     protected Tab dataATab, dataBTab, resultTab;
     @FXML
-    protected ControlData2DMatrix dataAController, dataBController;
-    @FXML
-    protected ControlData2DView resultController;
-    @FXML
-    protected ToggleGroup opGroup;
+    protected ControlData2DSource dataAController, dataBController;
     @FXML
     protected RadioButton plusRadio, minusRadio, multiplyRadio,
             hadamardProductRadio, kroneckerProductRadio, verticalMergeRadio, horizontalMergeRadio;
-    @FXML
-    protected Label matrixLabel, resultLabel, checkLabel;
-    @FXML
-    protected Button matrixAButton, matrixBButton;
 
     public MatricesBinaryCalculationController() {
         baseTitle = message("MatricesBinaryCalculation");
@@ -57,10 +39,8 @@ public class MatricesBinaryCalculationController extends BaseController {
     @Override
     public void initValues() {
         try {
+            matrixController = dataAController;
             super.initValues();
-
-            resultController.createData(Data2D.DataType.Matrix);
-            resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -72,11 +52,10 @@ public class MatricesBinaryCalculationController extends BaseController {
         try {
             super.initControls();
 
-            opGroup.selectedToggleProperty().addListener(
-                    (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
-                        checkMatrices(false);
-                    });
-            checkMatrices(false);
+            dataBController.setParameters(this);
+
+            dataAController.refreshTitle = false;
+            dataBController.refreshTitle = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -99,202 +78,232 @@ public class MatricesBinaryCalculationController extends BaseController {
         }
     }
 
-    @FXML
     @Override
-    public void createAction() {
-        dataAController.createAction();
-        dataBController.createAction();
+    public void setBaseTitle(String title) {
     }
 
-    protected void checkMatrices(boolean calculate) {
-        if (!dataAController.checkSelections()) {
-            popError(message("NoData") + ": " + message("MatrixA"));
+    @Override
+    public boolean checkParameters() {
+        try {
+            if (!dataAController.checkSelections()) {
+                popError(message("NoData") + ": " + message("MatrixA"));
+                return false;
+            }
+            int colsNumberA = dataAController.checkedColsIndices.size();
+            int rowsNumberA = dataAController.allPagesRadio.isSelected()
+                    ? (int) dataAController.data2D.getRowsNumber()
+                    : dataAController.filteredRowsIndices.size();
+            if (colsNumberA == 0 || rowsNumberA == 0) {
+                popError(message("InvalidData") + ": " + message("MatrixA"));
+                return false;
+            }
+
+            if (!dataBController.checkSelections()) {
+                popError(message("NoData") + ": " + message("MatrixB"));
+                return false;
+            }
+            int colsNumberB = dataBController.checkedColsIndices.size();
+            int rowsNumberB = dataBController.allPagesRadio.isSelected()
+                    ? (int) dataBController.data2D.getRowsNumber()
+                    : dataBController.filteredRowsIndices.size();
+
+            if (colsNumberB == 0 || rowsNumberB == 0) {
+                popError(message("InvalidData") + ": " + message("MatrixB"));
+                return false;
+            }
+
+            if (plusRadio.isSelected()
+                    || minusRadio.isSelected()
+                    || hadamardProductRadio.isSelected()) {
+                if (rowsNumberA != rowsNumberB || colsNumberA != colsNumberB) {
+                    popError(message("MatricesCannotCalculateShouldSame"));
+                    return false;
+                }
+
+            } else if (multiplyRadio.isSelected()) {
+                if (colsNumberA != rowsNumberB) {
+                    popError(message("MatricesCannotCalculateMultiply"));
+                    return false;
+                }
+
+            } else if (verticalMergeRadio.isSelected()) {
+                if (colsNumberA != colsNumberB) {
+                    popError(message("MatricesCannotCalculateShouldSameCols"));
+                    return false;
+                }
+
+            } else if (horizontalMergeRadio.isSelected()) {
+                if (rowsNumberA != rowsNumberB) {
+                    popError(message("MatricesCannotCalculateShouldSameRows"));
+                    return false;
+                }
+
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
+    public void preprocessStatistic() {
+        List<String> scriptsA = new ArrayList<>();
+        String filterScriptA = dataAController.data2D.filterScipt();
+        boolean hasFilterScriptA = filterScriptA != null && !filterScriptA.isBlank();
+        if (hasFilterScriptA) {
+            scriptsA.add(filterScriptA);
+            updateLogs(message("Filter") + ": " + filterScriptA, true);
+        }
+        List<String> scriptsB = new ArrayList<>();
+        String filterScriptB = dataBController.data2D.filterScipt();
+        boolean hasFilterScriptB = filterScriptB != null && !filterScriptB.isBlank();
+        if (hasFilterScriptB) {
+            scriptsB.add(filterScriptB);
+            updateLogs(message("Filter") + ": " + filterScriptB, true);
+        }
+
+        if (scriptsA.isEmpty() && scriptsB.isEmpty()) {
+            startOperation();
             return;
         }
-        if (!dataBController.checkSelections()) {
-            popError(message("NoData") + ": " + message("MatrixB"));
-            return;
-        }
-        checkLabel.setText("");
+        updateLogs(message("Statistic") + " ... ", true);
         if (task != null) {
             task.cancel();
         }
-        resultLabel.setText("");
-        sourceA = null;
-        sourceB = null;
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                try {
-                    sourceA = dataAController.pickMatrix(this);
-                    if (sourceA == null || sourceA.length == 0) {
-                        return false;
-                    }
-                    sourceB = dataBController.pickMatrix(this);
-                    if (sourceB == null || sourceB.length == 0) {
-                        return false;
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
+                dataAController.data2D.setTask(this);
+                List<String> filledScriptsA = dataAController.data2D.calculateScriptsStatistic(scriptsA);
+                if (hasFilterScriptA && filledScriptsA != null && filledScriptsA.size() == scriptsA.size()) {
+                    dataAController.data2D.filter.setFilledScript(filledScriptsA.get(0));
                 }
+                dataBController.data2D.setTask(this);
+                List<String> filledScriptsB = dataBController.data2D.calculateScriptsStatistic(scriptsB);
+                if (hasFilterScriptB && filledScriptsB != null && filledScriptsB.size() == scriptsB.size()) {
+                    dataBController.data2D.filter.setFilledScript(filledScriptsB.get(0));
+                }
+                taskSuccessed = true;
+                return taskSuccessed;
             }
 
             @Override
             protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void whenCanceled() {
+                taskCanceled();
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                setControls();
-                if (ok && calculate) {
-                    calculate();
+                dataAController.data2D.stopTask();
+                dataBController.data2D.stopTask();
+                if (taskSuccessed) {
+                    updateLogs(baseTitle + " ... ", true);
+                    startOperation();
+                } else {
+                    closeTask(ok);
                 }
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
-    protected void handleError(String error) {
-        popError(error);
-        checkLabel.setText(error);
-    }
-
-    protected boolean setControls() {
-        if (sourceA == null || sourceA.length == 0) {
-            handleError(message("InvalidData") + ": " + message("MatrixA"));
-            return false;
-        }
-        if (sourceB == null || sourceB.length == 0) {
-            handleError(message("InvalidData") + ": " + message("MatrixB"));
-            return false;
-        }
-        checkLabel.setText("");
-        int rowsNumberA = sourceA.length;
-        int colsNumberA = sourceA[0].length;
-        int rowsNumberB = sourceB.length;
-        int colsNumberB = sourceB[0].length;
-        if (plusRadio.isSelected() || minusRadio.isSelected() || hadamardProductRadio.isSelected()) {
-            if (rowsNumberA != rowsNumberB || colsNumberA != colsNumberB) {
-                handleError(message("MatricesCannotCalculateShouldSame"));
-                return false;
-            }
-
-        } else if (multiplyRadio.isSelected()) {
-            if (colsNumberA != rowsNumberB) {
-                handleError(message("MatricesCannotCalculateMultiply"));
-                return false;
-            }
-
-        } else if (verticalMergeRadio.isSelected()) {
-            if (colsNumberA != colsNumberB) {
-                handleError(message("MatricesCannotCalculateShouldSameCols"));
-                return false;
-            }
-
-        } else if (horizontalMergeRadio.isSelected()) {
-            if (rowsNumberA != rowsNumberB) {
-                handleError(message("MatricesCannotCalculateShouldSameRows"));
-                return false;
-            }
-
-        }
-
-        return true;
-    }
-
-    @FXML
-    public void calculateAction() {
-        checkMatrices(true);
-    }
-
-    @FXML
-    public void calculate() {
-        if (sourceA == null || sourceA.length == 0) {
-            handleError(message("InvalidData") + ": " + message("MatrixA"));
-            return;
-        }
-        if (sourceB == null || sourceB.length == 0) {
-            handleError(message("InvalidData") + ": " + message("MatrixB"));
-            return;
-        }
+    @Override
+    protected void startOperation() {
         if (task != null) {
             task.cancel();
         }
-        resultLabel.setText("");
         task = new FxSingletonTask<Void>(this) {
+
+            private String op;
+            private DataMatrix resultMatrix;
 
             @Override
             protected boolean handle() {
                 try {
+                    double[][] sourceMatrixA = pickSourceMatrix(this, dataAController);
+                    if (sourceMatrixA == null) {
+                        return false;
+                    }
+                    double[][] sourceMatrixB = pickSourceMatrix(this, dataBController);
+                    if (sourceMatrixB == null) {
+                        return false;
+                    }
+                    double[][] result = null;
                     if (plusRadio.isSelected()) {
-                        result = DoubleMatrixTools.add(sourceA, sourceB);
+                        result = DoubleMatrixTools.add(sourceMatrixA, sourceMatrixB);
 
                     } else if (minusRadio.isSelected()) {
-                        result = DoubleMatrixTools.subtract(sourceA, sourceB);
+                        result = DoubleMatrixTools.subtract(sourceMatrixA, sourceMatrixB);
 
                     } else if (multiplyRadio.isSelected()) {
-                        result = DoubleMatrixTools.multiply(sourceA, sourceB);
+                        result = DoubleMatrixTools.multiply(sourceMatrixA, sourceMatrixB);
 
                     } else if (hadamardProductRadio.isSelected()) {
-                        result = DoubleMatrixTools.hadamardProduct(sourceA, sourceB);
+                        result = DoubleMatrixTools.hadamardProduct(sourceMatrixA, sourceMatrixB);
 
                     } else if (kroneckerProductRadio.isSelected()) {
-                        result = DoubleMatrixTools.kroneckerProduct(sourceA, sourceB);
+                        result = DoubleMatrixTools.kroneckerProduct(sourceMatrixA, sourceMatrixB);
 
                     } else if (verticalMergeRadio.isSelected()) {
-                        result = DoubleMatrixTools.vertivalMerge(sourceA, sourceB);
+                        result = DoubleMatrixTools.vertivalMerge(sourceMatrixA, sourceMatrixB);
 
                     } else if (horizontalMergeRadio.isSelected()) {
-                        result = DoubleMatrixTools.horizontalMerge(sourceA, sourceB);
+                        result = DoubleMatrixTools.horizontalMerge(sourceMatrixA, sourceMatrixB);
 
                     }
+                    op = ((RadioButton) opGroup.getSelectedToggle()).getText();
+                    resultMatrix = writeResultMatrix(this, result,
+                            dataAController.data2D.getDataName()
+                            + "_" + dataBController.data2D.getDataName()
+                            + "_" + op);
+                    return resultMatrix != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return result != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 cost = new Date().getTime() - startTime.getTime();
-                String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
-                resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-                resultController.loadMatrix(result);
-                tabPane.getSelectionModel().select(resultTab);
+                showLogs(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
+                tabPane.getSelectionModel().select(logsTab);
+                Data2DManufactureController.openDef(resultMatrix).setAlwaysOnTop();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     /*
         static
      */
-    public static MatricesBinaryCalculationController oneOpen() {
-        MatricesBinaryCalculationController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof MatricesBinaryCalculationController) {
-                try {
-                    controller = (MatricesBinaryCalculationController) object;
-                    break;
-                } catch (Exception e) {
-                }
-            }
+    public static MatricesBinaryCalculationController open(BaseData2DLoadController tableController) {
+        try {
+            MatricesBinaryCalculationController controller = (MatricesBinaryCalculationController) WindowTools.operationStage(
+                    tableController, Fxmls.MatricesBinaryCalculationFxml);
+            controller.setParameters(tableController);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        if (controller == null) {
-            controller = (MatricesBinaryCalculationController) WindowTools.openStage(Fxmls.MatricesBinaryCalculationFxml);
-        }
-        controller.requestMouse();
-        return controller;
     }
 
 }

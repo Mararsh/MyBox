@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                         <Label text="%MaxCharacters" />
                                         <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
                                         <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                                        <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

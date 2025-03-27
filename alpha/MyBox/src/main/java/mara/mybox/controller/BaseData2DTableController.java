@@ -60,7 +60,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected boolean readOnly, widthChanged;
+    protected boolean readOnly, widthChanged, refreshTitle;
     protected SimpleBooleanProperty statusNotify;
     protected DataFilter styleFilter;
 
@@ -78,6 +78,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         readOnly = true;
         styleFilter = new DataFilter();
         pagination = new Pagination(Pagination.ObjectType.Table);
+        refreshTitle = true;
     }
 
     @Override
@@ -206,6 +207,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
             if (dataLabel != null) {
                 dataLabel.setText(data2D != null ? data2D.displayName() : "");
+            }
+            if (!refreshTitle) {
+                return;
             }
             myStage = getMyStage();
             if (myStage == null) {

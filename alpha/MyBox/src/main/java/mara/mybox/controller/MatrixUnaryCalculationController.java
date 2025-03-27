@@ -18,6 +18,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleMatrixTools;
@@ -82,31 +83,33 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
 
             sourceController.setParameters(this);
 
-            row = UserConfig.getInt(interfaceName + "Row", 1);
-            rowInput.setText(row + "");
+            if (normalizeController != null) {
+                row = UserConfig.getInt(interfaceName + "Row", 1);
+                rowInput.setText(row + "");
 
-            column = UserConfig.getInt(interfaceName + "Column", 1);
-            columnInput.setText(column + "");
+                column = UserConfig.getInt(interfaceName + "Column", 1);
+                columnInput.setText(column + "");
 
-            try {
-                number = Double.parseDouble(UserConfig.getString(interfaceName + "Number", "2"));
-            } catch (Exception e) {
-                number = 2d;
+                try {
+                    number = Double.parseDouble(UserConfig.getString(interfaceName + "Number", "2"));
+                } catch (Exception e) {
+                    number = 2d;
+                }
+                numberInput.setText(number + "");
+
+                try {
+                    power = UserConfig.getInt(interfaceName + "Power", 2);
+                } catch (Exception e) {
+                    power = 2;
+                }
+                powerInput.setText(power + "");
+
+                opGroup.selectedToggleProperty().addListener(
+                        (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
+                            checkControls();
+                        });
+                checkControls();
             }
-            numberInput.setText(number + "");
-
-            try {
-                power = UserConfig.getInt(interfaceName + "Power", 2);
-            } catch (Exception e) {
-                power = 2;
-            }
-            powerInput.setText(power + "");
-
-            opGroup.selectedToggleProperty().addListener(
-                    (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
-                        checkControls();
-                    });
-            checkControls();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -203,10 +206,10 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
                     || MatrixRankRadio.isSelected()
                     || AdjointMatrixRadio.isSelected()
                     || PowerRadio.isSelected()) {
-                int colsNumber = checkedColsIndices.size();
-                int rowsNumber = sourceController.allPagesRadio.isSelected()
-                        ? (int) data2D.getRowsNumber()
-                        : sourceController.filteredRowsIndices.size();
+                int colsNumber = matrixController.checkedColsIndices.size();
+                int rowsNumber = matrixController.allPagesRadio.isSelected()
+                        ? (int) matrixController.data2D.getRowsNumber()
+                        : matrixController.filteredRowsIndices.size();
                 if (colsNumber != rowsNumber) {
                     popError(message("MatricesCannotCalculateShouldSqure"));
                     return false;
@@ -246,16 +249,10 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     }
 
     @Override
-    public InvalidAs checkInvalidAs() {
-        invalidAs = InvalidAs.Fail;
-        return invalidAs;
-    }
-
-    @Override
     public void setParameters(BaseData2DLoadController controller) {
         try {
-            dataController.data2D = controller.data2D.cloneAll();
-            dataController.tableData.setAll(controller.tableData);
+            matrixController.data2D = controller.data2D.cloneAll();
+            matrixController.tableData.setAll(controller.tableData);
 
             sourceLoaded();
 
@@ -266,7 +263,94 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
 
     @Override
     public boolean checkParameters() {
-        return super.checkParameters() && checkControls();
+        if (!matrixController.checkSelections() || !checkControls()) {
+            return false;
+        }
+        if (!matrixController.allPagesRadio.isSelected()
+                && matrixController.selectedRowsIndices.isEmpty()) {
+            popError(message("SelectToHandle") + ": " + message("Rows"));
+            tabPane.getSelectionModel().select(sourceTab);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkOptions() {
+        try {
+            if (!checkParameters()) {
+                return false;
+            }
+            invalidAs = InvalidAs.Fail;
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public double[][] pickSourceMatrix(FxTask rtask, ControlData2DSource controller) {
+        try {
+            List<List<String>> data = controller.selectedData(rtask, false);
+            if (data == null) {
+                return null;
+            }
+            int rowsNumber = data.size();
+            int colsNumber = data.get(0).size();
+            if (rowsNumber <= 0 || colsNumber <= 0) {
+                return null;
+            }
+            double[][] matrix = new double[rowsNumber][colsNumber];
+            for (int r = 0; r < rowsNumber; r++) {
+                for (int c = 0; c < colsNumber; c++) {
+                    matrix[r][c] = DoubleTools.toDouble(data.get(r).get(c), invalidAs);
+                }
+            }
+            return matrix;
+        } catch (Exception e) {
+            if (rtask != null) {
+                rtask.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
+        }
+    }
+
+    public DataMatrix writeResultMatrix(FxTask rtask, double[][] result, String name) {
+        try {
+            int rowsNumber = result.length;
+            int colsNumber = result[0].length;
+            targetFile = new File(DataMatrix.filename(name + "_" + new Date().getTime()));
+            DataMatrix resultMatrix = new DataMatrix();
+            resultMatrix.setFile(targetFile).setSheet("Double")
+                    .setDataName(name)
+                    .setColsNumber(colsNumber)
+                    .setRowsNumber(rowsNumber);
+            try (BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(targetFile, resultMatrix.getCharset(), false))) {
+                String line;
+                for (int i = 0; i < rowsNumber; i++) {
+                    line = result[i][0] + "";
+                    for (int j = 1; j < colsNumber; j++) {
+                        line += DataMatrix.MatrixDelimiter + result[i][j];
+                    }
+                    writer.write(line + "\n");
+                }
+                writer.flush();
+            } catch (Exception ex) {
+            }
+            resultMatrix = (DataMatrix) new TableData2DDefinition().insertData(resultMatrix);
+            return resultMatrix;
+        } catch (Exception e) {
+            if (rtask != null) {
+                rtask.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
+        }
     }
 
     @Override
@@ -282,20 +366,9 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
             @Override
             protected boolean handle() {
                 try {
-                    List<List<String>> data = matrixController.selectedData(task, false);
-                    if (data == null) {
+                    double[][] sourceMatrix = pickSourceMatrix(this, matrixController);
+                    if (sourceMatrix == null) {
                         return false;
-                    }
-                    int rowsNumber = data.size();
-                    int colsNumber = data.get(0).size();
-                    if (rowsNumber <= 0 || colsNumber <= 0) {
-                        return false;
-                    }
-                    double[][] sourceMatrix = new double[rowsNumber][colsNumber];
-                    for (int r = 0; r < rowsNumber; r++) {
-                        for (int c = 0; c < colsNumber; c++) {
-                            sourceMatrix[r][c] = DoubleTools.toDouble(data.get(r).get(c), invalidAs);
-                        }
                     }
                     double[][] result = null;
                     resultValue = AppValues.InvalidDouble;
@@ -344,30 +417,9 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
 
                     }
                     if (result != null) {
-                        rowsNumber = result.length;
-                        colsNumber = result[0].length;
-                        targetFile = new File(DataMatrix.filename(data2D.getDataName()
-                                + "_" + op + "_" + new Date().getTime()));
-                        resultMatrix = new DataMatrix();
-                        resultMatrix.setFile(targetFile).setSheet("Double")
-                                .setDataName(data2D.getDataName() + "_" + op)
-                                .setColsNumber(colsNumber)
-                                .setRowsNumber(rowsNumber);
-                        try (BufferedWriter writer = new BufferedWriter(
-                                new FileWriter(targetFile, resultMatrix.getCharset(), false))) {
-                            String line;
-                            for (int i = 0; i < rowsNumber; i++) {
-                                line = result[i][0] + "";
-                                for (int j = 1; j < colsNumber; j++) {
-                                    line += DataMatrix.MatrixDelimiter + result[i][j];
-                                }
-                                writer.write(line + "\n");
-                            }
-                            writer.flush();
-                        } catch (Exception ex) {
-                        }
-                        resultMatrix = (DataMatrix) new TableData2DDefinition().insertData(resultMatrix);
-                        taskSuccessed = true;
+                        resultMatrix = writeResultMatrix(this, result,
+                                data2D.getDataName() + "_" + op);
+                        taskSuccessed = resultMatrix != null;
 
                     } else if (!DoubleTools.invalidDouble(resultValue)) {
                         resultInfo = op + ":\n" + resultValue;
