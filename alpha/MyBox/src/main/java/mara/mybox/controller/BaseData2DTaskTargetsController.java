@@ -51,9 +51,9 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     }
 
     @Override
-    public void sourceChanged() {
+    public void dataChanged() {
         try {
-            super.sourceChanged();
+            super.dataChanged();
 
             if (colSelector != null) {
                 colSelector.getItems().clear();

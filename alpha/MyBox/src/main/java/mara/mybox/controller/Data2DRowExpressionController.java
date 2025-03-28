@@ -52,8 +52,8 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
     }
 
     @Override
-    public void sourceChanged() {
-        super.sourceChanged();
+    public void dataChanged() {
+        super.dataChanged();
         expressionController.setData2D(data2D);
     }
 

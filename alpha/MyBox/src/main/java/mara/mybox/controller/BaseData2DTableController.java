@@ -610,7 +610,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (targetIsTextInput()) {
             return false;
         }
-        pasteContentInSystemClipboard();
+        loadContentInSystemClipboard();
         return true;
     }
 

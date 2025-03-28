@@ -109,7 +109,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
         }
     }
 
-    public void sourceChanged(Data2D data2d) {
+    public void dataChanged(Data2D data2d) {
         try {
             data2D = data2d;
             pagination = data2D.pagination;
@@ -129,7 +129,9 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             updateTable(data);
             postLoadedTableData();
             refreshControls();
-            notifyLoaded();
+            if (data2D.getFile() != null) {
+                recordFileOpened(data2D.getFile());
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -198,6 +200,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     // If none selected then select all
     public boolean checkedRows() {
         try {
+            MyBoxLog.console(data2D != null);
             if (data2D == null) {
                 return false;
             }

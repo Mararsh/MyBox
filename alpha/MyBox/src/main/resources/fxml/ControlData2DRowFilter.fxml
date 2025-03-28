@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
     <children>
       <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="54.0" maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
-            <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectAction">
+            <Button fx:id="selectExpressionButton" mnemonicParsing="false" onAction="#selectAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="saveFilterButton" mnemonicParsing="false" onAction="#saveAction">
+            <Button fx:id="saveExpressionButton" mnemonicParsing="false" onAction="#saveAction">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>

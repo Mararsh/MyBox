@@ -66,6 +66,15 @@ License:    Apache License Version 2.0
                                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                 </padding>
                                                 <children>
+                                          <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconStart.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
                                                     <VBox minHeight="-Infinity" spacing="5.0">
                                                         <children>
                                                             <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="0.0" vgap="2.0">
@@ -140,22 +149,6 @@ License:    Apache License Version 2.0
                                     </ScrollPane>
                                 </content>
                             </Tab>
-                        <Tab fx:id="outputsTab" text="%Outputs">
-                           <content>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                 <content>
-                                    <VBox fx:id="targetBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                       <padding>
-                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                       </padding>
-                                       <children>
-                                          <fx:include fx:id="target" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DTarget.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </ScrollPane>
-                           </content>
-                        </Tab>
                             <Tab fx:id="logsTab" text="%Logs">
                                 <content>
                                     <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -192,49 +185,6 @@ License:    Apache License Version 2.0
          <padding>
             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
          </padding>
-         <bottom>
-              <HBox alignment="CENTER_LEFT" spacing="5.0" BorderPane.alignment="CENTER">
-                  <children>
-                      <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                      <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconTop.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </CheckBox>
-                      <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconClose.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </CheckBox>
-                      <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconCancel.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconStart.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                  </children>
-              </HBox>
-         </bottom>
       </BorderPane>
    </content>
 </ScrollPane>

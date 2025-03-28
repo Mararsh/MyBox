@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -25,7 +26,7 @@ import static mara.mybox.value.Languages.message;
 public class MatricesBinaryCalculationController extends MatrixUnaryCalculationController {
 
     @FXML
-    protected Tab dataATab, dataBTab, resultTab;
+    protected Tab dataATab, dataBTab;
     @FXML
     protected ControlData2DSource dataAController, dataBController;
     @FXML
@@ -290,13 +291,28 @@ public class MatricesBinaryCalculationController extends MatrixUnaryCalculationC
         start(task, false);
     }
 
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == dataATab) {
+            if (dataAController.keyEventsFilter(event)) {
+                return true;
+            }
+        } else if (tab == dataBTab) {
+            if (dataBController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
+    }
+
     /*
         static
      */
     public static MatricesBinaryCalculationController open(BaseData2DLoadController tableController) {
         try {
-            MatricesBinaryCalculationController controller = (MatricesBinaryCalculationController) WindowTools.operationStage(
-                    tableController, Fxmls.MatricesBinaryCalculationFxml);
+            MatricesBinaryCalculationController controller = (MatricesBinaryCalculationController) WindowTools.openStage(
+                    Fxmls.MatricesBinaryCalculationFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

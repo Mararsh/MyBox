@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
     <children>
       <FlowPane hgap="2.0" vgap="2.0">
          <children>
-            <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
+            <Button fx:id="loadContentInSystemClipboardButton" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>

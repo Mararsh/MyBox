@@ -8,9 +8,11 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataMatrix;
@@ -81,7 +83,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
         try {
             super.initControls();
 
-            sourceController.setParameters(this);
+            matrixController.setParameters(this);
 
             if (normalizeController != null) {
                 row = UserConfig.getInt(interfaceName + "Row", 1);
@@ -117,7 +119,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     }
 
     protected boolean checkXY() {
-        if (data2D == null) {
+        if (matrixController.data2D == null) {
             return false;
         }
         boolean valid = true;
@@ -126,7 +128,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
                 return true;
             }
             int v = Integer.parseInt(rowInput.getText().trim());
-            if (v > 0 && v <= data2D.getRowsNumber()) {
+            if (v > 0 && v <= matrixController.data2D.getRowsNumber()) {
                 row = v;
                 UserConfig.setInt(interfaceName + "Row", v);
             } else {
@@ -137,7 +139,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
         }
         try {
             int v = Integer.parseInt(columnInput.getText().trim());
-            if (v > 0 && v <= data2D.getColsNumber()) {
+            if (v > 0 && v <= matrixController.data2D.getColsNumber()) {
                 column = v;
                 UserConfig.setInt(interfaceName + "Column", v);
             } else {
@@ -150,7 +152,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     }
 
     protected boolean checkNumber() {
-        if (data2D == null) {
+        if (matrixController.data2D == null) {
             return false;
         }
         try {
@@ -171,7 +173,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     }
 
     protected boolean checkPower() {
-        if (data2D == null) {
+        if (matrixController.data2D == null) {
             return false;
         }
         try {
@@ -194,11 +196,9 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     public boolean checkControls() {
         try {
             setBox.getChildren().clear();
-
-            if (data2D == null) {
+            if (matrixController.data2D == null) {
                 return false;
             }
-
             if (DeterminantByEliminationRadio.isSelected()
                     || DeterminantByComplementMinorRadio.isSelected()
                     || InverseMatrixByEliminationRadio.isSelected()
@@ -251,10 +251,12 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     @Override
     public void setParameters(BaseData2DLoadController controller) {
         try {
+            controller.setIconified(true);
+
             matrixController.data2D = controller.data2D.cloneAll();
             matrixController.tableData.setAll(controller.tableData);
 
-            sourceLoaded();
+            dataLoaded();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -281,6 +283,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
             if (!checkParameters()) {
                 return false;
             }
+            data2D = matrixController.data2D;
             invalidAs = InvalidAs.Fail;
 
             return true;
@@ -418,7 +421,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
                     }
                     if (result != null) {
                         resultMatrix = writeResultMatrix(this, result,
-                                data2D.getDataName() + "_" + op);
+                                matrixController.data2D.getDataName() + "_" + op);
                         taskSuccessed = resultMatrix != null;
 
                     } else if (!DoubleTools.invalidDouble(resultValue)) {
@@ -457,14 +460,27 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
         start(task, false);
     }
 
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (sourceTab != null) {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == sourceTab) {
+                if (matrixController.keyEventsFilter(event)) {
+                    return true;
+                }
+            }
+        }
+        return super.keyEventsFilter(event);
+    }
+
 
     /*
         static
      */
     public static MatrixUnaryCalculationController open(BaseData2DLoadController tableController) {
         try {
-            MatrixUnaryCalculationController controller = (MatrixUnaryCalculationController) WindowTools.operationStage(
-                    tableController, Fxmls.MatrixUnaryCalculationFxml);
+            MatrixUnaryCalculationController controller = (MatrixUnaryCalculationController) WindowTools.openStage(
+                    Fxmls.MatrixUnaryCalculationFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

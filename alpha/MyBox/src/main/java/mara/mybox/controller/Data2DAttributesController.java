@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
@@ -349,6 +350,17 @@ public class Data2DAttributesController extends BaseChildController {
     @Override
     public void recoverAction() {
         loadValues();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == columnsTab) {
+            if (columnsController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
     }
 
     /*

@@ -90,9 +90,9 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
     }
 
     @Override
-    public void sourceChanged() {
+    public void dataChanged() {
         try {
-            super.sourceChanged();
+            super.dataChanged();
             isSettingValues = true;
             xSelector.getItems().clear();
             ySelector.getItems().clear();

@@ -314,6 +314,18 @@ public class BaseTaskController extends BaseLogsController {
     }
 
     @Override
+    public boolean controlAltL() {
+        if (tabPane != null && logsTab != null && clearButton != null) {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == logsTab) {
+                clearLogs();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void cleanPane() {
         try {
             cancelTask();

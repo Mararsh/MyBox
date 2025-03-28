@@ -61,8 +61,17 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab text="%Calculation">
                             <content>
-                                <VBox fx:id="calBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
+                                    <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconStart.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                         <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
                                             <children>
                                                 <RadioButton fx:id="verticalMergeRadio" mnemonicParsing="false" selected="true" text="%VerticalMerge">
@@ -85,7 +94,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                     </children>
                                     <padding>
-                                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </VBox>
                             </content>
@@ -132,49 +141,6 @@ License:    Apache License Version 2.0
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-         <bottom>
-            <HBox alignment="CENTER_LEFT" spacing="5.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                  <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconTop.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </CheckBox>
-                  <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconClose.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </CheckBox>
-                  <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconCancel.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconStart.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
-         </bottom>
 </BorderPane>
    </content>
 </ScrollPane>

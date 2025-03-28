@@ -64,9 +64,9 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public void sourceChanged() {
+    public void dataChanged() {
         try {
-            super.sourceChanged();
+            super.dataChanged();
 
             List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {

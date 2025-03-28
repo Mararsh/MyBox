@@ -108,7 +108,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
 
             initOptions();
 
-            sourceLoaded();
+            dataLoaded();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -133,8 +133,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    MyBoxLog.console("sourceLoaded");
-                    sourceLoaded();
+                    dataLoaded();
                 }
             };
             dataController.loadedNotify.addListener(tableLoadListener);
@@ -142,7 +141,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             tableStatusListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    sourceChanged();
+                    dataChanged();
                 }
             };
             dataController.statusNotify.addListener(tableStatusListener);
@@ -159,18 +158,18 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
         }
     }
 
-    public void sourceLoaded() {
-        sourceChanged();
+    public void dataLoaded() {
+        dataChanged();
     }
 
-    public void sourceChanged() {
+    public void dataChanged() {
         try {
             data2D = dataController.data2D.cloneAll().setController(this);
 
             if (groupController != null) {
                 groupController.refreshControls();
             }
-            sourceController.sourceChanged(data2D);
+            sourceController.dataChanged(data2D);
 
             filterController.setData2D(data2D);
 
