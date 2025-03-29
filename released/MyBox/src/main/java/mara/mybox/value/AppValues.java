@@ -10,8 +10,8 @@ import javafx.scene.image.Image;
 public class AppValues {
 
     public static final boolean Alpha = false;
-    public static final String AppVersion = "6.8.5";
-    public static final String AppVersionDate = "2025-3-5";
+    public static final String AppVersion = "6.8.6";
+    public static final String AppVersionDate = "2025-3-30";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
     public static final int AppYear = 2025;
@@ -33,7 +33,7 @@ public class AppValues {
     public static final int InvalidInteger = Integer.MAX_VALUE;
     public static final double InvalidDouble = Double.MAX_VALUE;
     public static final double TinyDouble = Float.MIN_VALUE;
-    public static final String InvalidString = "MyBox%$#@^&Invalid()*&!~`String=-+_<>MyBox";
+    public static final String InvalidString = "MyBox%$#@^&Invalid)(*&!~`String=-+_<>MyBox";
 
     public static final String GaoDeMapJavascriptKey = "9a05f3a33dbf64b70f6e1ac3988d9cdd";
     public static final String GaoDeMapWebServiceKey = "a389d47ae369e57e0c2c7e32e845d1b0";

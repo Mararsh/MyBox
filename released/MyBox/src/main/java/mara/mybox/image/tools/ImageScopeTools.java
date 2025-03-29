@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.DoubleCircle;
@@ -26,7 +27,6 @@ import mara.mybox.fxml.image.ScopeTools;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.ImageScope.ShapeType;
 import static mara.mybox.image.data.ImageScope.ShapeType.Matting4;
-import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.InternalImages;
@@ -64,6 +64,7 @@ public class ImageScopeTools {
             targetScope.setMaskOpacity(sourceScope.getMaskOpacity());
             targetScope.setOutlineSource(sourceScope.getOutlineSource());
             targetScope.setOutline(sourceScope.getOutline());
+            targetScope.setOutlineName(sourceScope.getOutlineName());
             targetScope.setClip(sourceScope.getClip());
             targetScope.setMaskColor(sourceScope.getMaskColor());
             targetScope.setMaskOpacity(sourceScope.getMaskOpacity());
@@ -159,11 +160,12 @@ public class ImageScopeTools {
     // scope should have been decoded
     public static String toHtml(FxTask task, ImageScope scope) {
         try {
-            if (scope == null) {
+            if (scope == null || scope.isWhole()) {
                 return null;
             }
-            ShapeType type = scope.getShapeType();
             String html = "";
+            StringTable htmlTable = new StringTable();
+            List<String> row;
             try {
                 ImageItem item = new ImageItem(scope.getBackground());
                 Image image = item.readImage();
@@ -187,55 +189,54 @@ public class ImageScopeTools {
                                 + imgFile.toURI().toString() + "' width=500></P><BR>";
                     }
                 }
+                String v = scope.getName();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    htmlTable.add(row);
+                }
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ShapeType"), message(scope.getShapeType().name())));
+                htmlTable.add(row);
+                v = scope.getBackground();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Background"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    htmlTable.add(row);
+                }
+                v = scope.getOutlineName();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    htmlTable.add(row);
+                }
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ColorMatchAlgorithm"),
+                        message(scope.getColorAlgorithm().name())));
+                htmlTable.add(row);
+                v = scope.getShapeData();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Shape"), v));
+                    htmlTable.add(row);
+                }
+                v = scope.getColorData();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Colors"), v));
+                    htmlTable.add(row);
+                }
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ColorMatchThreshold"), scope.getColorThreshold() + ""));
+                htmlTable.add(row);
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ShapeExcluded"), scope.isShapeExcluded() ? message("Yes") : ""));
+                htmlTable.add(row);
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ColorExcluded"), scope.isColorExcluded() ? message("Yes") : ""));
+                htmlTable.add(row);
             } catch (Exception e) {
             }
-            StringTable htmlTable = new StringTable();
-            List<String> row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ShapeType"), type.name()));
-            htmlTable.add(row);
-            String v = scope.getBackground();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Background"), "<PRE><CODE>" + v + "</CODE></PRE>"));
-                htmlTable.add(row);
-            }
-            v = scope.getName();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
-                htmlTable.add(row);
-            }
-            v = scope.getOutlineName();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
-                htmlTable.add(row);
-            }
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ColorMatchAlgorithm"),
-                    message(scope.getColorAlgorithm().name())));
-            htmlTable.add(row);
-            v = scope.getShapeData();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Shape"), v));
-                htmlTable.add(row);
-            }
-            v = scope.getColorData();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Colors"), v));
-                htmlTable.add(row);
-            }
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ColorMatchThreshold"), scope.getColorThreshold() + ""));
-            htmlTable.add(row);
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ShapeExcluded"), scope.isShapeExcluded() ? message("Yes") : ""));
-            htmlTable.add(row);
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ColorExcluded"), scope.isColorExcluded() ? message("Yes") : ""));
-            htmlTable.add(row);
             return html + htmlTable.div();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -246,6 +247,17 @@ public class ImageScopeTools {
     public static DoubleRectangle makeOutline(FxTask task, ImageScope scope, Image bgImage,
             DoubleRectangle reck, boolean keepRatio) {
         try {
+            if (scope.getOutlineSource() == null) {
+                if (scope.getOutlineName() != null) {
+                    Image image = new ImageItem(scope.getOutlineName()).readImage();
+                    if (image != null) {
+                        scope.setOutlineSource(SwingFXUtils.fromFXImage(image, null));
+                    }
+                }
+            }
+            if (scope.getOutlineSource() == null) {
+                return null;
+            }
             BufferedImage[] outline = AlphaTools.outline(task,
                     scope.getOutlineSource(),
                     reck,
@@ -314,25 +326,6 @@ public class ImageScopeTools {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean decodeOutline(FxTask task, ImageScope scope) {
-        if (scope == null || scope.getShapeType() != ShapeType.Outline) {
-            return false;
-        }
-        try {
-            String file = scope.getOutlineName();
-            if (file == null) {
-                return false;
-            }
-            BufferedImage image = ImageFileReaders.readImage(task, new File(file));
-            scope.setOutlineSource(image);
-            return image != null;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            //            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -508,26 +501,33 @@ public class ImageScopeTools {
 
     public static String encodeOutline(FxTask task, ImageScope scope) {
         if (scope == null
-                || scope.getShapeType() != ImageScope.ShapeType.Outline
-                || scope.getOutlineSource() == null) {
+                || scope.getShapeType() != ImageScope.ShapeType.Outline) {
             return "";
         }
-        String filename = "";
+        String outlineName = scope.getOutlineName();
         try {
+            if (outlineName != null
+                    && (outlineName.startsWith("img/") || outlineName.startsWith("buttons/"))) {
+                return outlineName;
+            }
+            BufferedImage outlineSource = scope.getOutlineSource();
+            if (outlineSource == null) {
+                return "";
+            }
             String prefix = AppPaths.getImageScopePath() + File.separator + scope.getShapeType() + "_";
             String name = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
             while (new File(name).exists()) {
                 name = prefix + (new Date().getTime()) + "_" + new Random().nextInt(1000) + ".png";
             }
-            if (ImageFileWriters.writeImageFile(task, scope.getOutlineSource(), "png", name)) {
-                filename = name;
+            if (ImageFileWriters.writeImageFile(task, outlineSource, "png", name)) {
+                outlineName = name;
             }
-            scope.setOutlineName(filename);
+            scope.setOutlineName(outlineName);
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            filename = "";
+//            MyBoxLog.error(e);
+            outlineName = "";
         }
-        return filename;
+        return outlineName;
     }
 
 }

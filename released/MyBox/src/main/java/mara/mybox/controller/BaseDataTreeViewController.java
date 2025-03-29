@@ -948,6 +948,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @FXML
     public void manageAction() {
         DataTreeController.open(null, false, nodeTable);
+        setIconified(true);
     }
 
     @FXML

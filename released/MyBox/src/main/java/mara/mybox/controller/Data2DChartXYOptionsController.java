@@ -695,7 +695,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             if (chartController == null) {
                 return null;
             }
-            Data2DChartXYOptionsController controller = (Data2DChartXYOptionsController) WindowTools.operationStage(
+            Data2DChartXYOptionsController controller = (Data2DChartXYOptionsController) WindowTools.branchStage(
                     chartController, Fxmls.Data2DChartXYOptionsFxml);
             controller.setParameters(chartController);
             return controller;

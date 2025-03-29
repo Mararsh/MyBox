@@ -40,7 +40,7 @@ public abstract class Data2D extends Data2D_Operations {
     public String pageInfo() {
         StringTable infoTable = new StringTable();
         List<String> row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Type"), message(dataType.name())));
+        row.addAll(Arrays.asList(message("Type"), getTypeName()));
         infoTable.add(row);
         if (file != null) {
             row = new ArrayList<>();

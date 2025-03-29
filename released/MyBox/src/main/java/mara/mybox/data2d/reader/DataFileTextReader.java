@@ -17,8 +17,11 @@ public class DataFileTextReader extends Data2DReader {
     protected DataFileText readerText;
     protected BufferedReader textReader;
 
+    public DataFileTextReader() {
+    }
+
     public DataFileTextReader(DataFileText data) {
-        this.readerText = data;
+        readerText = data;
         sourceData = data;
     }
 

@@ -52,7 +52,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
+    protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio,
+            booleanRadio, numberBooleanRadio,
             datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio,
             enumRadio, enumEditableRadio, enumShortRadio,
             colorRadio, clobRadio;
@@ -67,7 +68,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected HBox formatBox;
     @FXML
-    protected FlowPane typesPane, fixPane, centuryPane;
+    protected FlowPane typesPane, fixPane, centuryPane, decimalPane, lengthPane;
     @FXML
     protected Label lengthLabel, enumLabel;
 
@@ -139,7 +140,19 @@ public class ControlData2DColumnEdit extends BaseChildController {
             enumLabel.setText(null);
             fixYearCheck.setSelected(false);
 
-            if (enumRadio.isSelected()
+            if (stringRadio.isSelected()) {
+                optionsBox.getChildren().add(lengthPane);
+                lengthInput.setText("32672");
+                lengthInput.setDisable(false);
+                lengthLabel.setText("(<= 32672)");
+
+            } else if (clobRadio.isSelected()) {
+                optionsBox.getChildren().add(lengthPane);
+                lengthInput.setText("2G");
+                lengthInput.setDisable(true);
+                lengthLabel.setText("");
+
+            } else if (enumRadio.isSelected()
                     || enumEditableRadio.isSelected()
                     || enumShortRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
@@ -163,20 +176,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 formatInput.setText(TimeFormats.DateA + " G");
 
             } else if (doubleRadio.isSelected() || floatRadio.isSelected()
-                    || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
-                optionsBox.getChildren().add(formatBox);
+                    || longRadio.isSelected() || intRadio.isSelected()
+                    || shortRadio.isSelected()) {
+                optionsBox.getChildren().addAll(formatBox, decimalPane);
                 formatInput.setText(message("GroupInThousands"));
 
-            }
-
-            if (clobRadio.isSelected()) {
-                lengthInput.setText("2G");
-                lengthInput.setDisable(true);
-                lengthLabel.setText("");
-            } else {
-                lengthInput.setText("32672");
-                lengthInput.setDisable(false);
-                lengthLabel.setText("(<= 32672)");
             }
 
         } catch (Exception e) {
@@ -195,7 +199,30 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
             if (columnsController.isMatrix()) {
                 typesPane.setDisable(true);
-                doubleRadio.setSelected(true);
+                String dataType = columnsController.data2D.getSheet();
+                if (dataType == null) {
+                    dataType = "Double";
+                }
+                switch (dataType.toLowerCase()) {
+                    case "float":
+                        floatRadio.setSelected(true);
+                        break;
+                    case "integer":
+                        intRadio.setSelected(true);
+                        break;
+                    case "long":
+                        longRadio.setSelected(true);
+                        break;
+                    case "short":
+                        shortRadio.setSelected(true);
+                        break;
+                    case "numberboolean":
+                        numberBooleanRadio.setSelected(true);
+                        break;
+                    case "double":
+                    default:
+                        doubleRadio.setSelected(true);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -234,6 +261,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     break;
                 case Boolean:
                     booleanRadio.setSelected(true);
+                    break;
+                case NumberBoolean:
+                    numberBooleanRadio.setSelected(true);
                     break;
                 case Datetime:
                     datetimeRadio.setSelected(true);
@@ -435,7 +465,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
             if (columnsController != null
                     && columnsController.data2D != null && columnsController.data2D.isMatrix()) {
-                column.setType(ColumnType.Double).setFormat(format);
+                column.setType(columnsController.data2D.defaultColumnType())
+                        .setFormat(format);
             } else if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String).setFormat(null);
             } else if (doubleRadio.isSelected()) {
@@ -450,6 +481,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Short).setFormat(format);
             } else if (booleanRadio.isSelected()) {
                 column.setType(ColumnType.Boolean).setFormat(null);
+            } else if (numberBooleanRadio.isSelected()) {
+                column.setType(ColumnType.NumberBoolean).setFormat(null);
             } else if (datetimeRadio.isSelected()) {
                 column.setType(ColumnType.Datetime).setFormat(format);
             } else if (dateRadio.isSelected()) {

@@ -1,5 +1,7 @@
 package mara.mybox.value;
 
+import java.sql.Connection;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableSystemConf;
 
 /**
@@ -10,8 +12,17 @@ import mara.mybox.db.table.TableSystemConf;
 public class SystemConfig {
 
     public static boolean setString(String key, String value) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return setString(conn, key, value);
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean setString(Connection conn, String key, String value) {
         AppVariables.SystemConfigValues.put(key, value);
-        if (TableSystemConf.writeString(key, value) >= 0) {
+        if (TableSystemConf.writeString(conn, key, value) >= 0) {
             return true;
         } else {
             return false;
@@ -61,8 +72,17 @@ public class SystemConfig {
     }
 
     public static boolean setBoolean(String key, boolean value) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return setBoolean(conn, key, value);
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean setBoolean(Connection conn, String key, boolean value) {
         AppVariables.SystemConfigValues.put(key, value ? "true" : "false");
-        if (TableSystemConf.writeBoolean(key, value) >= 0) {
+        if (TableSystemConf.writeBoolean(conn, key, value) >= 0) {
             return true;
         } else {
             return false;

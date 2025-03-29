@@ -48,7 +48,7 @@ public class Data2DLoadContentInSystemClipboardController extends ControlData2DS
 
     @Override
     public boolean doTask(FxTask currentTask) {
-        data = selectedData(currentTask);
+        data = selectedData(currentTask, true);
         return data != null && !data.isEmpty();
     }
 

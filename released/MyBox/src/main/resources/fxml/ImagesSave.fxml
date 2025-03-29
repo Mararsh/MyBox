@@ -161,7 +161,7 @@ License:    Apache License Version 2.0
                               <Label text="%MaxCharacters" />
                               <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
                               <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                              <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                              <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -208,7 +208,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="editFramesButton1" mnemonicParsing="false" onAction="#editFrames">
+            <Button fx:id="editFramesButton" mnemonicParsing="false" onAction="#editFrames">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>

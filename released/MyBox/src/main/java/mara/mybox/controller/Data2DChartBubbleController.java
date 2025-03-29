@@ -40,7 +40,7 @@ public class Data2DChartBubbleController extends BaseData2DChartController {
     protected ControlData2DChartXY chartController;
 
     public Data2DChartBubbleController() {
-        baseTitle = message("XYChart");
+        baseTitle = message("BubbleChart");
         TipsLabelKey = "DataChartXYTips";
     }
 
@@ -144,7 +144,7 @@ public class Data2DChartBubbleController extends BaseData2DChartController {
 
     public boolean initChart(boolean categoryIsNumbers) {
         try {
-            String chartName = ChartType.Bubble.name();
+            String chartName = message("BubbleChart");
             UserConfig.setBoolean(chartName + "CategoryIsNumbers", categoryIsNumbers);
             chartMaker.init(ChartType.Bubble, chartName)
                     .setDefaultChartTitle(chartTitle())

@@ -362,6 +362,7 @@ public class DataTreeImportController extends BaseBatchFileController {
     @FXML
     public void manageAction() {
         DataTreeController.open(null, false, nodeTable);
+        setIconified(true);
     }
 
     @FXML

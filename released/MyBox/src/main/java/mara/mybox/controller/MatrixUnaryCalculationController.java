@@ -1,26 +1,26 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleMatrixTools;
@@ -35,23 +35,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-17
  * @License Apache License Version 2.0
  */
-public class MatrixUnaryCalculationController extends BaseController {
+public class MatrixUnaryCalculationController extends BaseData2DTaskController {
 
-    protected DataMatrix resultMatrix;
     protected int column, row, power;
     protected double number, resultValue;
-    protected double[][] sourceMatrix, result;
 
     @FXML
-    protected ControlData2DMatrix dataController;
-    @FXML
-    protected ControlData2DView resultController;
-    @FXML
-    protected Tab resultTab;
+    protected ControlData2DSource matrixController;
     @FXML
     protected ToggleGroup opGroup;
     @FXML
-    protected VBox setBox, xyBox, resultBox, normalizeBox;
+    protected VBox setBox, xyBox, normalizeBox;
     @FXML
     protected HBox numberBox, powerBox;
     @FXML
@@ -63,12 +57,6 @@ public class MatrixUnaryCalculationController extends BaseController {
             ComplementMinorRadio, MultiplyNumberRadio;
     @FXML
     protected ControlData2DNormalize normalizeController;
-    @FXML
-    protected Label resultLabel, checkLabel;
-    @FXML
-    protected TextArea resultArea;
-    @FXML
-    protected ScrollPane resultTablePane;
 
     public MatrixUnaryCalculationController() {
         baseTitle = message("MatrixUnaryCalculation");
@@ -79,8 +67,11 @@ public class MatrixUnaryCalculationController extends BaseController {
         try {
             super.initValues();
 
-            resultController.createData(Data2D.DataType.Matrix);
-            resultMatrix = (DataMatrix) resultController.data2D;
+            stageType = StageType.Normal;
+
+            sourceController = matrixController;
+            filterController = matrixController.filterController;
+            dataController = matrixController;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -92,64 +83,35 @@ public class MatrixUnaryCalculationController extends BaseController {
         try {
             super.initControls();
 
-            resultBox.getChildren().clear();
+            matrixController.setParameters(this);
 
-            row = UserConfig.getInt(baseName + "Row", 1);
-            rowInput.setText(row + "");
-            rowInput.textProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkXY();
-                    });
+            if (normalizeController != null) {
+                row = UserConfig.getInt(interfaceName + "Row", 1);
+                rowInput.setText(row + "");
 
-            column = UserConfig.getInt(baseName + "Column", 1);
-            columnInput.setText(column + "");
-            columnInput.textProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        checkXY();
-                    });
+                column = UserConfig.getInt(interfaceName + "Column", 1);
+                columnInput.setText(column + "");
 
-            try {
-                number = Double.parseDouble(UserConfig.getString(baseName + "Number", "2"));
-            } catch (Exception e) {
-                number = 2d;
-            }
-            numberInput.setText(number + "");
-            numberInput.textProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                 try {
-                    number = Double.parseDouble(newValue);
-                    numberInput.setStyle(null);
-                    UserConfig.setString(baseName + "Number", number + "");
+                    number = Double.parseDouble(UserConfig.getString(interfaceName + "Number", "2"));
                 } catch (Exception e) {
-                    numberInput.setStyle(UserConfig.badStyle());
+                    number = 2d;
                 }
-            });
+                numberInput.setText(number + "");
 
-            try {
-                power = UserConfig.getInt(baseName + "Power", 2);
-            } catch (Exception e) {
-                power = 2;
-            }
-            powerInput.setText(power + "");
-            powerInput.textProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                 try {
-                    int v = Integer.parseInt(newValue);
-                    if (v > 1) {
-                        power = v;
-                        powerInput.setStyle(null);
-                        UserConfig.setInt(baseName + "Power", power);
-                    } else {
-                        powerInput.setStyle(UserConfig.badStyle());
-                    }
+                    power = UserConfig.getInt(interfaceName + "Power", 2);
                 } catch (Exception e) {
-                    powerInput.setStyle(UserConfig.badStyle());
+                    power = 2;
                 }
-            });
+                powerInput.setText(power + "");
 
-            opGroup.selectedToggleProperty().addListener(
-                    (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
-                        checkMatrix(false);
-                    });
-            checkMatrix(false);
+                opGroup.selectedToggleProperty().addListener(
+                        (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
+                            checkControls();
+                        });
+                checkControls();
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -157,211 +119,261 @@ public class MatrixUnaryCalculationController extends BaseController {
     }
 
     protected boolean checkXY() {
-        if (sourceMatrix == null || sourceMatrix.length == 0) {
+        if (matrixController.data2D == null) {
             return false;
         }
         boolean valid = true;
         try {
             if (!setBox.getChildren().contains(xyBox)) {
-                rowInput.setStyle(null);
-                columnInput.setStyle(null);
                 return true;
             }
             int v = Integer.parseInt(rowInput.getText().trim());
-            if (v > 0 && v <= sourceMatrix.length) {
+            if (v > 0 && v <= matrixController.data2D.getRowsNumber()) {
                 row = v;
-                rowInput.setStyle(null);
-                UserConfig.setInt(baseName + "Row", v);
+                UserConfig.setInt(interfaceName + "Row", v);
             } else {
-                rowInput.setStyle(UserConfig.badStyle());
                 valid = false;
             }
         } catch (Exception e) {
-            rowInput.setStyle(UserConfig.badStyle());
             valid = false;
         }
         try {
             int v = Integer.parseInt(columnInput.getText().trim());
-            if (v > 0 && v <= sourceMatrix[0].length) {
+            if (v > 0 && v <= matrixController.data2D.getColsNumber()) {
                 column = v;
-                columnInput.setStyle(null);
-                UserConfig.setInt(baseName + "Column", v);
+                UserConfig.setInt(interfaceName + "Column", v);
             } else {
-                columnInput.setStyle(UserConfig.badStyle());
                 valid = false;
             }
         } catch (Exception e) {
-            columnInput.setStyle(UserConfig.badStyle());
             valid = false;
         }
         return valid;
     }
 
     protected boolean checkNumber() {
-        if (sourceMatrix == null || sourceMatrix.length == 0) {
+        if (matrixController.data2D == null) {
             return false;
         }
         try {
             if (!setBox.getChildren().contains(numberBox)) {
-                numberInput.setStyle(null);
                 return true;
             }
-            number = Double.parseDouble(numberInput.getText().trim());
-            if (DivideNumberRadio.isSelected() && number == 0) {
-                numberInput.setStyle(UserConfig.badStyle());
+            double v = Double.parseDouble(numberInput.getText().trim());
+            if (DivideNumberRadio.isSelected() && v == 0) {
                 return false;
+            } else {
+                number = v;
+                UserConfig.setDouble(interfaceName + "Number", number);
+                return true;
             }
-            numberInput.setStyle(null);
-            UserConfig.setString(baseName + "Number", number + "");
-            return true;
         } catch (Exception e) {
-            numberInput.setStyle(UserConfig.badStyle());
             return false;
         }
     }
 
     protected boolean checkPower() {
-        if (sourceMatrix == null || sourceMatrix.length == 0) {
+        if (matrixController.data2D == null) {
             return false;
         }
         try {
             if (!setBox.getChildren().contains(powerBox)) {
-                powerInput.setStyle(null);
                 return true;
             }
             int v = Integer.parseInt(powerInput.getText().trim());
             if (v > 1) {
                 power = v;
-                powerInput.setStyle(null);
-                UserConfig.setInt(baseName + "Power", power);
+                UserConfig.setInt(interfaceName + "Power", power);
                 return true;
             } else {
-                powerInput.setStyle(UserConfig.badStyle());
                 return false;
             }
         } catch (Exception e) {
-            powerInput.setStyle(UserConfig.badStyle());
             return false;
         }
     }
 
-    protected void checkMatrix(boolean calculate) {
-        if (!dataController.checkSelections()) {
-            popError(message("NoData") + ": " + message("Matrix"));
-            return;
-        }
-        setBox.getChildren().clear();
-        rowInput.setStyle(null);
-        columnInput.setStyle(null);
-        numberInput.setStyle(null);
-        powerInput.setStyle(null);
-        checkLabel.setText("");
-        if (task != null) {
-            task.cancel();
-        }
-        resultLabel.setText("");
-        resultBox.getChildren().clear();
-        sourceMatrix = null;
-        task = new FxSingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    sourceMatrix = dataController.pickMatrix(this);
-                    return sourceMatrix != null && sourceMatrix.length > 0;
-                } catch (Exception e) {
-                    error = e.toString();
+    public boolean checkControls() {
+        try {
+            setBox.getChildren().clear();
+            if (matrixController.data2D == null) {
+                return false;
+            }
+            if (DeterminantByEliminationRadio.isSelected()
+                    || DeterminantByComplementMinorRadio.isSelected()
+                    || InverseMatrixByEliminationRadio.isSelected()
+                    || InverseMatrixByAdjointRadio.isSelected()
+                    || MatrixRankRadio.isSelected()
+                    || AdjointMatrixRadio.isSelected()
+                    || PowerRadio.isSelected()) {
+                int colsNumber = matrixController.checkedColsIndices.size();
+                int rowsNumber = matrixController.allPagesRadio.isSelected()
+                        ? (int) matrixController.data2D.getRowsNumber()
+                        : matrixController.filteredRowsIndices.size();
+                if (colsNumber != rowsNumber) {
+                    popError(message("MatricesCannotCalculateShouldSqure"));
                     return false;
                 }
-            }
 
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                setControls();
-                if (ok && calculate) {
-                    calculate();
+                if (PowerRadio.isSelected()) {
+                    setBox.getChildren().add(powerBox);
+                    if (!checkPower()) {
+                        popError(message("InvalidParameters"));
+                        return false;
+                    }
                 }
+
+            } else if (ComplementMinorRadio.isSelected()) {
+                setBox.getChildren().add(xyBox);
+                if (!checkXY()) {
+                    popError(message("InvalidParameters"));
+                    return false;
+                }
+
+            } else if (MultiplyNumberRadio.isSelected() || DivideNumberRadio.isSelected()) {
+                setBox.getChildren().add(numberBox);
+                if (!checkNumber()) {
+                    popError(message("InvalidParameters"));
+                    return false;
+                }
+
+            } else if (normalizeRadio.isSelected()) {
+                setBox.getChildren().add(normalizeBox);
+
             }
-
-        };
-        start(task);
-    }
-
-    protected void handleError(String error) {
-        popError(error);
-        checkLabel.setText(error);
-    }
-
-    protected boolean setControls() {
-        if (sourceMatrix == null || sourceMatrix.length == 0) {
-            handleError(message("InvalidData") + ": " + message("Matrix"));
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        if (DeterminantByEliminationRadio.isSelected() || DeterminantByComplementMinorRadio.isSelected()
-                || InverseMatrixByEliminationRadio.isSelected() || InverseMatrixByAdjointRadio.isSelected()
-                || MatrixRankRadio.isSelected() || AdjointMatrixRadio.isSelected() || PowerRadio.isSelected()) {
-            if (!dataController.isSquare(sourceMatrix)) {
-                handleError(message("MatricesCannotCalculateShouldSameRows"));
-                return false;
-            }
+    }
 
-            if (PowerRadio.isSelected()) {
-                setBox.getChildren().add(powerBox);
-                if (!checkPower()) {
-                    handleError(message("InvalidParameters"));
-                    return false;
-                }
-            }
+    @Override
+    public void setParameters(BaseData2DLoadController controller) {
+        try {
+            controller.setIconified(true);
 
-        } else if (ComplementMinorRadio.isSelected()) {
-            setBox.getChildren().add(xyBox);
-            if (!checkXY()) {
-                handleError(message("InvalidParameters"));
-                return false;
-            }
+            matrixController.data2D = controller.data2D.cloneAll();
+            matrixController.tableData.setAll(controller.tableData);
 
-        } else if (MultiplyNumberRadio.isSelected() || DivideNumberRadio.isSelected()) {
-            setBox.getChildren().add(numberBox);
-            if (!checkNumber()) {
-                handleError(message("InvalidParameters"));
-                return false;
-            }
+            dataLoaded();
 
-        } else if (normalizeRadio.isSelected()) {
-            setBox.getChildren().add(normalizeBox);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
+    @Override
+    public boolean checkParameters() {
+        if (!matrixController.checkSelections() || !checkControls()) {
+            return false;
+        }
+        if (!matrixController.allPagesRadio.isSelected()
+                && matrixController.selectedRowsIndices.isEmpty()) {
+            popError(message("SelectToHandle") + ": " + message("Rows"));
+            tabPane.getSelectionModel().select(sourceTab);
+            return false;
         }
         return true;
     }
 
-    @FXML
-    public void calculateAction() {
-        checkMatrix(true);
+    @Override
+    public boolean checkOptions() {
+        try {
+            if (!checkParameters()) {
+                return false;
+            }
+            data2D = matrixController.data2D;
+            invalidAs = InvalidAs.Fail;
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
-    @FXML
-    public void calculate() {
-        if (sourceMatrix == null || sourceMatrix.length == 0) {
-            handleError(message("InvalidData") + ": " + message("Matrix"));
-            return;
+    public double[][] pickSourceMatrix(FxTask rtask, ControlData2DSource controller) {
+        try {
+            List<List<String>> data = controller.selectedData(rtask, false);
+            if (data == null) {
+                return null;
+            }
+            int rowsNumber = data.size();
+            int colsNumber = data.get(0).size();
+            if (rowsNumber <= 0 || colsNumber <= 0) {
+                return null;
+            }
+            double[][] matrix = new double[rowsNumber][colsNumber];
+            for (int r = 0; r < rowsNumber; r++) {
+                for (int c = 0; c < colsNumber; c++) {
+                    matrix[r][c] = DoubleTools.toDouble(data.get(r).get(c), invalidAs);
+                }
+            }
+            return matrix;
+        } catch (Exception e) {
+            if (rtask != null) {
+                rtask.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
         }
+    }
+
+    public DataMatrix writeResultMatrix(FxTask rtask, double[][] result, String name) {
+        try {
+            int rowsNumber = result.length;
+            int colsNumber = result[0].length;
+            targetFile = new File(DataMatrix.filename(name + "_" + new Date().getTime()));
+            DataMatrix resultMatrix = new DataMatrix();
+            resultMatrix.setFile(targetFile).setSheet("Double")
+                    .setDataName(name)
+                    .setColsNumber(colsNumber)
+                    .setRowsNumber(rowsNumber);
+            try (BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(targetFile, resultMatrix.getCharset(), false))) {
+                String line;
+                for (int i = 0; i < rowsNumber; i++) {
+                    line = result[i][0] + "";
+                    for (int j = 1; j < colsNumber; j++) {
+                        line += DataMatrix.MatrixDelimiter + result[i][j];
+                    }
+                    writer.write(line + "\n");
+                }
+                writer.flush();
+            } catch (Exception ex) {
+            }
+            resultMatrix = (DataMatrix) new TableData2DDefinition().insertData(resultMatrix);
+            return resultMatrix;
+        } catch (Exception e) {
+            if (rtask != null) {
+                rtask.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
+        }
+    }
+
+    @Override
+    protected void startOperation() {
         if (task != null) {
             task.cancel();
         }
-        resultLabel.setText("");
-        resultBox.getChildren().clear();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
-            private String op;
+            private String op, resultInfo;
+            private DataMatrix resultMatrix;
 
             @Override
             protected boolean handle() {
                 try {
-                    result = null;
+                    double[][] sourceMatrix = pickSourceMatrix(this, matrixController);
+                    if (sourceMatrix == null) {
+                        return false;
+                    }
+                    double[][] result = null;
                     resultValue = AppValues.InvalidDouble;
                     op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                     if (message("Transpose").equals(op)) {
@@ -407,59 +419,75 @@ public class MatrixUnaryCalculationController extends BaseController {
                         result = DoubleMatrixTools.power(sourceMatrix, power);
 
                     }
+                    if (result != null) {
+                        resultMatrix = writeResultMatrix(this, result,
+                                matrixController.data2D.getDataName() + "_" + op);
+                        taskSuccessed = resultMatrix != null;
+
+                    } else if (!DoubleTools.invalidDouble(resultValue)) {
+                        resultInfo = op + ":\n" + resultValue;
+                        taskSuccessed = true;
+
+                    } else {
+                        taskSuccessed = false;
+                    }
                 } catch (Exception e) {
                     error = e.toString();
-                    return false;
+                    taskSuccessed = false;
                 }
-                return true;
+                return taskSuccessed;
             }
 
             @Override
             protected void whenSucceeded() {
                 cost = new Date().getTime() - startTime.getTime();
-                resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-                if (result != null) {
-                    resultBox.getChildren().add(resultTablePane);
-                    resultController.loadMatrix(result);
-                } else if (!DoubleTools.invalidDouble(resultValue)) {
-                    resultBox.getChildren().add(resultArea);
-                    resultArea.setText(resultValue + "");
+                showLogs(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
+                tabPane.getSelectionModel().select(logsTab);
+                if (resultMatrix != null) {
+                    Data2DManufactureController.openDef(resultMatrix).setAlwaysOnTop();
+                } else if (resultInfo != null) {
+                    TextPopController.loadText(resultInfo);
                 }
-                refreshStyle(resultBox);
-                tabPane.getSelectionModel().select(resultTab);
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (sourceTab != null) {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == sourceTab) {
+                if (matrixController.keyEventsFilter(event)) {
+                    return true;
+                }
+            }
+        }
+        return super.keyEventsFilter(event);
+    }
+
 
     /*
         static
      */
-    public static MatrixUnaryCalculationController oneOpen() {
-        MatrixUnaryCalculationController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof MatrixUnaryCalculationController) {
-                try {
-                    controller = (MatrixUnaryCalculationController) object;
-                    break;
-                } catch (Exception e) {
-                }
-            }
+    public static MatrixUnaryCalculationController open(BaseData2DLoadController tableController) {
+        try {
+            MatrixUnaryCalculationController controller = (MatrixUnaryCalculationController) WindowTools.openStage(
+                    Fxmls.MatrixUnaryCalculationFxml);
+            controller.setParameters(tableController);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        if (controller == null) {
-            controller = (MatrixUnaryCalculationController) WindowTools.openStage(Fxmls.MatrixUnaryCalculationFxml);
-        }
-        controller.requestMouse();
-        return controller;
-    }
-
-    public static MatrixUnaryCalculationController open() {
-        MatrixUnaryCalculationController controller = oneOpen();
-        return controller;
     }
 
 }

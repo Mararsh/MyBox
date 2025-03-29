@@ -87,9 +87,9 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     }
 
     @Override
-    public void sourceChanged() {
+    public void dataChanged() {
         try {
-            super.sourceChanged();
+            super.dataChanged();
             isSettingValues = true;
             labelSelector.getItems().clear();
             longitudeSelector.getItems().clear();

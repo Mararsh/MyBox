@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -33,6 +34,7 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.SystemClipboard;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.data2d.writer.Data2DWriter;
@@ -77,16 +79,16 @@ public class ControlData2DTarget extends BaseDataConvertController {
     @FXML
     protected TabPane optionsPane;
     @FXML
-    protected Tab csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab;
+    protected Tab csvTab, excelTab, textTab, matrixTab, htmlTab, pdfTab, dbTab;
     @FXML
     protected RadioButton useInvalidRadio, zeroInvalidRadio,
             emptyInvalidRadio, skipInvalidRadio, nullInvalidRadio;
     @FXML
-    protected VBox optionsBox, csvBox, excelBox, textBox, htmlBox, pdfBox, dbBox;
+    protected VBox optionsBox, csvBox, excelBox, textBox, matrixBox, htmlBox, pdfBox, dbBox;
     @FXML
     protected ControlNewDataTable dbController;
     @FXML
-    protected FlowPane extFormatPane, internalFormatPane;
+    protected FlowPane invalidAsPane, extFormatPane, internalFormatPane;
 
     public boolean isInvalid() {
         if (tableController == null) {
@@ -113,6 +115,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (tableController != null) {
                 data2D = tableController.data2D.cloneAll().setController(parent);
                 dbController.setParameters(this, data2D);
+                if (matrixOptionsController != null) {
+                    matrixOptionsController.setType(data2D.getSheet());
+                }
             } else {
                 data2D = null;
                 databaseRadio.setDisable(true);
@@ -140,6 +145,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 };
                 tableController.statusNotify.addListener(tableStatusListener);
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -265,6 +271,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
 
             } else if (matrixRadio.isSelected()) {
                 format = TargetType.Matrix;
+                optionsBox.getChildren().add(matrixBox);
 
             } else if (systemClipboardRadio.isSelected()) {
                 format = TargetType.SystemClipboard;
@@ -403,6 +410,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
         if (internalFormatPane != null) {
             internalFormatPane.setDisable(true);
         }
+        if (matrixOptionsController != null && tableController != null) {
+            matrixBox.setDisable(true);
+        }
     }
 
     public synchronized void sourceChanged() {
@@ -452,6 +462,11 @@ public class ControlData2DTarget extends BaseDataConvertController {
     public void setNotInTable(boolean notInTable) {
         this.notInTable = notInTable;
         checkTarget();
+    }
+
+    public void setNoFormat() {
+        thisPane.getChildren().clear();
+        thisPane.getChildren().add(invalidAsPane);
     }
 
     public boolean inTable() {
@@ -564,20 +579,27 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 targetName = targetName.substring(TmpTable.TmpTablePrefix.length());
             }
             Data2DWriter writer;
-            if (format == TargetType.DatabaseTable) {
-                writer = dbController.pickTableWriter();
-            } else {
-                if (format != TargetType.Matrix) {
-                    targetFile = file();
-                    if (targetFile == null) {
-                        targetFile = Data2DConvertTools.targetFile(targetName, format);
+            switch (format) {
+                case DatabaseTable:
+                    writer = dbController.pickTableWriter();
+                    break;
+                case Matrix:
+                    targetFile = new File(DataMatrix.filename(targetName + "_" + new Date().getTime()));
+                    writer = pickWriter(format);
+                    break;
+                default:
+                    if (format != TargetType.Matrix) {
+                        targetFile = file();
+                        if (targetFile == null) {
+                            targetFile = Data2DConvertTools.targetFile(targetName, format);
+                        }
+                        if (targetFile == null) {
+                            popError(message("InvalidParameter") + ": " + message("TargetFile"));
+                            return null;
+                        }
                     }
-                    if (targetFile == null) {
-                        popError(message("InvalidParameter") + ": " + message("TargetFile"));
-                        return null;
-                    }
-                }
-                writer = pickWriter(format);
+                    writer = pickWriter(format);
+                    break;
             }
             if (writer == null) {
                 return null;

@@ -5,25 +5,326 @@
             <![CDATA[行表达式]]>
         </title>
     </NodeAttributes>
-    <TreeNode>
+        <TreeNode>
         <NodeAttributes>
             <title>
-                <![CDATA[行过滤]]>
+                <![CDATA[示例]]>
             </title>
         </NodeAttributes>
-        <TreeNode>
+            <TreeNode>
             <NodeAttributes>
                 <title>
-                    <![CDATA[示例]]>
+                    <![CDATA[行计算]]>
                 </title>
             </NodeAttributes>
-            <TreeNode>
+                <TreeNode>
                 <NodeAttributes>
                     <title>
                         <![CDATA[数字]]>
                     </title>
                 </NodeAttributes>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[数据行号]]>
+                        </title>
+                        <script>
+                            <![CDATA[#{数据行号}]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[表行号]]>
+                        </title>
+                        <script>
+                            <![CDATA[#{表行号}]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[数学计算]]>
+                        </title>
+                        <script>
+                            <![CDATA[Math.abs(#{数字列1}) + Math.PI * Math.sqrt(#{数字列2})]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[包含统计值的计算]]>
+                        </title>
+                        <script>
+                            <![CDATA[#{数字列1} - #{数字列2-均值}]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                </TreeNode>
                 <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[字符串]]>
+                    </title>
+                </NodeAttributes>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[字符串长度]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.length
+else
+    -1]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[替换]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.replace(/hello/ig,'Hello')
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[小写]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.toLowerCase()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[分割]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.split(',')
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[子串位置]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.indexOf('今来花似雪')
+else
+    -1]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[替换首个]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.replace("敲门", "推门");
+else
+   null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[替换所有]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.replace(/怨年华/g, "鸟惊心");
+else
+   null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[包含子串]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{字符串列} != null ) 
+    #{字符串列}.search(/昔去雪如花/ig)
+else
+    -1]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[特定值]]>
+                        </title>
+                        <script>
+                            <![CDATA[var array = [ 'A', 'B', 'C', 'D' ];
+array.includes(#{字符串列})]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                </TreeNode>
+                <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[时间]]>
+                    </title>
+                </NodeAttributes>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[格式]]>
+                        </title>
+                        <script>
+                            <![CDATA[function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{时间列} != null)
+   formatDate(new Date(#{时间列}));
+else
+   null;]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[年]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{时间列} != null ) 
+    new Date(#{时间列}).getFullYear()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[月]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{时间列} != null ) 
+    new Date(#{时间列}).getMonth() + 1
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[日]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{时间列} != null ) 
+    new Date(#{时间列}).getDate()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[时]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{时间列} != null ) 
+    new Date(#{时间列}).getHours()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[分]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{时间列} != null ) 
+    new Date(#{时间列}).getMinutes()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[秒]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{时间列} != null ) 
+    new Date(#{时间列}).getSeconds()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                    <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                            <![CDATA[星期]]>
+                        </title>
+                        <script>
+                            <![CDATA[if ( #{时间列} != null ) 
+    new Date(#{时间列}).getDay()
+else
+    null]]>
+                        </script>
+                    </NodeAttributes>
+                    </TreeNode>
+                </TreeNode>
+            </TreeNode>
+            <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[行过滤]]>
+                </title>
+            </NodeAttributes>
+                <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[数字]]>
+                    </title>
+                </NodeAttributes>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[列值不是数字]]>
@@ -32,8 +333,8 @@
                             <![CDATA[isNaN(#{某列} - 1)]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[比较数字]]>
@@ -42,8 +343,8 @@
                             <![CDATA[#{数字列1} != 0 || #{数字列1} < #{数字列2}]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[比较统计值]]>
@@ -52,15 +353,15 @@
                             <![CDATA[#{数字列} < #{数字列-均值}]]>
                         </script>
                     </NodeAttributes>
+                    </TreeNode>
                 </TreeNode>
-            </TreeNode>
-            <TreeNode>
+                <TreeNode>
                 <NodeAttributes>
                     <title>
                         <![CDATA[时间]]>
                     </title>
                 </NodeAttributes>
-                <TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[列值的时间值]]>
@@ -72,8 +373,8 @@ else
    -1;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[时间点]]>
@@ -82,8 +383,8 @@ else
                             <![CDATA[#{时间列} == '2016-05-19 11:34:28']]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[匹配时间]]>
@@ -95,8 +396,8 @@ else
    undefined;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[比较时间]]>
@@ -108,8 +409,8 @@ else
    undefined;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[格式化时间]]>
@@ -135,8 +436,8 @@ else
    null;]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[是否为星期日]]>
@@ -148,15 +449,15 @@ else
    undefined;]]>
                         </script>
                     </NodeAttributes>
+                    </TreeNode>
                 </TreeNode>
-            </TreeNode>
-            <TreeNode>
+                <TreeNode>
                 <NodeAttributes>
                     <title>
                         <![CDATA[字符串]]>
                     </title>
                 </NodeAttributes>
-                <TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[列值为empty]]>
@@ -165,8 +466,8 @@ else
                             <![CDATA[#{字符串列} == '']]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[列值不为null]]>
@@ -175,47 +476,8 @@ else
                             <![CDATA[#{字符串列} != null]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[字串长度]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{字符串列} != null ) 
-    #{字符串列}.length
-else
-    -1]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[包含子串]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{字符串列} != null ) 
-    #{字符串列}.search(/昔去雪如花/ig)
-else
-    -1]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[子串位置]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{字符串列} != null ) 
-    #{字符串列}.indexOf('今来花似雪')
-else
-    -1]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[比较]]>
@@ -224,34 +486,8 @@ else
                             <![CDATA[#{字符串列} === '只恐夜深花睡去']]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[替换首个]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{字符串列} != null ) 
-    #{字符串列}.replace("敲门", "推门");
-else
-   null]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[替换所有]]>
-                        </title>
-                        <script>
-                            <![CDATA[if ( #{字符串列} != null ) 
-    #{字符串列}.replace(/怨年华/g, "鸟惊心");
-else
-   null]]>
-                        </script>
-                    </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[开始于]]>
@@ -263,8 +499,8 @@ else
    undefined]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
+                    </TreeNode>
+                    <TreeNode>
                     <NodeAttributes>
                         <title>
                             <![CDATA[结尾于]]>
@@ -276,19 +512,8 @@ else
    undefined]]>
                         </script>
                     </NodeAttributes>
-                </TreeNode>
-                <TreeNode>
-                    <NodeAttributes>
-                        <title>
-                            <![CDATA[特定值]]>
-                        </title>
-                        <script>
-                            <![CDATA[var array = [ 'A', 'B', 'C', 'D' ];
-array.includes(#{字符串列})]]>
-                        </script>
-                    </NodeAttributes>
+                    </TreeNode>
                 </TreeNode>
             </TreeNode>
         </TreeNode>
-    </TreeNode>
 </Node_Row_Expression>

@@ -15,6 +15,8 @@ import mara.mybox.controller.DataFileExcelFormatController;
 import mara.mybox.controller.DataFileExcelSheetsController;
 import mara.mybox.controller.DataFileTextFormatController;
 import mara.mybox.controller.FileBrowseController;
+import mara.mybox.controller.MatricesBinaryCalculationController;
+import mara.mybox.controller.MatrixUnaryCalculationController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
@@ -291,17 +293,19 @@ public class Data2DMenuTools {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (data2D.isCSV()) {
-                    DataFileCSVFormatController.open(dataController);
-                } else if (data2D.isTexts()) {
-                    DataFileTextFormatController.open(dataController);
-                } else if (data2D.isExcel()) {
-                    DataFileExcelFormatController.open(dataController);
-                }
-            });
-            items.add(menu);
+            if (!data2D.isMatrix()) {
+                menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (data2D.isCSV()) {
+                        DataFileCSVFormatController.open(dataController);
+                    } else if (data2D.isTexts()) {
+                        DataFileTextFormatController.open(dataController);
+                    } else if (data2D.isExcel()) {
+                        DataFileExcelFormatController.open(dataController);
+                    }
+                });
+                items.add(menu);
+            }
 
             CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
             backItem.setSelected(UserConfig.getBoolean("Data2DFileBackupWhenSave", true));
@@ -328,7 +332,7 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            if (data2D.isTexts() || data2D.isCSV()) {
+            if (data2D.isTextFile()) {
                 menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     dataController.editTextFile();
@@ -475,8 +479,23 @@ public class Data2DMenuTools {
             if (!controller.isValidData()) {
                 return null;
             }
+            Data2D data2D = controller.getData2D();
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
+
+            if (data2D.isMatrix()) {
+                menu = new MenuItem(message("MatrixUnaryCalculation"), StyleTools.getIconImageView("iconMatrix.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    MatrixUnaryCalculationController.open(controller);
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("MatricesBinaryCalculation"), StyleTools.getIconImageView("iconMatrix.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    MatricesBinaryCalculationController.open(controller);
+                });
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("RowExpression"), StyleTools.getIconImageView("iconNewItem.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -619,6 +638,12 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("GroupData") + " - " + message("BubbleChart"), StyleTools.getIconImageView("iconBubbleChart.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.groupBubbleChart();
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("GroupData") + " - " + message("PieChart"), StyleTools.getIconImageView("iconPieChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 controller.groupPieChart();
@@ -733,21 +758,51 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.Matrix);
+                Data2DManufactureController.create(DataType.DatabaseTable);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("DoubleMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Double");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("FloatMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Float");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("LongMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Long");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("IntegerMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Integer");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ShortMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("Short");
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BooleanMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.createMatrix("NumberBoolean");
             });
             items.add(menu);
 
             menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 Data2DManufactureController.create(DataType.MyBoxClipboard);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.DatabaseTable);
             });
             items.add(menu);
 

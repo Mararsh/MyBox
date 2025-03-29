@@ -33,6 +33,7 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -140,6 +141,14 @@ public class WebBrowserController extends BaseController {
             if (tab == initTab) {
                 Menu exampleMenu = new Menu(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
 
+                menu = new MenuItem(message("WebFavorite"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://mara-mybox.sourceforge.io/mybox_examples_Node_Web_Favorite_"
+                            + (Languages.isChinese() ? "zh" : "en") + ".html",
+                            true);
+                });
+                exampleMenu.getItems().add(menu);
+
                 menu = new MenuItem("https://sci-hub.se");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     loadAddress("https://sci-hub.se", true);
@@ -197,6 +206,12 @@ public class WebBrowserController extends BaseController {
                 menu = new MenuItem("https://docs.oracle.com/en/java/javase/23/docs/api/index.html");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     loadAddress("https://docs.oracle.com/en/java/javase/23/docs/api/index.html", true);
+                });
+                exampleMenu.getItems().add(menu);
+
+                menu = new MenuItem("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html", true);
                 });
                 exampleMenu.getItems().add(menu);
 

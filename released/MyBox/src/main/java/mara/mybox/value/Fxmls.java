@@ -352,6 +352,7 @@ public class Fxmls {
     public static final String Data2DLocationDistributionFxml = "/fxml/Data2DLocationDistribution.fxml";
     public static final String Data2DRowFilterEditFxml = "/fxml/Data2DRowFilterEdit.fxml";
     public static final String Data2DChartGroupXYFxml = "/fxml/Data2DChartGroupXY.fxml";
+    public static final String Data2DChartGroupBubbleFxml = "/fxml/Data2DChartGroupBubble.fxml";
     public static final String Data2DChartGroupPieFxml = "/fxml/Data2DChartGroupPie.fxml";
     public static final String Data2DChartGroupComparisonBarsFxml = "/fxml/Data2DChartGroupComparisonBars.fxml";
     public static final String Data2DChartGroupSelfComparisonBarsFxml = "/fxml/Data2DChartGroupSelfComparisonBars.fxml";

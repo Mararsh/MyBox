@@ -81,4 +81,8 @@ public class AppPaths {
         return getPath("icons");
     }
 
+    public static String getMatrixPath() {
+        return getPath("managed" + File.separator + "matrix");
+    }
+
 }

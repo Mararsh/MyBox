@@ -276,6 +276,21 @@ public class GameEliminationController extends BaseController {
                         }
                     }
                     if (items.size() < minimumAdjacent) {
+                        for (ImageItem pitem : predefinedItems) {
+                            boolean existed = false;
+                            for (ImageItem eitem : items) {
+                                if (eitem.getAddress().equals(pitem.getAddress())) {
+                                    existed = true;
+                                    break;
+                                }
+                            }
+                            if (!existed) {
+                                items.add(pitem);
+                            }
+                            if (items.size() >= minimumAdjacent) {
+                                break;
+                            }
+                        }
                         items.addAll(predefinedItems.subList(4, 6));
                     }
                     return true;

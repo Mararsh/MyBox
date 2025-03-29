@@ -377,6 +377,30 @@ public abstract class BaseTable<D> {
                         statement.setBoolean(index, b);
                     }
                     break;
+                case NumberBoolean:
+                    if (value == null && !notPermitNull) {
+                        statement.setNull(index, Types.SMALLINT);
+                    } else {
+                        short r;
+                        try {
+                            if (value instanceof Integer) {
+                                r = (short) ((int) value);
+                            } else {
+                                r = (short) value;
+                            }
+                        } catch (Exception ex) {
+                            r = 0;
+                        }
+                        if (ShortTools.invalidShort(r)) {
+                            r = 0;
+                            if (!notPermitNull) {
+                                statement.setNull(index, Types.SMALLINT);
+                                break;
+                            }
+                        }
+                        statement.setShort(index, r);
+                    }
+                    break;
                 case Datetime:
                     if (value == null && !notPermitNull) {
                         statement.setNull(index, Types.TIMESTAMP);
@@ -714,6 +738,9 @@ public abstract class BaseTable<D> {
                 break;
             case Boolean:
                 def += "BOOLEAN";
+                break;
+            case NumberBoolean:
+                def += "SMALLINT";
                 break;
             case Datetime:
                 def += "TIMESTAMP";

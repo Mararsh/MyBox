@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMatrixOptions">
+    <children>
+        <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+            <children>
+                <Label text="%DataType" />
+            <RadioButton fx:id="doubleRadio" mnemonicParsing="false" selected="true" text="%Double">
+               <toggleGroup>
+                  <ToggleGroup fx:id="typeGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="floatRadio" layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="%Float" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="longRadio" layoutX="10.0" layoutY="46.0" mnemonicParsing="false" text="%Long" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="intRadio" layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="%Integer" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="shortRadio" layoutX="10.0" layoutY="46.0" mnemonicParsing="false" text="%Short" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="booleanRadio" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="%Boolean" toggleGroup="$typeGroup" />
+            </children>
+        </FlowPane>
+    </children>
+</VBox>

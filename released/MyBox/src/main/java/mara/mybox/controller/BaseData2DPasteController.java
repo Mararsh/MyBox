@@ -111,7 +111,7 @@ public class BaseData2DPasteController extends ControlData2DSource {
 
     @Override
     public boolean doTask(FxTask currentTask) {
-        data = selectedData(currentTask);
+        data = selectedData(currentTask, true);
         return data != null && !data.isEmpty();
     }
 

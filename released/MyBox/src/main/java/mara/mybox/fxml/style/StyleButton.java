@@ -171,8 +171,11 @@ public class StyleButton {
             if (id.startsWith("selectPixels")) {
                 return new StyleData(id, message("SelectPixels"), "CTRL+T / ALT+T", "iconSelect.png");
             }
-
-            return new StyleData(id, message("Select"), "CTRL+T / ALT+T", "iconSelect.png");
+            if (id.equalsIgnoreCase("selectButton")) {
+                return new StyleData(id, message("Select"), "CTRL+T / ALT+T", "iconSelect.png");
+            } else {
+                return new StyleData(id, message("Select"), "", "iconSelect.png");
+            }
         }
 
         if (id.startsWith("mybox")) {

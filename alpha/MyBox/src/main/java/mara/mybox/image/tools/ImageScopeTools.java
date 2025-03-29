@@ -160,11 +160,12 @@ public class ImageScopeTools {
     // scope should have been decoded
     public static String toHtml(FxTask task, ImageScope scope) {
         try {
-            if (scope == null) {
+            if (scope == null || scope.isWhole()) {
                 return null;
             }
-            ShapeType type = scope.getShapeType();
             String html = "";
+            StringTable htmlTable = new StringTable();
+            List<String> row;
             try {
                 ImageItem item = new ImageItem(scope.getBackground());
                 Image image = item.readImage();
@@ -188,55 +189,54 @@ public class ImageScopeTools {
                                 + imgFile.toURI().toString() + "' width=500></P><BR>";
                     }
                 }
+                String v = scope.getName();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    htmlTable.add(row);
+                }
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ShapeType"), message(scope.getShapeType().name())));
+                htmlTable.add(row);
+                v = scope.getBackground();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Background"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    htmlTable.add(row);
+                }
+                v = scope.getOutlineName();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    htmlTable.add(row);
+                }
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ColorMatchAlgorithm"),
+                        message(scope.getColorAlgorithm().name())));
+                htmlTable.add(row);
+                v = scope.getShapeData();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Shape"), v));
+                    htmlTable.add(row);
+                }
+                v = scope.getColorData();
+                if (v != null && !v.isBlank()) {
+                    row = new ArrayList<>();
+                    row.addAll(Arrays.asList(message("Colors"), v));
+                    htmlTable.add(row);
+                }
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ColorMatchThreshold"), scope.getColorThreshold() + ""));
+                htmlTable.add(row);
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ShapeExcluded"), scope.isShapeExcluded() ? message("Yes") : ""));
+                htmlTable.add(row);
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("ColorExcluded"), scope.isColorExcluded() ? message("Yes") : ""));
+                htmlTable.add(row);
             } catch (Exception e) {
             }
-            StringTable htmlTable = new StringTable();
-            List<String> row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ShapeType"), message(type.name())));
-            htmlTable.add(row);
-            String v = scope.getBackground();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Background"), "<PRE><CODE>" + v + "</CODE></PRE>"));
-                htmlTable.add(row);
-            }
-            v = scope.getName();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
-                htmlTable.add(row);
-            }
-            v = scope.getOutlineName();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
-                htmlTable.add(row);
-            }
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ColorMatchAlgorithm"),
-                    message(scope.getColorAlgorithm().name())));
-            htmlTable.add(row);
-            v = scope.getShapeData();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Shape"), v));
-                htmlTable.add(row);
-            }
-            v = scope.getColorData();
-            if (v != null && !v.isBlank()) {
-                row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Colors"), v));
-                htmlTable.add(row);
-            }
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ColorMatchThreshold"), scope.getColorThreshold() + ""));
-            htmlTable.add(row);
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ShapeExcluded"), scope.isShapeExcluded() ? message("Yes") : ""));
-            htmlTable.add(row);
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("ColorExcluded"), scope.isColorExcluded() ? message("Yes") : ""));
-            htmlTable.add(row);
             return html + htmlTable.div();
         } catch (Exception e) {
             MyBoxLog.error(e);

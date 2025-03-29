@@ -45,8 +45,9 @@ public class AppVariables {
     public static Map<String, ScheduledFuture<?>> ScheduledTasks;
     public static AlarmClockController AlarmClockController;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth,
-            titleTrimSize, menuMaxLen;
+            titleTrimSize, menuMaxLen, blockMatrixThreshold;
     public static long maxDemoImage;
+    public static float sparseMatrixThreshold;
     public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, operationWindowIconifyParent, recordWindowsSizeLocation,
             controlDisplayText, commitModificationWhenDataCellLoseFocus,
@@ -114,6 +115,8 @@ public class AppVariables {
             maxDemoImage = UserConfig.getLong(conn, "MaxDemoImage", 1000000);
             titleTrimSize = UserConfig.getInt(conn, "TitleTrimSize", 60);
             menuMaxLen = UserConfig.getInt(conn, "MenuMaxLen", 80);
+            sparseMatrixThreshold = UserConfig.getFloat(conn, "SparseMatrixThreshold", 0.05f);
+            blockMatrixThreshold = UserConfig.getInt(conn, "BlockMatrixThreshold", 30);
             ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean(conn, "ShortcutsCanNotOmitCtrlAlt", false);
             useChineseWhenBlankTranslation = UserConfig.getBoolean(conn,
                     "UseChineseWhenBlankTranslation", isChinese(sysDefaultLanguage()));

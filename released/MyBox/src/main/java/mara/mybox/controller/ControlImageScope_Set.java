@@ -482,6 +482,7 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
                         BufferedImage outline
                                 = SwingFXUtils.fromFXImage(outlineController.getImage(), null);
                         scope.setOutlineSource(outline);
+                        scope.setOutlineName(outlineController.currentAddress);
                         maskRectangleData = DoubleRectangle.image(outline);
                     }
                     if (scope.getOutlineSource() == null) {

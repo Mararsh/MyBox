@@ -79,7 +79,8 @@ public class ImageScope {
     }
 
     public boolean isWhole() {
-        return shapeType == null || shapeType == ShapeType.Whole;
+        return (shapeType == null || shapeType == ShapeType.Whole)
+                && (colors == null || colors.isEmpty());
     }
 
     public void decode(FxTask task) {

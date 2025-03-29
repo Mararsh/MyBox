@@ -81,8 +81,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public void sourceChanged() {
-        super.sourceChanged();
+    public void dataChanged() {
+        super.dataChanged();
         valueController.setData2D(data2D);
     }
 
@@ -521,7 +521,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public void ouputRows() {
+    public void outputRows() {
         try {
             dataController.updateTable(outputData);
             dataController.tableChanged(true);

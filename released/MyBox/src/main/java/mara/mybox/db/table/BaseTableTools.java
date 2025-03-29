@@ -25,7 +25,6 @@ public class BaseTableTools {
                 put("CONVOLUTION_KERNEL", new TableConvolutionKernel());
                 put("DATA2D_DEFINITION", new TableData2DDefinition());
                 put("DATA2D_COLUMN", new TableData2DColumn());
-                put("DATA2D_CELL", new TableData2DCell());
                 put("DATA2D_STYLE", new TableData2DStyle());
                 put("FILE_BACKUP", new TableFileBackup());
                 put("FLOAT_MATRIX", new TableFloatMatrix());

@@ -206,10 +206,19 @@ public class TableSystemConf extends BaseTable<StringValue> {
     }
 
     public static int writeString(String keyName, String stringValue) {
-        if (keyName == null) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return writeString(conn, keyName, stringValue);
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public static int writeString(Connection conn, String keyName, String stringValue) {
+        if (conn == null || keyName == null) {
             return 0;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
+        try {
             if (stringValue == null) {
                 return delete(conn, keyName) ? 1 : 0;
             }
@@ -239,6 +248,15 @@ public class TableSystemConf extends BaseTable<StringValue> {
 
     public static int writeInt(String keyName, int intValue) {
         try (Connection conn = DerbyBase.getConnection()) {
+            return writeInt(conn, keyName, intValue);
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public static int writeInt(Connection conn, String keyName, int intValue) {
+        try {
             int exist = readInt(conn, keyName);
             if (exist != AppValues.InvalidInteger) {
                 if (intValue != exist) {
@@ -265,6 +283,10 @@ public class TableSystemConf extends BaseTable<StringValue> {
 
     public static int writeBoolean(String keyName, boolean booleanValue) {
         return writeInt(keyName, booleanValue ? 1 : 0);
+    }
+
+    public static int writeBoolean(Connection conn, String keyName, boolean booleanValue) {
+        return writeInt(conn, keyName, booleanValue ? 1 : 0);
     }
 
     public static boolean delete(String keyName) {

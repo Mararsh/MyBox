@@ -26,6 +26,8 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
@@ -613,7 +615,15 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public void setIconified(boolean set) {
         try {
-            getMyStage().setIconified(set);
+            myStage = getMyStage();
+            Window owner = myStage.getOwner();
+            if (owner != null) {
+                if (owner instanceof Stage) {
+                    ((Stage) owner).setIconified(true);
+                }
+            } else {
+                myStage.setIconified(true);
+            }
         } catch (Exception e) {
 //            MyBoxLog.error(e);
         }

@@ -248,11 +248,11 @@ public abstract class Data2DWriter {
                 case Text:
                     writer = new DataFileTextWriter();
                     break;
+                case Matrix:
+                    writer = new DataMatrixWriter();
+                    break;
                 case DatabaseTable:
                     writer = new DataTableWriter();
-                    break;
-                case Matrix:
-                    writer = new MatrixWriter();
                     break;
                 case MyBoxClipboard:
                     writer = new MyBoxClipboardWriter();

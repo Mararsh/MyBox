@@ -14,7 +14,6 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.operate.Data2DOperate;
@@ -51,7 +50,8 @@ public class Data2DConvertTools {
         if (type == null) {
             return null;
         }
-        return FileTmpTools.generateFile(prefix, type == Data2D_Attributes.TargetType.Excel ? "xlsx" : type.name().toLowerCase());
+        return FileTmpTools.generateFile(prefix,
+                type == Data2D_Attributes.TargetType.Excel ? "xlsx" : type.name().toLowerCase());
     }
 
     public static DataFileText toText(FxTask task, DataFileCSV csvData, String targetName, File targetFile) {
@@ -219,60 +219,6 @@ public class Data2DConvertTools {
             targetData.setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             targetData.saveAttributes();
             return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public static DataMatrix toMatrix(FxTask task, Data2D sourceData, String targetName) {
-        if (task == null || sourceData == null) {
-            return null;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return toMatrix(task, conn, sourceData, targetName);
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return null;
-        }
-    }
-
-    public static DataMatrix toMatrix(FxTask task, Connection conn, Data2D sourceData, String targetName) {
-        if (conn == null || task == null || sourceData == null) {
-            return null;
-        }
-        File csvFile = sourceData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        List<List<String>> data = sourceData.allRows(false);
-        List<Data2DColumn> cols = sourceData.getColumns();
-        if (cols == null || cols.isEmpty()) {
-            try {
-                sourceData.readColumns(conn);
-                cols = sourceData.getColumns();
-                if (cols == null || cols.isEmpty()) {
-                    return null;
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                } else {
-                    MyBoxLog.error(e);
-                }
-                return null;
-            }
-        }
-        DataMatrix matrix = new DataMatrix();
-        matrix.cloneDataAttributes(sourceData);
-        if (targetName != null) {
-            matrix.setDataName(targetName);
-        }
-        if (DataMatrix.save(task, conn, matrix, cols, data) >= 0) {
-            return matrix;
         } else {
             return null;
         }

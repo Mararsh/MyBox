@@ -1,6 +1,9 @@
 package mara.mybox.db.migration;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,16 +11,19 @@ import java.sql.Statement;
 import java.util.HashMap;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeDataColumn;
@@ -62,9 +68,99 @@ public class DataMigrationFrom68 {
             if (lastVersion < 6008005) {
                 updateIn685(controller, conn, lang);
             }
+            if (lastVersion < 6008006) {
+                updateIn686(controller, conn, lang);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public static void updateIn686(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        MyBoxLog.info("Updating tables in 6.8.6...");
+        controller.info("Updating tables in 6.8.6...");
+        try {
+            conn.setAutoCommit(false);
+            try (Statement statement = conn.createStatement();
+                    ResultSet defResult = statement.executeQuery("select * from Data2D_Definition WHERE data_type=4");
+                    PreparedStatement rowQuery = conn.prepareStatement("select * from Data2D_Cell WHERE dcdid=? AND row=?")) {
+                TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
+                double value;
+                String line;
+                ResultSet rowResult;
+                double[] row;
+                Charset charset = Charset.forName("UTF-8");
+                while (defResult.next()) {
+                    try {
+                        Data2DDefinition def = tableData2DDefinition.readData(defResult);
+                        long dataid = def.getDataID();
+                        long colsNumber = def.getColsNumber();
+                        long rowsNumber = def.getRowsNumber();
+                        File file = new File(DataMatrix.filename(dataid + ""));
+                        rowQuery.setLong(1, dataid);
+                        controller.info("Moving matrix:" + file);
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, charset, false))) {
+                            for (int rowID = 0; rowID < rowsNumber; rowID++) {
+                                try {
+                                    rowQuery.setLong(2, rowID);
+                                    row = new double[(int) colsNumber];
+                                    rowResult = rowQuery.executeQuery();
+                                    while (rowResult.next()) {
+                                        try {
+                                            value = Double.parseDouble(rowResult.getString("value").replaceAll(",", ""));
+                                            row[(int) rowResult.getLong("col")] = value;
+                                        } catch (Exception exx) {
+                                        }
+                                    }
+                                    line = row[0] + "";
+                                    for (int c = 1; c < row.length; c++) {
+                                        line += DataMatrix.MatrixDelimiter + row[c];
+                                    }
+                                    writer.write(line + "\n");
+                                } catch (Exception exx) {
+                                }
+                            }
+                            writer.flush();
+                        } catch (Exception ex) {
+                        }
+                        def.setFile(file).setSheet("Double")
+                                .setCharset(charset).setHasHeader(false)
+                                .setDelimiter(DataMatrix.MatrixDelimiter);
+                        tableData2DDefinition.updateData(conn, def);
+                        conn.commit();
+                    } catch (Exception e) {
+                    }
+                }
+                defResult.close();
+
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+
+            conn.setAutoCommit(true);
+
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE  Data2D_Cell DROP CONSTRAINT  Data2D_Cell_fk");
+                statement.executeUpdate("DROP TABLE Data2D_Cell");
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold_tmp  DOUBLE");
+                statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold_tmp=color_threshold");
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold");
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_threshold  DOUBLE");
+                statement.executeUpdate("UPDATE Node_Image_Scope SET color_threshold=color_threshold_tmp");
+                statement.executeUpdate("ALTER TABLE Node_Image_Scope DROP COLUMN color_threshold_tmp");
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+
     }
 
     public static void updateIn685(MyBoxLoadingController controller,

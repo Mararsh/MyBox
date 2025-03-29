@@ -104,7 +104,7 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
      */
     public static DataTreeMoveController open(DataTreeController parent, DataNode node) {
         DataTreeMoveController controller
-                = (DataTreeMoveController) WindowTools.openStage(Fxmls.DataTreeMoveFxml);
+                = (DataTreeMoveController) WindowTools.childStage(parent, Fxmls.DataTreeMoveFxml);
         controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;

@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -44,7 +45,9 @@ public class ControlPagination extends BaseController {
     protected Button pagesButton;
     @FXML
     protected Label menuPagesLabel, menuRowsLabel, menuSelectionLabel,
-            pagesLabel, rowsLabel, selectionLabel;
+            perPageLabel, pagesLabel, rowsLabel, selectionLabel;
+    @FXML
+    protected CheckBox leftCheck;
 
     public void setParameters(BaseController parent, Pagination pagi, ObjectType type) {
         try {
@@ -61,13 +64,16 @@ public class ControlPagination extends BaseController {
             List<String> sizeValues = new ArrayList();
             switch (pagination.objectType) {
                 case Table:
+                    perPageLabel.setText(message("RowsPerPage"));
                     sizeValues.addAll(Arrays.asList("50", "20", "100", "10", "300", "500", "600", "800", "1000", "2000"));
                     break;
                 case Bytes:
+                    perPageLabel.setText(message("BytesPerPage"));
                     sizeValues.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
                             "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
                     break;
                 case Text:
+                    perPageLabel.setText(message("RowsPerPage"));
                     sizeValues.addAll(Arrays.asList("200", "500", "100", "300", "600", "50", "20", "800", "1000", "2000"));
                     break;
 
@@ -85,6 +91,16 @@ public class ControlPagination extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     setPageSize(pageSizeSelector.getValue());
+                }
+            });
+
+            leftCheck.setSelected(UserConfig.getBoolean(baseName + "Left", true));
+            setLeftOrientation(leftCheck.isSelected());
+            leftCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Left", leftCheck.isSelected());
+                    setLeftOrientation(leftCheck.isSelected());
                 }
             });
 
@@ -174,6 +190,8 @@ public class ControlPagination extends BaseController {
             pageSelector.setDisable(!multiplePages());
             pageSizeSelector.setDisable(!multipleRows());
 
+            setLeftOrientation(leftCheck.isSelected());
+
             isSettingValues = false;
 
             refreshStyle(thisPane);
@@ -183,13 +201,16 @@ public class ControlPagination extends BaseController {
         }
     }
 
-    public void setRightOrientation(boolean isRight) {
-        if (isRight) {
-            menuPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-            navigatorBox.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-        } else {
+    private void setLeftOrientation(boolean isLeft) {
+        if (isSettingValues) {
+            return;
+        }
+        if (isLeft) {
             menuPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
             navigatorBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+        } else {
+            menuPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+            navigatorBox.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         }
     }
 
@@ -327,10 +348,10 @@ public class ControlPagination extends BaseController {
             }
         }
 
-        menu = new MenuItem(message("RowsPerPage") + "...");
+        menu = new MenuItem(perPageLabel.getText() + "...");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             String value = PopTools.askValue(parentController.getTitle(),
-                    null, message("RowsPerPage"), pagination.pageSize + "");
+                    null, perPageLabel.getText(), pagination.pageSize + "");
             setPageSize(value);
         });
         items.add(menu);
@@ -342,6 +363,17 @@ public class ControlPagination extends BaseController {
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
+
+        CheckMenuItem leftItem = new CheckMenuItem(message("Left"),
+                StyleTools.getIconImageView("iconLeft.png"));
+        leftItem.setSelected(leftCheck.isSelected());
+        leftItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                leftCheck.setSelected(leftItem.isSelected());
+            }
+        });
+        items.add(leftItem);
 
         CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
                 StyleTools.getIconImageView("iconPop.png"));

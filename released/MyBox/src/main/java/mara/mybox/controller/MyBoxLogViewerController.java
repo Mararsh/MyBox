@@ -86,10 +86,8 @@ public class MyBoxLogViewerController extends HtmlTableController {
 
     @FXML
     public void manageAction(ActionEvent event) {
-        MyBoxLogController controller = MyBoxLogController.oneOpen();
-        if (controller != null) {
-            controller.getMyStage().requestFocus();
-        }
+        MyBoxLogController.oneOpen();
+        setIconified(true);
     }
 
     @FXML

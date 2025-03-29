@@ -60,7 +60,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected boolean readOnly, widthChanged;
+    protected boolean readOnly, widthChanged, refreshTitle;
     protected SimpleBooleanProperty statusNotify;
     protected DataFilter styleFilter;
 
@@ -78,6 +78,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         readOnly = true;
         styleFilter = new DataFilter();
         pagination = new Pagination(Pagination.ObjectType.Table);
+        refreshTitle = true;
     }
 
     @Override
@@ -207,6 +208,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             if (dataLabel != null) {
                 dataLabel.setText(data2D != null ? data2D.displayName() : "");
             }
+            if (!refreshTitle) {
+                return;
+            }
             myStage = getMyStage();
             if (myStage == null) {
                 return;
@@ -266,12 +270,18 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     /*
         table
      */
+    public int tableColumnStartIndex() {
+        return rowsSelectionColumn != null
+                && tableView.getColumns().contains(rowsSelectionColumn)
+                ? 2 : 1;
+    }
+
     public void makeColumns() {
         try {
             isSettingValues = true;
             tableData.clear();
             tableView.getColumns().remove(
-                    rowsSelectionColumn != null && tableView.getColumns().contains(rowsSelectionColumn) ? 2 : 1,
+                    tableColumnStartIndex(),
                     tableView.getColumns().size());
             tableView.setItems(tableData);
             isSettingValues = false;
@@ -416,8 +426,12 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public void loadDataSize() {
-        if (!isValidData() || dataSizeLoaded
-                || data2D.isTmpData() || data2D.isMatrix()) {
+        if (!isValidData() || data2D.isTmpData()) {
+            setLoaded();
+            return;
+        }
+        if (dataSizeLoaded) {
+            data2D.setDataLoaded(true);
             afterLoaded();
             return;
         }
@@ -499,14 +513,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (saveButton != null) {
             saveButton.setDisable(false);
         }
-        if (data2D.isMatrix()) {
-            pagination.pageSize = Integer.MAX_VALUE;
-            pagination.pagesNumber = 1;
-            pagination.currentPage = 0;
-            pagination.startRowOfCurrentPage = 0;
-        } else {
-            pagination.goPage(pagination.rowsNumber, pagination.currentPage);
-        }
+        pagination.goPage(pagination.rowsNumber, pagination.currentPage);
         updateStatus();
         notifyLoaded();
     }
@@ -517,8 +524,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public boolean isShowPagination() {
-        return isValidData() && dataSizeLoaded
-                && !data2D.isMatrix() && !data2D.isTmpData();
+        return isValidData() && dataSizeLoaded && !data2D.isTmpData();
     }
 
 
@@ -604,7 +610,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (targetIsTextInput()) {
             return false;
         }
-        pasteContentInSystemClipboard();
+        loadContentInSystemClipboard();
         return true;
     }
 

@@ -51,7 +51,7 @@ public class DataFileText extends DataFile {
         return super.checkForLoad();
     }
 
-    public final String guessDelimiter() {
+    public String guessDelimiter() {
         if (file == null) {
             return null;
         }

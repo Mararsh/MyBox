@@ -120,21 +120,10 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     /*
-        matrix
-     */
-    public boolean isSquareMatrix() {
-        return dataType == DataType.Matrix && tableColsNumber() == tableRowsNumber();
-    }
-
-    /*
         values
      */
-    public String randomDouble(Random random, boolean nonNegative) {
+    public String randomString(Random random, boolean nonNegative) {
         return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
-    }
-
-    public String randomString(Random random) {
-        return randomDouble(random, true);
 //        return (char) ('a' + random.nextInt(25)) + "";
     }
 
@@ -213,7 +202,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     // without data row number
     public List<String> dataRow(int rowIndex) {
-        return Data2D_Data.this.dataRow(rowIndex, false);
+        return dataRow(rowIndex, false);
     }
 
     public List<String> dataRow(int rowIndex, boolean formatData) {
@@ -311,6 +300,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             case CSV:
             case Excel:
             case Texts:
+            case Matrix:
                 return file == null;
             case DatabaseTable:
             case InternalTable:
@@ -335,11 +325,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         for (int i = 0; i < rows; i++) {
             List<String> row = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
-                if (dataType == DataType.Matrix) {
-                    row.add(randomDouble(random, true));
-                } else {
-                    row.add(randomString(random));
-                }
+                row.add(randomString(random, false));
             }
             data.add(row);
         }
@@ -400,11 +386,11 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         columns
      */
     public String defaultColValue() {
-        return isMatrix() ? "0" : "";
+        return "";
     }
 
     public ColumnType defaultColumnType() {
-        return isMatrix() ? ColumnType.Double : ColumnType.String;
+        return ColumnType.String;
     }
 
     public String colPrefix() {
@@ -412,7 +398,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean defaultColNotNull() {
-        return isMatrix();
+        return false;
     }
 
     public Data2DColumn column(int col) {

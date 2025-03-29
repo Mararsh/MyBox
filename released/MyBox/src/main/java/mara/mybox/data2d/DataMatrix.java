@@ -1,56 +1,73 @@
 package mara.mybox.data2d;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import mara.mybox.data.SetValue;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
+import java.util.Date;
+import java.util.Random;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.data2d.writer.MatrixWriter;
-import mara.mybox.db.DerbyBase;
+import mara.mybox.data2d.writer.DataMatrixWriter;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DCell;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.table.TableData2DCell;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.IntTools;
+import mara.mybox.tools.LongTools;
 import mara.mybox.tools.NumberTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.AppPaths;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class DataMatrix extends Data2D {
+public class DataMatrix extends DataFileText {
 
-    protected TableData2DCell tableData2DCell;
+    public static final String MatrixDelimiter = "|";
 
     public DataMatrix() {
         dataType = DataType.Matrix;
-        tableData2DCell = new TableData2DCell();
+        sheet = "Double";
+        delimiter = MatrixDelimiter;
+        charset = Charset.forName("UTF-8");
+        hasHeader = false;
     }
 
     public int type() {
         return type(DataType.Matrix);
     }
 
-    public void cloneAll(DataMatrix d) {
-        try {
-            if (d == null) {
-                return;
-            }
-            super.cloneData(d);
-            tableData2DCell = d.tableData2DCell;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+//    public AbstractRealMatrix realMatrix(Connection conn) {
+//        int rows = (int) pagination.rowsNumber;
+//        int cols = (int) colsNumber;
+//        if (cols > blockMatrixThreshold) {
+//            return new BlockRealMatrix(rows, cols);
+//        } else if (tableMatrixCell.size(conn) < rows * cols * sparseMatrixThreshold) {
+//            return new OpenMapRealMatrix(rows, cols);
+//        } else {
+//            return new Array2DRowRealMatrix(rows, cols);
+//        }
+//    }
+    @Override
+    public String guessDelimiter() {
+        return MatrixDelimiter;
     }
 
     @Override
     public boolean checkForLoad() {
+        if (charset == null && file != null) {
+            charset = TextFileTools.charset(file);
+        }
+        if (charset == null) {
+            charset = Charset.forName("UTF-8");
+        }
+        delimiter = MatrixDelimiter;
         hasHeader = false;
         return true;
     }
@@ -58,71 +75,102 @@ public class DataMatrix extends Data2D {
     @Override
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
-            dataName = pagination.rowsNumber + "x" + colsNumber;
+            dataName = message("Matrix") + " "
+                    + pagination.rowsNumber + "x" + colsNumber;
         }
         return true;
     }
 
     @Override
-    public Data2DDefinition queryDefinition(Connection conn) {
-        return tableData2DDefinition.queryID(conn, dataID);
+    public boolean defaultColNotNull() {
+        return true;
     }
 
     @Override
-    public long readTotal() {
-        return pagination.rowsNumber;
+    public String defaultColValue() {
+        return "0";
     }
 
     @Override
-    public List<String> readColumnNames() {
-        checkForLoad();
-        List<String> names = new ArrayList<>();
-        for (int i = 1; i <= colsNumber; i++) {
-            names.add(colPrefix() + i);
+    public ColumnDefinition.ColumnType defaultColumnType() {
+        if (sheet == null) {
+            sheet = "Double";
         }
-        return names;
+        switch (sheet.toLowerCase()) {
+            case "float":
+                return ColumnType.Float;
+            case "integer":
+                return ColumnType.Integer;
+            case "long":
+                return ColumnType.Long;
+            case "short":
+                return ColumnType.Short;
+            case "numberboolean":
+                return ColumnType.NumberBoolean;
+            case "double":
+            default:
+                return ColumnType.Double;
+        }
     }
 
     @Override
-    public List<List<String>> readPageData(Connection conn) {
-        if (pagination.startRowOfCurrentPage < 0) {
-            pagination.startRowOfCurrentPage = 0;
+    public String randomString(Random random, boolean nonNegative) {
+        if (sheet == null) {
+            sheet = "Double";
         }
-        pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage;
-        List<List<String>> rows = new ArrayList<>();
-        if (dataID >= 0 && pagination.rowsNumber > 0 && colsNumber > 0) {
-            double[][] matrix = new double[(int) pagination.rowsNumber][(int) colsNumber];
-            try (PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
-                query.setLong(1, dataID);
-                ResultSet results = query.executeQuery();
-                while (results.next()) {
-                    Data2DCell cell = tableData2DCell.readData(results);
-                    if (cell.getColumnID() < colsNumber && cell.getRowID() < pagination.rowsNumber) {
-                        matrix[(int) cell.getRowID()][(int) cell.getColumnID()] = toDouble(cell.getValue());
-                    }
-                }
-                rows = toTableData(matrix);
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.console(e);
-            }
+        switch (sheet.toLowerCase()) {
+            case "float":
+                return NumberTools.format(FloatTools.random(random, maxRandom, nonNegative), scale);
+            case "integer":
+                return StringTools.format(IntTools.random(random, maxRandom, nonNegative));
+            case "long":
+                return StringTools.format(LongTools.random(random, maxRandom, nonNegative));
+            case "short":
+                return StringTools.format((short) IntTools.random(random, maxRandom, nonNegative));
+            case "numberboolean":
+                return random.nextInt(2) + "";
+            case "double":
+            default:
+                return NumberTools.format(DoubleTools.random(random, maxRandom, nonNegative), scale);
         }
-        pagination.rowsNumber = rows.size();
-        pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage + pagination.rowsNumber;
-        readPageStyles(conn);
-        return rows;
     }
 
     @Override
-    public long savePageData(FxTask task) {
-        pagination.rowsNumber = save(null, this, columns, pageData());
-        return pagination.rowsNumber;
+    public String getTypeName() {
+        if (sheet == null) {
+            sheet = "Double";
+        }
+        switch (sheet.toLowerCase()) {
+            case "float":
+                return message("FloatMatrix");
+            case "integer":
+                return message("IntegerMatrix");
+            case "long":
+                return message("LongMatrix");
+            case "short":
+                return message("ShortMatrix");
+            case "numberboolean":
+                return message("BooleanMatrix");
+            case "double":
+            default:
+                return message("DoubleMatrix");
+        }
     }
 
-    public boolean isSquare() {
-        return isValidDefinition() && tableColsNumber() == tableRowsNumber();
+    @Override
+    public Data2DWriter selfWriter() {
+        DataMatrixWriter writer = new DataMatrixWriter();
+        writer.setDataType(sheet)
+                .setCharset(Charset.forName("utf-8"))
+                .setDelimiter(DataMatrix.MatrixDelimiter)
+                .setWriteHeader(false)
+                .setTargetData(this)
+                .setPrintFile(file)
+                .setColumns(columns)
+                .setHeaderNames(columnNames())
+                .setRecordTargetFile(true)
+                .setRecordTargetData(true);
+        return writer;
     }
 
     public String toString(double d) {
@@ -133,6 +181,9 @@ public class DataMatrix extends Data2D {
         }
     }
 
+    /*
+        static
+     */
     public static double toDouble(String d) {
         try {
             return Double.parseDouble(d.replaceAll(",", ""));
@@ -141,142 +192,50 @@ public class DataMatrix extends Data2D {
         }
     }
 
-    public double[][] toMatrix() {
-        pagination.rowsNumber = tableRowsNumber();
-        colsNumber = tableColsNumber();
-        if (pagination.rowsNumber <= 0 || colsNumber <= 0) {
-            return null;
-        }
-        double[][] data = new double[(int) pagination.rowsNumber][(int) colsNumber];
-        for (int r = 0; r < pagination.rowsNumber; r++) {
-            List<String> row = dataRow(r);
-            for (int c = 0; c < row.size(); c++) {
-                data[r][c] = toDouble(row.get(c));
-            }
-        }
-        return data;
-    }
-
-    public List<List<String>> toTableData(double[][] data) {
-        if (data == null) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        for (int r = 0; r < data.length; r++) {
-            List<String> row = new ArrayList<>();
-            row.add(("" + (r + 1)));
-            for (int c = 0; c < data[r].length; c++) {
-                row.add(toString(data[r][c]));
-            }
-            rows.add(row);
-        }
-        return rows;
-    }
-
-    @Override
-    public long setValue(FxTask task, List<Integer> cols,
-            SetValue value, ColumnDefinition.InvalidAs invalidAs) {
-        return -1;
-    }
-
-    @Override
-    public long deleteRows(FxTask task) {
-        return -1;
-    }
-
-    @Override
-    public long clearData(FxTask task) {
-        long count = -1;
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
-            clear.setLong(1, dataID);
-            count = clear.executeUpdate();
-
-            conn.commit();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return count;
-    }
-
-    @Override
-    public Data2DWriter selfWriter() {
-        MatrixWriter writer = new MatrixWriter();
-        writer.setMatrix(this)
-                .setTargetData(this)
-                .setRecordTargetFile(false)
-                .setRecordTargetData(true);
-        return writer;
-    }
-
-    public static long save(FxTask task, DataMatrix matrix,
-            List<Data2DColumn> cols, List<List<String>> rows) {
-        if (matrix == null || cols == null || rows == null) {
-            return -1;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return save(task, conn, matrix, cols, rows);
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return -2;
-        }
-    }
-
-    public static long save(FxTask task, Connection conn, DataMatrix matrix,
-            List<Data2DColumn> cols, List<List<String>> rows) {
-        if (conn == null || matrix == null || cols == null || rows == null) {
-            return -1;
-        }
-        TableData2DCell tableData2DCell = matrix.tableData2DCell;
+    public static String filename() {
         try {
-            matrix.setColsNumber(cols.size());
-            matrix.setRowsNumber(rows.size());
-            Data2D.saveAttributes(conn, matrix, cols);
-            long dataid = matrix.getDataID();
-            if (dataid < 0) {
-                return -2;
-            }
-            try (PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
-                clear.setLong(1, dataid);
-                clear.executeUpdate();
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                MyBoxLog.debug(e);
-            }
-            conn.commit();
-            conn.setAutoCommit(false);
-            long num = 0;
-            for (int r = 0; r < rows.size(); r++) {
-                List<String> row = rows.get(r);
-                for (int c = 0; c < row.size(); c++) {
-                    double d = toDouble(row.get(c));
-                    if (d == 0 || DoubleTools.invalidDouble(d)) {
-                        continue;
-                    }
-                    Data2DCell cell = Data2DCell.create().setDataID(dataid)
-                            .setRowID(r).setColumnID(c).setValue(d + "");
-                    tableData2DCell.insertData(conn, cell);
-                }
-                num++;
-            }
-            conn.commit();
-            return num;
+            return filename(new Date().getTime() + "");
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return -3;
+            return null;
         }
     }
 
-    public TableData2DCell getTableData2DCell() {
-        return tableData2DCell;
+    public static String filename(String name) {
+        try {
+            return AppPaths.getMatrixPath() + File.separator + FileNameTools.filter(name) + ".txt";
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static DataMatrix makeMatrix(String type, int colsNumber, int rowsNumber, short scale, int max) {
+        try {
+
+            String dataName = type + "_" + colsNumber + "x" + rowsNumber;
+            File file = new File(DataMatrix.filename(dataName + "_" + new Date().getTime()));
+            DataMatrix matrix = new DataMatrix();
+            matrix.setFile(file).setSheet(type)
+                    .setScale(scale).setMaxRandom(max)
+                    .setColsNumber(colsNumber)
+                    .setRowsNumber(rowsNumber);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, matrix.getCharset(), false))) {
+                String line;
+                Random random = new Random();
+                for (int i = 0; i < rowsNumber; i++) {
+                    line = matrix.randomString(random, false);
+                    for (int j = 1; j < colsNumber; j++) {
+                        line += DataMatrix.MatrixDelimiter + matrix.randomString(random, false);
+                    }
+                    writer.write(line + "\n");
+                }
+                writer.flush();
+            } catch (Exception ex) {
+            }
+            new TableData2DDefinition().updateData(matrix);
+            return matrix;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

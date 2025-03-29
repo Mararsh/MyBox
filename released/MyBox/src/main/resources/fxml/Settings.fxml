@@ -242,7 +242,7 @@ License:    Apache License Version 2.0
                                                                     <children>
                                                                         <Label text="%WebReadTimeout" />
                                                                         <TextField fx:id="webReadTimeoutInput" prefWidth="160.0" />
-                                                                        <Button fx:id="okWebReadTimeoutButton1" mnemonicParsing="false" onAction="#okWebReadTimeout">
+                                                                        <Button fx:id="okWebReadTimeoutButton" mnemonicParsing="false" onAction="#okWebReadTimeout">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>

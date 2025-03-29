@@ -646,7 +646,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     protected DataTreeExportController exportNode(TreeItem<DataNode> item) {
         DataTreeExportController exportController
-                = (DataTreeExportController) openStage(Fxmls.DataTreeExportFxml);
+                = (DataTreeExportController) childStage(Fxmls.DataTreeExportFxml);
         exportController.setParamters(this, item);
         return exportController;
     }
@@ -657,14 +657,14 @@ public class DataTreeController extends BaseDataTreeViewController {
     @FXML
     protected void importAction(TreeItem<DataNode> item) {
         DataTreeImportController importController
-                = (DataTreeImportController) openStage(Fxmls.DataTreeImportFxml);
+                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
         importController.setParamters(this, item);
     }
 
     @FXML
     protected DataTreeImportController importExamples(TreeItem<DataNode> item) {
         DataTreeImportController importController
-                = (DataTreeImportController) openStage(Fxmls.DataTreeImportFxml);
+                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
         importController.importExamples(this, item);
         return importController;
     }

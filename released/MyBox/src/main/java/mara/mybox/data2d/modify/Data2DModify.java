@@ -52,8 +52,7 @@ public abstract class Data2DModify extends Data2DOperate {
 
     @Override
     public boolean checkParameters() {
-        rowsNumber = 0;
-
+//        rowsNumber = 0;
         valueInvalid = false;
         rejectInvalid = sourceData.rejectInvalidWhenSave() || invalidAs == InvalidAs.Fail;
         skipInvalid = invalidAs == InvalidAs.Skip;

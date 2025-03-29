@@ -8,7 +8,6 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.Data2DDefinition.DataType.CSV;
 import static mara.mybox.db.data.Data2DDefinition.DataType.DatabaseTable;
 import static mara.mybox.db.data.Data2DDefinition.DataType.Excel;
-import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
 import static mara.mybox.db.data.Data2DDefinition.DataType.MyBoxClipboard;
 import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
@@ -16,6 +15,7 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
 
 /**
  * @Author Mara

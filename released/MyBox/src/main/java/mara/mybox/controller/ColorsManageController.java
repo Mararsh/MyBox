@@ -160,8 +160,6 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 }
             });
 
-            paginationController.setRightOrientation(true);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

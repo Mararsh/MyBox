@@ -109,9 +109,9 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
         }
     }
 
-    public void sourceChanged(Data2D data) {
+    public void dataChanged(Data2D data2d) {
         try {
-            data2D = data;
+            data2D = data2d;
             pagination = data2D.pagination;
             if (paginationController != null) {
                 paginationController.pagination = data2D.pagination;
@@ -123,11 +123,15 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             pagination.rowsNumber = dataController.pagination.rowsNumber;
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
+            List<List<String>> data = new ArrayList<>();
+            data.addAll(dataController.tableData);
             makeColumns();
-            updateTable(dataController.tableData);
+            updateTable(data);
             postLoadedTableData();
             refreshControls();
-            notifyLoaded();
+            if (data2D.getFile() != null) {
+                recordFileOpened(data2D.getFile());
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -196,6 +200,10 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     // If none selected then select all
     public boolean checkedRows() {
         try {
+            MyBoxLog.console(data2D != null);
+            if (data2D == null) {
+                return false;
+            }
             selectedRowsIndices = new ArrayList<>();
             DataFilter filter = data2D.filter;
             if (filter != null) {
@@ -330,7 +338,8 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
         }
     }
 
-    public List<List<String>> selectedData(FxTask task, List<Integer> cols, boolean formatValues) {
+    public List<List<String>> selectedData(FxTask task, List<Integer> cols,
+            boolean formatValues, boolean hasHeaders) {
         try {
             if (data2D == null || cols == null) {
                 return null;
@@ -345,7 +354,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                 List<Data2DColumn> targetColumns = data2D.targetColumns(cols, false);
                 writer.setColumns(targetColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                        .setWriteHeader(true)
+                        .setWriteHeader(hasHeaders)
                         .setFormatValues(formatValues);
                 data2D.copy(task, writer, cols,
                         false, ColumnDefinition.InvalidAs.Empty);

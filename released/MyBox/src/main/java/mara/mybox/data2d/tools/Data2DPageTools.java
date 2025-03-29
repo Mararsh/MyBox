@@ -61,10 +61,8 @@ public class Data2DPageTools {
                     htmlRow.add("" + (i + 1));
                     htmlRow.add(pageRow.get(0));
                 }
-
                 for (int col = 0; col < cNumber; col++) {
-                    String value = pageRow.get(col + 1);
-                    value = StringTools.replaceHtmlLineBreak(value);
+                    String value = "<PRE>" + pageRow.get(col + 1) + "</PRE>";
                     String style = data2d.cellStyle(styleFilter, i, data2d.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")

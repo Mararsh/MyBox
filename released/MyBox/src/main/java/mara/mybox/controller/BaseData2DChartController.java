@@ -132,9 +132,9 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
     }
 
     @Override
-    public void sourceChanged() {
+    public void dataChanged() {
         try {
-            super.sourceChanged();
+            super.dataChanged();
             makeOptions();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -538,9 +538,6 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
             }
             if (playController != null) {
                 playController.clear();
-            }
-            if (groupDataController != null) {
-                groupDataController.loadNull();
             }
         } catch (Exception e) {
         }

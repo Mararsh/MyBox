@@ -15,7 +15,6 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.writer.Data2DWriter;
@@ -463,52 +462,6 @@ public class Data2DTableTools {
         DataFileCSV csvData = toCSV(task, dataTable, clipFile, false);
         if (csvData != null && clipFile != null && clipFile.exists()) {
             return DataClipboard.create(task, csvData, dataTable.getName(), clipFile);
-        } else {
-            return null;
-        }
-    }
-
-    public static DataMatrix toMatrix(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
-            return null;
-        }
-        List<List<String>> rows = new ArrayList<>();
-        TableData2D tableData2D = dataTable.getTableData2D();
-        List<Data2DColumn> dataColumns = dataTable.getColumns();
-        int tcolsNumber = dataColumns.size();
-        String sql = tableData2D.queryAllStatement();
-        if (task != null) {
-            task.setInfo(sql);
-        }
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql);
-                ResultSet results = statement.executeQuery()) {
-            while (results.next() && task != null && !task.isCancelled()) {
-                try {
-                    List<String> row = new ArrayList<>();
-                    for (int col = 0; col < tcolsNumber; col++) {
-                        Data2DColumn column = dataColumns.get(col);
-                        Object v = column.value(results);
-                        row.add(column.toString(v));
-                    }
-                    rows.add(row);
-                } catch (Exception e) {
-                    // skip  bad lines
-                    MyBoxLog.error(e);
-                }
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return null;
-        }
-        DataMatrix matrix = new DataMatrix();
-        matrix.cloneValueAttributes(dataTable);
-        if (DataMatrix.save(task, matrix, dataColumns, rows) >= 0) {
-            return matrix;
         } else {
             return null;
         }

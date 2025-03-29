@@ -518,7 +518,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 popDone();
             }
         });
-        if (data2D.isCSV() || data2D.isTexts()) {
+        if (data2D.isCSV() || data2D.isTexts() || data2D.isMatrix()) {
             controller.label.setText(message("DelimiterNotAffectSource"));
         }
     }

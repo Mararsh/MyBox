@@ -108,7 +108,8 @@
 
         <h3>5.2 Types of Columns</h3>
         <ol>
-            <li value="1"><p>Types of columns include: String, Double, Float, Long, Integer, Short, Boolean, Datetime, Date, Era, Longitude, Latitude, 
+            <li value="1"><p>Types of columns include: String, Double, Float, Long, Integer, Short, Boolean, Short Boolean,
+                    Datetime, Date, Era, Longitude, Latitude, 
                     Enumeration, Editable Enumeration, Enumerated Short, Color.</p></li>
             <li><p>This attribute is used to display, edit, calculate, and save data.</p></li>
             <li><p>Longitutde and Latitude are defined together generally.</p></li>
@@ -369,6 +370,7 @@
         <p>Notice: derby does not support negative date, so Ear is saved as long.</p>
 
         <h3>8.4 Save Matrix</h3>
+        <p>Matrices are stored as text files under internal special path.</p>
         <p>Invalid values are always rejected for matrix.</p>
         <p>All values in Matrix are saved as Double.</p>
 
@@ -377,8 +379,7 @@
         <ol>
             <li><p>Data are handled as original values, without concern about types and formats of columns.</p></li>
             <li><p>Values are parsed as need. Example, if the calculation requires double values, then try to convert values as doubles.</p></li>
-            <li><p>If value conversion fails, then invalid value is handled as definition of column.</p></li>
-            <li><p>Calculation itself can define how to handle invalid values. Definition of calculation priors to definition of column.</p></li>
+            <li><p>If value conversion fails, then invalid value is handled as definition of the calculation.</p></li>
             <li><p>Both column and calcultion can define decimal scale. Definition of calculation priors to definition of column.</p></li>
             <li><p>Example, Column type is String, and descriptive statistic is running against it:</p>
                 <ul>
@@ -425,14 +426,14 @@
                     <td width="18%"><p><b>Storage location of data</b></p></td>
                     <td width="19%"><p>Data file</p></td>
                     <td width="21%"><p>Files under MyBox internal path.</p></td>
-                    <td width="20%"><p>Database table of MyBox</p></td>
+                    <td width="20%"><p>Files under MyBox internal path</p></td>
                     <td width="22%"><p>Database tables of MyBox</p></td>
                 </tr>
                 <tr valign="TOP">
                     <td width="18%"><p><b>When delete data definition</b></p></td>
                     <td width="19%"><p>Data file is not affected</p></td>
                     <td width="21%"><p>Internal file is deleted</p></td>
-                    <td width="20%"><p>Data of matrix are cleared</p></td>
+                    <td width="20%"><p>Internal file is deleted</p></td>
                     <td width="22%"><p>Database table is dropped</p></td>
                 </tr>
             </tbody>
