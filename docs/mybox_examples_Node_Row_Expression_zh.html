@@ -53,113 +53,205 @@
     <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>行表达式</a>
     </DIV>
     <DIV class="TreeNode" id='item1'>
-        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>行过滤</a>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>示例</a>
         </DIV>
     <DIV class="TreeNode" id='item2'>
-            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>示例</a>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>行计算</a>
             </DIV>
     <DIV class="TreeNode" id='item3'>
                 <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4')"><SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>数字</a>
                 </DIV>
     <DIV class="TreeNode" id='item4'>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.1&nbsp;&nbsp;</SPAN>列值不是数字
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.1&nbsp;&nbsp;</SPAN>数据行号
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>isNaN(#{某列} - 1)</CODE></PRE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数据行号}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item5'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.2&nbsp;&nbsp;</SPAN>比较数字
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.2&nbsp;&nbsp;</SPAN>表行号
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数字列1} != 0 || #{数字列1} < #{数字列2}</CODE></PRE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{表行号}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item6'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.3&nbsp;&nbsp;</SPAN>比较统计值
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.3&nbsp;&nbsp;</SPAN>数学计算
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数字列} < #{数字列-均值}</CODE></PRE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>Math.abs(#{数字列1}) + Math.PI * Math.sqrt(#{数字列2})</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item7'>
     </DIV>
-    </DIV>
-                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item8')"><SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>时间</a>
-                </DIV>
-    <DIV class="TreeNode" id='item8'>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.1&nbsp;&nbsp;</SPAN>列值的时间值
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.4&nbsp;&nbsp;</SPAN>包含统计值的计算
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
-   new Date(#{时间列}.getTime()
-else
-   -1;</CODE></PRE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数字列1} - #{数字列2-均值}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item9'>
+    <DIV class="TreeNode" id='item8'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2&nbsp;&nbsp;</SPAN>时间点
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item9')"><SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>字符串</a>
+                </DIV>
+    <DIV class="TreeNode" id='item9'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.1&nbsp;&nbsp;</SPAN>字符串长度
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>#{时间列} == '2016-05-19 11:34:28'</CODE></PRE></TD></TR>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.length
+else
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item10'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.3&nbsp;&nbsp;</SPAN>匹配时间
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2&nbsp;&nbsp;</SPAN>替换
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
-   #{时间列}.startsWith('2016-05-19 09')
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.replace(/hello/ig,'Hello')
 else
-   undefined;</CODE></PRE></TD></TR>
+    null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item11'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.4&nbsp;&nbsp;</SPAN>比较时间
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.3&nbsp;&nbsp;</SPAN>小写
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
-   new Date(#{时间列}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.toLowerCase()
 else
-   undefined;</CODE></PRE></TD></TR>
+    null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item12'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.5&nbsp;&nbsp;</SPAN>格式化时间
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.4&nbsp;&nbsp;</SPAN>分割
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.split(',')
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item13'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.5&nbsp;&nbsp;</SPAN>子串位置
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.indexOf('今来花似雪')
+else
+    -1</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item14'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.6&nbsp;&nbsp;</SPAN>替换首个
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.replace("敲门", "推门");
+else
+   null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item15'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.7&nbsp;&nbsp;</SPAN>替换所有
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.replace(/怨年华/g, "鸟惊心");
+else
+   null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item16'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.8&nbsp;&nbsp;</SPAN>包含子串
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
+    #{字符串列}.search(/昔去雪如花/ig)
+else
+    -1</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item17'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.9&nbsp;&nbsp;</SPAN>特定值
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>var array = [ 'A', 'B', 'C', 'D' ];
+array.includes(#{字符串列})</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item18'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item19')"><SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>时间</a>
+                </DIV>
+    <DIV class="TreeNode" id='item19'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.1&nbsp;&nbsp;</SPAN>格式
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -186,9 +278,248 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item13'>
+    <DIV class="TreeNode" id='item20'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.6&nbsp;&nbsp;</SPAN>是否为星期日
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.2&nbsp;&nbsp;</SPAN>年
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getFullYear()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item21'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.3&nbsp;&nbsp;</SPAN>月
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getMonth() + 1
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item22'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.4&nbsp;&nbsp;</SPAN>日
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getDate()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item23'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.5&nbsp;&nbsp;</SPAN>时
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getHours()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item24'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.6&nbsp;&nbsp;</SPAN>分
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getMinutes()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item25'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.7&nbsp;&nbsp;</SPAN>秒
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getSeconds()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item26'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.8&nbsp;&nbsp;</SPAN>星期
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getDay()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item27'>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item28')"><SPAN class="SerialNumber">1.2&nbsp;&nbsp;</SPAN>行过滤</a>
+            </DIV>
+    <DIV class="TreeNode" id='item28'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item29')"><SPAN class="SerialNumber">1.2.1&nbsp;&nbsp;</SPAN>数字</a>
+                </DIV>
+    <DIV class="TreeNode" id='item29'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.1&nbsp;&nbsp;</SPAN>列值不是数字
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>isNaN(#{某列} - 1)</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item30'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.2&nbsp;&nbsp;</SPAN>比较数字
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数字列1} != 0 || #{数字列1} < #{数字列2}</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item31'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.3&nbsp;&nbsp;</SPAN>比较统计值
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{数字列} < #{数字列-均值}</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item32'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item33')"><SPAN class="SerialNumber">1.2.2&nbsp;&nbsp;</SPAN>时间</a>
+                </DIV>
+    <DIV class="TreeNode" id='item33'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.1&nbsp;&nbsp;</SPAN>列值的时间值
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
+   new Date(#{时间列}.getTime()
+else
+   -1;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item34'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2&nbsp;&nbsp;</SPAN>时间点
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>#{时间列} == '2016-05-19 11:34:28'</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item35'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.3&nbsp;&nbsp;</SPAN>匹配时间
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
+   #{时间列}.startsWith('2016-05-19 09')
+else
+   undefined;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item36'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.4&nbsp;&nbsp;</SPAN>比较时间
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>if (#{时间列} != null)
+   new Date(#{时间列}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
+else
+   undefined;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item37'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.5&nbsp;&nbsp;</SPAN>格式化时间
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>行表达式</TD><TD><PRE><CODE>function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{时间列} != null)
+   formatDate(new Date(#{时间列}));
+else
+   null;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item38'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.6&nbsp;&nbsp;</SPAN>是否为星期日
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -201,13 +532,13 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item14'>
+    <DIV class="TreeNode" id='item39'>
     </DIV>
     </DIV>
-                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item15')"><SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>字符串</a>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item40')"><SPAN class="SerialNumber">1.2.3&nbsp;&nbsp;</SPAN>字符串</a>
                 </DIV>
-    <DIV class="TreeNode" id='item15'>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.1&nbsp;&nbsp;</SPAN>列值为empty
+    <DIV class="TreeNode" id='item40'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.1&nbsp;&nbsp;</SPAN>列值为empty
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -217,9 +548,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item16'>
+    <DIV class="TreeNode" id='item41'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.2&nbsp;&nbsp;</SPAN>列值不为null
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.2&nbsp;&nbsp;</SPAN>列值不为null
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -229,54 +560,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item17'>
+    <DIV class="TreeNode" id='item42'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.3&nbsp;&nbsp;</SPAN>字串长度
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
-    #{字符串列}.length
-else
-    -1</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item18'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.4&nbsp;&nbsp;</SPAN>包含子串
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
-    #{字符串列}.search(/昔去雪如花/ig)
-else
-    -1</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item19'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.5&nbsp;&nbsp;</SPAN>子串位置
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
-    #{字符串列}.indexOf('今来花似雪')
-else
-    -1</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item20'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.6&nbsp;&nbsp;</SPAN>比较
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.3&nbsp;&nbsp;</SPAN>比较
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -286,39 +572,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item21'>
+    <DIV class="TreeNode" id='item43'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.7&nbsp;&nbsp;</SPAN>替换首个
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
-    #{字符串列}.replace("敲门", "推门");
-else
-   null</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item22'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.8&nbsp;&nbsp;</SPAN>替换所有
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>if ( #{字符串列} != null ) 
-    #{字符串列}.replace(/怨年华/g, "鸟惊心");
-else
-   null</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item23'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.9&nbsp;&nbsp;</SPAN>开始于
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.4&nbsp;&nbsp;</SPAN>开始于
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -331,9 +587,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item24'>
+    <DIV class="TreeNode" id='item44'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.10&nbsp;&nbsp;</SPAN>结尾于
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.5&nbsp;&nbsp;</SPAN>结尾于
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -346,20 +602,7 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item25'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.11&nbsp;&nbsp;</SPAN>特定值
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>行表达式</TD><TD><PRE><CODE>var array = [ 'A', 'B', 'C', 'D' ];
-array.includes(#{字符串列})</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item26'>
+    <DIV class="TreeNode" id='item45'>
     </DIV>
     </DIV>
     </DIV>

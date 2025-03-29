@@ -9,26 +9,32 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是图形化计算机应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2025-3-5 版本6.8.5</p>
+  <p>2025-3-30 版本6.8.6</p>
   <ul>
    <li>改进： 
     <ul>
-     <li>重新设计和实现图像的范围：由“形状的约束”和“匹配颜色列表”共同定义。</li>
-     <li>更多的匹配颜色的算法。</li>
-     <li>分页控件，可自动适应界面。</li>
-     <li>选择图像的控件，可取文件、示例、缺省。</li>
-     <li>数据图：气泡图与XY图分开设置。</li>
-     <li>Linux平台改为Mint版本。</li>
+     <li>重新设计和实现矩阵： 
+      <ul>
+       <li>数值类型可为：双精度、浮点、长整型、整型、短整型、数字布尔。</li>
+       <li>保存为内部文本文件。</li>
+       <li>可以分页。</li>
+       <li>提供示例数据。</li>
+      </ul></li>
+     <li>分页控件，可选靠左或靠右。</li>
+     <li>提供“图像范围”的示例。</li>
     </ul></li>
    <li>解决问题： 
     <ul>
-     <li>图像的范围：有的类型未能正确保存。</li>
-     <li>界面：定制颜色的图标未生效。</li>
-     <li>管理颜色：颜色面板中的色块值可能会混乱。</li>
-     <li>制作文档：生成树形示例时调用错误。</li>
+     <li>行表达式应能被保存和选择。</li>
+     <li>行表达式的示例不完整。</li>
+     <li>缺失分组气泡图。</li>
+     <li>右键点击数据图时应弹出菜单。</li>
+     <li>关闭数据图时会弹出错误。</li>
+     <li>导出clob类型的树结点XML时出错。</li>
+     <li>图像范围的颜色阈值应为双精度。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.5">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.6">此版本关闭的需求/问题列表</a></p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -236,6 +242,14 @@
      <td></td>
     </tr>
     <tr>
+     <td>managed/matrix</td>
+     <td>矩阵</td>
+     <td>是</td>
+     <td>是</td>
+     <td>是</td>
+     <td></td>
+    </tr>
+    <tr>
      <td>doc</td>
      <td>内部文档</td>
      <td>是</td>
@@ -426,8 +440,8 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -461,8 +475,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -517,8 +531,8 @@
     </tr>
     <tr>
      <td>软件测试-测试环境</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
@@ -531,8 +545,8 @@
     </tr>
     <tr>
      <td>软件测试-兼容性测试</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
     </tr>
@@ -559,8 +573,8 @@
     </tr>
     <tr>
      <td>关于-二维存储结构的数据</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html">html</a></td>
     </tr>
@@ -685,8 +699,8 @@
     </tr>
     <tr>
      <td>示例-行表达式</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_zh.html">html</a></td>
     </tr>
@@ -703,6 +717,13 @@
      <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Geography_Code_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Geography_Code_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>示例-图像的范围</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Image_Scope_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Image_Scope_zh.html">html</a></td>
     </tr>
     <tr>
      <td>调色盘-缺省颜色</td>
@@ -811,8 +832,8 @@
     </tr>
     <tr>
      <td>有用的链接</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_zh.html">html</a></td>
     </tr>

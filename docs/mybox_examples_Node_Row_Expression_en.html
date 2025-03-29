@@ -53,113 +53,205 @@
     <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>Row expression</a>
     </DIV>
     <DIV class="TreeNode" id='item1'>
-        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>Row filter</a>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>Example</a>
         </DIV>
     <DIV class="TreeNode" id='item2'>
-            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>Examples</a>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>Row calculation</a>
             </DIV>
     <DIV class="TreeNode" id='item3'>
-                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4')"><SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>Number</a>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4')"><SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>Numbers</a>
                 </DIV>
     <DIV class="TreeNode" id='item4'>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.1&nbsp;&nbsp;</SPAN>Is not number
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.1&nbsp;&nbsp;</SPAN>Data row number
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>isNaN(#{stringColumn} - 1)</CODE></PRE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{DataRowNumber}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item5'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.2&nbsp;&nbsp;</SPAN>Compare
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.2&nbsp;&nbsp;</SPAN>Table row number
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>#{numberColumn1} != 0 || #{numberColumn1} < #{numberColumn2}</CODE></PRE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{TableRowNumber}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item6'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.3&nbsp;&nbsp;</SPAN>Compare with statistic
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.3&nbsp;&nbsp;</SPAN>Math calculation
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>#{numberColumn} < #{numberColumn-Mean}</CODE></PRE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>Math.abs(#{numberColumn1}) + Math.PI * Math.sqrt(#{numberColumn2})</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item7'>
     </DIV>
-    </DIV>
-                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item8')"><SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>Date</a>
-                </DIV>
-    <DIV class="TreeNode" id='item8'>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.1&nbsp;&nbsp;</SPAN>value of date
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.4&nbsp;&nbsp;</SPAN>Calculation including statistic
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
-   new Date(#{dateColumn}.getTime()
-else
-   -1;</CODE></PRE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{numberColumn1} - #{numberColumn2-Mean}}</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item9'>
+    <DIV class="TreeNode" id='item8'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2&nbsp;&nbsp;</SPAN>Special time
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item9')"><SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>String</a>
+                </DIV>
+    <DIV class="TreeNode" id='item9'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.1&nbsp;&nbsp;</SPAN>Length
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>#{dateColumn} == '2016-05-19 11:34:28'</CODE></PRE></TD></TR>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.length
+else
+    -1</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item10'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.3&nbsp;&nbsp;</SPAN>Match time
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2&nbsp;&nbsp;</SPAN>Lowercase
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
-   #{dateColumn}.startsWith('2016-05-19 09')
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.toLowerCase()
 else
-   undefined;</CODE></PRE></TD></TR>
+    null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item11'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.4&nbsp;&nbsp;</SPAN>Compare time
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.3&nbsp;&nbsp;</SPAN>Split
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
             <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
-   new Date(#{dateColumn}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.split(',')
 else
-   undefined;</CODE></PRE></TD></TR>
+    null</CODE></PRE></TD></TR>
             </TABLE>
         </DIV>
 
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item12'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.5&nbsp;&nbsp;</SPAN>Format Date
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.4&nbsp;&nbsp;</SPAN>contain sub-string
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.search(/hello/ig)
+else
+    -1</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item13'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.5&nbsp;&nbsp;</SPAN>Position of sub-string
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.indexOf('hello')
+else
+    -1</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item14'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.6&nbsp;&nbsp;</SPAN>replace first
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace("hello", "Hello");
+else
+   null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item15'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.7&nbsp;&nbsp;</SPAN>replace all
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace(/hello/g, "Hello");
+else
+   null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item16'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.8&nbsp;&nbsp;</SPAN>Replace in case-insensitive
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace(/hello/ig,'Hello')
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item17'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.9&nbsp;&nbsp;</SPAN>Special values
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>var array = [ 'A', 'B', 'C', 'D' ];
+array.includes('#{stringColumn}')</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item18'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item19')"><SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>Date</a>
+                </DIV>
+    <DIV class="TreeNode" id='item19'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.1&nbsp;&nbsp;</SPAN>Format
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -186,9 +278,248 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item13'>
+    <DIV class="TreeNode" id='item20'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.6&nbsp;&nbsp;</SPAN>whether Sunday
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.2&nbsp;&nbsp;</SPAN>Year
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getFullYear()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item21'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.3&nbsp;&nbsp;</SPAN>Month
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getMonth() + 1
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item22'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.4&nbsp;&nbsp;</SPAN>Date
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getDate()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item23'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.5&nbsp;&nbsp;</SPAN>Hors
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getHours()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item24'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.6&nbsp;&nbsp;</SPAN>Minutes
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getMinutes()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item25'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.7&nbsp;&nbsp;</SPAN>Second
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getSeconds()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item26'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.8&nbsp;&nbsp;</SPAN>Day
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{dateColumn} != null ) 
+    new Date(#{dateColumn}).getDay()
+else
+    null</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item27'>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item28')"><SPAN class="SerialNumber">1.2&nbsp;&nbsp;</SPAN>Row Filter</a>
+            </DIV>
+    <DIV class="TreeNode" id='item28'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item29')"><SPAN class="SerialNumber">1.2.1&nbsp;&nbsp;</SPAN>Number</a>
+                </DIV>
+    <DIV class="TreeNode" id='item29'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.1&nbsp;&nbsp;</SPAN>Is not number
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>isNaN(#{stringColumn} - 1)</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item30'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.2&nbsp;&nbsp;</SPAN>Compare
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{numberColumn1} != 0 || #{numberColumn1} < #{numberColumn2}</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item31'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.3&nbsp;&nbsp;</SPAN>Compare with statistic
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{numberColumn} < #{numberColumn-Mean}</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item32'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item33')"><SPAN class="SerialNumber">1.2.2&nbsp;&nbsp;</SPAN>Date</a>
+                </DIV>
+    <DIV class="TreeNode" id='item33'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.1&nbsp;&nbsp;</SPAN>value of date
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
+   new Date(#{dateColumn}.getTime()
+else
+   -1;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item34'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2&nbsp;&nbsp;</SPAN>Special time
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>#{dateColumn} == '2016-05-19 11:34:28'</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item35'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.3&nbsp;&nbsp;</SPAN>Match time
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
+   #{dateColumn}.startsWith('2016-05-19 09')
+else
+   undefined;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item36'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.4&nbsp;&nbsp;</SPAN>Compare time
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>if (#{dateColumn} != null)
+   new Date(#{dateColumn}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
+else
+   undefined;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item37'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.5&nbsp;&nbsp;</SPAN>Format Date
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Row expression</TD><TD><PRE><CODE>function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{dateColumn} != null)
+   formatDate(new Date(#{dateColumn}));
+else
+   null;</CODE></PRE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item38'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.6&nbsp;&nbsp;</SPAN>whether Sunday
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -201,13 +532,13 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item14'>
+    <DIV class="TreeNode" id='item39'>
     </DIV>
     </DIV>
-                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item15')"><SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>String</a>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item40')"><SPAN class="SerialNumber">1.2.3&nbsp;&nbsp;</SPAN>String</a>
                 </DIV>
-    <DIV class="TreeNode" id='item15'>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.1&nbsp;&nbsp;</SPAN>string is empty
+    <DIV class="TreeNode" id='item40'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.1&nbsp;&nbsp;</SPAN>string is empty
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -217,9 +548,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item16'>
+    <DIV class="TreeNode" id='item41'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.2&nbsp;&nbsp;</SPAN>string is not null
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.2&nbsp;&nbsp;</SPAN>string is not null
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -229,54 +560,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item17'>
+    <DIV class="TreeNode" id='item42'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.3&nbsp;&nbsp;</SPAN>string length
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
-    #{stringColumn}.length
-else
-    -1</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item18'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.4&nbsp;&nbsp;</SPAN>contain sub-string
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
-    #{stringColumn}.search(/hello/ig)
-else
-    -1</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item19'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.5&nbsp;&nbsp;</SPAN>Position of sub-string
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
-    #{stringColumn}.indexOf('hello')
-else
-    -1</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item20'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.6&nbsp;&nbsp;</SPAN>compare strings
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.3&nbsp;&nbsp;</SPAN>compare strings
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -286,39 +572,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item21'>
+    <DIV class="TreeNode" id='item43'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.7&nbsp;&nbsp;</SPAN>replace first
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
-    #{stringColumn}.replace("hello", "Hello");
-else
-   null</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item22'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.8&nbsp;&nbsp;</SPAN>replace all
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>if ( #{stringColumn} != null ) 
-    #{stringColumn}.replace(/hello/g, "Hello");
-else
-   null</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item23'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.9&nbsp;&nbsp;</SPAN>starts with
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.4&nbsp;&nbsp;</SPAN>starts with
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -331,9 +587,9 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item24'>
+    <DIV class="TreeNode" id='item44'>
     </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.10&nbsp;&nbsp;</SPAN>ends with
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.5&nbsp;&nbsp;</SPAN>ends with
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
                             <DIV align="center">
@@ -346,20 +602,7 @@ else
         </DIV>
 
                     </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item25'>
-    </DIV>
-                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.11&nbsp;&nbsp;</SPAN>Special values
-                    </DIV>
-                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                            <DIV align="center">
-            <TABLE>
-                <TR><TD>Row expression</TD><TD><PRE><CODE>var array = [ 'A', 'B', 'C', 'D' ];
-array.includes('#{stringColumn}')</CODE></PRE></TD></TR>
-            </TABLE>
-        </DIV>
-
-                    </DIV></DIV></DIV>
-    <DIV class="TreeNode" id='item26'>
+    <DIV class="TreeNode" id='item45'>
     </DIV>
     </DIV>
     </DIV>

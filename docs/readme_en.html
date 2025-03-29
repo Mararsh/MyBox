@@ -9,26 +9,32 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2025-3-5 v6.8.5</p>
+  <p>2025-3-30 v6.8.6</p>
   <ul>
    <li>Improve: 
     <ul>
-     <li>Redesign and implement “Image Scope”, which is determined by both “Shape Constraints” and “Match Colors List”.</li>
-     <li>More algorithms about “Matching colors”.</li>
-     <li>Control of pagination, which can self-adapt interfaces.</li>
-     <li>Control of selecting image, which can pick file, example, and default.</li>
-     <li>Data charts: Bubble chart is separated from XY charts.</li>
-     <li>Linux Mint is used.</li>
+     <li>Redesign and implement Matrix: 
+      <ul>
+       <li>Data type can be: Double, Float, Long, Integer, Short, Short Boolean.</li>
+       <li>Stored as internal text files.</li>
+       <li>Can be paginated.</li>
+       <li>Examples are provided.</li>
+      </ul></li>
+     <li>Option “Show in left/right side” for control of pagination.</li>
+     <li>Examples of “Image Scope” are provided.</li>
     </ul></li>
    <li>Solved problems: 
     <ul>
-     <li>Image scope: Values of some types are saved incorrectly.</li>
-     <li>Interface: Icons of customized color do not work.</li>
-     <li>Manage colors: Color blocks may be messed.</li>
-     <li>Make documents: Wrong calls when generate tree examples.</li>
+     <li>Row expressions should be able to saved and selected.</li>
+     <li>Examples of Row Expression are incomplete.</li>
+     <li>Bubble chart of grouped data is missed.</li>
+     <li>Menu should be popped when right click data chart.</li>
+     <li>Errors popped when close data charts.</li>
+     <li>Fail to export tree XML when node is clob.</li>
+     <li>Color threshold of image scope should be double .</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.5">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.6">Closed requirements/bugs in this version</a></p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -236,6 +242,14 @@
      <td></td>
     </tr>
     <tr>
+     <td>managed/matrix</td>
+     <td>matrix</td>
+     <td>yes</td>
+     <td>yes</td>
+     <td>yes</td>
+     <td></td>
+    </tr>
+    <tr>
      <td>doc</td>
      <td>internal documents</td>
      <td>yes</td>
@@ -426,8 +440,8 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -461,8 +475,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -517,8 +531,8 @@
     </tr>
     <tr>
      <td>Software Testing - Test Environment</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.3</td>
+     <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
@@ -531,8 +545,8 @@
     </tr>
     <tr>
      <td>Software Testing - Compatibility Testing</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
     </tr>
@@ -559,8 +573,8 @@
     </tr>
     <tr>
      <td>About - Data in Two-dimensional Storage Structure</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html">html</a></td>
     </tr>
@@ -685,8 +699,8 @@
     </tr>
     <tr>
      <td>Examples - Row Expression</td>
-     <td>6.8.5</td>
-     <td>2025-3-5</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_zh.html">html</a></td>
     </tr>
@@ -703,6 +717,13 @@
      <td>2025-1-27</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Geography_Code_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Geography_Code_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>Examples - Image Scope</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Image_Scope_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Image_Scope_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Palette - Default Colors</td>
@@ -811,8 +832,8 @@
     </tr>
     <tr>
      <td>Useful Links</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8.6</td>
+     <td>2025-3-30</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_zh.html">html</a></td>
     </tr>
