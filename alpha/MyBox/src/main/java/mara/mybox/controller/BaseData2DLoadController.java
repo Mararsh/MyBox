@@ -291,7 +291,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
             updateTable(rows);
-            postLoadedTableData();
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
             }
@@ -302,6 +301,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     public void updateTable(List<List<String>> data) {
         setPageData(data);
+        postLoadedTableData();
     }
 
     public void setPageData(List<List<String>> data) {

@@ -127,7 +127,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             data.addAll(dataController.tableData);
             makeColumns();
             updateTable(data);
-            postLoadedTableData();
             refreshControls();
             if (data2D.getFile() != null) {
                 recordFileOpened(data2D.getFile());
@@ -200,7 +199,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     // If none selected then select all
     public boolean checkedRows() {
         try {
-            MyBoxLog.console(data2D != null);
             if (data2D == null) {
                 return false;
             }

@@ -896,6 +896,10 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
         if (data2D != null) {
             data2D.stopTask();
         }
+        if (dataController != null) {
+            setIconified(true);
+            dataController.setIconified(false);
+        }
         super.closeTask(ok);
     }
 

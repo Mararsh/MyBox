@@ -25,6 +25,7 @@ public class DataSelectRowExpressionController extends BaseDataSelectController 
                 return;
             }
             expController = parent;
+
             nodeTable = new TableNodeRowExpression();
             dataName = nodeTable.getDataName();
 

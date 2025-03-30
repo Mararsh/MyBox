@@ -147,7 +147,7 @@ public class ImageClipSelectController extends BaseImageClipController {
             if (parent == null) {
                 return null;
             }
-            ImageClipSelectController controller = (ImageClipSelectController) WindowTools.branchStage(
+            ImageClipSelectController controller = (ImageClipSelectController) WindowTools.childStage(
                     parent, Fxmls.ImageClipSelectFxml);
             controller.setParameters(parent);
             return controller;

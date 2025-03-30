@@ -619,10 +619,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
             Window owner = myStage.getOwner();
             if (owner != null) {
                 if (owner instanceof Stage) {
-                    ((Stage) owner).setIconified(true);
+                    ((Stage) owner).setIconified(set);
                 }
             } else {
-                myStage.setIconified(true);
+                myStage.setIconified(set);
             }
         } catch (Exception e) {
 //            MyBoxLog.error(e);
