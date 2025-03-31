@@ -59,9 +59,9 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
 
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 280MB- | Java 23 or higher |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 23 or higher |
-| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  280MB-  | Java 23 or higher |        
+| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 280MB- | Java 24 or higher |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 24 or higher |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  280MB-  | Java 24 or higher |        
 
 
 Run following command to launch this program with Jar package:        
@@ -211,14 +211,14 @@ MyBox is based on following open sources:
 | --- | --- | --- |
 | JDK                                 | Java                            | <http://jdk.java.net/>                                                                                                                                                                                                              |
 |                                     |                                 | <https://www.oracle.com/technetwork/java/javase/downloads/index.html>                                                                                                                                                               |
-|                                     |                                 | <https://docs.oracle.com/en/java/javase/23/docs/api/index.html>                                                                                                                                                                     |
+|                                     |                                 | <https://docs.oracle.com/en/java/javase/24/docs/api/index.html>                                                                                                                                                                     |
 | JavaFx                              | GUI                             | <https://gluonhq.com/products/javafx/>                                                                                                                                                                                              |
 |                                     |                                 | <https://docs.oracle.com/javafx/2/>                                                                                                                                                                                                 |
 |                                     |                                 | <https://gluonhq.com/products/scene-builder/>                                                                                                                                                                                       |
-|                                     |                                 | <https://openjfx.io/javadoc/23/>                                                                                                                                                                                                    |
+|                                     |                                 | <https://openjfx.io/javadoc/24/>                                                                                                                                                                                                    |
 | Derby                               | Database                        | <http://db.apache.org/derby/>                                                                                                                                                                                                       |
 | NetBeans                            | IDE                             | <https://netbeans.org/>                                                                                                                                                                                                             |
-| jpackage                            | pack                            | <https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html>                                                                                                                                                            |
+| jpackage                            | pack                            | <https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html>                                                                                                                                                            |
 | maven                               | build                           | <https://maven.apache.org/>                                                                                                                                                                                                         |
 | jai-imageio                         | Image manufacture               | <https://github.com/jai-imageio/jai-imageio-core>                                                                                                                                                                                   |
 | PDFBox                              | PDF manufacture                 | <https://pdfbox.apache.org/>                                                                                                                                                                                                        |
@@ -280,7 +280,7 @@ MyBox is based on following open sources:
 # Features        
 ## Cross Platforms        
 
-MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 23.        
+MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 24.        
 Versions before v5.3 are based on Java 8.        
 
 ## Internationalized       

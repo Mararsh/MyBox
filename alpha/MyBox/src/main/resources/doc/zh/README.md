@@ -59,9 +59,9 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 
 | 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 280MB- | Java 23或更高版本 |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 23或更高版本 |
-| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  280MB-  | Java 23或更高版本 |
+| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 280MB- | Java 24或更高版本 |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 24或更高版本 |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  280MB-  | Java 24或更高版本 |
 
 执行以下命令来启动程序：       
 `    java   -jar   MyBox.jar `     
@@ -209,14 +209,14 @@ MyBox基于以下开放资源：
 | --- | --- | --- |
 | JDK | Java语言 | <http://jdk.java.net/>    |
 | | | <https://www.oracle.com/technetwork/java/javase/downloads/index.html>   |
-| | | <https://docs.oracle.com/en/java/javase/23/docs/api/index.html>   |
+| | | <https://docs.oracle.com/en/java/javase/24/docs/api/index.html>   |
 | JavaFx | 图形化界面 | <https://gluonhq.com/products/javafx/>    |
 | | | <https://docs.oracle.com/javafx/2/>    |
 | | | <https://gluonhq.com/products/scene-builder/>   |
-| | | <https://openjfx.io/javadoc/23/>    |
+| | | <https://openjfx.io/javadoc/24/>    |
 | Derby | 数据库 | <http://db.apache.org/derby/>    |
 | NetBeans | 集成开发环境 | <https://netbeans.org/>    |
-| jpackage | 自包含包 | <https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html>   |
+| jpackage | 自包含包 | <https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html>   |
 | maven | 代码构建 | <https://maven.apache.org/>    |
 | jai-imageio | 图像处理 | <https://github.com/jai-imageio/jai-imageio-core>   |
 | PDFBox | PDF处理 | <https://pdfbox.apache.org/>    |
@@ -278,7 +278,7 @@ MyBox基于以下开放资源：
 # 特点
 ## 跨平台       
 
-MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 23的平台。             
+MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 24的平台。             
 MyBox v5.3以前的版本均基于Java 8。       
 
 ## 国际化        
