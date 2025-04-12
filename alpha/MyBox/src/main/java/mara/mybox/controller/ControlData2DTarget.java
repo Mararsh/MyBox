@@ -171,9 +171,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
                     case Matrix:
                         matrixRadio.setSelected(true);
                         break;
-                    case SystemClipboard:
-                        systemClipboardRadio.setSelected(true);
-                        break;
                     case MyBoxClipboard:
                         myBoxClipboardRadio.setSelected(true);
                         break;
@@ -185,6 +182,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
                             csvRadio.setSelected(true);
                             databaseRadio.setDisable(true);
                         }
+                        break;
+                    case SystemClipboard:
+                        systemClipboardRadio.setSelected(true);
                         break;
                     case JSON:
                         jsonRadio.setSelected(true);
@@ -261,7 +261,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 targetFileController.setFile(FileType.Excel,
                         baseName + "TargetType" + FileType.Excel, name, "xlsx");
                 optionsBox.getChildren().add(excelBox);
-                currentSheetOnlyCheck.setVisible(data2D.isExcel());
+                if (currentSheetOnlyCheck != null) {
+                    currentSheetOnlyCheck.setVisible(data2D != null && data2D.isExcel());
+                }
 
             } else if (textsRadio.isSelected()) {
                 format = TargetType.Text;
@@ -273,9 +275,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 format = TargetType.Matrix;
                 optionsBox.getChildren().add(matrixBox);
 
-            } else if (systemClipboardRadio.isSelected()) {
-                format = TargetType.SystemClipboard;
-
             } else if (myBoxClipboardRadio.isSelected()) {
                 format = TargetType.MyBoxClipboard;
 
@@ -283,23 +282,26 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 format = TargetType.DatabaseTable;
                 optionsBox.getChildren().add(dbBox);
 
-            } else if (jsonRadio.isSelected()) {
+            } else if (systemClipboardRadio != null && systemClipboardRadio.isSelected()) {
+                format = TargetType.SystemClipboard;
+
+            } else if (jsonRadio != null && jsonRadio.isSelected()) {
                 format = TargetType.JSON;
                 targetFileController.setFile(FileType.JSON,
                         baseName + "TargetType" + FileType.JSON, name, "json");
 
-            } else if (xmlRadio.isSelected()) {
+            } else if (xmlRadio != null && xmlRadio.isSelected()) {
                 format = TargetType.XML;
                 targetFileController.setFile(FileType.XML,
                         baseName + "TargetType" + FileType.XML, name, "xml");
 
-            } else if (htmlRadio.isSelected()) {
+            } else if (htmlRadio != null && htmlRadio.isSelected()) {
                 format = TargetType.HTML;
                 targetFileController.setFile(FileType.Html,
                         baseName + "TargetType" + FileType.Html, name, "html");
                 optionsBox.getChildren().add(htmlBox);
 
-            } else if (pdfRadio.isSelected()) {
+            } else if (pdfRadio != null && pdfRadio.isSelected()) {
                 format = TargetType.PDF;
                 targetFileController.setFile(FileType.PDF,
                         baseName + "TargetType" + FileType.PDF, name, "pdf");
@@ -375,7 +377,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                     }
                 }
                 if (matrixRadio.isSelected()
-                        || systemClipboardRadio.isSelected()
+                        || (systemClipboardRadio != null && systemClipboardRadio.isSelected())
                         || myBoxClipboardRadio.isSelected()
                         || databaseRadio.isSelected()) {
                     if (externalDefBox.getChildren().contains(fileBox)) {

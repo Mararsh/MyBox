@@ -58,7 +58,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
 
     protected void setParameters(Data2DAttributesController controller) {
         try {
-            this.attributesController = controller;
+            attributesController = controller;
 
             loadValues();
         } catch (Exception e) {
@@ -68,9 +68,9 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
 
     protected void loadValues() {
         try {
-            data2D = attributesController.dataController.data2D;
+            data2D = attributesController.data2D;
             tableData2DDefinition = attributesController.tableData2DDefinition;
-            tableData2DColumn = attributesController.dataController.tableData2DColumn;
+            tableData2DColumn = attributesController.tableData2DColumn;
             setData2DColumns();
             loadColumns();
         } catch (Exception e) {
@@ -257,12 +257,12 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
     @FXML
     public void headerAction() {
         try {
-            if (attributesController.dataController.data2D == null
-                    || attributesController.dataController.tableData.isEmpty()) {
+            if (attributesController.data2D == null
+                    || attributesController.tableData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
-            List<String> row = attributesController.dataController.tableData.get(0);
+            List<String> row = attributesController.tableData.get(0);
             if (row == null || row.size() < 2) {
                 popError(message("InvalidData"));
                 return;

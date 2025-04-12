@@ -19,7 +19,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import mara.mybox.data.Pagination;
@@ -664,10 +663,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
      */
     public Data2D getData2D() {
         return data2D;
-    }
-
-    public TableView<List<String>> getTableView() {
-        return tableView;
     }
 
     public ObservableList<List<String>> getTableData() {

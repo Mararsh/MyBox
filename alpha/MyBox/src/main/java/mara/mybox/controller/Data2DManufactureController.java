@@ -632,10 +632,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
         action
      */
     @FXML
-    public void popCreateMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "CreateMenuPopWhenMouseHovering", true)) {
-            showCreateMenu(event);
+    public void createDataAction() {
+        if (!checkBeforeNextAction()) {
+            return;
         }
+        Data2DCreateController.open(this);
     }
 
     @FXML
@@ -654,7 +655,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!super.createData(type)) {
             return false;
         }
-        Data2DAttributesController.open(this);
+        Data2DCreateController.open(this);
         return true;
     }
 
