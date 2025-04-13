@@ -3,6 +3,12 @@ package mara.mybox.controller;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DatabaseTable;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
@@ -46,22 +52,14 @@ public class Data2DCreateController extends Data2DAttributesController {
 
     @Override
     public boolean isInvalid() {
-        return dataController == null
-                || !dataController.isShowing();
+        return true;
     }
 
     @Override
     protected void setParameters(Data2DManufactureController controller) {
         try {
             dataController = controller;
-            if (isInvalid()) {
-                close();
-                return;
-            }
-
             attributesController.setParameters(this);
-
-            loadValues();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -69,7 +67,7 @@ public class Data2DCreateController extends Data2DAttributesController {
     }
 
     @Override
-    public void updateData() {
+    public void loadValues() {
         try {
             TargetType type = attributesController.format;
             switch (type) {
@@ -83,7 +81,7 @@ public class Data2DCreateController extends Data2DAttributesController {
                     data2D = new DataFileText();
                     break;
                 case Matrix:
-                    data2D = new DataMatrix();
+                    data2D = new DataMatrix(attributesController.matrixType());
                     break;
                 case MyBoxClipboard:
                     data2D = new DataClipboard();
@@ -94,7 +92,19 @@ public class Data2DCreateController extends Data2DAttributesController {
                 default:
                     data2D = new DataFileCSV();
             }
+            data2D.setColumns(data2D.tmpColumns(3));
             columnsController.setParameters(this);
+
+//             data2D.tmpData(size, 3)
+            isSettingValues = true;
+            dataNameInput.setText(data2D.getDataName());
+            scaleSelector.setValue(data2D.getScale() + "");
+            randomSelector.setValue(data2D.getMaxRandom() + "");
+            descInput.setText(data2D.getComments());
+            attributesChanged(false);
+            columnsChanged(false);
+            isSettingValues = false;
+            checkStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -39,8 +39,8 @@ public class DataMatrix extends DataFileText {
         hasHeader = false;
     }
 
-    public int type() {
-        return type(DataType.Matrix);
+    public DataMatrix(String type) {
+        sheet = type;
     }
 
 //    public AbstractRealMatrix realMatrix(Connection conn) {

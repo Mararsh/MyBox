@@ -144,25 +144,17 @@ public class Data2DAttributesController extends BaseChildController {
         }
     }
 
-    public void updateData() {
-        try {
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            tableData2DColumn = dataController.tableData2DColumn;
-            tableData = dataController.tableData;
-            data2D = dataController.data2D.cloneAll();
-            columnsController.setParameters(this);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void loadValues() {
         try {
             if (isInvalid()) {
                 close();
                 return;
             }
-            updateData();
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
+            tableData = dataController.tableData;
+            data2D = dataController.data2D.cloneAll();
+            columnsController.setParameters(this);
 
             isSettingValues = true;
             if (idInput != null) {

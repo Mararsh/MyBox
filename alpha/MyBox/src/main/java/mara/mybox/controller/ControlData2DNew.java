@@ -7,6 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import mara.mybox.data2d.Data2D_Attributes;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
 
@@ -37,8 +38,6 @@ public class ControlData2DNew extends ControlData2DTarget {
 
             initControls(baseName);
 
-            data2D = null;
-
             optionsPane.getTabs().clear();
             optionsBox.getChildren().clear();
 
@@ -49,11 +48,32 @@ public class ControlData2DNew extends ControlData2DTarget {
                     checkTarget();
                 }
             });
+            matrixOptionsController.typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (matrixRadio.isSelected()) {
+                        createController.loadValues();
+                    }
+                }
+            });
+
             checkTarget();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public TargetType checkTarget() {
+        try {
+            data2D = null;
+            super.checkTarget();
+            createController.loadValues();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return format;
     }
 
 }
