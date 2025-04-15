@@ -10,8 +10,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -22,7 +24,7 @@ License:    Apache License Version 2.0
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <children>
-        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE">
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
             <Tab fx:id="attributesTab" text="%Attributes">
                <content>
@@ -31,7 +33,7 @@ License:    Apache License Version 2.0
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                      <children>
-                        <fx:include fx:id="attributes" source="ControlData2DNew.fxml" />
+                        <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DNew.fxml" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </content>
@@ -43,7 +45,7 @@ License:    Apache License Version 2.0
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                             <children>
-                                <fx:include fx:id="columns" source="ControlData2DColumns.fxml" />
+                                <fx:include fx:id="columns" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DColumns.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>
@@ -52,17 +54,30 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <padding>
-                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                     <children>
-                                        <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
-                                        <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
-                                        <Label minHeight="-Infinity" text="%MaxRandom" wrapText="true" />
-                                        <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
+                                        <Label minHeight="-Infinity" text="%RowsNumber" wrapText="true" />
+                                        <ComboBox fx:id="rowsSelector" editable="true" prefWidth="120.0" />
                                     </children>
                                 </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" spacing="2.0">
+                           <children>
+                              <Label minHeight="-Infinity" text="%Values" wrapText="true" />
+                              <RadioButton fx:id="randomRadio" layoutX="150.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Random">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="valueGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="randomNonnegativeRadio" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" text="%RandomNonnegative" toggleGroup="$valueGroup" />
+                              <RadioButton fx:id="emptyRadio" mnemonicParsing="false" text="%EmptyValue" toggleGroup="$valueGroup" />
+                              <RadioButton fx:id="nullRadio" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" text="Null" toggleGroup="$valueGroup" />
+                              <RadioButton fx:id="zeroRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="0" toggleGroup="$valueGroup" />
+                              <RadioButton fx:id="oneRadio" layoutX="119.0" layoutY="10.0" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
+                           </children>
+                        </HBox>
                             </children>
                         </VBox>
                     </content>

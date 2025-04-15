@@ -154,7 +154,9 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
-        paginationController.reset();
+        if (paginationController != null) {
+            paginationController.reset();
+        }
         dataSizeLoaded = true;
         tableChanged(changed);
         editNull();

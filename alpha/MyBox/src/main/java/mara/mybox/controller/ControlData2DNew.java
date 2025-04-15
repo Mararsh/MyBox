@@ -27,7 +27,7 @@ public class ControlData2DNew extends ControlData2DTarget {
 
     @Override
     public boolean isInvalid() {
-        return true;
+        return false;
     }
 
     public void setParameters(Data2DCreateController controller) {
