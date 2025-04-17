@@ -55,7 +55,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-16
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DColumnsController extends BaseTablePagesController<Data2DColumn> {
+public abstract class BaseData2DColumnsController extends BaseTableViewController<Data2DColumn> {
 
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
@@ -450,7 +450,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     public void deleteRowsAction() {
         List<Data2DColumn> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
-            deleteAllRows();
+            clearWithSure();
             return;
         }
         for (Data2DColumn column : selected) {
@@ -466,14 +466,14 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     }
 
     @Override
-    public void deleteAllRows() {
+    public void clearWithSure() {
         for (Data2DColumn column : tableData) {
             if (column.isIsPrimaryKey()) {
                 popError(message("PrimaryKeysCanNotDeleted"));
                 return;
             }
         }
-        super.deleteAllRows();
+        super.clearWithSure();
     }
 
     @FXML

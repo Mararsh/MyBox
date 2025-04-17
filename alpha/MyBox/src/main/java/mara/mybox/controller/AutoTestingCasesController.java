@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-1-6
  * @License Apache License Version 2.0
  */
-public class AutoTestingCasesController extends BaseTablePagesController<TestCase> {
+public class AutoTestingCasesController extends BaseTableViewController<TestCase> {
 
     @FXML
     protected TableColumn<TestCase, String> typeColumn, operationColumn, objectColumn, versionColumn, stageColumn;

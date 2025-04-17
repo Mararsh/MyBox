@@ -31,7 +31,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-1-6
  * @License Apache License Version 2.0
  */
-public class AutoTestingExecutionController extends BaseTablePagesController<TestCase> {
+public class AutoTestingExecutionController extends BaseTableViewController<TestCase> {
 
     protected AutoTestingCasesController casesController;
     protected int currentIndex, interval = 2000;

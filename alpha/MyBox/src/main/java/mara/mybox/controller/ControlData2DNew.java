@@ -13,7 +13,7 @@ import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2021-12-11
+ * @CreateDate 2025-4-11
  * @License Apache License Version 2.0
  */
 public class ControlData2DNew extends ControlData2DTarget {

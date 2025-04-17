@@ -35,7 +35,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-11-29
  * @License Apache License Version 2.0
  */
-public class SecurityCertificatesController extends BaseTablePagesController<CertificateEntry> {
+public class SecurityCertificatesController extends BaseTableViewController<CertificateEntry> {
 
     @FXML
     protected TextField passwordInput;

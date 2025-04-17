@@ -865,7 +865,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         if (data2D.isTmpData()) {
-            deleteAllRows();
+            clearWithSure();
         } else {
             super.clearAction();
         }

@@ -188,22 +188,16 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             }
             isSettingValues = true;
             tableData.clear();
-            tableView.refresh();
-            isSettingValues = false;
-            if (data2D == null) {
-                return;
-            }
-            if (data2D.isValidDefinition()) {
-                isSettingValues = true;
+            if (data2D != null && data2D.isValidDefinition()) {
                 int colIndex = 0;
                 for (Data2DColumn column : data2D.getColumns()) {
                     Data2DColumn c = column.cloneAll();
                     c.setIndex(colIndex++);
                     tableData.add(c);
                 }
-                isSettingValues = false;
             }
-            postLoadedTableData();
+            isSettingValues = false;
+            tableChanged(false);
             changed(false);
         } catch (Exception e) {
             MyBoxLog.error(e);

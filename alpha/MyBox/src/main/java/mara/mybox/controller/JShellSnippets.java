@@ -19,7 +19,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-3-4
  * @License Apache License Version 2.0
  */
-public class JShellSnippets extends BaseTablePagesController<JShellSnippet> {
+public class JShellSnippets extends BaseTableViewController<JShellSnippet> {
 
     protected ControlDataJShell jShellController;
 
