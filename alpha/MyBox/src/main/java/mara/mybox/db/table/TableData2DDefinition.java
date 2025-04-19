@@ -63,11 +63,11 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public static final String Query_TypeFile
             = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? ORDER BY modify_time DESC";
 
-    public static final String Query_TypeName
-            = "SELECT * FROM Data2D_Definition WHERE data_type=? AND data_name=? ORDER BY modify_time DESC";
-
     public static final String Query_TypeFileSheet
             = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? AND sheet=? ORDER BY modify_time DESC";
+
+    public static final String Query_Files
+            = "SELECT * FROM Data2D_Definition WHERE data_type < 5";
 
     public static final String Query_Table
             = "SELECT * FROM Data2D_Definition WHERE data_type=? AND sheet=? ORDER BY modify_time DESC";
@@ -86,9 +86,6 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
 
     public static final String Delete_TypeName
             = "DELETE FROM Data2D_Definition WHERE data_type=? AND data_name=?";
-
-    public static final String Delete_InvalidExcelSheet
-            = "DELETE FROM Data2D_Definition WHERE data_type=2 AND sheet IS NULL";
 
     public static final String Delete_UserTable
             = "DELETE FROM Data2D_Definition WHERE data_type=5 AND sheet=?";
@@ -159,58 +156,12 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteFile(Connection conn, DataType type, File file) {
-        if (conn == null || file == null) {
-            return -1;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
-            return statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return -1;
-        }
+    public Data2DDefinition queryClipboard(Connection conn, File file) {
+        return queryFile(conn, DataType.MyBoxClipboard, file);
     }
 
-    public Data2DDefinition queryName(DataType type, String name) {
-        if (name == null || name.isBlank()) {
-            return null;
-        }
-        try (Connection conn = DerbyBase.getConnection();) {
-            return queryName(conn, type, name);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public Data2DDefinition queryName(Connection conn, DataType type, String name) {
-        if (conn == null || name == null || name.isBlank()) {
-            return null;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(Query_TypeName)) {
-            statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(name));
-            return query(conn, statement);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public int deleteName(Connection conn, DataType type, String name) {
-        if (conn == null || name == null || name.isBlank()) {
-            return -1;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeName)) {
-            statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(name));
-            return statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return -1;
-        }
+    public Data2DDefinition queryMatrix(Connection conn, File file) {
+        return queryFile(conn, DataType.Matrix, file);
     }
 
     public Data2DDefinition queryFileSheet(Connection conn, DataType type, File file, String sheet) {
@@ -258,6 +209,53 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
+    public DataTable writeTable(Connection conn, DataTable table) {
+        if (conn == null || table == null) {
+            return null;
+        }
+        try {
+            Data2DDefinition def = table.queryDefinition(conn);
+            if (def != null) {
+                table.setDataID(def.getDataID());
+                def = updateData(conn, table);
+            } else {
+                def = insertData(conn, table);
+            }
+            return def != null ? (DataTable) def : null;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public int deleteFile(Connection conn, DataType type, File file) {
+        if (conn == null || file == null) {
+            return -1;
+        }
+        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
+            statement.setShort(1, Data2DDefinition.type(type));
+            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
+    public int deleteName(Connection conn, DataType type, String name) {
+        if (conn == null || name == null || name.isBlank()) {
+            return -1;
+        }
+        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeName)) {
+            statement.setShort(1, Data2DDefinition.type(type));
+            statement.setString(2, DerbyBase.stringValue(name));
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -1;
+        }
+    }
+
     public int deleteUserTable(Connection conn, String tname) {
         if (conn == null || tname == null) {
             return -1;
@@ -280,51 +278,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryClipboard(Connection conn, File file) {
-        if (conn == null || file == null) {
-            return null;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(DataType.MyBoxClipboard));
-            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
-            return query(conn, statement);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public DataTable writeTable(Connection conn, DataTable table) {
-        if (conn == null || table == null) {
-            return null;
-        }
-        try {
-            Data2DDefinition def = table.queryDefinition(conn);
-            if (def != null) {
-                table.setDataID(def.getDataID());
-                def = updateData(conn, table);
-            } else {
-                def = insertData(conn, table);
-            }
-            return def != null ? (DataTable) def : null;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public int deleteClipboard(Connection conn, File file) {
-        if (conn == null || file == null) {
-            return -1;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(DataType.MyBoxClipboard));
-            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
-            return statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return -1;
-        }
+        return deleteFile(conn, DataType.MyBoxClipboard, file);
     }
 
     public int clearInvalid(BaseTaskController taskController, Connection conn, boolean clearTmpTables) {
@@ -332,7 +287,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         try {
             recordInfo(taskController, message("Check") + ": " + tableName);
 
-            invalidCount = clearInvalidExcelSheet(taskController, conn);
+            invalidCount = clearInvalidFiles(taskController, conn);
 
             if (taskController != null && taskController.getTask() != null
                     && taskController.getTask().isCancelled()) {
@@ -355,12 +310,10 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         return invalidCount;
     }
 
-    public int clearInvalidExcelSheet(BaseTaskController taskController, Connection conn) {
+    public int clearInvalidFiles(BaseTaskController taskController, Connection conn) {
         int rowCount = 0, invalidCount = 0;
         try {
-            recordInfo(taskController, Delete_InvalidExcelSheet);
-            update(conn, Delete_InvalidExcelSheet);
-            String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
+            String sql = Query_Files;
             recordInfo(taskController, sql);
             try (PreparedStatement query = conn.prepareStatement(sql);
                     PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
@@ -408,7 +361,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 recordError(taskController, e.toString() + "\n" + tableName);
             }
             recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                    + message("Expired") + ": " + invalidCount);
+                    + message("Invalid") + ": " + invalidCount);
 
         } catch (Exception e) {
             recordError(taskController, e.toString() + "\n" + tableName);

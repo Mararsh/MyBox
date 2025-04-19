@@ -34,8 +34,7 @@ public class MatricesManageController extends BaseData2DListController {
     }
 
     @FXML
-    @Override
-    public void createAction() {
+    public void createDataAction() {
         Data2DManufactureController.create(Data2DDefinition.DataType.Matrix);
     }
 

@@ -192,17 +192,11 @@ public class DataMatrix extends DataFileText {
         }
     }
 
-    public static String filename() {
+    public static File file(String dataname) {
         try {
-            return filename(new Date().getTime() + "");
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static String filename(String name) {
-        try {
-            return AppPaths.getMatrixPath() + File.separator + FileNameTools.filter(name) + ".txt";
+            return new File(AppPaths.getMatrixPath() + File.separator
+                    + FileNameTools.filter(dataname + "_" + new Date().getTime())
+                    + ".txt");
         } catch (Exception e) {
             return null;
         }
@@ -212,9 +206,10 @@ public class DataMatrix extends DataFileText {
         try {
 
             String dataName = type + "_" + colsNumber + "x" + rowsNumber;
-            File file = new File(DataMatrix.filename(dataName + "_" + new Date().getTime()));
+            File file = file(dataName);
             DataMatrix matrix = new DataMatrix();
             matrix.setFile(file).setSheet(type)
+                    .setDataName(dataName)
                     .setScale(scale).setMaxRandom(max)
                     .setColsNumber(colsNumber)
                     .setRowsNumber(rowsNumber);

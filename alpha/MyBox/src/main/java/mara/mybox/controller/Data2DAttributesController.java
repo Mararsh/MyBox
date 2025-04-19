@@ -383,7 +383,7 @@ public class Data2DAttributesController extends BaseChildController {
     /*
         static
      */
-    public static Data2DAttributesController open(Data2DManufactureController tableController) {
+    public static Data2DAttributesController edit(Data2DManufactureController tableController) {
         try {
             Data2DAttributesController controller = (Data2DAttributesController) WindowTools.childStage(
                     tableController, Fxmls.Data2DAttributesFxml);

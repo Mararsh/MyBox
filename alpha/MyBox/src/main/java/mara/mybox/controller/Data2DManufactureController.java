@@ -26,7 +26,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -639,35 +638,12 @@ public class Data2DManufactureController extends BaseData2DViewController {
         Data2DCreateController.open(this);
     }
 
-    @FXML
-    public void showCreateMenu(Event fevent) {
-        try {
-            List<MenuItem> items = Data2DMenuTools.createMenus(baseName);
-            popEventMenu(fevent, items);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     public boolean createData(DataType type) {
         if (!super.createData(type)) {
             return false;
         }
         Data2DCreateController.open(this);
-        return true;
-    }
-
-    public boolean makeMatrix(String type) {
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
-        resetStatus();
-        data2D = Data2D.create(DataType.Matrix);
-        data2D.setSheet(type);
-        loadTmpData(3);
-        Data2DAttributesController.open(this);
         return true;
     }
 
@@ -709,7 +685,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (data2D.isInternalTable()) {
             infoAction();
         } else {
-            Data2DAttributesController.open(this);
+            Data2DAttributesController.edit(this);
         }
     }
 
@@ -1089,18 +1065,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         try {
             Data2DManufactureController controller = Data2DManufactureController.open();
             controller.createData(type);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public static Data2DManufactureController createMatrix(String type) {
-        try {
-            Data2DManufactureController controller = Data2DManufactureController.open();
-            controller.makeMatrix(type);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

@@ -42,6 +42,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DCreateController extends Data2DAttributesController {
 
+    protected BaseController caller;
     protected int rows;
 
     @FXML
@@ -76,10 +77,9 @@ public class Data2DCreateController extends Data2DAttributesController {
         return false;
     }
 
-    @Override
-    protected void setParameters(Data2DManufactureController controller) {
+    protected void setCaller(BaseController controller) {
         try {
-            dataController = controller;
+            caller = controller;
             attributesController.setParameters(this);
 
             rowsSelector.getItems().addAll(
@@ -175,6 +175,7 @@ public class Data2DCreateController extends Data2DAttributesController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
+            Data2D targetData;
 
             @Override
             protected boolean handle() {
@@ -213,7 +214,11 @@ public class Data2DCreateController extends Data2DAttributesController {
                     operate.setController(myController)
                             .setTask(this)
                             .start();
-                    return !operate.isFailed();
+                    if (operate.isFailed()) {
+                        return false;
+                    }
+                    targetData = writer.getTargetData();
+                    return targetData != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -222,8 +227,18 @@ public class Data2DCreateController extends Data2DAttributesController {
 
             @Override
             protected void whenSucceeded() {
-                dataController.loadDef(writer.getTargetData(), false);
-                dataController.popInformation(message("Created"));
+                if (caller == null) {
+                    Data2DManufactureController.openDef(targetData);
+
+                } else if (caller instanceof Data2DManufactureController c) {
+                    c.loadDef(targetData, false);
+                    c.popInformation(message("Created"));
+
+                } else if (caller instanceof Data2DManageController c) {
+                    c.loadList();
+                    c.loadDef(targetData);
+                    c.popInformation(message("Created"));
+                }
                 close();
             }
 
@@ -254,11 +269,11 @@ public class Data2DCreateController extends Data2DAttributesController {
     /*
         static
      */
-    public static Data2DCreateController open(Data2DManufactureController tableController) {
+    public static Data2DCreateController open(BaseController parent) {
         try {
             Data2DCreateController controller = (Data2DCreateController) WindowTools.childStage(
-                    tableController, Fxmls.Data2DCreateFxml);
-            controller.setParameters(tableController);
+                    parent, Fxmls.Data2DCreateFxml);
+            controller.setCaller(parent);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

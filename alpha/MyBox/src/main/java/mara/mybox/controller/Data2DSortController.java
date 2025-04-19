@@ -46,7 +46,7 @@ public class Data2DSortController extends BaseData2DTaskTargetsController {
     @Override
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         try {
-            TmpTable tmpTable = tmpTable(targetController.name(), checkedColsIndices, showRowNumber());
+            TmpTable tmpTable = tmpTable(targetController.dataName(), checkedColsIndices, showRowNumber());
             if (tmpTable == null) {
                 return false;
             }

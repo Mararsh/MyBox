@@ -274,7 +274,7 @@ public class WindowTools {
     public static BaseController childStage(BaseController parent, String newFxml) {
         try {
             if (parent == null) {
-                return null;
+                return openStage(newFxml);
             }
             BaseController c = openStage(parent.getMyWindow(), newFxml,
                     AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
@@ -321,14 +320,14 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
         }
     }
 
-    public DataMatrix writeResultMatrix(FxTask rtask, double[][] result, String name) {
+    public DataMatrix writeResultMatrix(FxTask rtask, double[][] result, String dataname) {
         try {
             int rowsNumber = result.length;
             int colsNumber = result[0].length;
-            targetFile = new File(DataMatrix.filename(name + "_" + new Date().getTime()));
+            targetFile = DataMatrix.file(dataname);
             DataMatrix resultMatrix = new DataMatrix();
             resultMatrix.setFile(targetFile).setSheet("Double")
-                    .setDataName(name)
+                    .setDataName(dataname)
                     .setColsNumber(colsNumber)
                     .setRowsNumber(rowsNumber);
             try (BufferedWriter writer = new BufferedWriter(

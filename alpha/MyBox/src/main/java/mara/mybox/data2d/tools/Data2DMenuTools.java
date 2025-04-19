@@ -18,7 +18,6 @@ import mara.mybox.controller.FileBrowseController;
 import mara.mybox.controller.MatricesBinaryCalculationController;
 import mara.mybox.controller.MatrixUnaryCalculationController;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.Data2DDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -729,97 +728,6 @@ public class Data2DMenuTools {
             items.add(guidemenu);
 
             return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public static List<MenuItem> createMenus(String baseName) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                Data2DManufactureController.create(DataType.CSV);
-            });
-            items.add(menu);
-
-            menu = new MenuItem("Excel", StyleTools.getIconImageView("iconExcel.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.Excel);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                Data2DManufactureController.create(DataType.Texts);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.create(DataType.DatabaseTable);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("DoubleMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.createMatrix("Double");
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("FloatMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.createMatrix("Float");
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("LongMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.createMatrix("Long");
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("IntegerMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.createMatrix("Integer");
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("ShortMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.createMatrix("Short");
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("BooleanMatrix"), StyleTools.getIconImageView("iconMatrix.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.createMatrix("NumberBoolean");
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                Data2DManufactureController.create(DataType.MyBoxClipboard);
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "CreateMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "CreateMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            return items;
-
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

@@ -97,7 +97,8 @@ public class DataMigrationFrom68 {
                         long dataid = def.getDataID();
                         long colsNumber = def.getColsNumber();
                         long rowsNumber = def.getRowsNumber();
-                        File file = new File(DataMatrix.filename(dataid + ""));
+                        String dataname = dataid + "";
+                        File file = DataMatrix.file(dataname);
                         rowQuery.setLong(1, dataid);
                         controller.info("Moving matrix:" + file);
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, charset, false))) {
@@ -125,6 +126,7 @@ public class DataMigrationFrom68 {
                         } catch (Exception ex) {
                         }
                         def.setFile(file).setSheet("Double")
+                                .setDataName(dataname)
                                 .setCharset(charset).setHasHeader(false)
                                 .setDelimiter(DataMatrix.MatrixDelimiter);
                         tableData2DDefinition.updateData(conn, def);
