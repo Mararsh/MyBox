@@ -80,14 +80,14 @@ public class Data2DSpliceController extends BaseTaskController {
     public boolean checkOptions() {
         try {
             tabPane.getSelectionModel().select(aTab);
-            if (dataAController.data2D == null || !dataAController.data2D.isValidDefinition()) {
+            if (dataAController.data2D == null || !dataAController.data2D.hasColumns()) {
                 popError(message("DataA") + ": " + message("NoData"));
                 return false;
             } else if (!dataAController.checkSelections()) {
                 return false;
             }
             tabPane.getSelectionModel().select(bTab);
-            if (dataBController.data2D == null || !dataBController.data2D.isValidDefinition()) {
+            if (dataBController.data2D == null || !dataBController.data2D.hasColumns()) {
                 popError(message("DataB") + ": " + message("NoData"));
                 return false;
             } else if (!dataBController.checkSelections()) {

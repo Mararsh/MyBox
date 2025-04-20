@@ -15,7 +15,6 @@ import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
@@ -169,7 +168,7 @@ public class Data2DDefinition extends BaseData {
         return valid(this);
     }
 
-    public boolean isValidData() {
+    public boolean hasData() {
         if (isDataFile()) {
             return FileTools.hasData(file);
         } else if (isTable()) {
@@ -447,9 +446,9 @@ public class Data2DDefinition extends BaseData {
             case "csv":
                 return DataType.CSV;
         }
-        if (file.getAbsolutePath().startsWith(AppPaths.getMatrixPath() + File.separator)) {
-            return DataType.Matrix;
-        }
+//        if (file.getAbsolutePath().startsWith(AppPaths.getMatrixPath() + File.separator)) {
+//            return DataType.Matrix;
+//        }
         return DataType.Texts;
     }
 

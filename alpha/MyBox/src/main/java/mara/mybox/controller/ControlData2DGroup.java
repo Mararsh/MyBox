@@ -119,7 +119,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             tableData.clear();
             isSettingValues = false;
             expressionController.setData2D(taskController.data2D);
-            if (!taskController.data2D.isValidDefinition()) {
+            if (!taskController.data2D.hasColumns()) {
                 return;
             }
             List<String> names = taskController.data2D.columnNames();
@@ -141,7 +141,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     }
 
     public void loadColumnNames() {
-        if (!taskController.data2D.isValidDefinition()) {
+        if (!taskController.data2D.hasColumns()) {
             return;
         }
         List<String> names;

@@ -91,7 +91,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
                         return false;
                     }
                     data = readPageData(this, conn);
-                    pagination.updatePageEnd(data.size());
+                    pagination.updatePageEnd(data != null ? data.size() : 0);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;

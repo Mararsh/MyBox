@@ -181,7 +181,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public List<List<String>> readPageData(Connection conn) {
-        if (!isValidDefinition()) {
+        if (!hasColumns()) {
             pagination.startRowOfCurrentPage = pagination.endRowOfCurrentPage = 0;
             return null;
         }
@@ -327,7 +327,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public long setValue(FxTask task, List<Integer> cols,
             SetValue setValue, InvalidAs invalidAs) {
         try {
-            if (!isValidData() || cols == null || cols.isEmpty()) {
+            if (!hasData() || cols == null || cols.isEmpty()) {
                 return -1;
             }
             Data2DOperate operate = isTable()
@@ -354,7 +354,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public long deleteRows(FxTask task) {
         try {
-            if (!isValidData()) {
+            if (!hasData()) {
                 return -1;
             }
             Data2DOperate operate = isTable()
@@ -379,7 +379,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public long clearData(FxTask task) {
         try {
-            if (!isValidData()) {
+            if (!hasData()) {
                 return -1;
             }
             Data2DOperate operate = isTable()
@@ -406,7 +406,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public String encodeCSV(FxTask task, String delimiterName,
             boolean displayRowNames, boolean displayColNames, boolean formatData) {
-        if (!isValidDefinition()) {
+        if (!hasColumns()) {
             return "";
         }
         if (delimiterName == null) {

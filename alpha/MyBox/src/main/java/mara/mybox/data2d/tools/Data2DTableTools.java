@@ -299,7 +299,7 @@ public class Data2DTableTools {
     }
 
     public static DataFileText toText(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
+        if (task == null || dataTable == null || !dataTable.hasColumns()) {
             return null;
         }
         File txtFile = dataTable.tmpFile(dataTable.getName(), null, "txt");
@@ -322,7 +322,7 @@ public class Data2DTableTools {
     }
 
     public static String toString(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
+        if (task == null || dataTable == null || !dataTable.hasColumns()) {
             return null;
         }
         File txtFile = dataTable.tmpFile(dataTable.getName(), null, "txt");
@@ -335,7 +335,7 @@ public class Data2DTableTools {
     }
 
     public static DataFileCSV toCSV(FxTask task, DataTable dataTable, File file, boolean save) {
-        if (task == null || dataTable == null || !dataTable.isValidDefinition() || file == null) {
+        if (task == null || dataTable == null || !dataTable.hasColumns() || file == null) {
             return null;
         }
         TableData2D tableData2D = dataTable.getTableData2D();
@@ -393,7 +393,7 @@ public class Data2DTableTools {
     }
 
     public static DataFileExcel toExcel(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
+        if (task == null || dataTable == null || !dataTable.hasColumns()) {
             return null;
         }
         File excelFile = dataTable.tmpFile(dataTable.getName(), null, "xlsx");
@@ -455,7 +455,7 @@ public class Data2DTableTools {
     }
 
     public static DataClipboard toClip(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
+        if (task == null || dataTable == null || !dataTable.hasColumns()) {
             return null;
         }
         File clipFile = DataClipboard.newFile();

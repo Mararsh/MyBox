@@ -336,7 +336,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             if (isSettingValues) {
                 return true;
             }
-            if (data2D == null || !data2D.isValidDefinition()) {
+            if (data2D == null || !data2D.hasColumns()) {
                 popError(message("NoData"));
                 return false;
             }
@@ -421,7 +421,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             if (sortController == null) {
                 return;
             }
-            if (!data2D.isValidDefinition()) {
+            if (!data2D.hasColumns()) {
                 sortController.loadNames(null);
                 return;
             }

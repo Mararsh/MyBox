@@ -60,6 +60,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public static final String QueryID
             = "SELECT * FROM Data2D_Definition WHERE d2did=?";
 
+    public static final String Query_File
+            = "SELECT * FROM Data2D_Definition WHERE file=? ORDER BY modify_time DESC";
+
     public static final String Query_TypeFile
             = "SELECT * FROM Data2D_Definition WHERE data_type=? AND file=? ORDER BY modify_time DESC";
 
@@ -123,6 +126,31 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
         try (PreparedStatement statement = conn.prepareStatement(QueryID)) {
             statement.setLong(1, d2did);
+            return query(conn, statement);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public Data2DDefinition queryFile(File file) {
+        if (file == null) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection();) {
+            return queryFile(conn, file);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public Data2DDefinition queryFile(Connection conn, File file) {
+        if (conn == null || file == null) {
+            return null;
+        }
+        try (PreparedStatement statement = conn.prepareStatement(Query_File)) {
+            statement.setString(1, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);

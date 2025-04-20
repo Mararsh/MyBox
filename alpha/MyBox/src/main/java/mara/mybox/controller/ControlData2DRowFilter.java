@@ -133,7 +133,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     public String checkScript(boolean allPages) {
         error = null;
-        if (data2D == null || !data2D.isValidDefinition()) {
+        if (data2D == null || !data2D.hasColumns()) {
             error = message("InvalidData");
             return null;
         }

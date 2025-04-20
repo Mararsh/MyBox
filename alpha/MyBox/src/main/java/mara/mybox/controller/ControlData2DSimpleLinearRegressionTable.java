@@ -52,14 +52,18 @@ public class ControlData2DSimpleLinearRegressionTable extends BaseData2DLoadCont
     }
 
     @Override
-    public void makeColumns() {
+    public boolean makeColumns() {
         try {
             List<Data2DColumn> cols = createColumns();
             data2D.setColumns(cols);
-            super.makeColumns();
+            if (!super.makeColumns()) {
+                return false;
+            }
             sortColumn = tableView.getColumns().get(3);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 

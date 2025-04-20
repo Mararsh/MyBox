@@ -257,7 +257,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     }
 
     public boolean hasData() {
-        return data2D != null && data2D.isValidDefinition() && !tableData.isEmpty();
+        return data2D != null && data2D.hasColumns() && !tableData.isEmpty();
     }
 
     /*

@@ -36,7 +36,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> dataMenus(Data2DManufactureController dataController) {
         try {
             Data2D data2D = dataController.getData2D();
-            if (!dataController.isValidData()) {
+            if (dataController.invalidData()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -49,7 +49,7 @@ public class Data2DMenuTools {
 
             menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction((ActionEvent event) -> {
-                dataController.definitonAction();
+                dataController.definitionAction();
             });
             menu.setDisable(notLoaded);
             items.add(menu);
@@ -133,7 +133,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> operationsMenus(Data2DManufactureController dataController) {
         try {
-            if (!dataController.isValidData()) {
+            if (!dataController.hasColumns()) {
                 return null;
             }
             Data2D data2D = dataController.getData2D();
@@ -274,7 +274,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> fileMenus(Data2DManufactureController dataController) {
         try {
             Data2D data2D = dataController.getData2D();
-            if (!data2D.isDataFile() || !dataController.isValidData()) {
+            if (dataController.invalidData() || !data2D.isDataFile()) {
                 return null;
             }
             File file = data2D.getFile();
@@ -368,7 +368,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> verifyMenus(Data2DManufactureController dataController) {
         try {
-            if (!dataController.isValidData()) {
+            if (!dataController.hasColumns()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -420,7 +420,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> trimMenus(BaseData2DLoadController controller) {
         try {
-            if (!controller.isValidData()) {
+            if (!controller.hasColumns()) {
                 return null;
             }
             Data2D data2D = controller.getData2D();
@@ -475,7 +475,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> calMenus(BaseData2DLoadController controller) {
         try {
-            if (!controller.isValidData()) {
+            if (!controller.hasColumns()) {
                 return null;
             }
             Data2D data2D = controller.getData2D();
@@ -559,7 +559,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> chartMenus(BaseData2DLoadController controller) {
         try {
-            if (!controller.isValidData()) {
+            if (!controller.hasColumns()) {
                 return null;
             }
             Data2D data2D = controller.getData2D();
@@ -625,7 +625,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> groupChartMenus(BaseData2DLoadController controller) {
         try {
-            if (!controller.isValidData()) {
+            if (!controller.hasColumns()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();

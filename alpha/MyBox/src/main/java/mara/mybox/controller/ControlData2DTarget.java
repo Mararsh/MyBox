@@ -94,8 +94,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             return false;
         }
         return !tableController.isShowing()
-                || tableController.data2D == null
-                || !tableController.data2D.isValidDefinition()
+                || tableController.invalidData()
                 || (data2D != null && tableController.data2D.getDataID() != data2D.getDataID());
     }
 

@@ -120,7 +120,7 @@ public class Data2DAttributesController extends BaseChildController {
     public boolean isInvalid() {
         return dataController == null
                 || !dataController.isShowing()
-                || !dataController.isValidPageData();
+                || dataController.invalidData();
     }
 
     protected void setParameters(Data2DManufactureController controller) {

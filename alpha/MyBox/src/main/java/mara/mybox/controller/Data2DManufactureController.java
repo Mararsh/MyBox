@@ -101,7 +101,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (isSettingValues) {
             return;
         }
-        if (!isValidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
+        if (invalidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
             switchFormat();
             return;
         }
@@ -305,7 +305,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         try {
             super.updateStatus();
 
-            boolean invalidData = !isValidData();
+            boolean invalidData = invalidData();
             mainAreaBox.setDisable(invalidData);
             opsPane.setDisable(invalidData);
             recoverButton.setDisable(invalidData || !dataSizeLoaded
@@ -466,7 +466,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public List<String> newData() {
-        if (!isValidData()) {
+        if (invalidData()) {
             return null;
         }
         return data2D.newRow();
@@ -474,7 +474,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public List<String> dataCopy(List<String> data) {
-        if (!isValidData()) {
+        if (invalidData()) {
             return null;
         }
         return data2D.copyRow(data);
@@ -503,8 +503,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void showVerifyMenu(Event mevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
-            items.addAll(Data2DMenuTools.verifyMenus(this));
+            List<MenuItem> items = Data2DMenuTools.verifyMenus(this);
+            if (items == null) {
+                return;
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -541,6 +543,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void showTrimMenu(Event event) {
         try {
             List<MenuItem> items = Data2DMenuTools.trimMenus(this);
+            if (items == null) {
+                return;
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -572,6 +577,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void showCalculateMenu(Event event) {
         try {
             List<MenuItem> items = Data2DMenuTools.calMenus(this);
+            if (items == null) {
+                return;
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -603,7 +611,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void showChartsMenu(Event event) {
         try {
             List<MenuItem> items = Data2DMenuTools.chartMenus(this);
-
+            if (items == null) {
+                return;
+            }
             items.add(new SeparatorMenuItem());
 
             items.addAll(Data2DMenuTools.groupChartMenus(this));
@@ -649,7 +659,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean controlAltN() {
-        if (isValidData()) {
+        if (hasColumns()) {
             addRowsAction();
             return true;
         }
@@ -661,7 +671,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (targetIsTextInput()) {
             return false;
         }
-        if (isValidData() && isTableMode()) {
+        if (hasColumns() && isTableMode()) {
             deleteRowsAction();
             return true;
         }
@@ -670,15 +680,15 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean controlAltL() {
-        if (isValidData()) {
+        if (!invalidData()) {
             clearAction();
         }
         return false;
     }
 
     @FXML
-    public void definitonAction() {
-        if (!isValidPageData()) {
+    public void definitionAction() {
+        if (invalidData()) {
             popError(message("InvalidData"));
             return;
         }
@@ -696,7 +706,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             popError(message("CountingTotalNumber"));
             return;
         }
-        if (!isValidPageData()) {
+        if (invalidData()) {
             popError(message("InvalidData"));
             return;
         }
@@ -769,7 +779,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void recoverAction() {
-        if (!isValidData() || !data2D.isTableChanged()) {
+        if (invalidData() || !data2D.isTableChanged()) {
             return;
         }
         if (data2D.isMutiplePages()) {
@@ -788,7 +798,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void addRowsAction() {
-        if (!isValidData()) {
+        if (!hasColumns()) {
             popError(message("InvalidData"));
             return;
         }
@@ -836,7 +846,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void clearAction() {
-        if (!isValidData()) {
+        if (invalidData()) {
             popError(message("InvalidData"));
             return;
         }
@@ -849,7 +859,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     protected long clearData(FxTask currentTask) {
-        if (!isValidData()) {
+        if (invalidData()) {
             return 0;
         }
         return data2D.clearData(currentTask);
@@ -859,7 +869,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void pasteContentInSystemClipboard() {
         try {
-            if (!isValidData()) {
+            if (!hasColumns()) {
                 popError(message("InvalidData"));
                 return;
             }
@@ -876,7 +886,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void pasteContentInMyboxClipboard() {
         try {
-            if (!isValidData()) {
+            if (!hasColumns()) {
                 popError(message("InvalidData"));
                 return;
             }
@@ -889,7 +899,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void myBoxClipBoard() {
-        if (!isValidData()) {
+        if (!hasColumns()) {
             popError(message("InvalidData"));
             return;
         }

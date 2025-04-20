@@ -50,7 +50,7 @@ public class ControlData2DRowExpression extends ControlDataRowExpression {
 
     public boolean checkExpression(boolean allPages) {
         error = null;
-        if (data2D == null || !data2D.isValidDefinition()) {
+        if (data2D == null || !data2D.hasColumns()) {
             error = message("InvalidData");
             return false;
         }

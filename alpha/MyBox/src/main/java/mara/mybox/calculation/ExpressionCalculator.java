@@ -124,7 +124,7 @@ public class ExpressionCalculator {
             reset();
             if (script == null || script.isBlank()
                     || rowValues == null || rowValues.isEmpty()
-                    || data2D == null || !data2D.isValidDefinition()) {
+                    || data2D == null || !data2D.hasColumns()) {
                 handleError(message("invalidParameter"));
                 return false;
             }
@@ -224,7 +224,7 @@ public class ExpressionCalculator {
 
     public String replaceDummyStatistic(Data2D data2D, String script) {
         try {
-            if (data2D == null || !data2D.isValidDefinition() || script == null || script.isBlank()) {
+            if (data2D == null || !data2D.hasColumns() || script == null || script.isBlank()) {
                 return script;
             }
             String filledScript = script;
