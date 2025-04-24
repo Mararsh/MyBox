@@ -1,5 +1,9 @@
 package mara.mybox.controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +36,7 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -43,7 +48,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DCreateController extends Data2DAttributesController {
 
     protected BaseController caller;
-    protected int rows;
+    protected int rowsNumber;
 
     @FXML
     protected ControlData2DNew attributesController;
@@ -158,11 +163,11 @@ public class Data2DCreateController extends Data2DAttributesController {
             return;
         }
         try {
-            rows = Integer.parseInt(rowsSelector.getValue());
+            rowsNumber = Integer.parseInt(rowsSelector.getValue());
         } catch (Exception e) {
-            rows = -1;
+            rowsNumber = -1;
         }
-        if (rows < 0) {
+        if (rowsNumber < 0) {
             popError(message("InvalidParameter") + ": " + message("RowsNumber"));
             return;
         }
@@ -175,37 +180,25 @@ public class Data2DCreateController extends Data2DAttributesController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            Data2D targetData;
+            Data2D sourceData, targetData;
+            Random random;
+            int colsNumber;
 
             @Override
             protected boolean handle() {
                 try {
-                    Data2D sourceData = Data2D.create(Data2DDefinition.DataType.CSV);
+                    sourceData = Data2D.create(Data2DDefinition.DataType.CSV);
                     sourceData.setColumns(data2D.getColumns());
-                    int cols = sourceData.columnsNumber();
-                    Random random = new Random();
-                    tableData.clear();
-                    for (int i = 0; i < rows; i++) {
-                        List<String> row = new ArrayList<>();
-                        row.add("" + (i + 1));
-                        for (int j = 0; j < cols; j++) {
-                            if (randomRadio.isSelected()) {
-                                row.add(data2D.randomString(random, false));
-                            } else if (randomNonnegativeRadio.isSelected()) {
-                                row.add(data2D.randomString(random, true));
-                            } else if (emptyRadio.isSelected()) {
-                                row.add("");
-                            } else if (nullRadio.isSelected()) {
-                                row.add(null);
-                            } else if (zeroRadio.isSelected()) {
-                                row.add("0");
-                            } else if (oneRadio.isSelected()) {
-                                row.add("1");
-                            }
-                        }
-                        tableData.add(row);
+                    colsNumber = sourceData.columnsNumber();
+                    random = new Random();
+                    if (rowsNumber > data2D.pagination.pageSize) {
+                        ok = writeSourceFile();
+                    } else {
+                        ok = writeSourcePage();
                     }
-                    sourceData.setPageData(tableData);
+                    if (!ok) {
+                        return false;
+                    }
                     data2D.startTask(this, null);
                     Data2DSaveAs operate = Data2DSaveAs.writeTo(sourceData, writer);
                     if (operate == null) {
@@ -222,6 +215,97 @@ public class Data2DCreateController extends Data2DAttributesController {
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
+                }
+            }
+
+            protected boolean writeSourceFile() {
+                try {
+                    File tmpFile = FileTmpTools.getTempFile();
+                    Charset charset = Charset.forName("utf-8");
+                    String line, value;
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+                        line = null;
+                        for (String name : sourceData.columnNames()) {
+                            if (line == null) {
+                                line = name;
+                            } else {
+                                line += "," + name;
+                            }
+                        }
+                        writer.write(line + System.lineSeparator());
+                        for (int i = 0; i < rowsNumber; i++) {
+                            line = null;
+                            for (int j = 0; j < colsNumber; j++) {
+                                value = makeValue();
+                                if (line == null) {
+                                    line = value;
+                                } else {
+                                    line += "," + value;
+                                }
+                            }
+                            writer.write(line + System.lineSeparator());
+                        }
+                        writer.flush();
+                    } catch (Exception e) {
+                        MyBoxLog.error(e);
+                        return false;
+                    }
+                    sourceData.setFile(tmpFile).setHasHeader(true).setCharset(charset).setDelimiter(",");
+                    sourceData.saveAttributes();
+                    return true;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+            }
+
+            protected boolean writeSourcePage() {
+                try {
+                    tableData.clear();
+                    for (int i = 0; i < rowsNumber; i++) {
+                        List<String> row = new ArrayList<>();
+                        row.add("" + (i + 1));
+                        for (int j = 0; j < colsNumber; j++) {
+                            if (randomRadio.isSelected()) {
+                                row.add(data2D.randomString(random, false));
+                            } else if (randomNonnegativeRadio.isSelected()) {
+                                row.add(data2D.randomString(random, true));
+                            } else if (emptyRadio.isSelected()) {
+                                row.add("");
+                            } else if (nullRadio.isSelected()) {
+                                row.add(null);
+                            } else if (zeroRadio.isSelected()) {
+                                row.add("0");
+                            } else if (oneRadio.isSelected()) {
+                                row.add("1");
+                            }
+                        }
+                        tableData.add(row);
+                    }
+                    sourceData.setFile(null);
+                    sourceData.setPageData(tableData);
+                    return true;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+            }
+
+            protected String makeValue() {
+                if (randomRadio.isSelected()) {
+                    return data2D.randomString(random, false);
+                } else if (randomNonnegativeRadio.isSelected()) {
+                    return data2D.randomString(random, true);
+                } else if (emptyRadio.isSelected()) {
+                    return "";
+                } else if (nullRadio.isSelected()) {
+                    return "";
+                } else if (zeroRadio.isSelected()) {
+                    return "0";
+                } else if (oneRadio.isSelected()) {
+                    return "1";
+                } else {
+                    return "";
                 }
             }
 

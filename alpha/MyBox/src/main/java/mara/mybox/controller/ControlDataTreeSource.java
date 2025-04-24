@@ -15,7 +15,7 @@ public class ControlDataTreeSource extends BaseDataTreeViewController {
     @FXML
     protected Label topLabel;
 
-    public void setParameters(DataTreeController parent, DataNode node) {
+    public void setParameters(ControlTreeView parent, DataNode node) {
         try {
             initDataTree(parent.nodeTable);
 

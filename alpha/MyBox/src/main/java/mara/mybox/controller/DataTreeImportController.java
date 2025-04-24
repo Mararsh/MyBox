@@ -62,7 +62,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         setFileType(VisitHistory.FileType.XML);
     }
 
-    public void setParamters(DataTreeController controller, TreeItem<DataNode> item) {
+    public void setParamters(ControlTreeView controller, TreeItem<DataNode> item) {
         try {
             if (controller == null) {
                 close();
@@ -123,11 +123,11 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
     }
 
-    public void importExamples(DataTreeController controller, TreeItem<DataNode> item) {
+    public void importExamples(ControlTreeView controller, TreeItem<DataNode> item) {
         importExamples(controller, item, null);
     }
 
-    public void importExamples(DataTreeController controller, TreeItem<DataNode> item, File inFile) {
+    public void importExamples(ControlTreeView controller, TreeItem<DataNode> item, File inFile) {
         setParamters(controller, item);
         File file = inFile;
         if (file == null) {

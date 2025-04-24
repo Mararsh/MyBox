@@ -382,14 +382,14 @@ public class MyBoxDocumentsController extends BaseTaskController {
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
             BaseNodeTable nodeTable = BaseNodeTable.create(tableName);
             nodeTable.truncate();
-            DataTreeController treeController;
+            DataTreeController dataController;
             if (tableName.equals("GeographyCode")) {
-                treeController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+                dataController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
             } else {
-                treeController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-                treeController.initDataTree(nodeTable);
+                dataController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+                dataController.treeController.initDataTree(nodeTable);
             }
-            if (treeController == null) {
+            if (dataController == null) {
                 finishNotify();
                 return false;
             }
@@ -400,13 +400,13 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 return false;
             }
             TreeItem rootItem = new TreeItem(rootNode);
-            treeController.treeView.setRoot(rootItem);
+            dataController.treeController.treeView.setRoot(rootItem);
 //            popInformation(message("Handling") + ": " + tableName);
             DataTreeImportController importController = (DataTreeImportController) WindowTools
                     .openStage(Fxmls.DataTreeImportFxml);
 //            importController.setIconified(true);
             importController.miaoCheck.setSelected(false);
-            importController.importExamples(treeController, rootItem, nodeTable.exampleFileLang(lang));
+            importController.importExamples(dataController.treeController, rootItem, nodeTable.exampleFileLang(lang));
             importController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -415,7 +415,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                         DataTreeExportController exportController = (DataTreeExportController) WindowTools
                                 .openStage(Fxmls.DataTreeExportFxml);
 //                        exportController.setIconified(true);
-                        exportController.setParamters(treeController, rootItem);
+                        exportController.setParamters(dataController.treeController, rootItem);
                         exportController.selectAllFormat(false);
                         exportController.treeHtmlCheck.setSelected(true);
                         exportController.openCheck.setSelected(false);
@@ -434,7 +434,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                         showLogs(message("Failed"));
                                     }
                                     exportController.close();
-                                    treeController.close();
+                                    dataController.close();
                                     nodeTable.truncate();
                                     CurrentLangName = realLang;
                                     CurrentBundle = realBoundle;

@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ControlDataTreeTarget extends BaseDataTreeViewController {
 
-    public void setParameters(DataTreeController parent) {
+    public void setParameters(ControlTreeView parent) {
         try {
             initDataTree(parent.nodeTable);
 

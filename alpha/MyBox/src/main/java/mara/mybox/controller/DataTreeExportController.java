@@ -75,7 +75,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     @FXML
     protected Label nodeLabel;
 
-    public void setParamters(DataTreeController parent, TreeItem<DataNode> item) {
+    public void setParamters(ControlTreeView parent, TreeItem<DataNode> item) {
         try {
             super.setParameters(parent);
 

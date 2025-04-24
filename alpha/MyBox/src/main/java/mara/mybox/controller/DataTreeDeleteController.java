@@ -20,7 +20,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
 
     protected BaseDataTreeViewController treeController;
 
-    public void setParameters(DataTreeController parent, DataNode node) {
+    public void setParameters(ControlTreeView parent, DataNode node) {
         try {
             if (parent == null) {
                 close();
@@ -86,7 +86,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
     /*
         static methods
      */
-    public static DataTreeDeleteController open(DataTreeController parent, DataNode node) {
+    public static DataTreeDeleteController open(ControlTreeView parent, DataNode node) {
         DataTreeDeleteController controller
                 = (DataTreeDeleteController) WindowTools.childStage(parent, Fxmls.DataTreeDeleteFxml);
         controller.setParameters(parent, node);

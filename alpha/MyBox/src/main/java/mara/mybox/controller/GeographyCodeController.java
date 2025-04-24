@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.db.data.DataNode;
-import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -14,20 +12,20 @@ import static mara.mybox.value.Languages.message;
 public class GeographyCodeController extends DataTreeController {
 
     @FXML
-    protected GeographyCodeViewController mapController;
+    protected ControlGeographyCodeTree codesController;
+    @FXML
+    protected ControlGeographyCodeView mapController;
 
     public GeographyCodeController() {
         baseTitle = message("GeographyCode");
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
+            treeController = codesController;
 
-            initDataTree(new TableNodeGeographyCode(), null);
-
-            mapController.setPatrameters(this);
+            super.initValues();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -35,47 +33,16 @@ public class GeographyCodeController extends DataTreeController {
     }
 
     @Override
-    public void loadCurrent(DataNode node) {
-        nullCurrent();
-        if (node == null) {
-            return;
+    public void initControls() {
+        try {
+            super.initControls();
+
+            codesController.setPatrameters(this);
+            mapController.setPatrameters(codesController);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        mapController.loadNode(node);
-    }
-
-    @Override
-    protected void nullCurrent() {
-        currentNode = null;
-        infoButton.setDisable(true);
-        editButton.setDisable(true);
-        mapController.clearMap();
-    }
-
-    @FXML
-    @Override
-    public boolean infoAction() {
-        if (currentNode == null) {
-            return false;
-        }
-        popNode(currentNode);
-        return true;
-    }
-
-    @FXML
-    public boolean htmlAction() {
-        mapController.htmlAction();
-        return true;
-    }
-
-    @FXML
-    public boolean snapAction() {
-        mapController.snapAction();
-        return true;
-    }
-
-    @FXML
-    public void optionsAction() {
-        mapController.optionsAction();
     }
 
     @Override

@@ -11,8 +11,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -75,16 +73,7 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </children>
                                     </HBox>
-                                    <TreeTableView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                       <columns>
-                                          <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
-                                          <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
-                                          <TreeTableColumn fx:id="idColumn" text="%ID" />
-                                          <TreeTableColumn fx:id="timeColumn" prefWidth="180.0" text="%ModifiedTime" />
-                                          <TreeTableColumn fx:id="orderColumn" text="%OrderNumber" />
-                                       </columns>
-                                    </TreeTableView>
-                                    <Label fx:id="treeLabel" />
+                                    <fx:include fx:id="codes" source="ControlGeographyCodeTree.fxml" />
                                           </children>
                                       </VBox>
                                   </content>
@@ -151,7 +140,7 @@ License:    Apache License Version 2.0
                                           </FlowPane>
                                        </children>
                                     </HBox>
-                                    <fx:include fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="GeographyCodeView.fxml" VBox.vgrow="ALWAYS" />
+                                    <fx:include fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlGeographyCodeView.fxml" VBox.vgrow="ALWAYS" />
                                           </children>
                                           <padding>
                                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

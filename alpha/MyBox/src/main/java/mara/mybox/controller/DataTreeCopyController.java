@@ -28,7 +28,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     protected RadioButton nodeAndDescendantsRadio, descendantsRadio,
             nodeAndChildrenRadio, childrenRadio, nodeRadio;
 
-    public void setParameters(DataTreeController parent, DataNode node) {
+    public void setParameters(ControlTreeView parent, DataNode node) {
         try {
             super.setParameters(parent);
 
@@ -115,7 +115,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeCopyController open(DataTreeController parent, DataNode node) {
+    public static DataTreeCopyController open(ControlTreeView parent, DataNode node) {
         DataTreeCopyController controller
                 = (DataTreeCopyController) WindowTools.childStage(parent, Fxmls.DataTreeCopyFxml);
         controller.setParameters(parent, node);

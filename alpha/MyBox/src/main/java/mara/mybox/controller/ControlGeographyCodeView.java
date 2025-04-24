@@ -13,11 +13,11 @@ import mara.mybox.tools.GeographyCodeTools;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class GeographyCodeViewController extends BaseMapController {
+public class ControlGeographyCodeView extends BaseMapController {
 
-    protected GeographyCodeController treeController;
+    protected ControlGeographyCodeTree treeController;
 
-    public void setPatrameters(GeographyCodeController controller) {
+    public void setPatrameters(ControlGeographyCodeTree controller) {
         try {
             treeController = controller;
 

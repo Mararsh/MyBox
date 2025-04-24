@@ -25,7 +25,7 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     @FXML
     protected ControlDataTreeTarget targetController;
 
-    public void setParameters(DataTreeController parent, DataNode node) {
+    public void setParameters(ControlTreeView parent, DataNode node) {
         try {
             super.setParameters(parent);
 
@@ -102,7 +102,7 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeMoveController open(DataTreeController parent, DataNode node) {
+    public static DataTreeMoveController open(ControlTreeView parent, DataNode node) {
         DataTreeMoveController controller
                 = (DataTreeMoveController) WindowTools.childStage(parent, Fxmls.DataTreeMoveFxml);
         controller.setParameters(parent, node);
