@@ -36,7 +36,7 @@ import mara.mybox.value.UserConfig;
  */
 public class DataTreeLocateController extends BaseChildController {
 
-    protected BaseDataTreeViewController treeController;
+    protected BaseDataTreeController dataController;
     protected BaseNodeTable nodeTable;
     protected long longKey;
     protected String stringKey;
@@ -52,12 +52,12 @@ public class DataTreeLocateController extends BaseChildController {
     @FXML
     protected CheckBox expandedCheck;
 
-    public void setParameters(BaseDataTreeViewController controller) {
+    public void setParameters(BaseDataTreeController controller) {
         try {
-            treeController = controller;
-            nodeTable = treeController.nodeTable;
-            baseName = treeController.baseName + "_Locate";
-            baseTitle = treeController.baseTitle + message("Locate");
+            dataController = controller;
+            nodeTable = dataController.nodeTable;
+            baseName = dataController.baseName + "_Locate";
+            baseTitle = dataController.baseTitle + message("Locate");
             setTitle(baseTitle);
             valueRadio.setText(nodeTable.label(nodeTable.majorColumnName));
 
@@ -115,9 +115,9 @@ public class DataTreeLocateController extends BaseChildController {
 
             TableStringValues.add(baseName + currentName() + "Histories", input);
 
-            TreeItem<DataNode> item = matchFrom(treeController.getRootItem());
+            TreeItem<DataNode> item = matchFrom(dataController.treeController.getRootItem());
             if (item != null) {
-                treeController.focusItem(item);
+                dataController.treeController.focusItem(item);
 
             } else {
                 if (expandedCheck.isSelected()) {
@@ -219,7 +219,7 @@ public class DataTreeLocateController extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 if (node != null) {
-                    treeController.focusNode(node);
+                    dataController.treeController.focusNode(node);
                 } else {
                     popInformation(message("NotFound"));
                 }
@@ -258,7 +258,7 @@ public class DataTreeLocateController extends BaseChildController {
     /*
         static
      */
-    public static DataTreeLocateController open(BaseDataTreeViewController parent) {
+    public static DataTreeLocateController open(BaseDataTreeController parent) {
         try {
             DataTreeLocateController controller = (DataTreeLocateController) WindowTools.childStage(
                     parent, Fxmls.DataTreeLocateFxml);

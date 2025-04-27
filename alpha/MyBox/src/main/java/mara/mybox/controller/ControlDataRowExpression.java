@@ -90,7 +90,7 @@ public class ControlDataRowExpression extends BaseDataValuesController {
         try {
             DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeRowExpression());
-            ((ControlDataRowExpression) controller.dataController).edit(script);
+            ((ControlDataRowExpression) controller.valuesController).edit(script);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

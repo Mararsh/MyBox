@@ -199,7 +199,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
     public static DataTreeNodeEditorController open(ControlWebView controlWebView) {
         try {
             DataTreeNodeEditorController controller = openScriptEditor(controlWebView);
-            ((ControlDataJavascript) controller.dataController).setParameters(controlWebView);
+            ((ControlDataJavascript) controller.valuesController).setParameters(controlWebView);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -210,7 +210,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
     public static DataTreeNodeEditorController loadScript(BaseController parent, String script) {
         try {
             DataTreeNodeEditorController controller = openScriptEditor(parent);
-            ((ControlDataJavascript) controller.dataController).edit(script);
+            ((ControlDataJavascript) controller.valuesController).edit(script);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -221,7 +221,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
     public static DataTreeNodeEditorController openFile(BaseController parent, File file) {
         try {
             DataTreeNodeEditorController controller = openScriptEditor(parent);
-            ((ControlDataJavascript) controller.dataController).selectSourceFile(file);
+            ((ControlDataJavascript) controller.valuesController).selectSourceFile(file);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

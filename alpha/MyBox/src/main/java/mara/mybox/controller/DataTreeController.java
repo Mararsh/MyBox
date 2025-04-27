@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.event.Event;
-import javafx.fxml.FXML;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableNodeDataColumn;
@@ -26,12 +24,7 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class DataTreeController extends BaseController {
-
-    @FXML
-    protected ControlTreeView treeController;
-    @FXML
-    protected ControlWebView viewController;
+public class DataTreeController extends BaseDataTreeController {
 
     @Override
     public void initControls() {
@@ -39,58 +32,16 @@ public class DataTreeController extends BaseController {
             super.initControls();
 
             treeController.setParameters(this);
+            tableController.setParameters(this);
 
             if (viewController != null) {
                 viewController.setParent(this);
                 viewController.initStyle = HtmlStyles.styleValue("Table");
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    public void editAction() {
-        treeController.editAction();
-    }
-
-    @FXML
-    public void goAction() {
-        treeController.goAction();
-    }
-
-    @FXML
-    public void popDataMenu(Event event) {
-        treeController.popDataMenu(event);
-    }
-
-    @FXML
-    public void showDataMenu(Event event) {
-        treeController.showDataMenu(event);
-    }
-
-    @FXML
-    @Override
-    public void popOperationsMenu(Event event) {
-        treeController.popOperationsMenu(event);
-    }
-
-    @FXML
-    @Override
-    public void showOperationsMenu(Event event) {
-        treeController.showOperationsMenu(event);
-    }
-
-    @FXML
-    @Override
-    public void popViewMenu(Event event) {
-        treeController.popViewMenu(event);
-    }
-
-    @FXML
-    @Override
-    public void showViewMenu(Event event) {
-        treeController.showViewMenu(event);
     }
 
     /*
@@ -108,8 +59,7 @@ public class DataTreeController extends BaseController {
                 controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
             }
             controller.requestMouse();
-            controller.treeController.initDataTree(table);
-            controller.treeController.loadTree();
+            controller.initDataTree(table, null);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -120,7 +70,7 @@ public class DataTreeController extends BaseController {
     public static DataTreeController open(BaseNodeTable table, DataNode node) {
         try {
             DataTreeController controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-            controller.treeController.initDataTree(table, node);
+            controller.initDataTree(table, node);
             controller.setAlwaysOnTop();
             return controller;
         } catch (Exception e) {

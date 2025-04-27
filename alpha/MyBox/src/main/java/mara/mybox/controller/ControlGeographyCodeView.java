@@ -15,9 +15,9 @@ import mara.mybox.tools.GeographyCodeTools;
  */
 public class ControlGeographyCodeView extends BaseMapController {
 
-    protected ControlGeographyCodeTree treeController;
+    protected GeographyCodeController treeController;
 
-    public void setPatrameters(ControlGeographyCodeTree controller) {
+    public void setPatrameters(GeographyCodeController controller) {
         try {
             treeController = controller;
 

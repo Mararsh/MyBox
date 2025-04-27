@@ -25,7 +25,7 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     @FXML
     protected ControlDataTreeTarget targetController;
 
-    public void setParameters(ControlTreeView parent, DataNode node) {
+    public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
             super.setParameters(parent);
 
@@ -43,12 +43,12 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     @FXML
     @Override
     public void okAction() {
-        List<DataNode> sourceNodes = sourceController.selectedNodes();
+        List<DataNode> sourceNodes = sourceController.treeController.selectedNodes();
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             popError(message("SelectSourceNodes"));
             return;
         }
-        TreeItem<DataNode> targetItem = targetController.selectedItem();
+        TreeItem<DataNode> targetItem = targetController.treeController.selectedItem();
         if (targetItem == null) {
             popError(message("SelectNodeCopyInto"));
             return;
@@ -65,7 +65,7 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
                 count = 0;
                 targetNode = targetItem.getValue();
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (!targetController.equalOrDescendant(this, conn, targetNode, sourceNodes)) {
+                    if (!targetController.treeController.equalOrDescendant(this, conn, targetNode, sourceNodes)) {
                         error = message("TreeTargetComments");
                         return false;
                     }
@@ -90,9 +90,8 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
                 popInformation(message("Moved") + ": " + count);
                 sourceController.loadTree(targetNode);
                 targetController.loadTree(targetNode);
-                if (treeRunning()) {
-                    treeController.loadTree(targetNode);
-                    treeController.reloadCurrent();
+                if (dataRunning()) {
+                    dataController.loadTree(targetNode);
                 }
             }
         };
@@ -102,7 +101,7 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeMoveController open(ControlTreeView parent, DataNode node) {
+    public static DataTreeMoveController open(BaseDataTreeController parent, DataNode node) {
         DataTreeMoveController controller
                 = (DataTreeMoveController) WindowTools.childStage(parent, Fxmls.DataTreeMoveFxml);
         controller.setParameters(parent, node);

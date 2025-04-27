@@ -28,7 +28,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     protected RadioButton nodeAndDescendantsRadio, descendantsRadio,
             nodeAndChildrenRadio, childrenRadio, nodeRadio;
 
-    public void setParameters(ControlTreeView parent, DataNode node) {
+    public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
             super.setParameters(parent);
 
@@ -46,12 +46,12 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     @FXML
     @Override
     public void okAction() {
-        List<DataNode> sourceNodes = sourceController.selectedNodes();
+        List<DataNode> sourceNodes = sourceController.treeController.selectedNodes();
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             popError(message("SelectSourceNodes"));
             return;
         }
-        TreeItem<DataNode> targetItem = targetController.selectedItem();
+        TreeItem<DataNode> targetItem = targetController.treeController.selectedItem();
         if (targetItem == null) {
             popError(message("SelectNodeCopyInto"));
             return;
@@ -68,7 +68,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
                 count = 0;
                 targetNode = targetItem.getValue();
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (!targetController.equalOrDescendant(this, conn, targetNode, sourceNodes)) {
+                    if (!targetController.treeController.equalOrDescendant(this, conn, targetNode, sourceNodes)) {
                         error = message("TreeTargetComments");
                         return false;
                     }
@@ -103,9 +103,9 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
                 popInformation(message("Copied") + ": " + count);
                 sourceController.refreshNode(targetNode);
                 targetController.refreshNode(targetNode);
-                if (treeRunning()) {
-                    treeController.refreshNode(targetNode);
-                    treeController.reloadCurrent();
+                if (dataRunning()) {
+                    dataController.refreshNode(targetNode);
+                    dataController.reloadCurrent();
                 }
             }
         };
@@ -115,7 +115,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeCopyController open(ControlTreeView parent, DataNode node) {
+    public static DataTreeCopyController open(BaseDataTreeController parent, DataNode node) {
         DataTreeCopyController controller
                 = (DataTreeCopyController) WindowTools.childStage(parent, Fxmls.DataTreeCopyFxml);
         controller.setParameters(parent, node);

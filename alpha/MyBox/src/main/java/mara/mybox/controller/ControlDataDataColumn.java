@@ -70,7 +70,7 @@ public class ControlDataDataColumn extends BaseDataValuesController {
         try {
             DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeDataColumn());
-            ((ControlDataDataColumn) controller.dataController).editColumn(column);
+            ((ControlDataDataColumn) controller.valuesController).editColumn(column);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -10,16 +10,14 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2024-12-2
  * @License Apache License Version 2.0
  */
-public class ControlDataTreeSource extends BaseDataTreeViewController {
+public class ControlDataTreeSource extends BaseDataTreeController {
 
     @FXML
     protected Label topLabel;
 
-    public void setParameters(ControlTreeView parent, DataNode node) {
+    public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
-            initDataTree(parent.nodeTable);
-
-            loadTree(node);
+            initDataTree(parent.nodeTable, node);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

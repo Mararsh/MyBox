@@ -172,7 +172,7 @@ public class ControlDataWebFavorite extends BaseDataValuesController {
         try {
             DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeWebFavorite());
-            ((ControlDataWebFavorite) controller.dataController).load(title, address);
+            ((ControlDataWebFavorite) controller.valuesController).load(title, address);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

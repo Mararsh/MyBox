@@ -11,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.TreeItem;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import mara.mybox.db.Database;
@@ -42,12 +41,12 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DataTreeImportController extends BaseBatchFileController {
 
-    protected BaseDataTreeViewController treeController;
+    protected BaseDataTreeController dataController;
     protected BaseNodeTable nodeTable;
     protected String dataName, chainName;
     protected TableDataNodeTag nodeTagsTable;
     protected TableDataTag tagTable;
-    protected TreeItem<DataNode> parentItem;
+    protected DataNode parentNode;
     protected boolean isExmaple;
 
     @FXML
@@ -62,24 +61,24 @@ public class DataTreeImportController extends BaseBatchFileController {
         setFileType(VisitHistory.FileType.XML);
     }
 
-    public void setParamters(ControlTreeView controller, TreeItem<DataNode> item) {
+    public void setParamters(BaseDataTreeController controller, DataNode node) {
         try {
             if (controller == null) {
                 close();
                 return;
             }
-            treeController = controller;
-            parentItem = item != null ? item : treeController.treeView.getRoot();
+            dataController = controller;
+            parentNode = node != null ? node : dataController.rootNode;
 
-            nodeTable = treeController.nodeTable;
-            nodeTagsTable = treeController.nodeTagsTable;
-            tagTable = treeController.tagTable;
-            dataName = treeController.dataName;
+            nodeTable = dataController.nodeTable;
+            nodeTagsTable = dataController.nodeTagsTable;
+            tagTable = dataController.tagTable;
+            dataName = dataController.dataName;
 
             baseName = baseName + "_" + dataName;
             baseTitle = nodeTable.getTreeName() + " - "
-                    + message("Import") + " : " + parentItem.getValue().getTitle();
-            chainName = treeController.shortDescription(parentItem);
+                    + message("Import") + " : " + parentNode.getTitle();
+            chainName = parentNode.shortDescription();
 
             setControls();
 
@@ -123,12 +122,12 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
     }
 
-    public void importExamples(ControlTreeView controller, TreeItem<DataNode> item) {
-        importExamples(controller, item, null);
+    public void importExamples(BaseDataTreeController controller, DataNode node) {
+        importExamples(controller, node, null);
     }
 
-    public void importExamples(ControlTreeView controller, TreeItem<DataNode> item, File inFile) {
-        setParamters(controller, item);
+    public void importExamples(BaseDataTreeController controller, DataNode node, File inFile) {
+        setParamters(controller, node);
         File file = inFile;
         if (file == null) {
             file = nodeTable.exampleFile();
@@ -177,7 +176,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                 columnNames = nodeTable.dataColumnNames();
                 totalItemsHandled = 0;
                 parentStack = new Stack<>();
-                parentid = parentItem.getValue().getNodeid();
+                parentid = parentNode.getNodeid();
                 orderStack = new Stack<>();
                 orderNumber = 0f;
                 value = new StringBuilder();
@@ -341,9 +340,9 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
 
         tableView.refresh();
-        if (WindowTools.isRunning(treeController)) {
-            treeController.refreshItem(parentItem);
-            treeController.reloadCurrent();
+        if (WindowTools.isRunning(dataController)) {
+            dataController.refreshNode(parentNode);
+            dataController.reloadCurrent();
             if (isExmaple) {
                 close();
             }

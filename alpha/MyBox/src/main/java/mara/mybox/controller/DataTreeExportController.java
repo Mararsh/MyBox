@@ -23,7 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -51,7 +50,7 @@ import org.apache.commons.csv.CSVPrinter;
 public class DataTreeExportController extends BaseDataTreeHandleController {
 
     protected TableDataNodeTag nodeTagsTable;
-    protected TreeItem<DataNode> sourceItem;
+    protected DataNode sourceNode;
     protected long sourceid;
     protected File treeXmlFile, treeHtmlFile, treeJsonFile, listJsonFile,
             listHtmlFile, listXmlFile, listCsvFile, framesetFile, framesetNavFile;
@@ -75,18 +74,18 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     @FXML
     protected Label nodeLabel;
 
-    public void setParamters(ControlTreeView parent, TreeItem<DataNode> item) {
+    public void setParamters(BaseDataTreeController parent, DataNode node) {
         try {
             super.setParameters(parent);
 
             this.nodeTagsTable = parent.nodeTagsTable;
-            sourceItem = item;
-            sourceItem = item != null ? item : treeController.treeView.getRoot();
-            sourceid = sourceItem.getValue().getNodeid();
+            sourceNode = node;
+            sourceNode = node != null ? node : dataController.rootNode;
+            sourceid = sourceNode.getNodeid();
 
             baseTitle = nodeTable.getTreeName() + " - "
-                    + message("Export") + " : " + sourceItem.getValue().getTitle();
-            chainName = treeController.shortDescription(sourceItem);
+                    + message("Export") + " : " + sourceNode.getTitle();
+            chainName = sourceNode.shortDescription();
 
             setControls();
 
@@ -254,7 +253,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
 
     @Override
     public boolean checkOptions() {
-        if (sourceItem == null || sourceItem.getValue() == null) {
+        if (sourceNode == null) {
             close();
             return false;
         }
@@ -324,14 +323,14 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
 
     @Override
     public boolean doTask(FxTask currentTask) {
-        if (sourceItem == null || targetPath == null) {
+        if (sourceNode == null || targetPath == null) {
             return false;
         }
         count = level = 0;
         childrenNumberStack = new Stack();
         childrenNumber = 0;
         try (Connection conn = DerbyBase.getConnection()) {
-            chainName = nodeTable.chainName(currentTask, conn, sourceItem.getValue());
+            chainName = nodeTable.chainName(currentTask, conn, sourceNode);
             showLogs("Export started. Node: " + sourceid + " - " + chainName);
             if (!openWriters()) {
                 closeWriters();
@@ -346,7 +345,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected boolean openWriters() {
-        if (sourceItem == null || targetPath == null || chainName == null) {
+        if (sourceNode == null || targetPath == null || chainName == null) {
             return false;
         }
         try {
@@ -548,7 +547,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected boolean closeWriters() {
-        if (sourceItem == null || targetPath == null) {
+        if (sourceNode == null || targetPath == null) {
             return false;
         }
         boolean well = true;

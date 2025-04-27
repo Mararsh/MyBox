@@ -553,7 +553,7 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
         try {
             DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeGeographyCode());
-            ((ControlDataGeographyCode) controller.dataController).loadGeographyCode(code);
+            ((ControlDataGeographyCode) controller.valuesController).loadGeographyCode(code);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

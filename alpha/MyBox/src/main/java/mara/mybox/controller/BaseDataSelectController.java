@@ -1,8 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.scene.control.TreeItem;
-import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 
@@ -11,7 +8,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-3-14
  * @License Apache License Version 2.0
  */
-public class BaseDataSelectController extends BaseDataTreeViewController {
+public class BaseDataSelectController extends BaseDataTreeController {
 
     public void setParameters(BaseController parent, BaseNodeTable table) {
         try {
@@ -29,9 +26,8 @@ public class BaseDataSelectController extends BaseDataTreeViewController {
         }
     }
 
-    @Override
-    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
-        okAction();
-    }
-
+//    @Override
+//    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
+//        okAction();  // #######
+//    }
 }

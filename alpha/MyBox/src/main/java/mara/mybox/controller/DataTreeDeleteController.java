@@ -16,18 +16,18 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-14
  * @License Apache License Version 2.0
  */
-public class DataTreeDeleteController extends BaseDataTreeViewController {
+public class DataTreeDeleteController extends BaseDataTreeController {
 
-    protected BaseDataTreeViewController treeController;
+    protected BaseDataTreeController dataController;
 
-    public void setParameters(ControlTreeView parent, DataNode node) {
+    public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
             if (parent == null) {
                 close();
                 return;
             }
-            treeController = parent;
-            nodeTable = treeController.nodeTable;
+            dataController = parent;
+            nodeTable = dataController.nodeTable;
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
 
@@ -44,7 +44,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
     @FXML
     @Override
     public void okAction() {
-        List<DataNode> nodes = selectedNodes();
+        List<DataNode> nodes = treeController.selectedNodes();
         if (nodes == null || nodes.isEmpty()) {
             popError(message("SelectNodes"));
             return;
@@ -71,9 +71,8 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
                 super.finalAction();
                 if (count > 0) {
                     loadTree();
-                    if (WindowTools.isRunning(treeController)) {
-                        treeController.loadTree();
-                        treeController.reloadCurrent();
+                    if (WindowTools.isRunning(dataController)) {
+                        dataController.loadTree();
                     }
                 }
             }
@@ -86,7 +85,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
     /*
         static methods
      */
-    public static DataTreeDeleteController open(ControlTreeView parent, DataNode node) {
+    public static DataTreeDeleteController open(BaseDataTreeController parent, DataNode node) {
         DataTreeDeleteController controller
                 = (DataTreeDeleteController) WindowTools.childStage(parent, Fxmls.DataTreeDeleteFxml);
         controller.setParameters(parent, node);

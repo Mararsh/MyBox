@@ -2,49 +2,87 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.data2d.DataInternalTable;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
+import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.table.BaseNodeTable;
-import mara.mybox.db.table.BaseTableTools;
+import mara.mybox.db.table.TableDataNodeTag;
+import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
+import mara.mybox.fxml.cell.TreeTableDateCell;
+import mara.mybox.fxml.cell.TreeTableIDCell;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class ControlTreeView extends BaseDataTreeViewController {
+public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
 
-    protected DataTreeController dataController;
+    protected BaseDataTreeController dataController;
+    protected ControlWebView viewController;
+    protected static final int AutoExpandThreshold = 500;
+    protected boolean expandAll;
+    protected BaseNodeTable nodeTable;
+    protected TableDataTag tagTable;
+    protected TableDataNodeTag nodeTagsTable;
+    protected String dataName;
+    protected DataNode currentNode;
 
-    public void setParameters(DataTreeController controller) {
+    @FXML
+    protected TreeTableColumn<DataNode, Long> idColumn;
+    @FXML
+    protected TreeTableColumn<DataNode, Float> orderColumn;
+    @FXML
+    protected TreeTableColumn<DataNode, Date> timeColumn;
+
+    /*
+        init
+     */
+    @Override
+    public void initTree() {
+        try {
+            super.initTree();
+
+            if (idColumn != null) {
+                idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
+                idColumn.setCellFactory(new TreeTableIDCell());
+            }
+
+            orderColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("orderNumber"));
+
+            timeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("updateTime"));
+            timeColumn.setCellFactory(new TreeTableDateCell());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+
+    }
+
+    public void setParameters(BaseDataTreeController controller) {
         try {
             dataController = controller;
-            goButton = dataController.goButton;
-            editButton = dataController.editButton;
 
             if (dataController.viewController != null) {
                 viewController = dataController.viewController;
@@ -55,644 +93,525 @@ public class ControlTreeView extends BaseDataTreeViewController {
         }
     }
 
-    @Override
-    public void initDataTree(BaseNodeTable table) {
-        try {
-            super.initDataTree(table);
-            if (dataController != null) {
-                dataController.baseName = baseName;
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     /*
         tree
      */
-    @Override
+    public void loadTree() {
+        loadTree(null);
+    }
+
+    public void loadTree(DataNode selectNode) {
+        if (task != null) {
+            task.cancel();
+        }
+        clearTree();
+        task = new FxSingletonTask<Void>(this) {
+
+            private TreeItem<DataNode> rootItem, selectItem;
+            private int size;
+
+            @Override
+            protected boolean handle() {
+                rootItem = null;
+                if (nodeTable == null) {
+                    return true;
+                }
+                try (Connection conn = DerbyBase.getConnection()) {
+                    DataNode rootNode = nodeTable.getRoot(conn);
+                    if (rootNode == null) {
+                        return false;
+                    }
+                    rootItem = new TreeItem(rootNode);
+                    rootItem.setExpanded(true);
+                    size = nodeTable.size(conn);
+                    if (size > 1) {
+                        rootItem.getChildren().add(new TreeItem(new DataNode()));
+                        conn.setAutoCommit(true);
+                        unfold(this, conn, rootItem, size < AutoExpandThreshold);
+                    }
+                    if (selectNode != null) {
+                        selectItem = unfoldAncestors(this, conn, rootItem, selectNode);
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return task != null && !isCancelled();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setRoot(rootItem);
+                if (selectItem != null) {
+                    focusItem(selectItem);
+                }
+                if (size <= 1) {
+                    whenTreeEmpty();
+                }
+                afterTreeLoaded();
+            }
+
+        };
+        start(task, thisPane);
+    }
+
     public void whenTreeEmpty() {
         if (AppVariables.isTesting) {
             return;
         }
         File file = nodeTable.exampleFile();
         if (file != null && PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
-            importExamples(null);
+            dataController.importExamples(null);
         }
+    }
+
+    public void afterTreeLoaded() {
+    }
+
+    @Override
+    public void focusItem(TreeItem<DataNode> nodeitem) {
+        super.focusItem(nodeitem);
+        try {
+            nodeitem.getValue().getSelected().set(true);
+        } catch (Exception e) {
+        }
+    }
+
+    /*
+        values
+     */
+    @Override
+    public String title(DataNode node) {
+        return dataController.title(node);
+    }
+
+    @Override
+    public String value(DataNode node) {
+        return dataController.value(node);
+    }
+
+    @Override
+    public boolean validNode(DataNode node) {
+        return dataController.validNode(node);
+    }
+
+    @Override
+    public void setHierarchyNumber(DataNode node, String hierarchyNumber) {
+        dataController.setHierarchyNumber(node, hierarchyNumber);
+    }
+
+    @Override
+    public boolean equalNode(DataNode node1, DataNode node2) {
+        return dataController.equalNode(node1, node2);
+    }
+
+    public boolean isRoot(DataNode node) {
+        return dataController.isRoot(node);
+    }
+
+    public List<TreeItem<DataNode>> ancestorItems(TreeItem<DataNode> item) {
+        if (item == null) {
+            return null;
+        }
+        List<TreeItem<DataNode>> ancestor = null;
+        TreeItem<DataNode> parent = item.getParent();
+        if (parent != null) {
+            ancestor = ancestorItems(parent);
+            if (ancestor == null) {
+                ancestor = new ArrayList<>();
+            }
+            ancestor.add(parent);
+        }
+        return ancestor;
+    }
+
+    public String chainName(TreeItem<DataNode> item) {
+        if (item == null) {
+            return null;
+        }
+        String chainName = "";
+        List<TreeItem<DataNode>> ancestors = ancestorItems(item);
+        if (ancestors != null) {
+            for (TreeItem<DataNode> a : ancestors) {
+                chainName += title(a.getValue()) + TitleSeparater;
+            }
+        }
+        chainName += title(item.getValue());
+        return chainName;
+    }
+
+    public String shortDescription(TreeItem<DataNode> item) {
+        if (item == null) {
+            return null;
+        }
+        return item.getValue().shortDescription(chainName(item));
+    }
+
+    public boolean equalOrDescendant(FxTask<Void> currentTask, Connection conn,
+            DataNode targetNode, List<DataNode> sourceNodes) {
+        if (sourceNodes == null || sourceNodes.isEmpty()) {
+            displayError(message("SelectSourceNodes"));
+            return false;
+        }
+        if (targetNode == null) {
+            displayError(message("SelectTargetNode"));
+            return false;
+        }
+        for (DataNode source : sourceNodes) {
+            if (nodeTable.equalOrDescendant(currentTask, conn, targetNode, source)) {
+                displayError(message("TreeTargetComments"));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public BooleanProperty getSelectedProperty(DataNode node) {
+        return node.getSelected();
+    }
+
+    /*
+        operations
+     */
+    @Override
+    public void itemClicked(MouseEvent event, TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        dataController.itemClicked(event, item.getValue());
     }
 
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
-        clicked(UserConfig.getString(baseName + "WhenDoubleClickNode", "PopNode"), item);
+        if (item == null) {
+            return;
+        }
+        dataController.doubleClicked(event, item.getValue());
     }
 
     @Override
     public void rightClicked(MouseEvent event, TreeItem<DataNode> item) {
-        clicked(UserConfig.getString(baseName + "WhenRightClickNode", "PopMenu"), item);
-    }
-
-    public void clicked(String clickAction, TreeItem<DataNode> item) {
-        if (item == null || clickAction == null) {
+        if (item == null) {
             return;
         }
-        switch (clickAction) {
-            case "PopMenu":
-                showPopMenu(item);
-                break;
-            case "EditNode":
-                editNode(item.getValue());
-                break;
-            case "PopNode":
-                popNode(item.getValue());
-                break;
-            case "ExecuteNode":
-                executeNode(item.getValue());
-                break;
-            default:
-                break;
-        }
-    }
-
-    /*
-        menu
-     */
-    @Override
-    public List<MenuItem> operationsMenuItems(TreeItem<DataNode> treeItem) {
-        List<MenuItem> items = new ArrayList<>();
-
-        items.addAll(updateMenuItems(treeItem));
-
-        items.add(new SeparatorMenuItem());
-
-        items.add(doubleClickMenu(treeItem));
-        items.add(rightClickMenu(treeItem));
-
-        return items;
-    }
-
-    public List<MenuItem> updateMenuItems(TreeItem<DataNode> treeItem) {
-        if (treeItem == null) {
-            return null;
-        }
-        boolean isRoot = isRoot(treeItem.getValue());
-        boolean isLeaf = treeItem.isLeaf();
-
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            editNode(treeItem.getValue());
-        });
-        items.add(menu);
-
-        if (nodeTable.isNodeExecutable()) {
-            menu = new MenuItem(message("ExecuteNode"), StyleTools.getIconImageView("iconGo.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                executeNode(treeItem.getValue());
-            });
-            items.add(menu);
-        }
-
-        menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addChild(treeItem.getValue());
-        });
-        items.add(menu);
-
-        if (!isRoot) {
-            menu = new MenuItem(message("ChangeNodeTitle"), StyleTools.getIconImageView("iconInput.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                renameNode(treeItem);
-            });
-            items.add(menu);
-
-        }
-
-        if (!isRoot) {
-            menu = new MenuItem(message("ChangeNodeOrder"), StyleTools.getIconImageView("iconInput.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                reorderNode(treeItem);
-            });
-
-        }
-
-        MenuItem orderMenuItem = new MenuItem(message("ChangeNodeOrder"), StyleTools.getIconImageView("iconClean.png"));
-        orderMenuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            reorderNode(treeItem);
-        });
-
-        if (isLeaf) {
-            if (!isRoot) {
-                items.add(orderMenuItem);
-            }
-        } else {
-            Menu orderMenu = new Menu(message("OrderNumber"), StyleTools.getIconImageView("iconClean.png"));
-
-            if (!isRoot) {
-                orderMenu.getItems().add(orderMenuItem);
-            }
-
-            menu = new MenuItem(message("TrimDescendantsOrders"), StyleTools.getIconImageView("iconClean.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                trimDescendantsOrders(treeItem, true);
-            });
-            orderMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("TrimChildrenOrders"), StyleTools.getIconImageView("iconClean.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                trimDescendantsOrders(treeItem, false);
-            });
-            orderMenu.getItems().add(menu);
-
-            items.add(orderMenu);
-        }
-
-        menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            copyNodes(treeItem);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            moveNodes(treeItem);
-        });
-        items.add(menu);
-
-        Menu deleteMenu = new Menu(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
-
-        if (isLeaf) {
-            menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                deleteNodeAndDescendants(treeItem);
-            });
-            deleteMenu.getItems().add(menu);
-
-        } else {
-            menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                deleteNodeAndDescendants(treeItem);
-            });
-            deleteMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("DeleteDescendants"), StyleTools.getIconImageView("iconDelete.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                deleteDescendants(treeItem);
-            });
-            deleteMenu.getItems().add(menu);
-        }
-
-        menu = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteNodes(treeItem);
-        });
-        deleteMenu.getItems().add(menu);
-
-        items.add(deleteMenu);
-
-        return items;
+        dataController.rightClicked(event, item.getValue());
     }
 
     @Override
-    public List<MenuItem> dataMenuItems(TreeItem<DataNode> item) {
+    public void unfold(TreeItem<DataNode> item, boolean descendants) {
         if (item == null) {
-            return null;
+            return;
         }
-        List<MenuItem> items = new ArrayList<>();
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
 
-        MenuItem menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            DataTreeTagsController.manage(this);
-        });
-        items.add(menu);
+            private TreeItem<DataNode> parentItem, tempItem;
+            private int itemIndex;
 
-        menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importExamples(item);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Export"), StyleTools.getIconImageView("iconExport.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            exportNode(item);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Import"), StyleTools.getIconImageView("iconImport.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importAction(item);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconDatabase.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            manufactureData();
-        });
-        items.add(menu);
-
-        return items;
-    }
-
-    public Menu doubleClickMenu(TreeItem<DataNode> treeItem) {
-        Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
-        clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "EditNode");
-        return clickMenu;
-    }
-
-    public Menu rightClickMenu(TreeItem<DataNode> treeItem) {
-        Menu clickMenu = new Menu(message("WhenRightClickNode"), StyleTools.getIconImageView("iconSelectNone.png"));
-        clickMenu(treeItem, clickMenu, "WhenRightClickNode", "PopMenu");
-        return clickMenu;
-    }
-
-    public Menu clickMenu(TreeItem<DataNode> treeItem, Menu menu, String key, String defaultAction) {
-        ToggleGroup clickGroup = new ToggleGroup();
-        String currentClick = UserConfig.getString(baseName + key, defaultAction);
-
-        RadioMenuItem editNodeMenu = new RadioMenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
-        editNodeMenu.setSelected("EditNode".equals(currentClick));
-        editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "EditNode");
-            }
-        });
-        editNodeMenu.setToggleGroup(clickGroup);
-
-        RadioMenuItem popNodeMenu = new RadioMenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
-        popNodeMenu.setSelected("PopNode".equals(currentClick));
-        popNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "PopNode");
-            }
-        });
-        popNodeMenu.setToggleGroup(clickGroup);
-
-        menu.getItems().addAll(editNodeMenu, popNodeMenu);
-
-        if (nodeTable.isNodeExecutable()) {
-            RadioMenuItem executeNodeMenu = new RadioMenuItem(message("ExecuteNode"), StyleTools.getIconImageView("iconGo.png"));
-            executeNodeMenu.setSelected("ExecuteNode".equals(currentClick));
-            executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setString(baseName + key, "ExecuteNode");
+            protected boolean handle() {
+                itemIndex = -100;
+                parentItem = item.getParent();
+                if (parentItem != null) {
+                    itemIndex = parentItem.getChildren().indexOf(item);
+                    if (itemIndex < 0) {
+                        return false;
+                    }
+                } else if (treeView.getRoot() != item) {
+                    return false;
                 }
-            });
-            executeNodeMenu.setToggleGroup(clickGroup);
-            menu.getItems().add(executeNodeMenu);
-        }
-
-        RadioMenuItem nothingMenu = new RadioMenuItem(message("DoNothing"));
-        nothingMenu.setSelected(currentClick == null || "DoNothing".equals(currentClick));
-        nothingMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "DoNothing");
+                try (Connection conn = DerbyBase.getConnection()) {
+                    tempItem = new TreeItem(item.getValue());
+                    tempItem.getChildren().add(new TreeItem(new DataNode()));
+                    conn.setAutoCommit(true);
+                    unfold(this, conn, tempItem, descendants);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return tempItem != null;
             }
-        });
-        nothingMenu.setToggleGroup(clickGroup);
 
-        RadioMenuItem clickPopMenu = new RadioMenuItem(message("ContextMenu"), StyleTools.getIconImageView("iconMenu.png"));
-        clickPopMenu.setSelected("PopMenu".equals(currentClick));
-        clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "PopMenu");
+            protected void whenSucceeded() {
+                if (treeView.getRoot() == item) {
+                    setRoot(tempItem);
+                } else if (itemIndex >= 0) {
+                    parentItem.getChildren().set(itemIndex, tempItem);
+                    treeView.refresh();
+                    focusItem(tempItem);
+                }
+
             }
-        });
-        clickPopMenu.setToggleGroup(clickGroup);
 
-        menu.getItems().addAll(clickPopMenu, nothingMenu);
-
-        return menu;
+        };
+        start(task, thisPane);
     }
 
-    @FXML
-    public void showPopMenu(TreeItem<DataNode> item) {
-        if (item == null) {
-            return;
-        }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
-
-        Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
-        dataMenu.getItems().addAll(dataMenuItems(item));
-        items.add(dataMenu);
-
-        Menu treeMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
-        treeMenu.getItems().addAll(viewMenuItems(item));
-        items.add(treeMenu);
-
-        items.add(new SeparatorMenuItem());
-
-        items.addAll(operationsMenuItems(item));
-
-        popNodeMenu(treeView, items);
-    }
-
-    protected void deleteNodeAndDescendants(TreeItem<DataNode> item) {
-        if (item == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        DataNode node = item.getValue();
-        if (node == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        boolean isRoot = isRoot(node);
-        if (!item.isLeaf()) {
-            if (isRoot) {
-                if (!PopTools.askSure(getTitle(), message("DeleteNodeAndDescendants"), message("SureDeleteAll"))) {
-                    return;
+    // item should be unvisible in the treeView while doing this
+    public void unfold(FxTask task, Connection conn, TreeItem<DataNode> item, boolean descendants) {
+        try {
+            if (item == null || item.isLeaf()) {
+                return;
+            }
+            if (isLoaded(item)) {
+                for (TreeItem<DataNode> childItem : item.getChildren()) {
+                    if (task == null || task.isCancelled()) {
+                        return;
+                    }
+                    if (descendants) {
+                        unfold(task, conn, childItem, true);
+                    } else {
+                        childItem.setExpanded(false);
+                    }
                 }
             } else {
-                String chainName = chainName(item);
-                if (!PopTools.askSure(getTitle(), chainName, message("DeleteNodeAndDescendants"))) {
+                item.getChildren().clear();
+                DataNode node = item.getValue();
+                if (node == null) {
                     return;
                 }
-            }
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
 
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    return nodeTable.deleteNode(conn, node.getNodeid()) >= 0;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (isRoot) {
-                    loadTree(null);
-                } else {
-                    item.getParent().getChildren().remove(item);
-                    reloadCurrent();
-                }
-                popSuccessful();
-            }
-
-        };
-        start(task, treeView);
-    }
-
-    protected void deleteDescendants(TreeItem<DataNode> item) {
-        if (item == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        DataNode node = item.getValue();
-        if (node == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        boolean isRoot = isRoot(node);
-        if (isRoot) {
-            if (!PopTools.askSure(getTitle(), message("DeleteDescendants"), message("SureDeleteAll"))) {
-                return;
-            }
-        } else {
-            String chainName = chainName(item);
-            if (!PopTools.askSure(getTitle(), chainName, message("DeleteDescendants"))) {
-                return;
-            }
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    return nodeTable.deleteDecentants(conn, node.getNodeid()) >= 0;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                item.getChildren().clear();
-                reloadCurrent();
-                popSuccessful();
-            }
-
-        };
-        start(task, treeView);
-    }
-
-    protected void trimDescendantsOrders(TreeItem<DataNode> item, boolean allDescendants) {
-        if (item == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        DataNode node = item.getValue();
-        if (node == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private int count;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    count = nodeTable.trimDescedentsOrders(this, conn, node, allDescendants, 0);
-                } catch (Exception e) {
-//                    error = e.toString();
-//                    return false;
-                }
-                return count >= 0;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (count > 0) {
-                    refreshItem(item);
-                    reloadCurrent();
-                }
-                popSuccessful();
-            }
-
-        };
-        start(task, treeView);
-    }
-
-    public void deleteNodes(TreeItem<DataNode> item) {
-        DataTreeDeleteController.open(this, item != null ? item.getValue() : null);
-    }
-
-    protected void renameNode(TreeItem<DataNode> item) {
-        if (item == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        DataNode dataNode = item.getValue();
-        if (dataNode == null || isRoot(dataNode)) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        String chainName = chainName(item);
-        String name = PopTools.askValue(getBaseTitle(), chainName,
-                message("ChangeNodeTitle"), dataNode.getTitle() + "m");
-        if (name == null || name.isBlank()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private DataNode savedNode;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = nodeTable.query(conn, dataNode.getNodeid());
-                    if (savedNode == null) {
-                        return false;
+                String sql = "SELECT " + BaseNodeTable.NodeFields + " FROM " + nodeTable.getTableName()
+                        + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, node.getNodeid());
+                    try (ResultSet results = statement.executeQuery()) {
+                        while (results != null && results.next()) {
+                            if (task == null || task.isCancelled()) {
+                                return;
+                            }
+                            DataNode childNode = nodeTable.readData(results);
+                            TreeItem<DataNode> childItem = new TreeItem(childNode);
+                            item.getChildren().add(childItem);
+                            if (nodeTable.hasChildren(conn, childNode.getNodeid())) {
+                                childItem.expandedProperty().addListener(
+                                        (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                                            if (newVal && !childItem.isLeaf() && !isLoaded(childItem)) {
+                                                unfold(childItem, false);
+                                            }
+                                        });
+                                TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
+                                childItem.getChildren().add(dummyItem);
+                            }
+                            if (descendants) {
+                                unfold(task, conn, childItem, true);
+                            } else {
+                                childItem.setExpanded(false);
+                            }
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
                     }
-                    savedNode.setUpdateTime(new Date());
-                    savedNode.setTitle(name);
-                    savedNode = nodeTable.updateData(conn, savedNode);
-                    if (savedNode == null) {
-                        return false;
-                    }
-                    conn.commit();
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                }
+
+            }
+            item.setExpanded(true);
+        } catch (Exception e) {
+            error = e.toString();
+        }
+    }
+
+    public void unfoldNodeAncestors(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        TreeItem<DataNode> rootItem = getRootItem();
+        if (rootItem == null) {
+            return;
+        }
+        treeView.setRoot(null);
+        task = new FxSingletonTask<Void>(this) {
+
+            private TreeItem<DataNode> item;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    item = unfoldAncestors(this, conn, rootItem, node);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.error(e);
                     return false;
                 }
+
             }
 
             @Override
             protected void whenSucceeded() {
-                savedNode.setHierarchyNumber(dataNode.getHierarchyNumber());
-                item.setValue(savedNode);
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                treeView.setRoot(rootItem);
                 treeView.refresh();
-                checkCurrent(savedNode);
-                popSuccessful();
-            }
-        };
-        start(task, treeView);
-    }
-
-    protected void reorderNode(TreeItem<DataNode> item) {
-        if (item == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        DataNode nodeValue = item.getValue();
-        if (nodeValue == null || isRoot(nodeValue)) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        float fvalue;
-        try {
-            String value = PopTools.askValue(getBaseTitle(),
-                    chainName(item) + "\n" + message("NodeOrderComments"),
-                    message("ChangeNodeOrder"),
-                    nodeValue.getOrderNumber() + "");
-            fvalue = Float.parseFloat(value);
-        } catch (Exception e) {
-            popError(message("InvalidValue"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private DataNode savedNode;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = nodeTable.query(conn, nodeValue.getNodeid());
-                    if (savedNode == null) {
-                        return false;
-                    }
-                    savedNode.setUpdateTime(new Date());
-                    savedNode.setOrderNumber(fvalue);
-                    savedNode = nodeTable.updateData(conn, savedNode);
-                    return savedNode != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    MyBoxLog.error(e);
-                    return false;
+                if (item != null) {
+                    moveToItem(item);
                 }
-
             }
 
-            @Override
-            protected void whenSucceeded() {
-                item.setValue(savedNode);
-                reorderChildlren(item.getParent());
-                checkCurrent(savedNode);
-                popSuccessful();
-            }
         };
-        start(task, treeView);
+        start(task, thisPane);
     }
 
-    protected void copyNodes(TreeItem<DataNode> item) {
-        DataTreeCopyController.open(this, item != null ? item.getValue() : null);
+    public TreeItem<DataNode> unfoldAncestors(FxTask ptask, Connection conn,
+            TreeItem<DataNode> rootItem, DataNode node) {
+        try {
+            if (conn == null || rootItem == null || node == null) {
+                return null;
+            }
+            TreeItem<DataNode> parent, item;
+            conn.setAutoCommit(true);
+            List<DataNode> ancestors = nodeTable.ancestors(conn, node.getNodeid());
+            parent = rootItem;
+            parent.setExpanded(true);
+            if (ancestors != null) {
+                for (DataNode ancestor : ancestors) {
+                    item = findChild(parent, ancestor);
+                    if (item == null) {
+                        item = new TreeItem(ancestor);
+                        parent.getChildren().add(item);
+                    }
+                    unfold(ptask, conn, item, false);
+                    parent = item;
+                    parent.setExpanded(true);
+                }
+            }
+            item = findChild(parent, node);
+            if (item == null) {
+                item = new TreeItem(node);
+                parent.getChildren().add(item);
+            }
+            if (item.isLeaf() && nodeTable.hasChildren(conn, node.getNodeid())) {
+                TreeItem<DataNode> unloadItem = item;
+                unloadItem.expandedProperty().addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                            if (newVal && !unloadItem.isLeaf() && !isLoaded(unloadItem)) {
+                                unfold(unloadItem, false);
+                            }
+                        });
+                TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
+                unloadItem.getChildren().add(dummyItem);
+            }
+            return item;
+        } catch (Exception e) {
+            error = e.toString();
+            return null;
+        }
     }
 
-    protected void moveNodes(TreeItem<DataNode> item) {
-        DataTreeMoveController.open(this, item != null ? item.getValue() : null);
+    @Override
+    public boolean focusNode(DataNode node) {
+        if (treeView == null || node == null) {
+            return false;
+        }
+        unfoldNodeAncestors(node);
+        return treeView.getRoot() != null;
     }
 
-    protected DataTreeExportController exportNode(TreeItem<DataNode> item) {
-        DataTreeExportController exportController
-                = (DataTreeExportController) childStage(Fxmls.DataTreeExportFxml);
-        exportController.setParamters(this, item);
-        return exportController;
+    public void nodeSaved(DataNode parent, DataNode node) {
+        try {
+            dataController.loadCurrent(node);
+            TreeItem<DataNode> nodeItem = find(node);
+            if (nodeItem != null) {
+                try {
+                    node.setHierarchyNumber(nodeItem.getValue().getHierarchyNumber());
+                    nodeItem.setValue(node);
+                    TreeItem<DataNode> currentParentItem = nodeItem.getParent();
+                    if (currentParentItem.getValue().equals(parent)) {
+                        return;
+                    }
+                    currentParentItem.getChildren().remove(nodeItem);
+                    TreeItem<DataNode> newParentItem = find(parent);
+                    if (newParentItem != null) {
+                        newParentItem.getChildren().add(nodeItem);
+                        reorderChildlren(newParentItem);
+                        return;
+                    }
+                } catch (Exception e) {
+                }
+            }
+            unfoldNodeAncestors(node);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
+
+    public void refreshItem(TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        item.getChildren().clear();
+        item.getChildren().add(new TreeItem(new DataNode()));
+        unfold(item, false);
+    }
+
+    public void reorderChildlren(TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        List<TreeItem<DataNode>> children = item.getChildren();
+        if (children == null || children.isEmpty()) {
+            return;
+        }
+        List<TreeItem<DataNode>> items = new ArrayList<>();
+        for (TreeItem<DataNode> child : children) {
+            items.add(child);
+        }
+        item.getChildren().clear();
+        Collections.sort(items, new Comparator<TreeItem<DataNode>>() {
+            @Override
+            public int compare(TreeItem<DataNode> v1, TreeItem<DataNode> v2) {
+                DataNode node1 = v1.getValue();
+                DataNode node2 = v2.getValue();
+                if (node1 == null) {
+                    return -1;
+                }
+                if (node2 == null) {
+                    return 1;
+                }
+                float diff = node1.getOrderNumber() - node2.getOrderNumber();
+                if (diff == 0) {
+                    return 0;
+                } else if (diff > 0) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+        for (TreeItem<DataNode> child : items) {
+            item.getChildren().add(child);
+        }
+    }
+
 
     /*
-        action
+        tree
      */
-    @FXML
-    protected void importAction(TreeItem<DataNode> item) {
-        DataTreeImportController importController
-                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
-        importController.setParamters(this, item);
+    @Override
+    public List<MenuItem> viewMenuItems(TreeItem<DataNode> item) {
+        if (item == null) {
+            return null;
+        }
+        return dataController.viewMenuItems(null, item.getValue());
     }
 
-    @FXML
-    protected DataTreeImportController importExamples(TreeItem<DataNode> item) {
-        DataTreeImportController importController
-                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
-        importController.importExamples(this, item);
-        return importController;
-    }
-
-    protected void manufactureData() {
-        String tname = nodeTable.getTableName();
-        DataTable dataTable = BaseTableTools.isInternalTable(tname)
-                ? new DataInternalTable() : new DataTable();
-        dataTable.setDataName(nodeTable.getTreeName()).setSheet(tname);
-        Data2DManufactureController.openDef(dataTable);
+    @Override
+    public List<MenuItem> operationsMenuItems(TreeItem<DataNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        return dataController.operationsMenuItems(null, treeItem.getValue());
     }
 
 }

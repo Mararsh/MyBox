@@ -50,15 +50,14 @@ public class DataSelectParentController extends BaseDataSelectController {
         }
     }
 
-    @Override
-    public boolean isSourceNode(DataNode node) {
-        return equalNode(node, sourceNode);
-    }
-
+//    @Override
+//    public boolean isSourceNode(DataNode node) {
+//        return treeController.equalNode(node, sourceNode);
+//    }  // ####
     @FXML
     @Override
     public void okAction() {
-        DataNode targetNode = selectedValue();
+        DataNode targetNode = treeController.selectedValue();
         if (targetNode == null) {
             popError(message("SelectToHandle"));
             return;

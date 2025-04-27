@@ -41,7 +41,7 @@ public class DataSelectSQLController extends BaseDataSelectController {
     @FXML
     @Override
     public void okAction() {
-        DataNode node = selectedValue();
+        DataNode node = treeController.selectedValue();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;

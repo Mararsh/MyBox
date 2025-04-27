@@ -387,7 +387,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 dataController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
             } else {
                 dataController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-                dataController.treeController.initDataTree(nodeTable);
+                dataController.initDataTree(nodeTable);
             }
             if (dataController == null) {
                 finishNotify();
@@ -399,14 +399,14 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 finishNotify();
                 return false;
             }
-            TreeItem rootItem = new TreeItem(rootNode);
+            TreeItem<DataNode> rootItem = new TreeItem(rootNode);
             dataController.treeController.treeView.setRoot(rootItem);
 //            popInformation(message("Handling") + ": " + tableName);
             DataTreeImportController importController = (DataTreeImportController) WindowTools
                     .openStage(Fxmls.DataTreeImportFxml);
 //            importController.setIconified(true);
             importController.miaoCheck.setSelected(false);
-            importController.importExamples(dataController.treeController, rootItem, nodeTable.exampleFileLang(lang));
+            importController.importExamples(dataController, rootNode, nodeTable.exampleFileLang(lang));
             importController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -415,7 +415,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                         DataTreeExportController exportController = (DataTreeExportController) WindowTools
                                 .openStage(Fxmls.DataTreeExportFxml);
 //                        exportController.setIconified(true);
-                        exportController.setParamters(dataController.treeController, rootItem);
+                        exportController.setParamters(dataController, rootNode);
                         exportController.selectAllFormat(false);
                         exportController.treeHtmlCheck.setSelected(true);
                         exportController.openCheck.setSelected(false);

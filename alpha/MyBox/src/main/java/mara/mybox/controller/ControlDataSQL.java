@@ -207,7 +207,7 @@ public class ControlDataSQL extends BaseDataValuesController {
         try {
             DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeSQL());
-            ((ControlDataSQL) controller.dataController).load(sql);
+            ((ControlDataSQL) controller.valuesController).load(sql);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

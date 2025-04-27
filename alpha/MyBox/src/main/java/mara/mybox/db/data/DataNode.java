@@ -2,6 +2,7 @@ package mara.mybox.db.data;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,11 +23,13 @@ public class DataNode extends BaseData {
     public static final String TagsSeparater = ";;;";
 
     protected long nodeid, parentid;
-    protected String title, hierarchyNumber;
+    protected String title, hierarchyNumber, chainName;
     protected float orderNumber;
     protected Date updateTime;
     protected Map<String, Object> values;
     protected final BooleanProperty selected = new SimpleBooleanProperty(false);
+    protected List<DataNode> ancestors;
+    protected DataNode parentNode;
 
     private void init() {
         nodeid = -1;
@@ -308,6 +311,33 @@ public class DataNode extends BaseData {
 
     public BooleanProperty getSelected() {
         return selected;
+    }
+
+    public String getChainName() {
+        return chainName;
+    }
+
+    public DataNode setChainName(String chainName) {
+        this.chainName = chainName;
+        return this;
+    }
+
+    public List<DataNode> getAncestors() {
+        return ancestors;
+    }
+
+    public DataNode setAncestors(List<DataNode> ancestors) {
+        this.ancestors = ancestors;
+        return this;
+    }
+
+    public DataNode getParentNode() {
+        return parentNode;
+    }
+
+    public DataNode setParentNode(DataNode parentNode) {
+        this.parentNode = parentNode;
+        return this;
     }
 
 }
