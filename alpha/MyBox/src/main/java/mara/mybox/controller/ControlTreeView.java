@@ -19,7 +19,6 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
@@ -47,7 +46,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
     protected String dataName;
-    protected DataNode currentNode;
 
     @FXML
     protected TreeTableColumn<DataNode, Long> idColumn;
@@ -57,7 +55,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
     protected TreeTableColumn<DataNode, Date> timeColumn;
 
     /*
-        init
+        tree
      */
     @Override
     public void initTree() {
@@ -83,24 +81,26 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
     public void setParameters(BaseDataTreeController controller) {
         try {
             dataController = controller;
+            nodeTable = dataController.nodeTable;
+            tagTable = dataController.tagTable;
+            nodeTagsTable = dataController.nodeTagsTable;
+            dataName = dataController.dataName;
+            baseName = dataController.baseName;
 
             if (dataController.viewController != null) {
                 viewController = dataController.viewController;
             }
+
+            refreshStyle();
+
+            loadTree(dataController.currentNode);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    /*
-        tree
-     */
-    public void loadTree() {
-        loadTree(null);
-    }
-
-    public void loadTree(DataNode selectNode) {
+    public void loadTree(DataNode node) {
         if (task != null) {
             task.cancel();
         }
@@ -129,8 +129,8 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                         conn.setAutoCommit(true);
                         unfold(this, conn, rootItem, size < AutoExpandThreshold);
                     }
-                    if (selectNode != null) {
-                        selectItem = unfoldAncestors(this, conn, rootItem, selectNode);
+                    if (node != null) {
+                        selectItem = unfoldAncestors(this, conn, rootItem, node);
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -205,10 +205,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         return dataController.equalNode(node1, node2);
     }
 
-    public boolean isRoot(DataNode node) {
-        return dataController.isRoot(node);
-    }
-
     public List<TreeItem<DataNode>> ancestorItems(TreeItem<DataNode> item) {
         if (item == null) {
             return null;
@@ -223,28 +219,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
             ancestor.add(parent);
         }
         return ancestor;
-    }
-
-    public String chainName(TreeItem<DataNode> item) {
-        if (item == null) {
-            return null;
-        }
-        String chainName = "";
-        List<TreeItem<DataNode>> ancestors = ancestorItems(item);
-        if (ancestors != null) {
-            for (TreeItem<DataNode> a : ancestors) {
-                chainName += title(a.getValue()) + TitleSeparater;
-            }
-        }
-        chainName += title(item.getValue());
-        return chainName;
-    }
-
-    public String shortDescription(TreeItem<DataNode> item) {
-        if (item == null) {
-            return null;
-        }
-        return item.getValue().shortDescription(chainName(item));
     }
 
     public boolean equalOrDescendant(FxTask<Void> currentTask, Connection conn,
@@ -351,7 +325,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         start(task, thisPane);
     }
 
-    // item should be unvisible in the treeView while doing this
+    // item should be invisible in the treeView while doing this
     public void unfold(FxTask task, Connection conn, TreeItem<DataNode> item, boolean descendants) {
         try {
             if (item == null || item.isLeaf()) {

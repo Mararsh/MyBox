@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -13,6 +15,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataInternalTable;
@@ -70,57 +73,51 @@ public class BaseDataTreeController extends BaseFileController {
                 return;
             }
 
-            initDataTree(table);
-
-            treeController.setParameters(this);
-            tableController.setParameters(this);
+            nodeTable = table;
+            tagTable = new TableDataTag(nodeTable);
+            nodeTagsTable = new TableDataNodeTag(nodeTable);
+            dataName = nodeTable.getTableName();
+            baseName = baseName + "_" + dataName;
+            baseTitle = nodeTable.getTreeName();
+            setTitle(baseTitle);
 
             if (viewController != null) {
                 viewController.setParent(this);
                 viewController.initStyle = HtmlStyles.styleValue("Table");
             }
 
-            loadTree(node);
+            currentNode = node;
+
+            formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    loadTree();
+                }
+            });
+            loadTree();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void initDataTree(BaseNodeTable table) {
-        try {
-            if (table == null) {
-                return;
-            }
-            nodeTable = table;
-            tagTable = new TableDataTag(nodeTable);
-            nodeTagsTable = new TableDataNodeTag(nodeTable);
-
-            dataName = nodeTable.getTableName();
-            baseName = baseName + "_" + dataName;
-            baseTitle = nodeTable.getTreeName();
-            setTitle(baseTitle);
-
-            treeController.nodeTable = nodeTable;
-            treeController.tagTable = tagTable;
-            treeController.nodeTagsTable = nodeTagsTable;
-            treeController.dataName = dataName;
-            treeController.baseName = baseName;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void loadTree() {
-        loadTree(null);
     }
 
     public void loadTree(DataNode node) {
-        if (treeRadio.isSelected()) {
-            treeController.loadTree(node);
-        } else {
-            tableController.loadTree(node);
+        currentNode = node;
+        loadTree();
+    }
+
+    public void loadTree() {
+        try {
+            dataBox.getChildren().clear();
+            if (treeRadio.isSelected()) {
+                dataBox.getChildren().add(treeBox);
+                treeController.setParameters(this);
+            } else {
+                dataBox.getChildren().add(tableBox);
+                tableController.setParameters(this);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -584,7 +581,7 @@ public class BaseDataTreeController extends BaseFileController {
             @Override
             protected void whenSucceeded() {
                 if (isRoot) {
-                    loadTree(null);
+                    loadTree();
                 } else {
                     reloadCurrent(node);
                 }

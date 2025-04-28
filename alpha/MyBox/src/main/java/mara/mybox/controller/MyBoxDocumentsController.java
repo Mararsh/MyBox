@@ -387,7 +387,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 dataController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
             } else {
                 dataController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-                dataController.initDataTree(nodeTable);
+                dataController.initDataTree(nodeTable, null);
             }
             if (dataController == null) {
                 finishNotify();

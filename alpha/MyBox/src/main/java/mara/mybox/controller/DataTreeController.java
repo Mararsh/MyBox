@@ -15,7 +15,6 @@ import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 
@@ -25,24 +24,6 @@ import mara.mybox.value.Fxmls;
  * @License Apache License Version 2.0
  */
 public class DataTreeController extends BaseDataTreeController {
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            treeController.setParameters(this);
-            tableController.setParameters(this);
-
-            if (viewController != null) {
-                viewController.setParent(this);
-                viewController.initStyle = HtmlStyles.styleValue("Table");
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
 
     /*
         static methods

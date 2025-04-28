@@ -12,8 +12,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -28,7 +26,7 @@ License:    Apache License Version 2.0
                 <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
             </top>
             <center>
-                <VBox>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                     <children>
                         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                             <items>
@@ -99,35 +97,23 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                     <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                        <children>
-                                                      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                                          <tabs>
-                                                              <Tab text="tree">
-                                                                  <content>
-                                                                      <VBox fx:id="treeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                                          <children>
-                                                                              <fx:include fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeView.fxml" VBox.vgrow="ALWAYS" />
-                                                                          </children>
-                                                                      </VBox>
-                                                                  </content>
-                                                              </Tab>
-                                                              <Tab text="table">
-                                                                  <content>
-                                                                      <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                                          <children>
-                                                                              <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeTable.fxml" VBox.vgrow="ALWAYS" />
-                                                                          </children>
-                                                                      </VBox>
-                                                                  </content>
-                                                              </Tab>
-                                                          </tabs>
-                                                      </TabPane>
+                                                          <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                              <children>
+                                                                  <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeTable.fxml" VBox.vgrow="ALWAYS" />
+                                                              </children>
+                                                          </VBox>
+                                                          <VBox fx:id="treeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                              <children>
+                                                                  <fx:include fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeView.fxml" VBox.vgrow="ALWAYS" />
+                                                              </children>
+                                                          </VBox>
                                        </children>
                                     </VBox>
                                             </children>
                                         </VBox>
                                     </content>
                                 </ScrollPane>
-                                <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="921.0">
+                                <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>

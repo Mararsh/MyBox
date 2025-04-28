@@ -586,6 +586,40 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return count;
     }
 
+    public DataNode readAncestors(FxTask<Void> task, Connection conn, DataNode node) {
+        return readAncestors(task, conn, node == null ? RootID : node.getNodeid());
+    }
+
+    public DataNode readAncestors(FxTask<Void> task, Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return null;
+        }
+        String chainName = "";
+        List<DataNode> ancestors = null;
+        DataNode node = query(conn, id);
+        if (node == null) {
+            return node;
+        }
+        DataNode cnode = node;
+        while (!cnode.isRoot() && cnode.getNodeid() != cnode.getParentid()) {
+            if (conn == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            cnode = query(conn, cnode.getParentid());
+            if (cnode == null) {
+                break;
+            }
+            chainName = cnode.getTitle() + TitleSeparater + chainName;
+            if (ancestors == null) {
+                ancestors = new ArrayList<>();
+            }
+            ancestors.add(cnode);
+        }
+        node.setAncestors(ancestors);
+        node.setChainName(chainName + node.getTitle());
+        return node;
+    }
+
     /*
         values
      */
