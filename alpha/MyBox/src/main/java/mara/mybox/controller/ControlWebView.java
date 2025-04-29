@@ -1988,7 +1988,7 @@ public class ControlWebView extends BaseController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         MenuWebviewController.webviewMenu(this);
         return true;
     }

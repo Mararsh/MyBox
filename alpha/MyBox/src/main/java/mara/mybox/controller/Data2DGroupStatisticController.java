@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -528,22 +529,22 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
         if (tab == groupDataTab) {
-            return groupDataController.menuAction();
+            return groupDataController.menuAction(event);
 
         } else if (tab == statisticDataTab) {
-            return statisticDataController.menuAction();
+            return statisticDataController.menuAction(event);
 
         } else if (tab == chartDataTab) {
-            return chartDataController.menuAction();
+            return chartDataController.menuAction(event);
 
         } else if (tab == xyChartTab) {
-            return chartController.menuAction();
+            return chartController.menuAction(event);
 
         } else if (tab == pieChartTab) {
-            return pieChartController.menuAction();
+            return pieChartController.menuAction(event);
 
         }
         return false;

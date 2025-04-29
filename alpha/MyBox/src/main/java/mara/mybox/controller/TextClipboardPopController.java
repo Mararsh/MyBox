@@ -99,7 +99,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         pasteAction();
     }
 

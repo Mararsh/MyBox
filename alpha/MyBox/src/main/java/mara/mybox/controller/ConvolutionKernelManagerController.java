@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -147,7 +148,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     }
 
     @Override
-    public void itemClicked() {
+    public void itemClicked(Event event) {
         editAction();
     }
 

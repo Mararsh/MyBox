@@ -288,8 +288,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     @Override
-    public boolean menuAction() {
-        popContextMenu(null);
+    public boolean menuAction(Event event) {
+        popContextMenu(event);
         return true;
     }
 

@@ -117,11 +117,11 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataNode rootNode = nodeTable.getRoot(conn);
-                    if (rootNode == null) {
+                    dataController.rootNode = nodeTable.getRoot(conn);
+                    if (dataController.rootNode == null) {
                         return false;
                     }
-                    rootItem = new TreeItem(rootNode);
+                    rootItem = new TreeItem(dataController.rootNode);
                     rootItem.setExpanded(true);
                     size = nodeTable.size(conn);
                     if (size > 1) {
@@ -174,6 +174,16 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         try {
             nodeitem.getValue().getSelected().set(true);
         } catch (Exception e) {
+        }
+    }
+
+    public void resetTree() {
+        try {
+            isSettingValues = true;
+            treeView.setRoot(null);
+            isSettingValues = false;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -245,6 +255,10 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         return node.getSelected();
     }
 
+    public DataNode selectedNode() {
+        return selectedValue();
+    }
+
     /*
         operations
      */
@@ -253,7 +267,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         if (item == null) {
             return;
         }
-        dataController.itemClicked(event, item.getValue());
+        dataController.leftClicked(event, item.getValue());
     }
 
     @Override

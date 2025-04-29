@@ -259,7 +259,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         int index = selectedIndix();
         if (index < 0 || index > tableData.size() - 1) {
             return;

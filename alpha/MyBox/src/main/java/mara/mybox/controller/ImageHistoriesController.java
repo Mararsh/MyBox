@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -221,7 +222,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         useHistory();
     }
 

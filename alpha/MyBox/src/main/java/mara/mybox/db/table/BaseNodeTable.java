@@ -360,7 +360,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         try {
-            DataNode newNode = sourceNode.copy()
+            DataNode newNode = sourceNode.cloneAll()
                     .setNodeid(-1).setParentid(targetNode.getNodeid());
             newNode = insertData(conn, newNode);
             if (newNode == null) {
@@ -397,7 +397,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                             return -count;
                         }
                         DataNode childNode = readData(results);
-                        DataNode newNode = childNode.copy()
+                        DataNode newNode = childNode.cloneAll()
                                 .setNodeid(-1).setParentid(targetid);
                         newNode = insertData(conn, newNode);
                         if (newNode == null) {
@@ -847,6 +847,9 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         while (parent != null) {
             parentid = parent.getNodeid();
             childid = child.getNodeid();
+            if (parentid == childid || childid == RootID) {
+                break;
+            }
             String sql = "SELECT nodeid FROM " + tableName
                     + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
             int index = -1;
@@ -872,6 +875,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 return "";
             }
             h = "." + (index + 1) + h;
+
             child = parent;
             parent = query(conn, child.getParentid());
         }

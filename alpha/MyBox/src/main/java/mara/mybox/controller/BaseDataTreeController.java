@@ -109,6 +109,8 @@ public class BaseDataTreeController extends BaseFileController {
     public void loadTree() {
         try {
             dataBox.getChildren().clear();
+            treeController.resetTree();
+            tableController.resetTable();
             if (treeRadio.isSelected()) {
                 dataBox.getChildren().add(treeBox);
                 treeController.setParameters(this);
@@ -186,7 +188,13 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     public DataNode selectedNode() {
-        return rootNode;
+        DataNode node;
+        if (treeRadio.isSelected()) {
+            node = treeController.selectedNode();
+        } else {
+            node = tableController.selectedNode();
+        }
+        return node != null ? node : rootNode;
     }
 
     public DataNode parentNode(DataNode node) {
@@ -196,28 +204,25 @@ public class BaseDataTreeController extends BaseFileController {
     /*
         events
      */
-    public void itemClicked(Event event, DataNode node) {
+    public void leftClicked(Event event, DataNode node) {
         if (node == null) {
             return;
         }
         loadCurrent(node);
-//        clicked(event, UserConfig.getString(baseName + "WhenDoubleClickNode", "PopNode"), node);
     }
 
     public void doubleClicked(Event event, DataNode node) {
         if (node == null) {
             return;
         }
-        popNode(node);
-//        clicked(event, UserConfig.getString(baseName + "WhenDoubleClickNode", "PopMenu"), node);
+        clicked(event, UserConfig.getString(baseName + "WhenDoubleClickNode", "PopNode"), node);
     }
 
     public void rightClicked(Event event, DataNode node) {
         if (node == null) {
             return;
         }
-        popNode(node);
-//        clicked(event, UserConfig.getString(baseName + "WhenRightClickNode", "PopMenu"), node);
+        clicked(event, UserConfig.getString(baseName + "WhenRightClickNode", "PopMenu"), node);
     }
 
     public void clicked(Event event, String clickAction, DataNode node) {
@@ -226,7 +231,7 @@ public class BaseDataTreeController extends BaseFileController {
         }
         switch (clickAction) {
             case "PopMenu":
-                popMenu(event, node);
+                showPopMenu(event, node);
                 break;
             case "EditNode":
                 editNode(node);
@@ -1017,9 +1022,18 @@ public class BaseDataTreeController extends BaseFileController {
         return items;
     }
 
-    public void popMenu(Event event, DataNode node) {
-        if (node == null) {
+    public void showPopMenu(Event event, DataNode node) {
+        List<MenuItem> items = popMenu(event, node);
+        if (items == null) {
             return;
+        }
+        popEventMenu(event, items);
+    }
+
+    public List<MenuItem> popMenu(Event event, DataNode inNode) {
+        DataNode node = inNode != null ? inNode : rootNode;
+        if (node == null) {
+            return null;
         }
         List<MenuItem> items = new ArrayList<>();
 
@@ -1040,7 +1054,7 @@ public class BaseDataTreeController extends BaseFileController {
 
         items.addAll(operationsMenuItems(event, node));
 
-        popNodeMenu(treeController.treeView, items);
+        return items;
     }
 
     public Menu doubleClickMenu(Event fevent, DataNode inNode) {

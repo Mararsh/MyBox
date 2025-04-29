@@ -381,7 +381,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         return false;
     }
 

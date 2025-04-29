@@ -292,7 +292,7 @@ public class MarkdownEditorController extends TextEditorController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         try {
             closePopup();
             Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
@@ -305,8 +305,8 @@ public class MarkdownEditorController extends TextEditorController {
     }
 
     @FXML
-    public boolean menuHtmlAction() {
-        return webViewController.menuAction();
+    public boolean menuHtmlAction(Event event) {
+        return webViewController.menuAction(event);
     }
 
     @FXML

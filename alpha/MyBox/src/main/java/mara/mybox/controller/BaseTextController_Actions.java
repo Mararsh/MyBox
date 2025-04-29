@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.input.Clipboard;
@@ -337,7 +338,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
         MenuTextEditController.textMenu(myController, mainArea, localToScreen.getX(), localToScreen.getY());
         return true;

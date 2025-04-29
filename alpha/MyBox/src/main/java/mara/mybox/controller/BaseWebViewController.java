@@ -373,11 +373,11 @@ public class BaseWebViewController extends BaseFileController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         if (webViewController == null) {
             return false;
         }
-        return webViewController.menuAction();
+        return webViewController.menuAction(event);
     }
 
     @FXML

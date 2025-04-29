@@ -529,7 +529,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         try {
             closePopup();
             if (data2D == null) {
@@ -541,7 +541,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 return true;
 
             } else if (tableRadio.isSelected()) {
-                popTableMenu();
+                popTableMenu(event);
                 return true;
 
             } else if (textsRadio.isSelected()) {

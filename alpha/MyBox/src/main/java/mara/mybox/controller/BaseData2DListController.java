@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
@@ -170,7 +171,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     }
 
     @Override
-    public void itemClicked() {
+    public void itemClicked(Event event) {
         viewAction();
     }
 

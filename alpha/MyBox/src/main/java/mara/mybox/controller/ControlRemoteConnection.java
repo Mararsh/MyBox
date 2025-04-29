@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -97,12 +98,12 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     }
 
     @Override
-    public void itemClicked() {
+    public void itemClicked(Event event) {
         editAction();
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         taskController.startAction();
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -452,19 +453,19 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
         if (tab == modelTab) {
-            return modelController.menuAction();
+            return modelController.menuAction(event);
 
         } else if (tab == resultsTab) {
-            return regressionDataController.menuAction();
+            return regressionDataController.menuAction(event);
 
         } else if (tab == fitTab) {
-            return fittingController.menuAction();
+            return fittingController.menuAction(event);
 
         } else if (tab == residualTab) {
-            return residualController.menuAction();
+            return residualController.menuAction(event);
 
         }
         return false;

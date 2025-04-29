@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -113,11 +114,11 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
                         popMenu.hide();
                     }
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        popTableMenu();
+                        popTableMenu(event);
                     } else if (event.getClickCount() == 1) {
-                        itemClicked();
+                        itemClicked(event);
                     } else if (event.getClickCount() > 1) {
-                        itemDoubleClicked();
+                        itemDoubleClicked(event);
                     }
                 }
             });
@@ -239,10 +240,10 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         notifyLoaded();
     }
 
-    public void itemClicked() {
+    public void itemClicked(Event event) {
     }
 
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         editAction();
     }
 
@@ -537,7 +538,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
     }
 
     @FXML
-    public void popAddMenu(MouseEvent mouseEvent) {
+    public void popAddMenu(Event pEvent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -567,7 +568,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
 
             items.add(new SeparatorMenuItem());
 
-            popEventMenu(mouseEvent, items);
+            popEventMenu(pEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -900,7 +901,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         interface
      */
     @FXML
-    protected void popTableMenu() {
+    protected void popTableMenu(Event event) {
         if (isSettingValues) {
             return;
         }

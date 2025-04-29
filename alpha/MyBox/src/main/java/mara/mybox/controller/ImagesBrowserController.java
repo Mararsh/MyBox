@@ -9,6 +9,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -28,16 +29,16 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.data.ImageInformation;
-import mara.mybox.image.tools.TransformTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ImageViewInfoTask;
-import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ImageViewInfoTask;
+import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.TransformTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -176,7 +177,7 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @Override
-    public void itemClicked() {
+    public void itemClicked(Event event) {
         ImageInformation info = tableView.getSelectionModel().getSelectedItem();
         if (info == null) {
             return;
@@ -1003,12 +1004,12 @@ public class ImagesBrowserController extends ControlImagesTable {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         if (viewBox.isFocused() || viewBox.isFocusWithin()) {
-            viewController.menuAction();
+            viewController.menuAction(event);
             return true;
         }
-        return super.menuAction();
+        return super.menuAction(event);
     }
 
     @FXML

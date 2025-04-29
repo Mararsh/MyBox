@@ -387,7 +387,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         viewAction();
     }
 

@@ -589,7 +589,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
 
             menu = new MenuItem(message("ContextMenu") + "    F6", StyleTools.getIconImageView("iconMenu.png"));
             menu.setOnAction((ActionEvent event) -> {
-                menuAction();
+                menuAction(fevent);
             });
             items.add(menu);
 
@@ -673,7 +673,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         try {
             closePopup();
 

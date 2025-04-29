@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextInputDialog;
@@ -62,7 +63,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         playAction();
     }
 

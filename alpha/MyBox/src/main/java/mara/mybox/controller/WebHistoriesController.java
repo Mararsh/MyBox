@@ -209,7 +209,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         table
      */
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         goAction();
     }
 

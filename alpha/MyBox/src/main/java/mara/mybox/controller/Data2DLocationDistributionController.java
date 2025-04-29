@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -478,13 +479,13 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
         if (tab == chartTab) {
-            return mapController.menuAction();
+            return mapController.menuAction(event);
 
         } else if (tab == dataTab) {
-            return valuesController.menuAction();
+            return valuesController.menuAction(event);
 
         }
         return false;

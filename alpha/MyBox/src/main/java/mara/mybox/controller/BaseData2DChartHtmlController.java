@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -14,7 +15,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
-import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
@@ -48,7 +48,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
             clickListener = new EventListener() {
                 @Override
-                public void handleEvent(Event ev) {
+                public void handleEvent(org.w3c.dom.events.Event ev) {
                     try {
                         Element element = (Element) ev.getTarget();
                         if (!"INPUT".equalsIgnoreCase(element.getTagName())) {
@@ -294,7 +294,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
     @FXML
     @Override
-    public void popFunctionsMenu(javafx.event.Event event) {
+    public void popFunctionsMenu(Event event) {
         if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
         }
@@ -302,14 +302,14 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
 
     @FXML
     @Override
-    public void showFunctionsMenu(javafx.event.Event event) {
+    public void showFunctionsMenu(Event event) {
         webViewController.showFunctionsMenu(event);
     }
 
     @FXML
     @Override
-    public boolean menuAction() {
-        return webViewController.menuAction();
+    public boolean menuAction(Event event) {
+        return webViewController.menuAction(event);
     }
 
     @FXML

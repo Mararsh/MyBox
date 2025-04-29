@@ -11,6 +11,7 @@ import static mara.mybox.value.AppValues.InvalidDouble;
 import static mara.mybox.value.AppValues.InvalidInteger;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.AppValues.InvalidShort;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -37,10 +38,52 @@ public class DataNode extends BaseData {
         title = null;
         updateTime = new Date();
         orderNumber = 0f;
+        ancestors = null;
+        parentNode = null;
+        hierarchyNumber = null;
+        chainName = null;
+        selected.set(false);
     }
 
     public DataNode() {
         init();
+    }
+
+    public DataNode cloneAll() {
+        try {
+            DataNode node = create()
+                    .setNodeid(nodeid)
+                    .setParentid(parentid)
+                    .setTitle(title)
+                    .setOrderNumber(orderNumber)
+                    .setUpdateTime(updateTime)
+                    .setHierarchyNumber(hierarchyNumber)
+                    .setAncestors(ancestors)
+                    .setParentNode(parentNode)
+                    .setChainName(chainName);
+            if (values != null) {
+                for (String key : values.keySet()) {
+                    node.setValue(key, values.get(key));
+                }
+            }
+            node.getSelected().set(selected.get());
+            return node;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String info() {
+        String info = message("ID") + ": " + nodeid + "\n";
+        info += message("Title") + ": " + title + "\n";
+        info += message("ParentID") + ": " + parentid + "\n";
+        info += message("HierarchyNumber") + ": " + hierarchyNumber + "\n";
+        info += message("ChainName") + ": " + chainName + "\n";
+        info += message("OrderNumber") + ": " + orderNumber + "\n";
+        info += message("Values") + ": " + values + "\n";
+        info += "Ancestors: " + (ancestors != null ? ancestors.size() : null) + "\n";
+        info += "ParentNode: " + (parentNode != null ? parentNode.getTitle() : null);
+        return info;
     }
 
     @Override
@@ -191,23 +234,6 @@ public class DataNode extends BaseData {
         }
     }
 
-    public DataNode copy() {
-        try {
-            DataNode node = create()
-                    .setParentid(parentid)
-                    .setTitle(title)
-                    .setOrderNumber(orderNumber);
-            if (values != null) {
-                for (String key : values.keySet()) {
-                    node.setValue(key, values.get(key));
-                }
-            }
-            return node;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public String shortDescription() {
         return shortDescription(title);
     }
@@ -223,7 +249,6 @@ public class DataNode extends BaseData {
         s += name;
         return s;
     }
-
 
     /*
         Static methods
@@ -305,8 +330,9 @@ public class DataNode extends BaseData {
         return hierarchyNumber;
     }
 
-    public void setHierarchyNumber(String hierarchyNumber) {
+    public DataNode setHierarchyNumber(String hierarchyNumber) {
         this.hierarchyNumber = hierarchyNumber;
+        return this;
     }
 
     public BooleanProperty getSelected() {

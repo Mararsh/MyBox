@@ -839,7 +839,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         popAction();
     }
 

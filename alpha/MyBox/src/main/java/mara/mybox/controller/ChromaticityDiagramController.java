@@ -982,26 +982,26 @@ public class ChromaticityDiagramController extends BaseImageController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Tab currentTab = displayPane.getSelectionModel().getSelectedItem();
         if (currentTab == cie21Tab) {
-            d2n1Controller.webViewController.menuAction();
+            d2n1Controller.webViewController.menuAction(event);
             return true;
 
         } else if (currentTab == cie25Tab) {
-            d2n5Controller.webViewController.menuAction();
+            d2n5Controller.webViewController.menuAction(event);
             return true;
 
         } else if (currentTab == cie101Tab) {
-            d10n1Controller.webViewController.menuAction();
+            d10n1Controller.webViewController.menuAction(event);
             return true;
 
         } else if (currentTab == cie105Tab) {
-            d10n5Controller.webViewController.menuAction();
+            d10n5Controller.webViewController.menuAction(event);
             return true;
 
         }
-        return super.menuAction();
+        return super.menuAction(event);
     }
 
 }
