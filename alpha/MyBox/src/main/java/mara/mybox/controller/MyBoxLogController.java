@@ -154,12 +154,12 @@ public class MyBoxLogController extends BaseSysTableController<MyBoxLog> {
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         loadItem();
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         popAction();
     }
 

@@ -23,7 +23,7 @@ public class DataNode extends BaseData {
     public static final String TitleSeparater = " > ";
     public static final String TagsSeparater = ";;;";
 
-    protected long nodeid, parentid;
+    protected long nodeid, parentid, index, childrenSize;
     protected String title, hierarchyNumber, chainName;
     protected float orderNumber;
     protected Date updateTime;
@@ -42,6 +42,8 @@ public class DataNode extends BaseData {
         parentNode = null;
         hierarchyNumber = null;
         chainName = null;
+        index = -1;
+        childrenSize = -1;
         selected.set(false);
     }
 
@@ -60,7 +62,9 @@ public class DataNode extends BaseData {
                     .setHierarchyNumber(hierarchyNumber)
                     .setAncestors(ancestors)
                     .setParentNode(parentNode)
-                    .setChainName(chainName);
+                    .setChainName(chainName)
+                    .setIndex(index)
+                    .setChildrenSize(childrenSize);
             if (values != null) {
                 for (String key : values.keySet()) {
                     node.setValue(key, values.get(key));
@@ -82,7 +86,9 @@ public class DataNode extends BaseData {
         info += message("OrderNumber") + ": " + orderNumber + "\n";
         info += message("Values") + ": " + values + "\n";
         info += "Ancestors: " + (ancestors != null ? ancestors.size() : null) + "\n";
-        info += "ParentNode: " + (parentNode != null ? parentNode.getTitle() : null);
+        info += "ParentNode: " + (parentNode != null ? parentNode.getTitle() : null) + "\n";
+        info += "Index: " + index + "\n";
+        info += message("ChildrenSize") + ": " + childrenSize + "\n";
         return info;
     }
 
@@ -363,6 +369,24 @@ public class DataNode extends BaseData {
 
     public DataNode setParentNode(DataNode parentNode) {
         this.parentNode = parentNode;
+        return this;
+    }
+
+    public long getIndex() {
+        return index;
+    }
+
+    public DataNode setIndex(long index) {
+        this.index = index;
+        return this;
+    }
+
+    public long getChildrenSize() {
+        return childrenSize;
+    }
+
+    public DataNode setChildrenSize(long childrenSize) {
+        this.childrenSize = childrenSize;
         return this;
     }
 

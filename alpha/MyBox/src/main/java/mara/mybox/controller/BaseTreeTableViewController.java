@@ -81,29 +81,31 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     public void initTree() {
         try {
-            hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
-            hierarchyColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {
-                @Override
-                public TreeTableCell<NodeP, String> call(TreeTableColumn<NodeP, String> param) {
+            if (hierarchyColumn != null) {
+                hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
+                hierarchyColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {
+                    @Override
+                    public TreeTableCell<NodeP, String> call(TreeTableColumn<NodeP, String> param) {
 
-                    TreeTableCell<NodeP, String> cell = new TreeTableCell<NodeP, String>() {
-                        @Override
-                        public void updateItem(String item, boolean empty) {
-                            super.updateItem(item, empty);
-                            setGraphic(null);
-                            if (empty || item == null) {
-                                setText(null);
-                                return;
-                            }
-                            TreeItem<NodeP> treeItem = getTreeTableView().getTreeItem(getIndex());
-                            String hierarchyNumber = makeHierarchyNumber(treeItem);
-                            setText(hierarchyNumber);
+                        TreeTableCell<NodeP, String> cell = new TreeTableCell<NodeP, String>() {
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                setGraphic(null);
+                                if (empty || item == null) {
+                                    setText(null);
+                                    return;
+                                }
+                                TreeItem<NodeP> treeItem = getTreeTableView().getTreeItem(getIndex());
+                                String hierarchyNumber = makeHierarchyNumber(treeItem);
+                                setText(hierarchyNumber);
 //                            setHierarchyNumber(treeItem.getValue(), hierarchyNumber);
-                        }
-                    };
-                    return cell;
-                }
-            });
+                            }
+                        };
+                        return cell;
+                    }
+                });
+            }
 
             titleColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
             titleColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {

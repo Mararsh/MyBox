@@ -172,7 +172,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         useBackup();
     }
 

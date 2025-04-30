@@ -62,7 +62,7 @@ public class ControlGeographyCodeView extends BaseMapController {
             @Override
             protected void whenSucceeded() {
                 drawCode(geoCode);
-                treeController.currentNode = savedNode;
+                treeController.viewNode = savedNode;
                 treeController.infoButton.setDisable(false);
                 treeController.editButton.setDisable(false);
             }

@@ -80,7 +80,7 @@ public class ImageClipSelectController extends BaseImageClipController {
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         okAction();
     }
 

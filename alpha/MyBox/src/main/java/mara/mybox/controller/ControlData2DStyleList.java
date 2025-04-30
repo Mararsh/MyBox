@@ -88,7 +88,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         editAction();
     }
 

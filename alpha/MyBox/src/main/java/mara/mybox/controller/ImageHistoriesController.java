@@ -222,7 +222,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         useHistory();
     }
 

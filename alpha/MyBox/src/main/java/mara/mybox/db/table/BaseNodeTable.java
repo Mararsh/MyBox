@@ -340,12 +340,18 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public boolean hasChildren(Connection conn, long nodeid) {
+    public boolean hasChildren(Connection conn, DataNode node) {
+        if (node == null || node.getChildrenSize() == 0) {
+            return false;
+        }
+        if (node.getChildrenSize() > 0) {
+            return true;
+        }
         boolean hasChildren = false;
         String sql = "SELECT nodeid FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, nodeid);
+            statement.setLong(1, node.getNodeid());
             try (ResultSet results = statement.executeQuery()) {
                 hasChildren = results != null && results.next();
             }
@@ -353,6 +359,23 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             MyBoxLog.debug(e);
         }
         return hasChildren;
+    }
+
+    public long childrenSize(Connection conn, long nodeid) {
+        String sql = "SELECT count(nodeid) FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid";
+        long size = -1;
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, nodeid);
+            conn.setAutoCommit(true);
+            ResultSet results = statement.executeQuery();
+            if (results != null && results.next()) {
+                size = results.getInt(1);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return size;
     }
 
     public DataNode copyNode(Connection conn, DataNode sourceNode, DataNode targetNode) {
@@ -486,20 +509,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return chainName;
     }
 
-    public List<DataNode> ancestors(long id) {
-        if (id < 0) {
-            return null;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return ancestors(conn, id);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public List<DataNode> ancestors(Connection conn, long id) {
-        if (conn == null || id < 0) {
+    public List<DataNode> readAncestors(FxTask task, Connection conn, long id) {
+        if (conn == null || id < 0 || (task != null && !task.isWorking())) {
             return null;
         }
         List<DataNode> ancestors = null;
@@ -510,7 +521,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         long parentid = node.getParentid();
         DataNode parent = query(conn, parentid);
         if (parent != null) {
-            ancestors = ancestors(conn, parentid);
+            ancestors = readAncestors(task, conn, parentid);
             if (ancestors == null) {
                 ancestors = new ArrayList<>();
             }
@@ -586,11 +597,11 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return count;
     }
 
-    public DataNode readAncestors(FxTask<Void> task, Connection conn, DataNode node) {
-        return readAncestors(task, conn, node == null ? RootID : node.getNodeid());
+    public DataNode readChain(FxTask<Void> task, Connection conn, DataNode node) {
+        return BaseNodeTable.this.readChain(task, conn, node == null ? RootID : node.getNodeid());
     }
 
-    public DataNode readAncestors(FxTask<Void> task, Connection conn, long id) {
+    public DataNode readChain(FxTask<Void> task, Connection conn, long id) {
         if (conn == null || id < 0) {
             return null;
         }
@@ -600,23 +611,61 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (node == null) {
             return node;
         }
-        DataNode cnode = node;
-        while (!cnode.isRoot() && cnode.getNodeid() != cnode.getParentid()) {
+        DataNode child = node, parent;
+        long parentid, childid;
+        String h = "";
+        while (true) {
             if (conn == null || (task != null && !task.isWorking())) {
                 return null;
             }
-            cnode = query(conn, cnode.getParentid());
-            if (cnode == null) {
+            childid = child.getNodeid();
+            parentid = child.getParentid();
+            if (parentid == childid || childid == RootID) {
                 break;
             }
-            chainName = cnode.getTitle() + TitleSeparater + chainName;
+            parent = query(conn, parentid);
+            if (parent == null) {
+                break;
+            }
+            chainName = parent.getTitle() + TitleSeparater + chainName;
             if (ancestors == null) {
                 ancestors = new ArrayList<>();
             }
-            ancestors.add(cnode);
+            ancestors.add(parent);
+            String sql = "SELECT nodeid FROM " + tableName
+                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
+            int index = -1;
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setLong(1, parentid);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results != null && results.next()) {
+                        index++;
+                        long itemid = results.getLong("nodeid");
+                        if (itemid == childid) {
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                    return null;
+                }
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+                return null;
+            }
+            if (index < 0) {
+                return null;
+            }
+            child.setIndex(index);
+            h = "." + (index + 1) + h;
+            child = parent;
         }
         node.setAncestors(ancestors);
         node.setChainName(chainName + node.getTitle());
+        if (h.startsWith(".")) {
+            h = h.substring(1, h.length());
+        }
+        node.setHierarchyNumber(h);
         return node;
     }
 
@@ -834,56 +883,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
         }
         return s;
-    }
-
-    public String makeHierarchyNumber(Connection conn, DataNode node) {
-        if (node == null || node.getNodeid() == node.getParentid()) {
-            return "";
-        }
-        String h = "";
-        DataNode parent = query(conn, node.getParentid());
-        DataNode child = node;
-        long parentid, childid;
-        while (parent != null) {
-            parentid = parent.getNodeid();
-            childid = child.getNodeid();
-            if (parentid == childid || childid == RootID) {
-                break;
-            }
-            String sql = "SELECT nodeid FROM " + tableName
-                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
-            int index = -1;
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setLong(1, parentid);
-                try (ResultSet results = statement.executeQuery()) {
-                    while (results != null && results.next()) {
-                        index++;
-                        long itemid = results.getLong("nodeid");
-                        if (itemid == childid) {
-                            break;
-                        }
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.console(e);
-                    return null;
-                }
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-                return null;
-            }
-            if (index < 0) {
-                return "";
-            }
-            h = "." + (index + 1) + h;
-
-            child = parent;
-            parent = query(conn, child.getParentid());
-        }
-        if (h.startsWith(".")) {
-            h = h.substring(1, h.length());
-        }
-        node.setHierarchyNumber(h);
-        return h;
     }
 
     public Object majorValue(DataNode node) {

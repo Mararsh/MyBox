@@ -177,7 +177,7 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         ImageInformation info = tableView.getSelectionModel().getSelectedItem();
         if (info == null) {
             return;

@@ -113,12 +113,12 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
                     if (popMenu != null && popMenu.isShowing()) {
                         popMenu.hide();
                     }
-                    if (event.getButton() == MouseButton.SECONDARY) {
-                        popTableMenu(event);
-                    } else if (event.getClickCount() == 1) {
-                        itemClicked(event);
-                    } else if (event.getClickCount() > 1) {
-                        itemDoubleClicked(event);
+                    if (event.getClickCount() > 1) {
+                        doubleClicked(event);
+                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                        rightClicked(event);
+                    } else {
+                        clicked(event);
                     }
                 }
             });
@@ -240,11 +240,15 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         notifyLoaded();
     }
 
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
     }
 
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         editAction();
+    }
+
+    public void rightClicked(Event event) {
+        popTableMenu(event);
     }
 
     public void updateStatus() {

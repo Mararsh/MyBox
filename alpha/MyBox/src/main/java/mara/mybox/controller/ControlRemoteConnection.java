@@ -98,12 +98,12 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         editAction();
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         taskController.startAction();
     }
 

@@ -108,9 +108,8 @@ public class DataNodeTools {
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodeName = node.getTitle();
-            long nodeid = node.getNodeid();
             String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
-            boolean hasChildren = nodeTable.hasChildren(conn, nodeid);
+            boolean hasChildren = nodeTable.hasChildren(conn, node);
             if (hasChildren) {
                 displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
             }

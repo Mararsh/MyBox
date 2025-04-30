@@ -48,7 +48,10 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
     protected String dataName;
 
     @FXML
-    protected TreeTableColumn<DataNode, Long> idColumn;
+    protected TreeTableColumn<DataNode, Long> idColumn, childrenColumn;
+    @FXML
+    protected TreeTableColumn<DataNode, String> hierarchyNumberColumn;
+
     @FXML
     protected TreeTableColumn<DataNode, Float> orderColumn;
     @FXML
@@ -62,10 +65,13 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         try {
             super.initTree();
 
-            if (idColumn != null) {
-                idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
-                idColumn.setCellFactory(new TreeTableIDCell());
-            }
+            idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
+            idColumn.setCellFactory(new TreeTableIDCell());
+
+            hierarchyNumberColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchyNumber"));
+
+            childrenColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("childrenSize"));
+            childrenColumn.setCellFactory(new TreeTableIDCell());
 
             orderColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("orderNumber"));
 
@@ -267,7 +273,12 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         if (item == null) {
             return;
         }
-        dataController.leftClicked(event, item.getValue());
+        DataNode node = item.getValue();
+        if (node == null) {
+            return;
+        }
+        dataController.currentNode = node;
+        dataController.leftClicked(event, node);
     }
 
     @Override
@@ -367,15 +378,25 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                         + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
                 try (PreparedStatement statement = conn.prepareStatement(sql)) {
                     statement.setLong(1, node.getNodeid());
+                    String prefix = node.getHierarchyNumber();
+                    if (prefix == null || prefix.isBlank()) {
+                        prefix = "";
+                    } else {
+                        prefix += ".";
+                    }
+                    long index = 0;
                     try (ResultSet results = statement.executeQuery()) {
                         while (results != null && results.next()) {
                             if (task == null || task.isCancelled()) {
                                 return;
                             }
                             DataNode childNode = nodeTable.readData(results);
+                            childNode.setIndex(index);
+                            childNode.setHierarchyNumber(prefix + (++index));
+                            childNode.setChildrenSize(nodeTable.childrenSize(conn, childNode.getNodeid()));
                             TreeItem<DataNode> childItem = new TreeItem(childNode);
                             item.getChildren().add(childItem);
-                            if (nodeTable.hasChildren(conn, childNode.getNodeid())) {
+                            if (childNode.getChildrenSize() > 0) {
                                 childItem.expandedProperty().addListener(
                                         (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                                             if (newVal && !childItem.isLeaf() && !isLoaded(childItem)) {
@@ -459,7 +480,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
             }
             TreeItem<DataNode> parent, item;
             conn.setAutoCommit(true);
-            List<DataNode> ancestors = nodeTable.ancestors(conn, node.getNodeid());
+            List<DataNode> ancestors = nodeTable.readAncestors(ptask, conn, node.getNodeid());
             parent = rootItem;
             parent.setExpanded(true);
             if (ancestors != null) {
@@ -479,7 +500,8 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                 item = new TreeItem(node);
                 parent.getChildren().add(item);
             }
-            if (item.isLeaf() && nodeTable.hasChildren(conn, node.getNodeid())) {
+            node.setChildrenSize(nodeTable.childrenSize(conn, node.getNodeid()));
+            if (item.isLeaf() && node.getChildrenSize() > 0) {
                 TreeItem<DataNode> unloadItem = item;
                 unloadItem.expandedProperty().addListener(
                         (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
@@ -508,7 +530,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
 
     public void nodeSaved(DataNode parent, DataNode node) {
         try {
-            dataController.loadCurrent(node);
+            dataController.viewNode(node);
             TreeItem<DataNode> nodeItem = find(node);
             if (nodeItem != null) {
                 try {

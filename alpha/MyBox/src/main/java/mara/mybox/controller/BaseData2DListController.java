@@ -171,7 +171,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         viewAction();
     }
 

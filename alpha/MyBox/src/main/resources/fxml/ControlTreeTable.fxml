@@ -20,14 +20,15 @@ License:    Apache License Version 2.0
             <TableColumn fx:id="rowColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="80.0" prefWidth="-1.0" text="%DataRow" />
                 <TableColumn fx:id="titleColumn" editable="false" prefWidth="120.0" text="%Title" />
                 <TableColumn fx:id="hierarchyColumn" editable="false" prefWidth="120.0" text="%HierarchyNumber" />
+            <TableColumn fx:id="childrenColumn" editable="false" prefWidth="100.0" text="%ChildrenSize" />
+            <TableColumn fx:id="orderColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="100.0" text="%OrderNumber" />
                 <TableColumn fx:id="idColumn" editable="false" prefWidth="100.0" text="%ID" />
             <TableColumn fx:id="timeColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="180.0" text="%ModifiedTime" />
-            <TableColumn fx:id="orderColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="100.0" text="%OrderNumber" />
             </columns>
         </TableView>
       <HBox fx:id="paginationBox" nodeOrientation="LEFT_TO_RIGHT">
          <children>
-            <fx:include fx:id="pagination" source="ControlPagination.fxml" />
+            <fx:include fx:id="pagination" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" source="ControlPagination.fxml" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
     </children>

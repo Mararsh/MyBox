@@ -59,7 +59,7 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         ImageClipboard clip = selectedItem();
         if (clip == null) {
             return;

@@ -63,7 +63,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         playAction();
     }
 

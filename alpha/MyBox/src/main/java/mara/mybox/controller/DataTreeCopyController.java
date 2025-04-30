@@ -105,7 +105,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
                 targetController.refreshNode(targetNode);
                 if (dataRunning()) {
                     dataController.refreshNode(targetNode);
-                    dataController.reloadCurrent();
+                    dataController.reloadView();
                 }
             }
         };

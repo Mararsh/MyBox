@@ -822,7 +822,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         openLink();
     }
 

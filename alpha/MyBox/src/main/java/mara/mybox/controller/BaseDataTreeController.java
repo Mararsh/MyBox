@@ -52,7 +52,7 @@ public class BaseDataTreeController extends BaseFileController {
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
     protected String dataName;
-    protected DataNode rootNode, currentNode;
+    protected DataNode rootNode, currentNode, viewNode;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -205,28 +205,19 @@ public class BaseDataTreeController extends BaseFileController {
         events
      */
     public void leftClicked(Event event, DataNode node) {
-        if (node == null) {
-            return;
-        }
-        loadCurrent(node);
+        viewNode(node != null ? node : rootNode);
     }
 
     public void doubleClicked(Event event, DataNode node) {
-        if (node == null) {
-            return;
-        }
         clicked(event, UserConfig.getString(baseName + "WhenDoubleClickNode", "PopNode"), node);
     }
 
     public void rightClicked(Event event, DataNode node) {
-        if (node == null) {
-            return;
-        }
         clicked(event, UserConfig.getString(baseName + "WhenRightClickNode", "PopMenu"), node);
     }
 
     public void clicked(Event event, String clickAction, DataNode node) {
-        if (node == null || clickAction == null) {
+        if (clickAction == null) {
             return;
         }
         switch (clickAction) {
@@ -251,8 +242,8 @@ public class BaseDataTreeController extends BaseFileController {
     /*
         operations
      */
-    protected void nullCurrent() {
-        currentNode = null;
+    protected void nullView() {
+        viewNode = null;
         if (editButton != null) {
             editButton.setVisible(false);
         }
@@ -264,8 +255,8 @@ public class BaseDataTreeController extends BaseFileController {
         }
     }
 
-    public void loadCurrent(DataNode node) {
-        nullCurrent();
+    public void viewNode(DataNode node) {
+        nullView();
         if (viewController == null || node == null) {
             return;
         }
@@ -293,12 +284,12 @@ public class BaseDataTreeController extends BaseFileController {
             @Override
             protected void whenSucceeded() {
                 viewController.loadContent(html);
-                currentNode = stonedNode;
+                viewNode = stonedNode;
                 if (editButton != null) {
                     editButton.setVisible(true);
                 }
                 if (goButton != null) {
-                    goButton.setVisible(nodeTable.isNodeExecutable(stonedNode));
+                    goButton.setVisible(nodeTable.isNodeExecutable(viewNode));
                 }
             }
 
@@ -409,7 +400,7 @@ public class BaseDataTreeController extends BaseFileController {
             @Override
             protected void whenSucceeded() {
                 stonedNode.setHierarchyNumber(node.getHierarchyNumber());
-                reloadCurrent(stonedNode);
+                viewNode(stonedNode);
                 popSuccessful();
             }
         };
@@ -460,7 +451,7 @@ public class BaseDataTreeController extends BaseFileController {
             @Override
             protected void whenSucceeded() {
                 reorderChildlren(parentNode(stonedNode));
-                loadCurrent(stonedNode);
+                viewNode(stonedNode);
                 popSuccessful();
             }
         };
@@ -500,7 +491,7 @@ public class BaseDataTreeController extends BaseFileController {
             @Override
             protected void whenSucceeded() {
                 if (count > 0) {
-                    reloadCurrent(node);
+                    reloadView(node);
                 }
                 popSuccessful();
             }
@@ -542,7 +533,7 @@ public class BaseDataTreeController extends BaseFileController {
 
             @Override
             protected void whenSucceeded() {
-                reloadCurrent();
+                reloadView();
                 popSuccessful();
             }
 
@@ -588,7 +579,7 @@ public class BaseDataTreeController extends BaseFileController {
                 if (isRoot) {
                     loadTree();
                 } else {
-                    reloadCurrent(node);
+                    reloadView(node);
                 }
                 popSuccessful();
             }
@@ -648,13 +639,13 @@ public class BaseDataTreeController extends BaseFileController {
         }
     }
 
-    protected void reloadCurrent() {
-        loadCurrent(currentNode);
+    protected void reloadView() {
+        viewNode(viewNode);
     }
 
-    protected void reloadCurrent(DataNode node) {
-        if (currentNode != null && currentNode.equals(node)) {
-            loadCurrent(node);
+    protected void reloadView(DataNode node) {
+        if (viewNode != null && viewNode.equals(node)) {
+            viewNode(node);
         }
     }
 
@@ -664,7 +655,7 @@ public class BaseDataTreeController extends BaseFileController {
 
     public void nodeSaved(DataNode parent, DataNode node) {
         try {
-            reloadCurrent(node);
+            reloadView(node);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -731,27 +722,27 @@ public class BaseDataTreeController extends BaseFileController {
 
     @FXML
     public void editAction() {
-        if (currentNode == null) {
+        if (viewNode == null) {
             DataNode node = selectedNode();
             if (node == null) {
                 return;
             }
-            currentNode = node;
+            viewNode = node;
         }
-        DataTreeNodeEditorController.editNode(this, currentNode);
+        DataTreeNodeEditorController.editNode(this, viewNode);
     }
 
     @FXML
     @Override
     public void goAction() {
-        if (currentNode == null) {
+        if (viewNode == null) {
             DataNode node = selectedNode();
             if (node == null) {
                 return;
             }
-            currentNode = node;
+            viewNode = node;
         }
-        executeNode(currentNode);
+        executeNode(viewNode);
     }
 
     @FXML

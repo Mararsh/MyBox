@@ -903,7 +903,9 @@ public abstract class BaseTable<D> {
         if (tableName == null) {
             return null;
         }
-        return "SELECT COUNT(*) FROM " + DerbyBase.fixedIdentifier(tableName);
+        return "SELECT COUNT("
+                + (idColumnName != null ? idColumnName : "*")
+                + ") FROM " + DerbyBase.fixedIdentifier(tableName);
     }
 
     public int size() {

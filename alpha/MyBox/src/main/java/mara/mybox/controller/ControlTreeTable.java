@@ -16,6 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -30,6 +31,7 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableIDCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -53,7 +55,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
     @FXML
     protected TableColumn<DataNode, String> rowColumn, hierarchyColumn, titleColumn;
     @FXML
-    protected TableColumn<DataNode, Long> idColumn;
+    protected TableColumn<DataNode, Long> idColumn, childrenColumn;
     @FXML
     protected TableColumn<DataNode, Float> orderColumn;
     @FXML
@@ -116,6 +118,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                 public TableCell<DataNode, String> call(TableColumn<DataNode, String> param) {
                     try {
                         final Hyperlink link = new Hyperlink();
+                        NodeStyleTools.setTooltip(link, new Tooltip(message("View")));
 
                         TableCell<DataNode, String> cell = new TableCell<DataNode, String>() {
 
@@ -131,7 +134,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                                 link.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        loadChildren(getTableRow().getItem());
+                                        dataController.viewNode(getTableRow().getItem());
                                     }
                                 });
                                 setGraphic(link);
@@ -147,9 +150,57 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
             });
 
             hierarchyColumn.setCellValueFactory(new PropertyValueFactory<>("hierarchyNumber"));
+            hierarchyColumn.setCellFactory(new Callback<TableColumn<DataNode, String>, TableCell<DataNode, String>>() {
+
+                @Override
+                public TableCell<DataNode, String> call(TableColumn<DataNode, String> param) {
+                    try {
+                        final Hyperlink link = new Hyperlink();
+                        NodeStyleTools.setTooltip(link, new Tooltip(message("Unfold")));
+
+                        TableCell<DataNode, String> cell = new TableCell<DataNode, String>() {
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                setText(null);
+                                setGraphic(null);
+                                if (empty || item == null) {
+                                    return;
+                                }
+                                DataNode node = getTableRow().getItem();
+                                if (node == null) {
+                                    return;
+                                }
+                                if (node.getChildrenSize() > 0) {
+                                    link.setText(item);
+                                    link.setOnAction(new EventHandler<ActionEvent>() {
+                                        @Override
+                                        public void handle(ActionEvent event) {
+                                            loadChildren(node);
+                                        }
+                                    });
+                                    setGraphic(link);
+                                } else {
+                                    setText(item);
+                                }
+
+                            }
+
+                        };
+
+                        return cell;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            });
 
             idColumn.setCellValueFactory(new PropertyValueFactory<>("nodeid"));
             idColumn.setCellFactory(new TableIDCell());
+
+            childrenColumn.setCellValueFactory(new PropertyValueFactory<>("childrenSize"));
+            childrenColumn.setCellFactory(new TableIDCell());
 
             orderColumn.setCellValueFactory(new PropertyValueFactory<>("orderNumber"));
 
@@ -221,7 +272,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    currentNode = nodeTable.readAncestors(this, conn, node);
+                    currentNode = nodeTable.readChain(this, conn, node);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -231,11 +282,18 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
 
             @Override
             protected void whenSucceeded() {
-                dataController.currentNode = currentNode;
-                if (currentNode.isRoot()) {
-                    dataController.rootNode = currentNode.cloneAll();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (currentNode != null) {
+                    dataController.currentNode = currentNode;
+                    if (currentNode.isRoot()) {
+                        dataController.rootNode = currentNode.cloneAll();
+                    }
+                    loadTableData();
                 }
-                loadTableData();
             }
 
         };
@@ -264,7 +322,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                     + " ROWS FETCH NEXT " + pagination.pageSize + " ROWS ONLY";
             List<DataNode> nodes = nodeTable.query(conn, sql);
             if (nodes != null) {
-                String prefix = nodeTable.makeHierarchyNumber(conn, dataController.currentNode);
+                String prefix = dataController.currentNode.getHierarchyNumber();
                 if (prefix == null || prefix.isBlank()) {
                     prefix = "";
                 } else {
@@ -272,7 +330,9 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                 }
                 long index = pagination.startRowOfCurrentPage;
                 for (DataNode node : nodes) {
+                    node.setIndex(index);
                     node.setHierarchyNumber(prefix + (++index));
+                    node.setChildrenSize(nodeTable.childrenSize(conn, node.getNodeid()));
                 }
             }
             return nodes;
@@ -320,19 +380,30 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                 nodes.addAll(ancestors);
             }
             for (DataNode node : nodes) {
-                Hyperlink link = new Hyperlink(node.getTitle());
-                link.setOnAction(new EventHandler<ActionEvent>() {
+                if (!namesPane.getChildren().isEmpty()) {
+                    namesPane.getChildren().add(0, new Label(">"));
+                }
+                Hyperlink titleLink = new Hyperlink(node.getTitle());
+                NodeStyleTools.setTooltip(titleLink, new Tooltip(message("View")));
+                titleLink.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        dataController.viewNode(node);
+                    }
+                });
+                namesPane.getChildren().add(0, titleLink);
+                long index = node.getIndex();
+                Hyperlink numberLink = new Hyperlink(index >= 0 ? "" + (index + 1) : "0");
+                NodeStyleTools.setTooltip(numberLink, new Tooltip(message("Unfold")));
+                numberLink.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         loadChildren(node);
                     }
                 });
-                if (!namesPane.getChildren().isEmpty()) {
-                    namesPane.getChildren().add(0, new Label(">"));
-                }
-                namesPane.getChildren().add(0, link);
+                namesPane.getChildren().add(0, numberLink);
             }
-            dataController.loadCurrent(dataController.currentNode);
+            dataController.viewNode(dataController.currentNode);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -373,13 +444,18 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         dataController.leftClicked(event, selectedNode());
     }
 
     @Override
-    public void itemDoubleClicked(Event event) {
+    public void doubleClicked(Event event) {
         dataController.doubleClicked(event, selectedNode());
+    }
+
+    @Override
+    public void rightClicked(Event event) {
+        dataController.rightClicked(event, selectedNode());
     }
 
 }

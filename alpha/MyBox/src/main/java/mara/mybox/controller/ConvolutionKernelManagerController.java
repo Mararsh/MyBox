@@ -148,7 +148,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     }
 
     @Override
-    public void itemClicked(Event event) {
+    public void clicked(Event event) {
         editAction();
     }
 

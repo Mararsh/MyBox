@@ -14,8 +14,6 @@ import static mara.mybox.value.Languages.message;
 public class GeographyCodeController extends DataTreeController {
 
     @FXML
-    protected ControlGeographyCodeTree codesController;
-    @FXML
     protected ControlGeographyCodeView mapController;
 
     public GeographyCodeController() {
@@ -23,26 +21,13 @@ public class GeographyCodeController extends DataTreeController {
     }
 
     @Override
-    public void initValues() {
-        try {
-            treeController = codesController;
-
-            super.initValues();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
     public void initControls() {
         try {
             super.initControls();
 
-            codesController.setPatrameters(this);
-            mapController.setPatrameters(this);
-
             initDataTree(new TableNodeGeographyCode(), null);
+
+            mapController.setPatrameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -50,29 +35,29 @@ public class GeographyCodeController extends DataTreeController {
     }
 
     @Override
-    public void loadCurrent(DataNode node) {
-        nullCurrent();
+    protected void nullView() {
+        viewNode = null;
+        infoButton.setDisable(true);
+        editButton.setDisable(true);
+        mapController.clearMap();
+    }
+
+    @Override
+    public void viewNode(DataNode node) {
+        nullView();
         if (node == null) {
             return;
         }
         mapController.loadNode(node);
     }
 
-    @Override
-    protected void nullCurrent() {
-        currentNode = null;
-        infoButton.setDisable(true);
-        editButton.setDisable(true);
-        mapController.clearMap();
-    }
-
     @FXML
     @Override
     public boolean infoAction() {
-        if (currentNode == null) {
+        if (viewNode == null) {
             return false;
         }
-        popNode(currentNode);
+        popNode(viewNode);
         return true;
     }
 
