@@ -35,6 +35,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.HtmlStyles;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
@@ -142,7 +143,8 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return "";
         }
-        return node.getHierarchyNumber() + " " + title(node);
+        String s = node.getHierarchyNumber();
+        return (s != null ? s + " " : "") + title(node);
     }
 
     public String chainName(DataNode node) {
@@ -194,7 +196,8 @@ public class BaseDataTreeController extends BaseFileController {
         } else {
             node = tableController.selectedNode();
         }
-        return node != null ? node : rootNode;
+        return node != null ? node
+                : (currentNode != null ? currentNode : rootNode);
     }
 
     public DataNode parentNode(DataNode node) {
@@ -523,12 +526,7 @@ public class BaseDataTreeController extends BaseFileController {
 
             @Override
             protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    return nodeTable.deleteDecentants(conn, node.getNodeid()) >= 0;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+                return nodeTable.deleteDecentants(node.getNodeid()) >= 0;
             }
 
             @Override
@@ -566,12 +564,7 @@ public class BaseDataTreeController extends BaseFileController {
 
             @Override
             protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    return nodeTable.deleteNode(conn, node.getNodeid()) >= 0;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+                return nodeTable.deleteNode(node.getNodeid()) >= 0;
             }
 
             @Override
@@ -767,17 +760,24 @@ public class BaseDataTreeController extends BaseFileController {
      */
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
-        return viewMenuItems(fevent, null);
+        return viewMenuItems(fevent, null, true);
     }
 
-    public List<MenuItem> viewMenuItems(Event fevent, DataNode inNode) {
+    public List<MenuItem> viewMenuItems(Event fevent, DataNode inNode, boolean withTitle) {
         DataNode node = inNode != null ? inNode : selectedNode();
         if (node == null) {
             return null;
         }
         List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+        if (withTitle) {
+            menu = new MenuItem(StringTools.menuPrefix(label(node)));
+            menu.setStyle(attributeTextStyle());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+        }
 
-        MenuItem menu = new MenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
+        menu = new MenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             popNode(node);
         });
@@ -827,20 +827,22 @@ public class BaseDataTreeController extends BaseFileController {
 
     @Override
     public List<MenuItem> dataMenuItems(Event fevent) {
-        return dataMenuItems(fevent, null);
+        return dataMenuItems(fevent, null, true);
     }
 
-    public List<MenuItem> dataMenuItems(Event fevent, DataNode inNode) {
+    public List<MenuItem> dataMenuItems(Event fevent, DataNode inNode, boolean withTitle) {
         DataNode node = inNode != null ? inNode : selectedNode();
         if (node == null) {
             return null;
         }
         List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(node)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        MenuItem menu;
+        if (withTitle) {
+            menu = new MenuItem(StringTools.menuPrefix(label(node)));
+            menu.setStyle(attributeTextStyle());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+        }
 
         menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -877,15 +879,22 @@ public class BaseDataTreeController extends BaseFileController {
 
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
-        return operationsMenuItems(fevent, null);
+        return operationsMenuItems(fevent, null, true);
     }
 
-    public List<MenuItem> operationsMenuItems(Event fevent, DataNode inNode) {
+    public List<MenuItem> operationsMenuItems(Event fevent, DataNode inNode, boolean withTitle) {
         DataNode node = inNode != null ? inNode : selectedNode();
         if (node == null) {
             return null;
         }
         List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+        if (withTitle) {
+            menu = new MenuItem(StringTools.menuPrefix(label(node)));
+            menu.setStyle(attributeTextStyle());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
+        }
 
         items.addAll(updateMenuItems(fevent, node));
 
@@ -1029,21 +1038,21 @@ public class BaseDataTreeController extends BaseFileController {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(node)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
         Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
-        dataMenu.getItems().addAll(dataMenuItems(event, node));
+        dataMenu.getItems().addAll(dataMenuItems(event, node, false));
         items.add(dataMenu);
 
         Menu treeMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
-        treeMenu.getItems().addAll(viewMenuItems(event, node));
+        treeMenu.getItems().addAll(viewMenuItems(event, node, false));
         items.add(treeMenu);
 
         items.add(new SeparatorMenuItem());
 
-        items.addAll(operationsMenuItems(event, node));
+        items.addAll(operationsMenuItems(event, node, false));
 
         return items;
     }

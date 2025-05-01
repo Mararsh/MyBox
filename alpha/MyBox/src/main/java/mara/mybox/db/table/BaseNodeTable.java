@@ -203,6 +203,15 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return DataNode.create();
     }
 
+    public DataNode createRoot() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return createRoot(conn);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     private DataNode createRoot(Connection conn) {
         try {
             if (clearData(conn) < 0) {
@@ -244,12 +253,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             DataNode root = query(conn, RootID);
             if (root == null) {
                 root = createRoot(conn);
-            } else {
-                if (treeName != null && !treeName.equals(root.getTitle())) {
-                    root.setTitle(treeName);
-                    root = updateData(conn, root);
-                }
             }
+            if (treeName != null && !treeName.equals(root.getTitle())) {
+                root.setTitle(treeName);
+            }
+            root.setHierarchyNumber("").setChainName(root.getTitle());
+            root = updateData(conn, root);
             return root;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -285,15 +294,16 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     // its decentants will be deleted automatically
-    public long deleteNode(Connection conn, long nodeid) {
-        if (conn == null || nodeid < 0) {
+    public long deleteNode(long nodeid) {
+        if (nodeid < 0) {
             return -1;
         }
         if (nodeid == RootID) {
-            return createRoot(conn) != null ? 1 : -3;
+            return createRoot() != null ? 1 : -3;
         }
         String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -302,13 +312,14 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public long deleteDecentants(Connection conn, long nodeid) {
-        if (conn == null || nodeid < 0) {
+    public long deleteDecentants(long nodeid) {
+        if (nodeid < 0) {
             return -1;
         }
         String sql = "DELETE FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -507,27 +518,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
         chainName += node.getTitle();
         return chainName;
-    }
-
-    public List<DataNode> readAncestors(FxTask task, Connection conn, long id) {
-        if (conn == null || id < 0 || (task != null && !task.isWorking())) {
-            return null;
-        }
-        List<DataNode> ancestors = null;
-        DataNode node = query(conn, id);
-        if (node == null || node.isRoot()) {
-            return ancestors;
-        }
-        long parentid = node.getParentid();
-        DataNode parent = query(conn, parentid);
-        if (parent != null) {
-            ancestors = readAncestors(task, conn, parentid);
-            if (ancestors == null) {
-                ancestors = new ArrayList<>();
-            }
-            ancestors.add(parent);
-        }
-        return ancestors;
     }
 
     public DataNode find(Connection conn, long parent, String title) {

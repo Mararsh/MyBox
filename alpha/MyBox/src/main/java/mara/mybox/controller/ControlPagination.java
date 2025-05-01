@@ -24,6 +24,7 @@ import mara.mybox.data.Pagination;
 import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -286,7 +287,7 @@ public class ControlPagination extends BaseController {
 
         MenuItem menu = new MenuItem(message("Page") + " "
                 + (pagination.currentPage + 1) + "/" + pagination.pagesNumber);
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 

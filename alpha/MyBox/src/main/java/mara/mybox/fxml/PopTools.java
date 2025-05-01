@@ -85,6 +85,7 @@ import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -283,7 +284,7 @@ public class PopTools {
             String baseName = controller.getBaseName();
 
             MenuItem menu = new MenuItem(message("HtmlStyle"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 
@@ -381,7 +382,7 @@ public class PopTools {
 
             String baseName = parent.getBaseName();
             MenuItem menu = new MenuItem(message("WindowStyle"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 

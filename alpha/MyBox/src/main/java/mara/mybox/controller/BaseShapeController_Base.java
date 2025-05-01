@@ -47,6 +47,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -414,7 +415,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
         return null;
     }
 
-    /* 
+    /*
         anchor
         index: 0-based
      */
@@ -514,7 +515,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             MenuItem menu;
 
             menu = new MenuItem(title + "\n" + StringTools.menuPrefix(p.text(2)));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 
@@ -1566,7 +1567,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
             String title = message("Line") + " " + (index + 1);
             menu = new MenuItem(title);
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 

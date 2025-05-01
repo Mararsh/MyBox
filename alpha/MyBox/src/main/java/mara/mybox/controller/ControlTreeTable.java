@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,17 +10,12 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
@@ -32,11 +29,9 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableIDCell;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -53,7 +48,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
     protected ControlWebView viewController;
 
     @FXML
-    protected TableColumn<DataNode, String> rowColumn, hierarchyColumn, titleColumn;
+    protected TableColumn<DataNode, String> hierarchyColumn, titleColumn;
     @FXML
     protected TableColumn<DataNode, Long> idColumn, childrenColumn;
     @FXML
@@ -66,50 +61,6 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
     @Override
     public void initColumns() {
         try {
-            rowColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-            rowColumn.setCellFactory(new Callback<TableColumn<DataNode, String>, TableCell<DataNode, String>>() {
-
-                @Override
-                public TableCell<DataNode, String> call(TableColumn<DataNode, String> param) {
-                    try {
-                        final Button rowButton = new Button("");
-                        rowButton.setGraphic(StyleTools.getIconImageView("iconOperation.png"));
-
-                        TableCell<DataNode, String> cell = new TableCell<DataNode, String>() {
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                setText(null);
-                                if (empty || item == null) {
-                                    setGraphic(null);
-                                    return;
-                                }
-                                rowButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        if (UserConfig.getBoolean("TreeTableRowMenuPopWhenMouseHovering", true)) {
-                                            showRowMenu(event, getTableRow().getItem());
-                                        }
-                                    }
-                                });
-                                rowButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        showRowMenu(event, getTableRow().getItem());
-                                    }
-                                });
-                                setGraphic(rowButton);
-                            }
-
-                        };
-
-                        return cell;
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-            });
 
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             titleColumn.setCellFactory(new Callback<TableColumn<DataNode, String>, TableCell<DataNode, String>>() {
@@ -212,31 +163,6 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
         }
     }
 
-    public void showRowMenu(Event fevent, DataNode rowNode) {
-        try {
-            List<MenuItem> items = dataController.popMenu(fevent, rowNode);
-            if (items == null || items.isEmpty()) {
-                return;
-            }
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean("TreeTableRowMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("TreeTableRowMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            popEventMenu(fevent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void setParameters(BaseDataTreeController controller) {
         try {
             dataController = controller;
@@ -300,28 +226,20 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
         start(task);
     }
 
-    public String queryCondition() {
-        queryConditions = null;
-        if (nodeTable != null && dataController.currentNode != null) {
-            queryConditions = " parentid=" + dataController.currentNode.getNodeid()
-                    + " AND parentid<>nodeid ";
-        }
-        return queryConditions;
-    }
-
     @Override
     public List<DataNode> readPageData(FxTask currentTask, Connection conn) {
-        try {
-            if (nodeTable == null || dataController.currentNode == null) {
-                return null;
-            }
-            String sql = "SELECT * FROM " + nodeTable.tableName
-                    + " WHERE " + queryCondition()
-                    + " ORDER BY " + nodeTable.orderColumns
-                    + " OFFSET " + pagination.startRowOfCurrentPage
-                    + " ROWS FETCH NEXT " + pagination.pageSize + " ROWS ONLY";
-            List<DataNode> nodes = nodeTable.query(conn, sql);
-            if (nodes != null) {
+        if (nodeTable == null || dataController.currentNode == null) {
+            return null;
+        }
+        List<DataNode> nodes = new ArrayList<>();
+        String sql = "SELECT * FROM " + nodeTable.tableName
+                + " WHERE parentid=? AND parentid<>nodeid "
+                + " ORDER BY " + nodeTable.orderColumns
+                + " OFFSET " + pagination.startRowOfCurrentPage
+                + " ROWS FETCH NEXT " + pagination.pageSize + " ROWS ONLY";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, dataController.currentNode.getNodeid());
+            try (ResultSet results = statement.executeQuery()) {
                 String prefix = dataController.currentNode.getHierarchyNumber();
                 if (prefix == null || prefix.isBlank()) {
                     prefix = "";
@@ -329,40 +247,41 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                     prefix += ".";
                 }
                 long index = pagination.startRowOfCurrentPage;
-                for (DataNode node : nodes) {
-                    node.setIndex(index);
-                    node.setHierarchyNumber(prefix + (++index));
-                    node.setChildrenSize(nodeTable.childrenSize(conn, node.getNodeid()));
+                while (results != null && results.next()) {
+                    if (currentTask == null || currentTask.isCancelled()) {
+                        return null;
+                    }
+                    DataNode childNode = nodeTable.readData(results);
+                    childNode.setIndex(index);
+                    childNode.setHierarchyNumber(prefix + (++index));
+                    childNode.setChildrenSize(nodeTable.childrenSize(conn, childNode.getNodeid()));
+                    nodes.add(childNode);
+                }
+            } catch (Exception e) {
+                if (currentTask != null) {
+                    currentTask.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e);
                 }
             }
-            return nodes;
         } catch (Exception e) {
             if (currentTask != null) {
                 currentTask.setError(e.toString());
             } else {
                 MyBoxLog.error(e);
             }
-            return null;
         }
+        return nodes;
     }
 
     @Override
     public long readDataSize(FxTask currentTask, Connection conn) {
-        try {
-            if (nodeTable == null || dataController.currentNode == null) {
-                return 0;
-            }
-            long size = nodeTable.conditionSize(conn, queryCondition());
-            dataSizeLoaded = true;
-            return size;
-        } catch (Exception e) {
-            if (currentTask != null) {
-                currentTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return 0;
+        if (nodeTable == null || dataController.currentNode == null) {
+            return -1;
         }
+        long size = nodeTable.childrenSize(conn, dataController.currentNode.getNodeid());
+        dataSizeLoaded = size >= 0;
+        return size;
     }
 
     @Override
@@ -415,7 +334,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
             if (nodeTable == null || dataController.currentNode == null) {
                 return -1;
             }
-            return nodeTable.deleteCondition(queryCondition());
+            return nodeTable.deleteDecentants(dataController.currentNode.getNodeid());
         } catch (Exception e) {
             if (currentTask != null) {
                 currentTask.setError(e.toString());
@@ -440,7 +359,8 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
     }
 
     public DataNode selectedNode() {
-        return tableView.getSelectionModel().getSelectedItem();
+        DataNode node = tableView.getSelectionModel().getSelectedItem();
+        return node != null ? node : dataController.currentNode;
     }
 
     @Override

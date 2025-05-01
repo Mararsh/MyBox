@@ -26,8 +26,6 @@ import mara.mybox.value.UserConfig;
  */
 public class SettingCustomColorsController extends BaseChildController {
 
-    protected Color darkColor, lightColor;
-
     @FXML
     protected ControlColorSet darkColorSetController, lightColorSetController;
     @FXML
@@ -43,22 +41,20 @@ public class SettingCustomColorsController extends BaseChildController {
                 getMyStage().setTitle(parent.getTitle());
             }
 
-            darkColor = Colors.customizeColorDark();
+            Color darkColor = Colors.customizeColorDark();
             darkColorSetController.init(this, baseName + "DarkColor", darkColor).setColor(darkColor);
             darkColorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    darkColor = darkColorSetController.color();
                     updateView();
                 }
             });
 
-            lightColor = Colors.customizeColorLight();
+            Color lightColor = Colors.customizeColorLight();
             lightColorSetController.init(this, baseName + "LightColor", lightColor).setColor(lightColor);
             lightColorSetController.setNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    lightColor = lightColorSetController.color();
                     updateView();
                 }
             });
@@ -72,13 +68,22 @@ public class SettingCustomColorsController extends BaseChildController {
 
     public void updateView() {
         try {
-            Image image = StyleTools.makeImage(null, "iconAdd.png", darkColor, lightColor);
+            Image image = StyleTools.makeImage(null, "iconAdd.png",
+                    darkColorSetController.color(),
+                    lightColorSetController.color());
             if (image != null) {
                 exampleView.setImage(image);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    @FXML
+    public void defaultAction() {
+        darkColorSetController.setColor(Color.web("0x8B008BFF"));
+        lightColorSetController.setColor(Color.web("0xF8F8FFFF"));
+        updateView();
     }
 
     @FXML

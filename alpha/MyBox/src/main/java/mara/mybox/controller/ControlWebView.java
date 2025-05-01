@@ -53,6 +53,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
@@ -851,7 +852,7 @@ public class ControlWebView extends BaseController {
             title += "\n" + message("Address") + ": " + StringTools.menuPrefix(finalAddress);
         }
         MenuItem menu = new MenuItem(title);
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
@@ -1093,7 +1094,7 @@ public class ControlWebView extends BaseController {
 
             if (address != null && !address.isBlank()) {
                 menu = new MenuItem(StringTools.menuPrefix(address));
-                menu.setStyle("-fx-text-fill: #2e598a;");
+                menu.setStyle(attributeTextStyle());
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
             }
@@ -1310,7 +1311,7 @@ public class ControlWebView extends BaseController {
 
             if (hasAddress) {
                 menu = new MenuItem(StringTools.menuPrefix(address));
-                menu.setStyle("-fx-text-fill: #2e598a;");
+                menu.setStyle(attributeTextStyle());
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
             }

@@ -35,6 +35,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.ImageViewInfoTask;
 import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.image.data.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
@@ -773,7 +774,7 @@ public class ImagesBrowserController extends ControlImagesTable {
         MenuItem menu;
 
         menu = new MenuItem(StringTools.menuSuffix(info.getFile().getAbsolutePath()));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
 
         items.add(new SeparatorMenuItem());

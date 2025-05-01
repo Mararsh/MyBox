@@ -36,6 +36,7 @@ import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -257,7 +258,7 @@ public class ColorPalettePopupController extends BaseChildController {
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Examples"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
 
             items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));

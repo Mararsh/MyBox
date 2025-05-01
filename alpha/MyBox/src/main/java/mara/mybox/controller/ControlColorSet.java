@@ -101,16 +101,11 @@ public class ControlColorSet extends BaseController {
         thisPane.getChildren().remove(rect);
     }
 
+    // Notify is not set in this way
     public void setColor(Color color) {
         rect.setFill(color);
         NodeStyleTools.setTooltip(rect, message("ClickColorToPalette") + "\n---------\n"
                 + FxColorTools.colorNameDisplay(tableColor, color));
-    }
-
-    public void initColor(Color color) {
-        isSettingValues = true;
-        setColor(color);
-        isSettingValues = false;
     }
 
     public Color color() {
@@ -142,9 +137,7 @@ public class ControlColorSet extends BaseController {
     }
 
     public void asSaved() {
-        isSettingValues = true;
         setColor(saved());
-        isSettingValues = false;
     }
 
     public Connection getConn() {
@@ -162,8 +155,16 @@ public class ControlColorSet extends BaseController {
                     WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.CurrentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
-            setNotify.bind(controller.setNotify);
             controller.load(this, rect);
+            controller.setNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    setNotify.set(!setNotify.get());
+                }
+            });
 
             popup = makePopup();
             popup.getContent().add(pane);

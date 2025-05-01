@@ -30,6 +30,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.RecentVisitMenu;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
@@ -227,7 +228,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 if (his != null && !his.isEmpty()) {
                     items.add(new SeparatorMenuItem());
                     menu = new MenuItem(Languages.message("RecentAccessedFiles"));
-                    menu.setStyle("-fx-text-fill: #2e598a;");
+                    menu.setStyle(attributeTextStyle());
                     items.add(menu);
                     for (VisitHistory h : his) {
                         final String fname = h.getResourceValue();
@@ -243,7 +244,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 }
 
                 menu = new MenuItem(Languages.message("Examples"));
-                menu.setStyle("-fx-text-fill: #2e598a;");
+                menu.setStyle(attributeTextStyle());
                 items.add(menu);
                 menu = new MenuItem("http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8");
                 menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -266,7 +267,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 if (paths != null && !paths.isEmpty()) {
                     items.add(new SeparatorMenuItem());
                     menu = new MenuItem(Languages.message("RecentAccessedDirectories"));
-                    menu.setStyle("-fx-text-fill: #2e598a;");
+                    menu.setStyle(attributeTextStyle());
                     items.add(menu);
                     for (String path : paths) {
                         menu = new MenuItem(path);

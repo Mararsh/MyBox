@@ -28,14 +28,15 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -288,7 +289,7 @@ public class ControlColorPaletteSelector extends BaseController {
         boolean isAll = palette.getName().equals(allColors.getName());
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu = new MenuItem(StringTools.menuPrefix(palette.getName()));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 

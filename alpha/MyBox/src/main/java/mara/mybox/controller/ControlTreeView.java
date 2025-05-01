@@ -113,6 +113,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         clearTree();
         task = new FxSingletonTask<Void>(this) {
 
+            private DataNode rootNode;
             private TreeItem<DataNode> rootItem, selectItem;
             private int size;
 
@@ -123,11 +124,12 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    dataController.rootNode = nodeTable.getRoot(conn);
-                    if (dataController.rootNode == null) {
+                    rootNode = nodeTable.getRoot(conn);
+                    if (rootNode == null) {
                         return false;
                     }
-                    rootItem = new TreeItem(dataController.rootNode);
+                    rootNode.setChildrenSize(nodeTable.childrenSize(conn, rootNode.getNodeid()));
+                    rootItem = new TreeItem(rootNode);
                     rootItem.setExpanded(true);
                     size = nodeTable.size(conn);
                     if (size > 1) {
@@ -147,6 +149,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
 
             @Override
             protected void whenSucceeded() {
+                dataController.rootNode = rootNode;
                 setRoot(rootItem);
                 if (selectItem != null) {
                     focusItem(selectItem);
@@ -480,7 +483,8 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
             }
             TreeItem<DataNode> parent, item;
             conn.setAutoCommit(true);
-            List<DataNode> ancestors = nodeTable.readAncestors(ptask, conn, node.getNodeid());
+            node = nodeTable.readChain(ptask, conn, node);
+            List<DataNode> ancestors = node.getAncestors();
             parent = rootItem;
             parent.setExpanded(true);
             if (ancestors != null) {
@@ -613,7 +617,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         if (item == null) {
             return null;
         }
-        return dataController.viewMenuItems(null, item.getValue());
+        return dataController.viewMenuItems(null, item.getValue(), false);
     }
 
     @Override
@@ -621,7 +625,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         if (treeItem == null) {
             return null;
         }
-        return dataController.operationsMenuItems(null, treeItem.getValue());
+        return dataController.operationsMenuItems(null, treeItem.getValue(), false);
     }
 
 }

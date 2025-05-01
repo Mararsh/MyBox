@@ -28,6 +28,7 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
@@ -467,7 +468,7 @@ public class RemotePathManageController extends FilesTreeController {
 
         List<MenuItem> items = new ArrayList<>();
         MenuItem menuItem = new MenuItem(filename);
-        menuItem.setStyle("-fx-text-fill: #2e598a;");
+        menuItem.setStyle(attributeTextStyle());
         items.add(menuItem);
         items.add(new SeparatorMenuItem());
 

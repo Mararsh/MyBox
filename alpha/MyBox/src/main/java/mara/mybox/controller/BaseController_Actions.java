@@ -782,7 +782,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         items.addAll(menuItems);
 
         MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-//        menu.setStyle("-fx-text-fill: #2e598a;");
+//        menu.setStyle(attributeTextStyle());
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();

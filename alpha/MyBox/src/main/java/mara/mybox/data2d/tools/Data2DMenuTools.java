@@ -25,6 +25,7 @@ import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -717,7 +718,7 @@ public class Data2DMenuTools {
             items.add(new SeparatorMenuItem());
 
             MenuItem guidemenu = new MenuItem(message("UserGuideDataTools"));
-            guidemenu.setStyle("-fx-text-fill: #2e598a;");
+            guidemenu.setStyle(attributeTextStyle());
             guidemenu.setOnAction((ActionEvent event) -> {
                 if (Languages.isChinese()) {
                     controller.browse("https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf");

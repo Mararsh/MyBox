@@ -17,7 +17,6 @@ License:    Apache License Version 2.0
       <FlowPane fx:id="namesPane" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" />
         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
-            <TableColumn fx:id="rowColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="80.0" prefWidth="-1.0" text="%DataRow" />
                 <TableColumn fx:id="titleColumn" editable="false" prefWidth="120.0" text="%Title" />
                 <TableColumn fx:id="hierarchyColumn" editable="false" prefWidth="120.0" text="%HierarchyNumber" />
             <TableColumn fx:id="childrenColumn" editable="false" prefWidth="100.0" text="%ChildrenSize" />

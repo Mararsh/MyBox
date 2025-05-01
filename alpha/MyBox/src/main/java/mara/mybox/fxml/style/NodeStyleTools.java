@@ -17,6 +17,7 @@ import javafx.util.Duration;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -29,8 +30,10 @@ public class NodeStyleTools {
         return "-fx-background-color: #FFF0F5;";
     }
 
-    public static String blueTextStyle() {
-        return "-fx-text-fill: #2e598a;";
+    public static String attributeTextStyle() {
+        return "-fx-text-fill: #"
+                + Colors.colorValue(AppVariables.ControlColor, true)
+                + ";";
     }
 
     public static String redTextStyle() {
@@ -39,10 +42,6 @@ public class NodeStyleTools {
 
     public static String darkRedTextStyle() {
         return "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
-    }
-
-    public static String darkBlueTextStyle() {
-        return "-fx-text-fill: #2e598a;  -fx-font-weight: bolder;";
     }
 
     public static String selectedDataStyle() {

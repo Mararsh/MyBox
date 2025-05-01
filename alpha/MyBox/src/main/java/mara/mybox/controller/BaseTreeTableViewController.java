@@ -34,6 +34,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -504,7 +505,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
@@ -613,7 +614,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     public List<MenuItem> makeFunctionsMenu(TreeItem<NodeP> item) {
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
@@ -745,7 +746,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 

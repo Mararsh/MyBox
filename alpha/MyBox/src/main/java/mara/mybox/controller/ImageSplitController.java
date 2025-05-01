@@ -24,12 +24,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-import mara.mybox.image.data.ImageInformation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.tools.IntTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -671,7 +672,7 @@ public class ImageSplitController extends BaseShapeController {
             }
 
             menu = new MenuItem(name + " " + index + "\n" + type + ": " + currentValue);
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 
@@ -803,7 +804,7 @@ public class ImageSplitController extends BaseShapeController {
             double px = scale(p.getX());
             double py = scale(p.getY());
             menu = new MenuItem(message("Point") + ": " + px + ", " + py);
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 

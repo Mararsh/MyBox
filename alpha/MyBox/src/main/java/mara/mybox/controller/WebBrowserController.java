@@ -26,6 +26,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -131,7 +132,7 @@ public class WebBrowserController extends BaseController {
             MenuItem menu;
             if (title != null && !title.isBlank()) {
                 menu = new MenuItem(StringTools.menuPrefix(title));
-                menu.setStyle("-fx-text-fill: #2e598a;");
+                menu.setStyle(attributeTextStyle());
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
             }
