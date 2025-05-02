@@ -11,7 +11,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
@@ -128,7 +127,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                                     link.setOnAction(new EventHandler<ActionEvent>() {
                                         @Override
                                         public void handle(ActionEvent event) {
-                                            loadChildren(node);
+                                            loadNode(node);
                                         }
                                     });
                                     setGraphic(link);
@@ -175,18 +174,24 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
 
             refreshStyle();
 
-            loadChildren(dataController.currentNode);
+            loadNode(dataController.currentNode);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void loadChildren(DataNode node) {
+    public void loadNode(DataNode node) {
+        loadNode(node, true);
+    }
+
+    public void loadNode(DataNode node, boolean refreshChildren) {
         if (task != null) {
             task.cancel();
         }
-        resetTable();
+        if (refreshChildren) {
+            resetTable();
+        }
         task = new FxSingletonTask<Void>(this) {
 
             private DataNode currentNode;
@@ -218,7 +223,11 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                     if (currentNode.isRoot()) {
                         dataController.rootNode = currentNode.cloneAll();
                     }
-                    loadTableData();
+                    if (refreshChildren) {
+                        loadTableData();
+                    } else {
+                        writeNamesPane();
+                    }
                 }
             }
 
@@ -286,8 +295,13 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
 
     @Override
     public void postLoadedTableData() {
+        super.postLoadedTableData();
+        writeNamesPane();
+        dataController.viewNode(dataController.currentNode);
+    }
+
+    public void writeNamesPane() {
         try {
-            super.postLoadedTableData();
             namesPane.getChildren().clear();
             if (nodeTable == null || dataController.currentNode == null) {
                 return;
@@ -299,30 +313,25 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                 nodes.addAll(ancestors);
             }
             for (DataNode node : nodes) {
-                if (!namesPane.getChildren().isEmpty()) {
-                    namesPane.getChildren().add(0, new Label(">"));
-                }
-                Hyperlink titleLink = new Hyperlink(node.getTitle());
-                NodeStyleTools.setTooltip(titleLink, new Tooltip(message("View")));
-                titleLink.setOnAction(new EventHandler<ActionEvent>() {
+                Hyperlink unfoldLink = new Hyperlink(">");
+                NodeStyleTools.setTooltip(unfoldLink, new Tooltip(message("Unfold")));
+                unfoldLink.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        loadNode(node);
+                    }
+                });
+                namesPane.getChildren().add(0, unfoldLink);
+                Hyperlink viewLink = new Hyperlink(node.getTitle());
+                NodeStyleTools.setTooltip(viewLink, new Tooltip(message("View")));
+                viewLink.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         dataController.viewNode(node);
                     }
                 });
-                namesPane.getChildren().add(0, titleLink);
-                long index = node.getIndex();
-                Hyperlink numberLink = new Hyperlink(index >= 0 ? "" + (index + 1) : "0");
-                NodeStyleTools.setTooltip(numberLink, new Tooltip(message("Unfold")));
-                numberLink.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        loadChildren(node);
-                    }
-                });
-                namesPane.getChildren().add(0, numberLink);
+                namesPane.getChildren().add(0, viewLink);
             }
-            dataController.viewNode(dataController.currentNode);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -376,6 +385,52 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
     @Override
     public void rightClicked(Event event) {
         dataController.rightClicked(event, selectedNode());
+    }
+
+    public boolean refreshNode(DataNode node) {
+        if (nodeTable == null
+                || dataController.currentNode == null
+                || !dataController.currentNode.equals(node)) {
+            return false;
+        }
+        loadNode(dataController.currentNode);
+        return true;
+    }
+
+    public void nodeSaved(DataNode parent, DataNode node) {
+        try {
+            if (nodeTable == null || dataController.currentNode == null) {
+                return;
+            }
+
+            List<DataNode> nodes = new ArrayList<>();
+            nodes.add(dataController.currentNode);
+            List<DataNode> ancestors = dataController.currentNode.getAncestors();
+            if (ancestors != null) {
+                nodes.addAll(ancestors);
+            }
+            for (DataNode anode : nodes) {
+                if (anode.equals(node)) {
+                    loadNode(dataController.currentNode, false);
+                    return;
+                }
+            }
+
+            long cid = dataController.currentNode.getNodeid();
+            for (int i = 0; i < tableData.size(); i++) {
+                DataNode tnode = tableData.get(i);
+                if (tnode.equals(node)) {
+                    if (node.getParentid() != cid) {
+                        tableData.remove(tnode);
+                    } else {
+                        tableData.set(i, node);
+                    }
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

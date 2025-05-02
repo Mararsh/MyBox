@@ -342,7 +342,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         tableView.refresh();
         if (WindowTools.isRunning(dataController)) {
             dataController.refreshNode(parentNode);
-            dataController.reloadView();
+
             if (isExmaple) {
                 close();
             }

@@ -439,8 +439,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             @Override
             protected void whenSucceeded() {
                 if (dataRunning()) {
-                    dataController.treeController.nodeSaved(parentNode, savedNode);
-                    dataController.popSaved();
+                    dataController.nodeSaved(parentNode, savedNode);
                 } else {
                     DataTreeController c = DataTreeController.open(nodeTable, savedNode);
                     c.popSaved();

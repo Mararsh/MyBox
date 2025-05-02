@@ -29,12 +29,12 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -537,7 +537,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
         List<MenuItem> items = new ArrayList<>();
         if (!treeItem.isLeaf()) {
-            items.addAll(foldMenuItems(treeItem));
+            items.addAll(foldMenuItems());
 
             items.add(new SeparatorMenuItem());
         }
@@ -628,7 +628,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return viewMenuItems(item);
     }
 
-    public List<MenuItem> foldMenuItems(TreeItem<NodeP> item) {
+    public List<MenuItem> foldMenuItems() {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));

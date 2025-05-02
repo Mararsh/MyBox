@@ -151,15 +151,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return null;
         }
-        String chainName = "";  // #######
-//        List<TreeItem<DataNode>> ancestors = ancestorItems(item);
-//        if (ancestors != null) {
-//            for (TreeItem<DataNode> a : ancestors) {
-//                chainName += title(a.getValue()) + TitleSeparater;
-//            }
-//        }
-//        chainName += title(item.getValue());
-        return chainName;
+        return node.getChainName();
     }
 
     public void setHierarchyNumber(DataNode node, String hierarchyNumber) {
@@ -183,10 +175,7 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     public boolean isLeaf(DataNode node) {
-        if (node == null) {
-            return false;
-        }
-        return false;
+        return node == null ? false : node.getChildrenSize() == 0;
     }
 
     public DataNode selectedNode() {
@@ -466,7 +455,11 @@ public class BaseDataTreeController extends BaseFileController {
             popError(message("SelectToHandle"));
             return;
         }
-        // ###########
+        if (treeRadio.isSelected()) {
+            treeController.reorderChildlren(node);
+        } else {
+            tableController.refreshNode(node);
+        }
     }
 
     protected void trimDescendantsOrders(DataNode node, boolean allDescendants) {
@@ -485,7 +478,7 @@ public class BaseDataTreeController extends BaseFileController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     count = nodeTable.trimDescedentsOrders(this, conn, node, allDescendants, 0);
                 } catch (Exception e) {
-//                    error = e.toString();
+                    error = e.toString();
 //                    return false;
                 }
                 return count >= 0;
@@ -494,7 +487,7 @@ public class BaseDataTreeController extends BaseFileController {
             @Override
             protected void whenSucceeded() {
                 if (count > 0) {
-                    reloadView(node);
+                    refreshNode(node);
                 }
                 popSuccessful();
             }
@@ -531,7 +524,7 @@ public class BaseDataTreeController extends BaseFileController {
 
             @Override
             protected void whenSucceeded() {
-                reloadView();
+                refreshNode(node);
                 popSuccessful();
             }
 
@@ -572,7 +565,7 @@ public class BaseDataTreeController extends BaseFileController {
                 if (isRoot) {
                     loadTree();
                 } else {
-                    reloadView(node);
+                    refreshNode(node);
                 }
                 popSuccessful();
             }
@@ -630,10 +623,12 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return;
         }
-    }
-
-    protected void reloadView() {
-        viewNode(viewNode);
+        if (treeRadio.isSelected()) {
+            treeController.refreshNode(node);
+        } else {
+            tableController.loadNode(node);
+        }
+        reloadView(node);
     }
 
     protected void reloadView(DataNode node) {
@@ -648,8 +643,13 @@ public class BaseDataTreeController extends BaseFileController {
 
     public void nodeSaved(DataNode parent, DataNode node) {
         try {
+            if (treeRadio.isSelected()) {
+                treeController.nodeSaved(parent, node);
+            } else {
+                tableController.nodeSaved(parent, node);
+            }
             reloadView(node);
-
+            popSaved();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -795,19 +795,27 @@ public class BaseDataTreeController extends BaseFileController {
         });
         items.add(menu);
 
+        items.add(new SeparatorMenuItem());
+
         menu = new MenuItem(message("Locate"), StyleTools.getIconImageView("iconTarget.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             locate();
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
+        if (!isLeaf(node)) {
+            if (treeRadio.isSelected()) {
+                items.addAll(treeController.foldMenuItems());
 
-//        if (!item.isLeaf()) {
-//            items.addAll(foldMenuItems(item));
-//
-//            items.add(new SeparatorMenuItem());
-//        }
+            } else {
+                menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    tableController.loadNode(node);
+                });
+                items.add(menu);
+            }
+
+        }
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             refreshAction();

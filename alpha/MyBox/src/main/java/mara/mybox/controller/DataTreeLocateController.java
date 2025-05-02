@@ -117,7 +117,7 @@ public class DataTreeLocateController extends BaseChildController {
 
             TreeItem<DataNode> item = matchFrom(dataController.treeController.getRootItem());
             if (item != null) {
-                dataController.treeController.focusItem(item);
+//                dataController.treeController.focusItem(item); // ???????
 
             } else {
                 if (expandedCheck.isSelected()) {
@@ -219,7 +219,7 @@ public class DataTreeLocateController extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 if (node != null) {
-                    dataController.treeController.focusNode(node);
+                    dataController.focusNode(node);
                 } else {
                     popInformation(message("NotFound"));
                 }

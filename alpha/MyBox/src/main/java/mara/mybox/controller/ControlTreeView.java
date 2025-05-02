@@ -534,11 +534,9 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
 
     public void nodeSaved(DataNode parent, DataNode node) {
         try {
-            dataController.viewNode(node);
             TreeItem<DataNode> nodeItem = find(node);
             if (nodeItem != null) {
                 try {
-                    node.setHierarchyNumber(nodeItem.getValue().getHierarchyNumber());
                     nodeItem.setValue(node);
                     TreeItem<DataNode> currentParentItem = nodeItem.getParent();
                     if (currentParentItem.getValue().equals(parent)) {
@@ -548,7 +546,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                     TreeItem<DataNode> newParentItem = find(parent);
                     if (newParentItem != null) {
                         newParentItem.getChildren().add(nodeItem);
-                        reorderChildlren(newParentItem);
+                        reorderChildlren(parent);
                         return;
                     }
                 } catch (Exception e) {
@@ -560,7 +558,8 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         }
     }
 
-    public void refreshItem(TreeItem<DataNode> item) {
+    public void refreshNode(DataNode node) {
+        TreeItem<DataNode> item = find(node);
         if (item == null) {
             return;
         }
@@ -569,7 +568,8 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         unfold(item, false);
     }
 
-    public void reorderChildlren(TreeItem<DataNode> item) {
+    public void reorderChildlren(DataNode node) {
+        TreeItem<DataNode> item = find(node);
         if (item == null) {
             return;
         }
