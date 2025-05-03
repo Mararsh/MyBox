@@ -26,13 +26,7 @@ public class DataSelectRowExpressionController extends BaseDataSelectController 
             }
             expController = parent;
 
-            nodeTable = new TableNodeRowExpression();
-            dataName = nodeTable.getDataName();
-
-            baseTitle = nodeTable.getTreeName() + " - " + message("SelectNode");
-            setTitle(baseTitle);
-
-            loadTree();
+            initDataTree(new TableNodeRowExpression(), null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

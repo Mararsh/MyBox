@@ -25,13 +25,7 @@ public class DataSelectDataColumnController extends BaseDataSelectController {
         try {
             super.initControls();
 
-            nodeTable = new TableNodeDataColumn();
-            dataName = nodeTable.getDataName();
-
-            baseTitle = nodeTable.getTreeName() + " - " + message("SelectNode");
-            setTitle(baseTitle);
-
-            loadTree();
+            initDataTree(new TableNodeDataColumn(), null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

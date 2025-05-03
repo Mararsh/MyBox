@@ -334,7 +334,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
     @FXML
     public void selectParent() {
-        DataSelectParentController.open(this, currentNode);
+        DataSelectParentController.open(this, currentNode, parentNode);
     }
 
     protected void setParentNode(DataNode node) {

@@ -27,18 +27,20 @@ public class DataTreeDeleteController extends BaseDataTreeController {
                 return;
             }
             dataController = parent;
-            nodeTable = dataController.nodeTable;
-            dataName = nodeTable.getDataName();
-            baseName = baseName + "_" + dataName;
-
-            baseTitle = nodeTable.getTreeName() + " - " + message("DeleteNodes");
-            setTitle(baseTitle);
-
-            loadTree(node);
+            initDataTree(dataController.nodeTable, node);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public String initTitle() {
+        return nodeTable.getTreeName() + " - " + message("DeleteNodes");
+    }
+
+    @Override
+    public void setSelectionColumns() {
     }
 
     @FXML

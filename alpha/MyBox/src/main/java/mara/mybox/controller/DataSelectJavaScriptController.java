@@ -26,14 +26,8 @@ public class DataSelectJavaScriptController extends BaseDataSelectController {
                 return;
             }
             scriptInput = input;
-            nodeTable = new TableNodeJavaScript();
-            dataName = nodeTable.getDataName();
-            baseName = baseName + "_" + dataName;
 
-            baseTitle = nodeTable.getTreeName() + " - " + message("SelectNode");
-            setTitle(baseTitle);
-
-            loadTree();
+            initDataTree(new TableNodeJavaScript(), null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

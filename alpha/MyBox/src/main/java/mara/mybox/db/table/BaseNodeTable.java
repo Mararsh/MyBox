@@ -588,7 +588,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public DataNode readChain(FxTask<Void> task, Connection conn, DataNode node) {
-        return BaseNodeTable.this.readChain(task, conn, node == null ? RootID : node.getNodeid());
+        return readChain(task, conn, node == null ? RootID : node.getNodeid());
     }
 
     public DataNode readChain(FxTask<Void> task, Connection conn, long id) {

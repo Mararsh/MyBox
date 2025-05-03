@@ -24,14 +24,7 @@ public class DataSelectSQLController extends BaseDataSelectController {
                 return;
             }
             queryController = parent;
-            nodeTable = queryController.nodeTable;
-            dataName = nodeTable.getDataName();
-            baseName = baseName + "_" + dataName;
-
-            baseTitle = nodeTable.getTreeName() + " - " + message("Select");
-            setTitle(baseTitle);
-
-            loadTree();
+            initDataTree(queryController.nodeTable, null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

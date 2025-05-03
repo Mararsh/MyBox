@@ -12,7 +12,6 @@ import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
@@ -51,7 +50,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
     protected TreeTableColumn<DataNode, Long> idColumn, childrenColumn;
     @FXML
     protected TreeTableColumn<DataNode, String> hierarchyNumberColumn;
-
     @FXML
     protected TreeTableColumn<DataNode, Float> orderColumn;
     @FXML
@@ -81,7 +79,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
     }
 
     public void setParameters(BaseDataTreeController controller) {
@@ -224,6 +221,11 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         return dataController.equalNode(node1, node2);
     }
 
+    @Override
+    public boolean isSourceNode(DataNode node) {
+        return dataController.isSourceNode(node);
+    }
+
     public List<TreeItem<DataNode>> ancestorItems(TreeItem<DataNode> item) {
         if (item == null) {
             return null;
@@ -280,7 +282,9 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         if (node == null) {
             return;
         }
-        dataController.currentNode = node;
+
+        dataController.currentNode = item.isLeaf() && !node.isRoot()
+                ? item.getParent().getValue() : node;
         dataController.leftClicked(event, node);
     }
 
@@ -558,6 +562,10 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         }
     }
 
+    public void unfoldNode(DataNode node) {
+        unfold(find(node), false);
+    }
+
     public void refreshNode(DataNode node) {
         TreeItem<DataNode> item = find(node);
         if (item == null) {
@@ -606,26 +614,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         for (TreeItem<DataNode> child : items) {
             item.getChildren().add(child);
         }
-    }
-
-
-    /*
-        tree
-     */
-    @Override
-    public List<MenuItem> viewMenuItems(TreeItem<DataNode> item) {
-        if (item == null) {
-            return null;
-        }
-        return dataController.viewMenuItems(null, item.getValue(), false);
-    }
-
-    @Override
-    public List<MenuItem> operationsMenuItems(TreeItem<DataNode> treeItem) {
-        if (treeItem == null) {
-            return null;
-        }
-        return dataController.operationsMenuItems(null, treeItem.getValue(), false);
     }
 
 }
