@@ -81,17 +81,19 @@ public class BaseDataTreeController extends BaseFileController {
             setTitle(baseTitle);
 
             treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-            tableController.tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
             if (multipleSelection) {
                 treeController.treeView.setEditable(true);
                 tableController.tableView.setEditable(true);
+                tableController.tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
             } else {
                 treeController.treeView.getColumns().remove(treeController.selectColumn);
                 treeController.treeView.setEditable(false);
 
                 tableController.tableView.getColumns().remove(tableController.rowsSelectionColumn);
                 tableController.tableView.setEditable(false);
+                tableController.tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             }
 
             if (viewController != null) {
@@ -320,6 +322,14 @@ public class BaseDataTreeController extends BaseFileController {
 
         };
         start(loadTask, rightPane);
+    }
+
+    public void showNode(DataNode node) {
+        if (viewController == null) {
+            popNode(node);
+        } else {
+            viewNode(node);
+        }
     }
 
     public void addChild(DataNode node) {

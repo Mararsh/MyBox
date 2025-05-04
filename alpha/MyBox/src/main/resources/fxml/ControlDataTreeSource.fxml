@@ -36,14 +36,11 @@ License:    Apache License Version 2.0
                               </image>
                           </ImageView>
                       </graphic>
-                      <toggleGroup>
-                          <ToggleGroup fx:id="formatGroup" />
-                      </toggleGroup>
+               <toggleGroup>
+                  <ToggleGroup fx:id="formatGroup" />
+               </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="tableRaido" mnemonicParsing="false">
-                      <toggleGroup>
-                          <ToggleGroup fx:id="formatGroup" />
-                      </toggleGroup>
+                  <RadioButton fx:id="tableRaido" mnemonicParsing="false" toggleGroup="$formatGroup">
                       <graphic>
                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                               <image>

@@ -84,11 +84,15 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
 
             @Override
             protected void whenSucceeded() {
-                popInformation(message("Moved") + ": " + count);
-                sourceController.loadTree(targetNode);
-                targetController.loadTree(targetNode);
                 if (dataRunning()) {
                     dataController.loadTree(targetNode);
+                    dataController.popInformation(message("Moved") + ": " + count);
+                }
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                } else {
+                    sourceController.loadTree(targetNode);
+                    targetController.loadTree(targetNode);
                 }
             }
         };

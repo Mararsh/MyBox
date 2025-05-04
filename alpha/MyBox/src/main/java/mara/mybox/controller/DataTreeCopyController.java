@@ -97,11 +97,15 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
 
             @Override
             protected void whenSucceeded() {
-                popInformation(message("Copied") + ": " + count);
-                sourceController.refreshNode(targetNode);
-                targetController.refreshNode(targetNode);
                 if (dataRunning()) {
                     dataController.refreshNode(targetNode);
+                    dataController.popInformation(message("Copied") + ": " + count);
+                }
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                } else {
+                    sourceController.refreshNode(targetNode);
+                    targetController.refreshNode(targetNode);
                 }
             }
         };

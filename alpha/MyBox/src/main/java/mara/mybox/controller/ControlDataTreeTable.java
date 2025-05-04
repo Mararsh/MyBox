@@ -60,6 +60,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
     @Override
     public void initColumns() {
         try {
+            super.initColumns();
 
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             titleColumn.setCellFactory(new Callback<TableColumn<DataNode, String>, TableCell<DataNode, String>>() {
@@ -84,7 +85,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
                                 link.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        dataController.viewNode(getTableRow().getItem());
+                                        dataController.showNode(getTableRow().getItem());
                                     }
                                 });
                                 setGraphic(link);
@@ -321,7 +322,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
                 viewLink.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        dataController.viewNode(node);
+                        dataController.showNode(node);
                     }
                 });
                 namesPane.getChildren().add(viewLink);
