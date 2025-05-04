@@ -596,11 +596,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         String chainName = "";
-        List<DataNode> ancestors = null;
+        List<DataNode> chainNodes = new ArrayList<>();
         DataNode node = query(conn, id);
         if (node == null) {
             return node;
         }
+        chainNodes.add(node);
         DataNode child = node, parent;
         long parentid, childid;
         String h = "";
@@ -618,10 +619,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 break;
             }
             chainName = parent.getTitle() + TitleSeparater + chainName;
-            if (ancestors == null) {
-                ancestors = new ArrayList<>();
-            }
-            ancestors.add(parent);
+            chainNodes.add(0, parent);
             String sql = "SELECT nodeid FROM " + tableName
                     + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
             int index = -1;
@@ -650,7 +648,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             h = "." + (index + 1) + h;
             child = parent;
         }
-        node.setAncestors(ancestors);
+        node.setChainNodes(chainNodes);
         node.setChainName(chainName + node.getTitle());
         if (h.startsWith(".")) {
             h = h.substring(1, h.length());

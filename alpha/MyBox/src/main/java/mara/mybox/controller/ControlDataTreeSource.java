@@ -17,12 +17,12 @@ public class ControlDataTreeSource extends BaseDataTreeController {
 
     public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
+            multipleSelection = true;
             initDataTree(parent.nodeTable, node);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-
     }
 
     public void setLabel(String label) {

@@ -11,6 +11,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -50,6 +51,7 @@ public class BaseDataTreeController extends BaseFileController {
     protected TableDataNodeTag nodeTagsTable;
     protected String dataName;
     protected DataNode rootNode, currentNode, viewNode, sourceNode;
+    protected boolean multipleSelection = false;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -58,9 +60,9 @@ public class BaseDataTreeController extends BaseFileController {
     @FXML
     protected VBox dataBox, treeBox, tableBox;
     @FXML
-    protected ControlTreeView treeController;
+    protected ControlDataTreeView treeController;
     @FXML
-    protected ControlTreeTable tableController;
+    protected ControlDataTreeTable tableController;
     @FXML
     protected ControlWebView viewController;
 
@@ -77,7 +79,20 @@ public class BaseDataTreeController extends BaseFileController {
             baseName = baseName + "_" + dataName;
             baseTitle = initTitle();
             setTitle(baseTitle);
-            setSelectionColumns();
+
+            treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            tableController.tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+            if (multipleSelection) {
+                treeController.treeView.setEditable(true);
+                tableController.tableView.setEditable(true);
+            } else {
+                treeController.treeView.getColumns().remove(treeController.selectColumn);
+                treeController.treeView.setEditable(false);
+
+                tableController.tableView.getColumns().remove(tableController.rowsSelectionColumn);
+                tableController.tableView.setEditable(false);
+            }
 
             if (viewController != null) {
                 viewController.setParent(this);
@@ -96,11 +111,6 @@ public class BaseDataTreeController extends BaseFileController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void setSelectionColumns() {
-        treeController.treeView.getColumns().remove(treeController.selectColumn);
-        tableController.tableView.getColumns().remove(tableController.rowsSelectionColumn);
     }
 
     public String initTitle() {
@@ -194,12 +204,39 @@ public class BaseDataTreeController extends BaseFileController {
                 : (currentNode != null ? currentNode : rootNode);
     }
 
+    public List<DataNode> selectedNodes() {
+        if (treeRadio.isSelected()) {
+            return treeController.selectedNodes();
+        } else {
+            return tableController.selectedItems();
+        }
+    }
+
     public DataNode parentNode(DataNode node) {
         return node.getParentNode();
     }
 
     public boolean isSourceNode(DataNode node) {
         return equalNode(node, sourceNode);
+    }
+
+    public boolean equalOrDescendant(FxTask<Void> currentTask, Connection conn,
+            DataNode targetNode, List<DataNode> sourceNodes) {
+        if (sourceNodes == null || sourceNodes.isEmpty()) {
+            displayError(message("SelectSourceNodes"));
+            return false;
+        }
+        if (targetNode == null) {
+            displayError(message("SelectTargetNode"));
+            return false;
+        }
+        for (DataNode source : sourceNodes) {
+            if (nodeTable.equalOrDescendant(currentTask, conn, targetNode, source)) {
+                displayError(message("TreeTargetComments"));
+                return false;
+            }
+        }
+        return true;
     }
 
     /*
@@ -210,7 +247,7 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     public void doubleClicked(Event event, DataNode node) {
-        showPopMenu(event, node);
+        popNode(node);
     }
 
     public void rightClicked(Event event, DataNode node) {
@@ -428,24 +465,12 @@ public class BaseDataTreeController extends BaseFileController {
 
             @Override
             protected void whenSucceeded() {
-                reorderChildlren(parentNode(stonedNode));
-                viewNode(stonedNode);
+                refreshNode(parentNode(stonedNode));
+                reloadView(stonedNode);
                 popSuccessful();
             }
         };
         start(task);
-    }
-
-    public void reorderChildlren(DataNode node) {
-        if (node == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        if (treeRadio.isSelected()) {
-            treeController.reorderChildlren(node);
-        } else {
-            tableController.refreshNode(node);
-        }
     }
 
     protected void trimDescendantsOrders(DataNode node, boolean allDescendants) {
@@ -627,7 +652,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (treeRadio.isSelected()) {
             treeController.refreshNode(node);
         } else {
-            tableController.loadNode(node);
+            tableController.refreshNode(node);
         }
         reloadView(node);
     }

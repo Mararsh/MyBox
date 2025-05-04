@@ -4,9 +4,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
@@ -35,7 +32,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
+public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
 
     protected BaseDataTreeController dataController;
     protected ControlWebView viewController;
@@ -117,6 +114,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
             @Override
             protected boolean handle() {
                 rootItem = null;
+                selectItem = null;
                 if (nodeTable == null) {
                     return true;
                 }
@@ -133,9 +131,9 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                         rootItem.getChildren().add(new TreeItem(new DataNode()));
                         conn.setAutoCommit(true);
                         unfold(this, conn, rootItem, size < AutoExpandThreshold);
-                    }
-                    if (node != null) {
-                        selectItem = unfoldAncestors(this, conn, rootItem, node);
+                        if (node != null) {
+                            selectItem = unfoldAncestors(this, conn, rootItem, node);
+                        }
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -224,41 +222,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
     @Override
     public boolean isSourceNode(DataNode node) {
         return dataController.isSourceNode(node);
-    }
-
-    public List<TreeItem<DataNode>> ancestorItems(TreeItem<DataNode> item) {
-        if (item == null) {
-            return null;
-        }
-        List<TreeItem<DataNode>> ancestor = null;
-        TreeItem<DataNode> parent = item.getParent();
-        if (parent != null) {
-            ancestor = ancestorItems(parent);
-            if (ancestor == null) {
-                ancestor = new ArrayList<>();
-            }
-            ancestor.add(parent);
-        }
-        return ancestor;
-    }
-
-    public boolean equalOrDescendant(FxTask<Void> currentTask, Connection conn,
-            DataNode targetNode, List<DataNode> sourceNodes) {
-        if (sourceNodes == null || sourceNodes.isEmpty()) {
-            displayError(message("SelectSourceNodes"));
-            return false;
-        }
-        if (targetNode == null) {
-            displayError(message("SelectTargetNode"));
-            return false;
-        }
-        for (DataNode source : sourceNodes) {
-            if (nodeTable.equalOrDescendant(currentTask, conn, targetNode, source)) {
-                displayError(message("TreeTargetComments"));
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override
@@ -485,32 +448,31 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
             if (conn == null || rootItem == null || node == null) {
                 return null;
             }
-            TreeItem<DataNode> parent, item;
             conn.setAutoCommit(true);
             node = nodeTable.readChain(ptask, conn, node);
-            List<DataNode> ancestors = node.getAncestors();
-            parent = rootItem;
-            parent.setExpanded(true);
-            if (ancestors != null) {
-                for (DataNode ancestor : ancestors) {
-                    item = findChild(parent, ancestor);
-                    if (item == null) {
-                        item = new TreeItem(ancestor);
-                        parent.getChildren().add(item);
-                    }
-                    unfold(ptask, conn, item, false);
-                    parent = item;
-                    parent.setExpanded(true);
-                }
+            if (node == null) {
+                return null;
             }
-            item = findChild(parent, node);
-            if (item == null) {
-                item = new TreeItem(node);
-                parent.getChildren().add(item);
+            List<DataNode> chainNodes = node.getChainNodes();
+            if (chainNodes == null) {
+                return null;
+            }
+            TreeItem<DataNode> parentItem = rootItem, chainItem = rootItem;
+            for (DataNode chainNode : chainNodes) {
+                chainItem = findChild(parentItem, chainNode);
+                if (chainItem == null) {
+                    unfold(ptask, conn, parentItem, false);
+                }
+                chainItem = findChild(parentItem, chainNode);
+                if (chainItem == null) {
+                    return null;
+                }
+                parentItem.setExpanded(true);
+                parentItem = chainItem;
             }
             node.setChildrenSize(nodeTable.childrenSize(conn, node.getNodeid()));
-            if (item.isLeaf() && node.getChildrenSize() > 0) {
-                TreeItem<DataNode> unloadItem = item;
+            if (chainItem.isLeaf() && node.getChildrenSize() > 0) {
+                TreeItem<DataNode> unloadItem = chainItem;
                 unloadItem.expandedProperty().addListener(
                         (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                             if (newVal && !unloadItem.isLeaf() && !isLoaded(unloadItem)) {
@@ -520,7 +482,7 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                 TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
                 unloadItem.getChildren().add(dummyItem);
             }
-            return item;
+            return chainItem;
         } catch (Exception e) {
             error = e.toString();
             return null;
@@ -547,12 +509,8 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
                         return;
                     }
                     currentParentItem.getChildren().remove(nodeItem);
-                    TreeItem<DataNode> newParentItem = find(parent);
-                    if (newParentItem != null) {
-                        newParentItem.getChildren().add(nodeItem);
-                        reorderChildlren(parent);
-                        return;
-                    }
+                    refreshNode(parent);
+                    return;
                 } catch (Exception e) {
                 }
             }
@@ -574,46 +532,6 @@ public class ControlTreeView extends BaseTreeTableViewController<DataNode> {
         item.getChildren().clear();
         item.getChildren().add(new TreeItem(new DataNode()));
         unfold(item, false);
-    }
-
-    public void reorderChildlren(DataNode node) {
-        TreeItem<DataNode> item = find(node);
-        if (item == null) {
-            return;
-        }
-        List<TreeItem<DataNode>> children = item.getChildren();
-        if (children == null || children.isEmpty()) {
-            return;
-        }
-        List<TreeItem<DataNode>> items = new ArrayList<>();
-        for (TreeItem<DataNode> child : children) {
-            items.add(child);
-        }
-        item.getChildren().clear();
-        Collections.sort(items, new Comparator<TreeItem<DataNode>>() {
-            @Override
-            public int compare(TreeItem<DataNode> v1, TreeItem<DataNode> v2) {
-                DataNode node1 = v1.getValue();
-                DataNode node2 = v2.getValue();
-                if (node1 == null) {
-                    return -1;
-                }
-                if (node2 == null) {
-                    return 1;
-                }
-                float diff = node1.getOrderNumber() - node2.getOrderNumber();
-                if (diff == 0) {
-                    return 0;
-                } else if (diff > 0) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
-        });
-        for (TreeItem<DataNode> child : items) {
-            item.getChildren().add(child);
-        }
     }
 
 }

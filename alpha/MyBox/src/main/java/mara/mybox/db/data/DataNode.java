@@ -29,7 +29,7 @@ public class DataNode extends BaseData {
     protected Date updateTime;
     protected Map<String, Object> values;
     protected final BooleanProperty selected = new SimpleBooleanProperty(false);
-    protected List<DataNode> ancestors;
+    protected List<DataNode> chainNodes;
     protected DataNode parentNode;
 
     private void init() {
@@ -38,7 +38,7 @@ public class DataNode extends BaseData {
         title = null;
         updateTime = new Date();
         orderNumber = 0f;
-        ancestors = null;
+        chainNodes = null;
         parentNode = null;
         hierarchyNumber = null;
         chainName = null;
@@ -60,7 +60,7 @@ public class DataNode extends BaseData {
                     .setOrderNumber(orderNumber)
                     .setUpdateTime(updateTime)
                     .setHierarchyNumber(hierarchyNumber)
-                    .setAncestors(ancestors)
+                    .setChainNodes(chainNodes)
                     .setParentNode(parentNode)
                     .setChainName(chainName)
                     .setIndex(index)
@@ -85,7 +85,7 @@ public class DataNode extends BaseData {
         info += message("ChainName") + ": " + chainName + "\n";
         info += message("OrderNumber") + ": " + orderNumber + "\n";
         info += message("Values") + ": " + values + "\n";
-        info += "Ancestors: " + (ancestors != null ? ancestors.size() : null) + "\n";
+        info += "Ancestors: " + (chainNodes != null ? chainNodes.size() : null) + "\n";
         info += "ParentNode: " + (parentNode != null ? parentNode.getTitle() : null) + "\n";
         info += "Index: " + index + "\n";
         info += message("ChildrenSize") + ": " + childrenSize + "\n";
@@ -354,12 +354,12 @@ public class DataNode extends BaseData {
         return this;
     }
 
-    public List<DataNode> getAncestors() {
-        return ancestors;
+    public List<DataNode> getChainNodes() {
+        return chainNodes;
     }
 
-    public DataNode setAncestors(List<DataNode> ancestors) {
-        this.ancestors = ancestors;
+    public DataNode setChainNodes(List<DataNode> nodes) {
+        this.chainNodes = nodes;
         return this;
     }
 

@@ -95,20 +95,20 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </children>
                                                 </HBox>
-                                    <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                       <children>
-                                                          <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                                              <children>
-                                                                  <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeTable.fxml" VBox.vgrow="ALWAYS" />
-                                                              </children>
-                                                          </VBox>
-                                                          <VBox fx:id="treeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                                              <children>
-                                                                  <fx:include fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeView.fxml" VBox.vgrow="ALWAYS" />
-                                                              </children>
-                                                          </VBox>
-                                       </children>
-                                    </VBox>
+                                                <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                    <children>
+                                                        <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                            <children>
+                                                                <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeTable.fxml" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox fx:id="treeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                            <children>
+                                                                <fx:include fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeView.fxml" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </VBox>
                                             </children>
                                         </VBox>
                                     </content>

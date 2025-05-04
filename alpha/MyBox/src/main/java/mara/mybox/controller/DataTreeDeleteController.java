@@ -27,6 +27,7 @@ public class DataTreeDeleteController extends BaseDataTreeController {
                 return;
             }
             dataController = parent;
+            multipleSelection = true;
             initDataTree(dataController.nodeTable, node);
 
         } catch (Exception e) {
@@ -39,14 +40,10 @@ public class DataTreeDeleteController extends BaseDataTreeController {
         return nodeTable.getTreeName() + " - " + message("DeleteNodes");
     }
 
-    @Override
-    public void setSelectionColumns() {
-    }
-
     @FXML
     @Override
     public void okAction() {
-        List<DataNode> nodes = treeController.selectedNodes();
+        List<DataNode> nodes = selectedNodes();
         if (nodes == null || nodes.isEmpty()) {
             popError(message("SelectNodes"));
             return;

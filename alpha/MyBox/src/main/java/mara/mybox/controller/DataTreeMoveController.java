@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
@@ -43,13 +42,13 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     @FXML
     @Override
     public void okAction() {
-        List<DataNode> sourceNodes = sourceController.treeController.selectedNodes();
+        List<DataNode> sourceNodes = sourceController.selectedNodes();
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             popError(message("SelectSourceNodes"));
             return;
         }
-        TreeItem<DataNode> targetItem = targetController.treeController.selectedItem();
-        if (targetItem == null) {
+        DataNode targetNode = targetController.selectedNode();
+        if (targetNode == null) {
             popError(message("SelectNodeCopyInto"));
             return;
         }
@@ -58,14 +57,12 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
         }
         task = new FxSingletonTask<Void>(this) {
             private int count;
-            private DataNode targetNode;
 
             @Override
             protected boolean handle() {
                 count = 0;
-                targetNode = targetItem.getValue();
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (!targetController.treeController.equalOrDescendant(this, conn, targetNode, sourceNodes)) {
+                    if (!targetController.equalOrDescendant(this, conn, targetNode, sourceNodes)) {
                         error = message("TreeTargetComments");
                         return false;
                     }

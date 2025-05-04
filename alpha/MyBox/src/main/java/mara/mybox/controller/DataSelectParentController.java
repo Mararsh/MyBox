@@ -23,14 +23,14 @@ public class DataSelectParentController extends BaseDataSelectController {
     @FXML
     protected Label nodeLabel;
 
-    public void setParameters(DataTreeNodeEditorController c,
+    public void setParameters(DataTreeNodeEditorController controller,
             DataNode node, DataNode parentNode) {
         try {
-            if (c == null) {
+            if (controller == null) {
                 close();
                 return;
             }
-            editor = c;
+            editor = controller;
             sourceNode = node;
             if (sourceNode != null) {
                 nodeLabel.setText(message("SourceNode") + ": " + sourceNode.shortDescription());

@@ -37,7 +37,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2025-4-25
  * @License Apache License Version 2.0
  */
-public class ControlTreeTable extends BaseTablePagesController<DataNode> {
+public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
 
     protected BaseDataTreeController dataController;
     protected BaseNodeTable nodeTable;
@@ -88,6 +88,11 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                                     }
                                 });
                                 setGraphic(link);
+                                if (isSourceNode(getTableRow().getItem())) {
+                                    setStyle(NodeStyleTools.darkRedTextStyle());
+                                } else {
+                                    setStyle(null);
+                                }
                             }
 
                         };
@@ -179,6 +184,10 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public boolean isSourceNode(DataNode node) {
+        return dataController != null && dataController.isSourceNode(node);
     }
 
     public void loadNode(DataNode node) {
@@ -289,7 +298,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
             return -1;
         }
         long size = nodeTable.childrenSize(conn, dataController.currentNode.getNodeid());
-        dataSizeLoaded = size >= 0;
+        dataSizeLoaded = true;
         return size;
     }
 
@@ -306,22 +315,7 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
             if (nodeTable == null || dataController.currentNode == null) {
                 return;
             }
-            List<DataNode> nodes = new ArrayList<>();
-            nodes.add(dataController.currentNode);
-            List<DataNode> ancestors = dataController.currentNode.getAncestors();
-            if (ancestors != null) {
-                nodes.addAll(ancestors);
-            }
-            for (DataNode node : nodes) {
-                Hyperlink unfoldLink = new Hyperlink(">");
-                NodeStyleTools.setTooltip(unfoldLink, new Tooltip(message("Unfold")));
-                unfoldLink.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        loadNode(node);
-                    }
-                });
-                namesPane.getChildren().add(0, unfoldLink);
+            for (DataNode node : dataController.currentNode.getChainNodes()) {
                 Hyperlink viewLink = new Hyperlink(node.getTitle());
                 NodeStyleTools.setTooltip(viewLink, new Tooltip(message("View")));
                 viewLink.setOnAction(new EventHandler<ActionEvent>() {
@@ -330,7 +324,18 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                         dataController.viewNode(node);
                     }
                 });
-                namesPane.getChildren().add(0, viewLink);
+                namesPane.getChildren().add(viewLink);
+
+                Hyperlink unfoldLink = new Hyperlink(">");
+                NodeStyleTools.setTooltip(unfoldLink, new Tooltip(message("Unfold")));
+                unfoldLink.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        loadNode(node);
+                    }
+                });
+                namesPane.getChildren().add(unfoldLink);
+
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -403,28 +408,17 @@ public class ControlTreeTable extends BaseTablePagesController<DataNode> {
                 return;
             }
 
-            List<DataNode> nodes = new ArrayList<>();
-            nodes.add(dataController.currentNode);
-            List<DataNode> ancestors = dataController.currentNode.getAncestors();
-            if (ancestors != null) {
-                nodes.addAll(ancestors);
-            }
-            for (DataNode anode : nodes) {
+            for (DataNode anode : dataController.currentNode.getChainNodes()) {
                 if (anode.equals(node)) {
                     loadNode(dataController.currentNode, false);
                     return;
                 }
             }
 
-            long cid = dataController.currentNode.getNodeid();
             for (int i = 0; i < tableData.size(); i++) {
                 DataNode tnode = tableData.get(i);
                 if (tnode.equals(node)) {
-                    if (node.getParentid() != cid) {
-                        tableData.remove(tnode);
-                    } else {
-                        tableData.set(i, node);
-                    }
+                    loadTableData();
                     return;
                 }
             }
