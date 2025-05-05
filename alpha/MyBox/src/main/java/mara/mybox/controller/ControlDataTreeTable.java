@@ -20,6 +20,7 @@ import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
+import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
@@ -213,7 +214,16 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    currentNode = nodeTable.readChain(this, conn, node);
+                    long id;
+                    if (node == null) {
+                        id = RootID;
+                    } else {
+                        id = node.getNodeid();
+                        if (node.getChildrenSize() == 0 && id != RootID) {
+                            id = node.getParentid();
+                        }
+                    }
+                    currentNode = nodeTable.readChain(this, conn, id);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

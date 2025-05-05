@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -11,6 +12,8 @@ public class ControlDataTreeTarget extends BaseDataTreeController {
 
     public void setParameters(BaseDataTreeController parent) {
         try {
+            selectionType = DataNode.SelectionType.Single;
+
             initDataTree(parent.nodeTable, null);
 
         } catch (Exception e) {

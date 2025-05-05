@@ -27,7 +27,8 @@ public class DataTreeDeleteController extends BaseDataTreeController {
                 return;
             }
             dataController = parent;
-            multipleSelection = true;
+            selectionType = DataNode.SelectionType.Multiple;
+
             initDataTree(dataController.nodeTable, node);
 
         } catch (Exception e) {

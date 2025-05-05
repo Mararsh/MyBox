@@ -20,6 +20,7 @@ import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataNode.SelectionType;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.BaseTableTools;
@@ -51,7 +52,7 @@ public class BaseDataTreeController extends BaseFileController {
     protected TableDataNodeTag nodeTagsTable;
     protected String dataName;
     protected DataNode rootNode, currentNode, viewNode, sourceNode;
-    protected boolean multipleSelection = false;
+    protected SelectionType selectionType = SelectionType.None;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -80,20 +81,29 @@ public class BaseDataTreeController extends BaseFileController {
             baseTitle = initTitle();
             setTitle(baseTitle);
 
-            treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
-            if (multipleSelection) {
+            if (selectionType == SelectionType.Multiple) {
+                treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
                 treeController.treeView.setEditable(true);
-                tableController.tableView.setEditable(true);
+
                 tableController.tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+                tableController.tableView.setEditable(true);
+
+            } else if (selectionType == SelectionType.Single) {
+                treeController.treeView.getColumns().remove(treeController.selectColumn);
+                treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                treeController.treeView.setEditable(false);
+
+                tableController.tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                tableController.tableView.setEditable(true);
 
             } else {
                 treeController.treeView.getColumns().remove(treeController.selectColumn);
+                treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
                 treeController.treeView.setEditable(false);
 
                 tableController.tableView.getColumns().remove(tableController.rowsSelectionColumn);
-                tableController.tableView.setEditable(false);
                 tableController.tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                tableController.tableView.setEditable(false);
             }
 
             if (viewController != null) {

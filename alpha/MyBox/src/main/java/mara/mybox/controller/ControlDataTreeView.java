@@ -245,9 +245,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         if (node == null) {
             return;
         }
-
-        dataController.currentNode = item.isLeaf() && !node.isRoot()
-                ? item.getParent().getValue() : node;
+        dataController.currentNode = node;
         dataController.leftClicked(event, node);
     }
 

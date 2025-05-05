@@ -64,7 +64,6 @@ public class ControlData2DSetValue extends BaseController {
         try {
             this.handleController = handleController;
 
-            thisPane.getChildren().remove(tabPane);
             setBox.getChildren().clear();
 
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {

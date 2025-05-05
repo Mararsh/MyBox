@@ -17,7 +17,8 @@ public class ControlDataTreeSource extends BaseDataTreeController {
 
     public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
-            multipleSelection = true;
+            selectionType = DataNode.SelectionType.Multiple;
+
             initDataTree(parent.nodeTable, node);
 
         } catch (Exception e) {

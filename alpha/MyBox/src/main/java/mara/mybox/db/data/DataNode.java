@@ -23,6 +23,10 @@ public class DataNode extends BaseData {
     public static final String TitleSeparater = " > ";
     public static final String TagsSeparater = ";;;";
 
+    public static enum SelectionType {
+        None, Multiple, Single
+    }
+
     protected long nodeid, parentid, index, childrenSize;
     protected String title, hierarchyNumber, chainName;
     protected float orderNumber;
