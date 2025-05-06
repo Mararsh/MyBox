@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
+import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
@@ -36,7 +37,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
 
     protected BaseDataTreeController dataController;
     protected ControlWebView viewController;
-    protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
@@ -104,12 +104,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         if (task != null) {
             task.cancel();
         }
-        clearTree();
         task = new FxSingletonTask<Void>(this) {
 
             private DataNode rootNode;
             private TreeItem<DataNode> rootItem, selectItem;
-            private int size;
+            private long size;
 
             @Override
             protected boolean handle() {
@@ -123,14 +122,15 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                     if (rootNode == null) {
                         return false;
                     }
-                    rootNode.setChildrenSize(nodeTable.childrenSize(conn, rootNode.getNodeid()));
+                    size = nodeTable.childrenSize(conn, RootID);
+                    rootNode.setChildrenSize(size);
                     rootItem = new TreeItem(rootNode);
                     rootItem.setExpanded(true);
-                    size = nodeTable.size(conn);
-                    if (size > 1) {
+
+                    if (size > 0) {
                         rootItem.getChildren().add(new TreeItem(new DataNode()));
                         conn.setAutoCommit(true);
-                        unfold(this, conn, rootItem, size < AutoExpandThreshold);
+                        unfold(this, conn, rootItem, false);
                         if (node != null) {
                             selectItem = unfoldAncestors(this, conn, rootItem, node);
                         }
@@ -152,7 +152,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 if (size <= 1) {
                     whenTreeEmpty();
                 }
-                afterTreeLoaded();
             }
 
         };
@@ -167,9 +166,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         if (file != null && PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
             dataController.importExamples(null);
         }
-    }
-
-    public void afterTreeLoaded() {
     }
 
     @Override
@@ -457,10 +453,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             }
             TreeItem<DataNode> parentItem = rootItem, chainItem = rootItem;
             for (DataNode chainNode : chainNodes) {
-                chainItem = findChild(parentItem, chainNode);
-                if (chainItem == null) {
-                    unfold(ptask, conn, parentItem, false);
-                }
+                unfold(ptask, conn, parentItem, false);
                 chainItem = findChild(parentItem, chainNode);
                 if (chainItem == null) {
                     return null;

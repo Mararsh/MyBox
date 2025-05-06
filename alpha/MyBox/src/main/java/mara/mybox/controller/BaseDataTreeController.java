@@ -57,7 +57,7 @@ public class BaseDataTreeController extends BaseFileController {
     @FXML
     protected ToggleGroup formatGroup;
     @FXML
-    protected RadioButton treeRadio, tableRaido;
+    protected RadioButton treeRadio, tableRadio;
     @FXML
     protected VBox dataBox, treeBox, tableBox;
     @FXML
@@ -118,11 +118,44 @@ public class BaseDataTreeController extends BaseFileController {
                 }
             });
 
-            loadTree(node);
+            setTree(node);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void setTree(DataNode node) {
+        task = new FxSingletonTask<Void>(this) {
+
+            private long size = -1;
+
+            @Override
+            protected boolean handle() {
+                if (nodeTable == null) {
+                    return true;
+                }
+                try (Connection conn = DerbyBase.getConnection()) {
+                    size = nodeTable.childrenSize(conn, RootID);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return size >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                isSettingValues = true;
+                if (size > 100) {
+                    tableRadio.setSelected(true);
+                }
+                isSettingValues = false;
+                loadTree(node);
+            }
+
+        };
+        start(task, thisPane);
     }
 
     public String initTitle() {
@@ -150,6 +183,7 @@ public class BaseDataTreeController extends BaseFileController {
             MyBoxLog.error(e);
         }
     }
+
 
     /*
         values

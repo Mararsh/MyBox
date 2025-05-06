@@ -51,6 +51,11 @@ public class GeographyCodeController extends DataTreeController {
         mapController.loadNode(node);
     }
 
+    @Override
+    public void showNode(DataNode node) {
+        viewNode(node);
+    }
+
     @FXML
     @Override
     public boolean infoAction() {
