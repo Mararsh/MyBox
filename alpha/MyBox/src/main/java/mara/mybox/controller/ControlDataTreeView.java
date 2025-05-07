@@ -91,10 +91,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 viewController = dataController.viewController;
             }
 
-            refreshStyle();
-
-            loadTree(dataController.currentNode);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

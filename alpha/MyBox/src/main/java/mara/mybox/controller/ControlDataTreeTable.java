@@ -179,10 +179,6 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
             baseName = dataController.baseName;
             viewController = dataController.viewController;
 
-            refreshStyle();
-
-            loadNode(dataController.currentNode);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

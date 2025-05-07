@@ -81,6 +81,9 @@ public class BaseDataTreeController extends BaseFileController {
             baseTitle = initTitle();
             setTitle(baseTitle);
 
+            treeController.setParameters(this);
+            tableController.setParameters(this);
+
             if (selectionType == SelectionType.Multiple) {
                 treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
                 treeController.treeView.setEditable(true);
@@ -118,14 +121,14 @@ public class BaseDataTreeController extends BaseFileController {
                 }
             });
 
-            setTree(node);
+            setFormat(node);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void setTree(DataNode node) {
+    public void setFormat(DataNode node) {
         task = new FxSingletonTask<Void>(this) {
 
             private long size = -1;
@@ -174,11 +177,12 @@ public class BaseDataTreeController extends BaseFileController {
             tableController.resetTable();
             if (treeRadio.isSelected()) {
                 dataBox.getChildren().add(treeBox);
-                treeController.setParameters(this);
+                treeController.loadTree(currentNode);
             } else {
                 dataBox.getChildren().add(tableBox);
-                tableController.setParameters(this);
+                tableController.loadNode(currentNode);
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
