@@ -886,7 +886,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             sourceController.selectedRadio.setSelected(true);
         }
         filterController.load(controller.filterController.scriptInput.getText(),
-                controller.filterController.trueRadio.isSelected());
+                !controller.filterController.excluded());
         filterController.maxInput.setText(controller.filterController.maxInput.getText());
         scaleSelector.getSelectionModel().select(controller.scale + "");
     }

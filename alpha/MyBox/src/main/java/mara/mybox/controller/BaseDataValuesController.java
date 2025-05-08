@@ -45,7 +45,7 @@ public abstract class BaseDataValuesController extends BaseFileController {
         try {
             this.nodeEditor = controller;
             this.parentController = nodeEditor;
-            this.baseName = nodeEditor.baseName;
+            this.baseName = nodeEditor.baseName + "_" + baseName;
             nodeTable = nodeEditor.nodeTable;
 
             initEditor();

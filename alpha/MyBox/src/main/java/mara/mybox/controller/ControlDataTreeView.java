@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,11 +21,8 @@ import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.cell.TreeTableIDCell;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -121,8 +117,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                     size = nodeTable.childrenSize(conn, RootID);
                     rootNode.setChildrenSize(size);
                     rootItem = new TreeItem(rootNode);
-                    rootItem.setExpanded(true);
-
                     if (size > 0) {
                         rootItem.getChildren().add(new TreeItem(new DataNode()));
                         conn.setAutoCommit(true);
@@ -131,6 +125,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                             selectItem = unfoldAncestors(this, conn, rootItem, node);
                         }
                     }
+                    rootItem.setExpanded(true);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -146,22 +141,12 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                     focusItem(selectItem);
                 }
                 if (size <= 1) {
-                    whenTreeEmpty();
+                    dataController.whenTreeEmpty();
                 }
             }
 
         };
         start(task, thisPane);
-    }
-
-    public void whenTreeEmpty() {
-        if (AppVariables.isTesting) {
-            return;
-        }
-        File file = nodeTable.exampleFile();
-        if (file != null && PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
-            dataController.importExamples(null);
-        }
     }
 
     @Override

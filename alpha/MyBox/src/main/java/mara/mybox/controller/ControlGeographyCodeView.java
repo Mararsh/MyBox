@@ -15,11 +15,11 @@ import mara.mybox.tools.GeographyCodeTools;
  */
 public class ControlGeographyCodeView extends BaseMapController {
 
-    protected GeographyCodeController treeController;
+    protected GeographyCodeController dataController;
 
     public void setPatrameters(GeographyCodeController controller) {
         try {
-            treeController = controller;
+            dataController = controller;
 
             initMap();
 
@@ -42,7 +42,7 @@ public class ControlGeographyCodeView extends BaseMapController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = treeController.nodeTable.query(conn, node.getNodeid());
+                    savedNode = nodeTable.query(conn, node.getNodeid());
                     if (savedNode == null) {
                         return false;
                     }
@@ -62,9 +62,9 @@ public class ControlGeographyCodeView extends BaseMapController {
             @Override
             protected void whenSucceeded() {
                 drawCode(geoCode);
-                treeController.viewNode = savedNode;
-                treeController.infoButton.setDisable(false);
-                treeController.editButton.setDisable(false);
+                dataController.viewNode = savedNode;
+                dataController.infoButton.setDisable(false);
+                dataController.editButton.setDisable(false);
             }
 
             @Override
@@ -72,7 +72,7 @@ public class ControlGeographyCodeView extends BaseMapController {
             }
 
         };
-        start(task, treeController.rightPane);
+        start(task, dataController.rightPane);
     }
 
 }

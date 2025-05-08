@@ -36,7 +36,7 @@ public class DataSelectRowExpressionController extends BaseDataSelectController 
     @FXML
     @Override
     public void okAction() {
-        DataNode node = treeController.selectedValue();
+        DataNode node = selectedNode();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;

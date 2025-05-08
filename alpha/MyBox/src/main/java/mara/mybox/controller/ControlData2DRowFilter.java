@@ -4,10 +4,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.table.TableStringValues;
@@ -15,6 +17,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,11 +29,16 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     protected DataFilter filter;
 
     @FXML
-    protected ToggleGroup takeGroup;
+    protected ToggleGroup objectGroup, conditionGroup;
     @FXML
-    protected RadioButton trueRadio, falseRadio;
+    protected VBox setBox, expressionBox;
     @FXML
-    protected TextField maxInput;
+    protected RadioButton notFilterRadio, expressionRadio,
+            containRadio;
+    @FXML
+    protected TextField maxInput, conditionInput;
+    @FXML
+    protected CheckBox excludedCheck;
 
     @Override
     public void initControls() {
@@ -40,7 +48,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             filter = new DataFilter();
             calculator = filter.calculator;
 
-            takeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     if (isSettingValues) {
@@ -69,11 +77,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     public void load(String script, boolean matchTrue, long max) {
         isSettingValues = true;
         scriptInput.setText(script);
-        if (matchTrue) {
-            trueRadio.setSelected(true);
-        } else {
-            falseRadio.setSelected(true);
-        }
+        excludedCheck.setSelected(!matchTrue);
         maxInput.setText(max > 0 && max != InvalidLong ? max + "" : "");
         isSettingValues = false;
         filter.setSourceScript(script);
@@ -85,7 +89,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         this.data2D = data2D;
         if (filter == null) {
             scriptInput.setText(null);
-            trueRadio.setSelected(true);
+            excludedCheck.setSelected(false);
             maxInput.setText(null);
             return;
         }
@@ -106,7 +110,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 return null;
             }
         }
-        filter.setMatchFalse(falseRadio.isSelected())
+        filter.setMatchFalse(excludedCheck.isSelected())
                 .setMaxPassed(max > 0 && max != InvalidLong ? max : -1)
                 .setPassedNumber(0)
                 .setSourceScript(script);
@@ -148,10 +152,26 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         return script;
     }
 
+    public boolean excluded() {
+        return excludedCheck.isSelected();
+    }
+
     @FXML
     @Override
     protected void showExamples(Event event) {
-        PopTools.popRowExpressionExamples(this, event, scriptInput, baseName + "Examples", data2D);
+        PopTools.popRowExpressionExamples(this, event, valueInput, baseName + "Examples", data2D);
+    }
+
+    @FXML
+    public void popConditionHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + "ConditionHistoriesPopWhenMouseHovering", false)) {
+            showConditionHistories(event);
+        }
+    }
+
+    @FXML
+    public void showConditionHistories(Event event) {
+        PopTools.popSavedValues(this, conditionInput, event, baseName + "ConditionHistories");
     }
 
 }
