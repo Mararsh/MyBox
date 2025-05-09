@@ -41,7 +41,7 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
             super.updateStatus();
 
             if (filterController != null) {
-                filterController.setData2D(data2D);
+                filterController.updateData(data2D);
             }
             refreshControls();
             if (toolbar != null) {

@@ -301,6 +301,10 @@ public class ColumnDefinition extends BaseData {
         return DoubleTools.compare(d1, d2, desc);
     }
 
+    public boolean isBooleanType() {
+        return type == ColumnType.Boolean;
+    }
+
     public boolean isNumberType() {
         return isNumberType(type);
     }

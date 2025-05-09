@@ -118,7 +118,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             columnSelector.getItems().clear();
             tableData.clear();
             isSettingValues = false;
-            expressionController.setData2D(taskController.data2D);
+            expressionController.updateData(taskController.data2D);
             if (!taskController.data2D.hasColumns()) {
                 return;
             }

@@ -44,8 +44,8 @@ public class ControlData2DRowExpression extends ControlDataRowExpression {
         }
     }
 
-    public void setData2D(Data2D data2D) {
-        this.data2D = data2D;
+    public void updateData(Data2D data) {
+        data2D = data;
     }
 
     public boolean checkExpression(boolean allPages) {

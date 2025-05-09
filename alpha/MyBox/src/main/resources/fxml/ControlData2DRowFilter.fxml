@@ -19,38 +19,12 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DRowFilter">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DRowFilter">
     <children>
-      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="54.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
-            <Button fx:id="selectExpressionButton" mnemonicParsing="false" onAction="#selectAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconSelect.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="saveExpressionButton" mnemonicParsing="false" onAction="#saveAction">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconSave.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconClaw.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+            <Label minHeight="-Infinity" text="%MaxFilteredDataTake" wrapText="true" />
+            <TextField fx:id="maxInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <FlowPane fx:id="objectPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
@@ -64,46 +38,86 @@ License:    Apache License Version 2.0
             <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$objectGroup" />
          </children>
       </FlowPane>
-      <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+      <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
-            <FlowPane fx:id="operatorPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <VBox fx:id="columnBox" spacing="5.0">
                <children>
-                  <Label text="%Operator" />
-                  <RadioButton fx:id="containRadio" mnemonicParsing="false" selected="true" text="%Contains">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="conditionGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="expressionRadio12" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="%Equals" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio122" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThan" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio1222" layoutX="202.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThanOrEqual" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio1221" layoutX="228.0" layoutY="31.0" mnemonicParsing="false" text="%LessThan" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio12221" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%LessThanOrEqual" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio12211" layoutX="288.0" layoutY="10.0" mnemonicParsing="false" text="%Prefix" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio122111" layoutX="154.0" layoutY="52.0" mnemonicParsing="false" text="%Suffix" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio1221111" layoutX="204.0" layoutY="52.0" mnemonicParsing="false" text="%Number" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio11" layoutX="163.0" layoutY="10.0" mnemonicParsing="false" text="%NullValue" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio121" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%EmptyValue" toggleGroup="$conditionGroup" />
-                  <RadioButton fx:id="expressionRadio1211" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%NullEmptyValue" toggleGroup="$conditionGroup" />
+                  <FlowPane fx:id="operatorPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                     <children>
+                        <Label text="%Operator" />
+                        <RadioButton fx:id="equalRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Equals">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="conditionGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="greaterRadio" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThan" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="greaterEqualRadio" layoutX="202.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThanOrEqual" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="lessRadio" layoutX="228.0" layoutY="31.0" mnemonicParsing="false" text="%LessThan" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="lessEqualRadio" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%LessThanOrEqual" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="containRadio" mnemonicParsing="false" text="%Contains" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="containInsensitiveRadio" layoutX="374.0" layoutY="10.0" mnemonicParsing="false" text="%ContainsCaseInsensitive" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="prefixRadio" layoutX="288.0" layoutY="10.0" mnemonicParsing="false" text="%Prefix" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="suffixRadio" layoutX="154.0" layoutY="52.0" mnemonicParsing="false" text="%Suffix" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="numberRadio" layoutX="204.0" layoutY="52.0" mnemonicParsing="false" text="%Number" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="zeroRadio" layoutX="295.0" layoutY="31.0" mnemonicParsing="false" text="%Zero" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="nullRadio" layoutX="163.0" layoutY="10.0" mnemonicParsing="false" text="%NullValue" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="emptyRadio" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%EmptyValue" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="nullEmptyRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%NullEmptyValue" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="trueRadio" layoutX="295.0" layoutY="31.0" mnemonicParsing="false" text="%True" toggleGroup="$conditionGroup" />
+                        <RadioButton fx:id="falseRadio" layoutX="265.0" layoutY="52.0" mnemonicParsing="false" text="%False" toggleGroup="$conditionGroup" />
+                     </children>
+                  </FlowPane>
+                  <HBox fx:id="valueBox" alignment="CENTER_LEFT" spacing="2.0">
+                     <children>
+                        <Label fx:id="keyLabel" text="%Value" />
+                        <TextField fx:id="conditionInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="conditionHistoryButton" mnemonicParsing="false" onAction="#showConditionHistories" onMouseEntered="#popConditionHistories">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconHistory.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
-            </FlowPane>
-            <HBox fx:id="valueBox" alignment="CENTER_LEFT" spacing="2.0">
-               <children>
-                  <Label fx:id="keyLabel" text="%Value" />
-                  <TextField fx:id="conditionInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="conditionHistoryButton" mnemonicParsing="false" onAction="#showConditionHistories" onMouseEntered="#popConditionHistories">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconHistory.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
+            </VBox>
             <VBox fx:id="expressionBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
                <children>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                     <children>
+                        <Button fx:id="selectExpressionButton" mnemonicParsing="false" onAction="#selectAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconSelect.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="saveExpressionButton" mnemonicParsing="false" onAction="#saveAction">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconSave.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/iconClaw.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                   <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                      <children>
                         <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
@@ -163,17 +177,11 @@ License:    Apache License Version 2.0
                         </Button>
                      </children>
                   </HBox>
-                  <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" />
+                  <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                   <CheckBox fx:id="excludedCheck" mnemonicParsing="false" text="%Excluded" />
                </children>
             </VBox>
          </children>
       </VBox>
-      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-         <children>
-            <Label minHeight="-Infinity" text="%MaxFilteredDataTake" wrapText="true" />
-            <TextField fx:id="maxInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
     </children>
 </VBox>

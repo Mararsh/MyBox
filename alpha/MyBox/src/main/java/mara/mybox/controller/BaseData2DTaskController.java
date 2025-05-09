@@ -171,7 +171,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             }
             sourceController.dataChanged(data2D);
 
-            filterController.setData2D(data2D);
+            filterController.updateData(data2D);
 
             makeSortList();
             isSettingValues = true;
