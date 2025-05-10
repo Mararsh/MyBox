@@ -233,7 +233,11 @@ public abstract class Data2DOperate {
             public void run() {
                 Platform.runLater(() -> {
                     for (Data2DWriter writer : writers) {
-                        writer.showResult();
+                        if (writer.showResult()) {
+                            showInfo(writer.getFileSuffix() + " written.");
+                        } else {
+                            showInfo(writer.getFileSuffix() + " no data.");
+                        }
                     }
                 });
                 Platform.requestNextPulse();

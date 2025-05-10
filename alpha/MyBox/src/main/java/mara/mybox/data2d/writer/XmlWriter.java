@@ -108,11 +108,12 @@ public class XmlWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
         if (printFile == null) {
-            return;
+            return false;
         }
         XmlEditorController.open(printFile);
+        return true;
     }
 
 }

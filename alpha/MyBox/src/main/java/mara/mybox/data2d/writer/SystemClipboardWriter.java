@@ -59,13 +59,14 @@ public class SystemClipboardWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
         if (builder == null || builder.isEmpty()) {
-            return;
+            return false;
         }
         TextClipboardTools.copyToSystemClipboard(
                 controller != null ? controller : operate.getController(),
                 builder.toString());
+        return true;
     }
 
     /*

@@ -120,12 +120,12 @@ public class JsonWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
         if (printFile == null || !printFile.exists()) {
-            showError(message("Failed"));
-            return;
+            return false;
         }
         JsonEditorController.open(printFile);
+        return true;
     }
 
 }

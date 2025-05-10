@@ -160,10 +160,14 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             @Override
             protected void whenSucceeded() {
-                popDone();
-                writer.showResult();
-                if (targetController != null) {
-                    targetController.sourceChanged();
+                if (writer.showResult()) {
+                    popDone();
+                    if (targetController != null) {
+                        targetController.sourceChanged();
+                    }
+                } else {
+                    alertInformation(message("NoData"));
+                    updateLogs(message("NoData"));
                 }
             }
 
@@ -217,16 +221,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     }
 
     public boolean handleRows() {
-        try {
-            outputData = rowsFiltered();
-            return outputData != null;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
+        outputData = rowsFiltered();
+        return true;
     }
 
     public void outputRows() {
@@ -239,8 +235,13 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
     public boolean updateTable() {
         try {
-            if (targetController == null || !targetController.inTable() || outputData == null) {
+            if (targetController == null || !targetController.inTable()) {
                 return false;
+            }
+            if (outputData == null || outputData.isEmpty()) {
+                alertInformation(message("NoData"));
+                updateLogs(message("NoData"));
+                return true;
             }
             int row = targetController.row();
             int col = targetController.col();
@@ -296,7 +297,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             return;
         }
         if (outputData == null || outputData.isEmpty()) {
-            popError(message("NoData"));
+            alertInformation(message("NoData"));
+            updateLogs(message("NoData"));
             return;
         }
         if (task != null) {
@@ -325,9 +327,14 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             @Override
             protected void whenSucceeded() {
-                writer.showResult();
-                if (dataController != null) {
-                    dataController.popDone();
+                if (writer.showResult()) {
+                    popDone();
+                    if (dataController != null) {
+                        dataController.popDone();
+                    }
+                } else {
+                    alertInformation(message("NoData"));
+                    updateLogs(message("NoData"));
                 }
             }
 

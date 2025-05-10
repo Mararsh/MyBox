@@ -164,12 +164,13 @@ public abstract class Data2DWriter {
         }
     }
 
-    public void showResult() {
+    public boolean showResult() {
         if (targetData == null) {
-            return;
+            return false;
         }
         Data2DManufactureController c = Data2DManufactureController.openDef(targetData);
         c.setAlwaysOnTop();
+        return true;
     }
 
     public void showInfo(String info) {

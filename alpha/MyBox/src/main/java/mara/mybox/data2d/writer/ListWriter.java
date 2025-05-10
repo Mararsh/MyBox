@@ -45,7 +45,8 @@ public class ListWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
+        return true;
     }
 
     public List<List<String>> getRows() {

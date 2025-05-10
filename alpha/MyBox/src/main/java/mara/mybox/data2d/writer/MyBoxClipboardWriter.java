@@ -110,11 +110,12 @@ public class MyBoxClipboardWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
         if (targetData == null) {
-            return;
+            return false;
         }
         DataInMyBoxClipboardController.open(targetData);
+        return true;
     }
 
 }

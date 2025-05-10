@@ -358,7 +358,11 @@ public class Data2DSpliceController extends BaseTaskController {
 
     @Override
     public void afterSuccess() {
-        writer.showResult();
+        if (writer.showResult()) {
+            popDone();
+        } else {
+            alertInformation(message("NoData"));
+        }
     }
 
     @Override

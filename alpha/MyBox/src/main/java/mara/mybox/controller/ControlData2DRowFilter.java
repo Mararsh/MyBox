@@ -34,9 +34,9 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     protected Data2DColumn objectColumn;
 
     @FXML
-    protected ToggleGroup objectGroup, conditionGroup;
+    protected ToggleGroup objectGroup, operatorGroup, compareGroup;
     @FXML
-    protected FlowPane objectPane, operatorPane;
+    protected FlowPane objectPane, operatorPane, comparePane;
     @FXML
     protected VBox setBox, columnBox, expressionBox;
     @FXML
@@ -46,9 +46,10 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             containRadio, containInsensitiveRadio, equalRadio,
             greaterRadio, greaterEqualRadio, lessRadio, lessEqualRadio,
             prefixRadio, suffixRadio, numberRadio, zeroRadio,
-            nullRadio, emptyRadio, nullEmptyRadio;
+            nullRadio, emptyRadio, nullEmptyRadio, trueRadio, falseRadio,
+            numberTypeRadio, stringTypeRadio;
     @FXML
-    protected TextField maxInput, conditionInput;
+    protected TextField maxInput, operandInput;
     @FXML
     protected CheckBox excludedCheck;
 
@@ -73,13 +74,33 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 }
             });
 
-            conditionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            operatorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    conditionChanged();
+                    operatorChanged();
+                    valueChanged(true);
+                }
+            });
+
+            compareGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    valueChanged(true);
+                }
+            });
+
+            operandInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     valueChanged(true);
                 }
             });
@@ -126,6 +147,9 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     public void objectChanged() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             setBox.getChildren().clear();
             objectColumn = null;
             for (Node node : objectPane.getChildren()) {
@@ -144,7 +168,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 } else {
                     objectColumn = data2D.column((int) node.getUserData());
                     setBox.getChildren().addAll(columnBox, excludedCheck);
-                    conditionChanged();
+                    columnChanged();
 
                 }
                 break;
@@ -155,21 +179,87 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         }
     }
 
-    public void conditionChanged() {
+    public void columnChanged() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             columnBox.getChildren().clear();
             if (objectColumn == null) {
                 return;
             }
             columnBox.getChildren().add(operatorPane);
+            operatorPane.getChildren().clear();
+            isSettingValues = true;
+            if (objectColumn.isBooleanType()) {
+                operatorPane.getChildren().addAll(trueRadio, falseRadio);
+                trueRadio.setSelected(true);
+
+            } else if (objectColumn.isDBNumberType()) {
+                operatorPane.getChildren().addAll(
+                        equalRadio,
+                        greaterRadio, greaterEqualRadio, lessRadio, lessEqualRadio,
+                        zeroRadio, numberRadio,
+                        containRadio, containInsensitiveRadio,
+                        prefixRadio, suffixRadio);
+                equalRadio.setSelected(true);
+
+            } else {
+                operatorPane.getChildren().addAll(
+                        containRadio, containInsensitiveRadio,
+                        prefixRadio, suffixRadio,
+                        equalRadio, numberRadio, zeroRadio,
+                        greaterRadio, greaterEqualRadio, lessRadio, lessEqualRadio);
+                containRadio.setSelected(true);
+
+            }
+            isSettingValues = false;
+            operatorPane.getChildren().addAll(nullRadio, emptyRadio, nullEmptyRadio);
+            operatorChanged();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void operatorChanged() {
+        try {
+            if (isSettingValues || objectColumn == null) {
+                return;
+            }
             if (equalRadio.isSelected()
                     || greaterRadio.isSelected()
                     || greaterEqualRadio.isSelected()
                     || lessRadio.isSelected()
-                    || lessEqualRadio.isSelected()
+                    || lessEqualRadio.isSelected()) {
+                if (!columnBox.getChildren().contains(valueBox)) {
+                    columnBox.getChildren().add(valueBox);
+                }
+                if (!setBox.getChildren().contains(comparePane)) {
+                    setBox.getChildren().add(1, comparePane);
+                }
+                if (objectColumn.isDBNumberType()) {
+                    numberTypeRadio.setSelected(true);
+                } else {
+                    stringTypeRadio.setSelected(true);
+                }
+            } else if (containRadio.isSelected()
+                    || containInsensitiveRadio.isSelected()
+                    || containRadio.isSelected()
                     || prefixRadio.isSelected()
                     || suffixRadio.isSelected()) {
-                columnBox.getChildren().add(valueBox);
+                if (!columnBox.getChildren().contains(valueBox)) {
+                    columnBox.getChildren().add(valueBox);
+                }
+                if (setBox.getChildren().contains(comparePane)) {
+                    setBox.getChildren().remove(comparePane);
+                }
+            } else {
+                if (columnBox.getChildren().contains(valueBox)) {
+                    columnBox.getChildren().remove(valueBox);
+                }
+                if (setBox.getChildren().contains(comparePane)) {
+                    setBox.getChildren().remove(comparePane);
+                }
             }
             refreshStyle(columnBox);
         } catch (Exception e) {
@@ -213,141 +303,191 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     }
 
     public String makeScript() {
-        String script = null;
         try {
-            String value = conditionInput.getText();
-            String valueError = message("InvalidParameter") + ": " + message("Value");
+            if (notFilterRadio.isSelected()) {
+                return null;
+            }
+
             if (expressionRadio.isSelected()) {
-                script = scriptInput.getText();
+                return scriptInput.getText();
+            }
 
-            } else if (objectColumn != null) {
+            if (objectColumn == null) {
+                error = message("InvalidParameter") + ": " + message("Object");
+                return null;
+            }
 
-                String name = objectColumn.getColumnName();
-                String placeholder = "#{" + name + "}";
-                String placeholderString = "( #{" + name + "} + '' )";
+            String script = null;
+            String value = operandInput.getText();
+            String valueError = message("InvalidParameter") + ": " + message("Value");
+            String name = objectColumn.getColumnName();
+            String placeholder = "#{" + name + "}";
+            String placeholderString = "( #{" + name + "} + '' )";
+            boolean isNumberType = objectColumn.isDBNumberType();
+            boolean asNumberType = numberTypeRadio.isSelected();
 
-                if (equalRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    if (objectColumn.isDBNumberType() || objectColumn.isBooleanType()) {
+            if (trueRadio.isSelected()) {
+                script = placeholder + " == true";
+
+            } else if (falseRadio.isSelected()) {
+                script = placeholder + " == false";
+
+            } else if (equalRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                if (isNumberType) {
+                    if (asNumberType) {
                         script = placeholder + " == " + value;
+                    } else {
+                        script = placeholderString + " == '" + value + "'";
+                    }
+                } else {
+                    if (asNumberType) {
+                        script = "parseFloat(" + placeholderString + ") " + " == " + value;
                     } else {
                         script = placeholder + " == '" + value + "'";
                     }
+                }
 
-                } else if (numberRadio.isSelected()) {
-                    script = "!isNaN(" + placeholder + " - 1)";
+            } else if (numberRadio.isSelected()) {
+                script = "!isNaN(" + placeholder + " - 1)";
 
-                } else if (zeroRadio.isSelected()) {
-                    if (objectColumn.isDBNumberType() || objectColumn.isBooleanType()) {
-                        script = placeholder + " == " + value;
-                    } else {
-                        script = placeholder + " == '" + value + "'";
-                    }  // ??????
+            } else if (zeroRadio.isSelected()) {
+                if (isNumberType) {
+                    script = placeholder + " == 0";
+                } else {
                     script = "parseFloat(" + placeholderString + ") == 0";
+                }
 
-                } else if (nullRadio.isSelected()) {
-                    script = placeholder + " == null";
+            } else if (nullRadio.isSelected()) {
+                script = placeholder + " == null";
 
-                } else if (emptyRadio.isSelected()) {
-                    script = "(" + placeholder + " != null) && ("
-                            + placeholderString + " == '')";
+            } else if (emptyRadio.isSelected()) {
+                script = "(" + placeholder + " != null) && ("
+                        + placeholderString + " == '')";
 
-                } else if (nullEmptyRadio.isSelected()) {
-                    script = "(" + placeholder + " == null) || ("
-                            + placeholderString + " == '')";
+            } else if (nullEmptyRadio.isSelected()) {
+                script = "(" + placeholder + " == null) || ("
+                        + placeholderString + " == '')";
 
-                } else if (prefixRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    script = "(" + placeholder + " != null) && ("
-                            + placeholderString + ".startsWith('" + value + "'))";
+            } else if (prefixRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                script = "(" + placeholder + " != null) && ("
+                        + placeholderString + ".startsWith('" + value + "'))";
 
-                } else if (suffixRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    script = "(" + placeholder + " != null) && ("
-                            + placeholderString + ".endsWith('" + value + "'))";
+            } else if (suffixRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                script = "(" + placeholder + " != null) && ("
+                        + placeholderString + ".endsWith('" + value + "'))";
 
-                } else if (containRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    script = "(" + placeholder + " != null) && ("
-                            + placeholderString + ".search(/" + value + "/) >= 0))";
+            } else if (containRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                script = "(" + placeholder + " != null) && ("
+                        + placeholderString + ".search(/" + value + "/) >= 0)";
 
-                } else if (containInsensitiveRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    script = "(" + placeholder + " != null) && ("
-                            + placeholderString + ".search(/" + value + "/ig) >= 0))";
+            } else if (containInsensitiveRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                script = "(" + placeholder + " != null) && ("
+                        + placeholderString + ".search(/" + value + "/ig) >= 0)";
 
-                } else if (greaterRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    if (objectColumn.isDBNumberType() || objectColumn.isBooleanType()) {
-                        script = "  placeholder > " + value;
+            } else if (greaterRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                if (isNumberType) {
+                    if (asNumberType) {
+                        script = placeholder + " > " + value;
                     } else {
-                        script = "  placeholder > '" + value + "'";
+                        script = placeholderString + " > '" + value + "'";
                     }
-
-                } else if (greaterEqualRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    if (objectColumn.isDBNumberType() || objectColumn.isBooleanType()) {
-                        script = "  placeholder >= " + value;
+                } else {
+                    if (asNumberType) {
+                        script = "parseFloat(" + placeholderString + ") " + " > " + value;
                     } else {
-                        script = "  placeholder >= '" + value + "'";
+                        script = placeholder + " > '" + value + "'";
                     }
+                }
 
-                } else if (lessRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    if (objectColumn.isDBNumberType() || objectColumn.isBooleanType()) {
-                        script = "  placeholder < " + value;
+            } else if (greaterEqualRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                if (isNumberType) {
+                    if (asNumberType) {
+                        script = placeholder + " >= " + value;
                     } else {
-                        script = "  placeholder < '" + value + "'";
+                        script = placeholderString + " >= '" + value + "'";
                     }
-
-                } else if (lessEqualRadio.isSelected()) {
-                    if (value == null || value.isEmpty()) {
-                        error = valueError;
-                        return null;
-                    }
-                    if (objectColumn.isDBNumberType() || objectColumn.isBooleanType()) {
-                        script = "  placeholder <= " + value;
+                } else {
+                    if (asNumberType) {
+                        script = "parseFloat(" + placeholderString + ") " + " >= " + value;
                     } else {
-                        script = "  placeholder <= '" + value + "'";
+                        script = placeholder + " >= '" + value + "'";
                     }
+                }
 
+            } else if (lessRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                if (isNumberType) {
+                    if (asNumberType) {
+                        script = placeholder + " < " + value;
+                    } else {
+                        script = placeholderString + " < '" + value + "'";
+                    }
+                } else {
+                    if (asNumberType) {
+                        script = "parseFloat(" + placeholderString + ") " + " < " + value;
+                    } else {
+                        script = placeholder + " < '" + value + "'";
+                    }
+                }
+
+            } else if (lessEqualRadio.isSelected()) {
+                if (value == null || value.isEmpty()) {
+                    error = valueError;
+                    return null;
+                }
+                if (isNumberType) {
+                    if (asNumberType) {
+                        script = placeholder + " <= " + value;
+                    } else {
+                        script = placeholderString + " <= '" + value + "'";
+                    }
+                } else {
+                    if (asNumberType) {
+                        script = "parseFloat(" + placeholderString + ") " + " <= " + value;
+                    } else {
+                        script = placeholder + " <= '" + value + "'";
+                    }
                 }
 
             }
 
-            if (script != null) {
-                script = script.trim();
-            }
-
+            return script;
         } catch (Exception e) {
             MyBoxLog.error(e);
-
+            error = e.toString();
+            return null;
         }
-        return script;
     }
 
     public DataFilter pickFilter(boolean allPages) {
@@ -396,12 +536,10 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             return null;
         }
         String script = makeScript();
-        if (error != null) {
+        if (error != null || script == null || script.isBlank()) {
             return null;
         }
-        if (script == null || script.isBlank()) {
-            return script;
-        }
+        script = script.trim();
         calculator.validateExpression(data2D, script, allPages);
         TableStringValues.add(baseName + "Histories", script);
         error = calculator.getError();
@@ -427,7 +565,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     @FXML
     public void showConditionHistories(Event event) {
-        PopTools.popSavedValues(this, conditionInput, event, baseName + "ConditionHistories");
+        PopTools.popSavedValues(this, operandInput, event, baseName + "ConditionHistories");
     }
 
 }

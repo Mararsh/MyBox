@@ -98,12 +98,12 @@ public class PdfWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
         if (printFile == null || !printFile.exists()) {
-            showError(message("Failed"));
-            return;
+            return false;
         }
         PdfViewController.open(printFile);
+        return true;
     }
 
     /*

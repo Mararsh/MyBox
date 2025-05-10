@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.operate.Data2DSaveAs;
 import mara.mybox.data2d.writer.Data2DWriter;
@@ -121,10 +122,15 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     @Override
     public void afterSuccess() {
-        if (saveTmp) {
-            targetController.tableController.loadDef(writer.getTargetData(), false);
+        Data2D results = writer.getTargetData();
+        if (results != null) {
+            if (saveTmp) {
+                targetController.tableController.loadDef(results, false);
+            } else {
+                writer.showResult();
+            }
         } else {
-            writer.showResult();
+            alertInformation(message("NoData"));
         }
     }
 
