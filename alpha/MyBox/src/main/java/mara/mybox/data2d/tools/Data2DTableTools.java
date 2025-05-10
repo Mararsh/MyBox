@@ -200,7 +200,7 @@ public class Data2DTableTools {
                 fileRow.clear();
             }
             writer.closeWriter();
-            return writer.isCreated();
+            return writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

@@ -45,13 +45,18 @@ public abstract class Data2DWriter {
     protected ControlTargetFile targetFileController;
     protected List<String> headerNames, printRow;
     protected List<Data2DColumn> columns;
-    public boolean writeHeader, created, validateValue,
+    public boolean writeHeader, validateValue,
             formatValues, recordTargetFile, recordTargetData;
     protected String indent = "    ", dataName, fileSuffix, value;
     protected long targetRowIndex;
     protected Connection conn;
     protected int rowSize;
     public InvalidAs invalidAs;
+    public Status status;
+
+    public enum Status {
+        Unknown, Openned, Writing, Created, NoData, Failed
+    }
 
     public Data2DWriter() {
         operate = null;
@@ -60,6 +65,7 @@ public abstract class Data2DWriter {
         validateValue = false;
         writeHeader = recordTargetFile = recordTargetData = true;
         invalidAs = null;
+        status = Status.Unknown;
     }
 
     public boolean checkParameters() {
@@ -75,7 +81,7 @@ public abstract class Data2DWriter {
     public boolean resetWriter() {
         targetData = null;
         targetRowIndex = 0;
-        created = false;
+        status = Status.Unknown;
         return true;
     }
 
@@ -140,9 +146,8 @@ public abstract class Data2DWriter {
     }
 
     public void closeWriter() {
-        created = false;
-    }
 
+    }
 
     /*
         value/status
@@ -228,6 +233,10 @@ public abstract class Data2DWriter {
 
     public boolean isStopped() {
         return operate != null && operate.isStopped();
+    }
+
+    public boolean isCompleted() {
+        return status == Status.Created || status == Status.NoData;
     }
 
     /*
@@ -361,12 +370,12 @@ public abstract class Data2DWriter {
         return this;
     }
 
-    public boolean isCreated() {
-        return created;
+    public Status getStatus() {
+        return status;
     }
 
-    public Data2DWriter setCreated(boolean created) {
-        this.created = created;
+    public Data2DWriter setStatus(Status status) {
+        this.status = status;
         return this;
     }
 

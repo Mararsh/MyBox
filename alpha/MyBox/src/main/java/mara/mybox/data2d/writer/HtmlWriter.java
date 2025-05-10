@@ -53,6 +53,7 @@ public class HtmlWriter extends Data2DWriter {
             s.append(indent).append("</HEAD>\n").append(indent).append("<BODY>\n");
             s.append(StringTable.tablePrefix(new StringTable(headerNames)));
             fileWriter.write(s.toString());
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -75,9 +76,9 @@ public class HtmlWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
-            if (fileWriter == null) {
+            if (fileWriter == null || printFile == null) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
@@ -85,6 +86,15 @@ public class HtmlWriter extends Data2DWriter {
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
+                return;
+            }
+            if (targetRowIndex == 0) {
+                fileWriter.close();
+                fileWriter = null;
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("NoData") + ": " + printFile);
+                status = Status.NoData;
                 return;
             }
             fileWriter.write(StringTable.tableSuffix(new StringTable(headerNames)));
@@ -95,14 +105,16 @@ public class HtmlWriter extends Data2DWriter {
             if (!FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (printFile == null || !printFile.exists()) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.Html);
-            created = true;
+            status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }

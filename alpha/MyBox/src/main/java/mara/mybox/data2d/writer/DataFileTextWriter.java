@@ -49,6 +49,7 @@ public class DataFileTextWriter extends Data2DWriter {
             if (writeHeader) {
                 TextFileTools.writeLine(task(), fileWriter, headerNames, delimiter);
             }
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -71,26 +72,40 @@ public class DataFileTextWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
-            if (fileWriter == null) {
+            if (fileWriter == null || printFile == null) {
+                showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             fileWriter.flush();
             fileWriter.close();
             fileWriter = null;
-            if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, printFile)) {
+            if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
+                return;
+            }
+            if (targetRowIndex == 0) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("NoData") + ": " + printFile);
+                status = Status.NoData;
+                return;
+            }
+            if (!FileTools.override(tmpFile, printFile)) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (printFile == null || !printFile.exists()) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.Text);
             recordTargetData();
-            created = true;
+            status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }

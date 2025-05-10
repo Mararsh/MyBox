@@ -154,7 +154,7 @@ public class Data2DSpliceController extends BaseTaskController {
             writer.closeWriter();
             csvA.drop();
             csvB.drop();
-            return writer.isCreated();
+            return writer.isCompleted();
         } catch (Exception e) {
             error = e.toString();
             return false;

@@ -321,7 +321,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                     writer.writeRow(row);
                 }
                 writer.closeWriter();
-                taskSuccessed = writer.isCreated();
+                taskSuccessed = writer.isCompleted();
                 return taskSuccessed;
             }
 

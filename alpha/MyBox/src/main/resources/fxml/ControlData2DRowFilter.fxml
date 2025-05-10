@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
             <TextField fx:id="maxInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <FlowPane fx:id="objectPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+      <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
          <children>
             <Label text="%Object" />
             <RadioButton fx:id="notFilterRadio" mnemonicParsing="false" selected="true" text="%NotFilter">
@@ -38,6 +38,12 @@ License:    Apache License Version 2.0
             <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$objectGroup" />
          </children>
       </FlowPane>
+      <HBox maxWidth="1.7976931348623157E308" spacing="2.0">
+         <children>
+            <Label text="%Object" visible="false" />
+            <FlowPane fx:id="columnsPane" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
       <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
             <VBox fx:id="columnBox" spacing="5.0">

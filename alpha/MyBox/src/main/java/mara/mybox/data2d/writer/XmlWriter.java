@@ -40,6 +40,7 @@ public class XmlWriter extends Data2DWriter {
             s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
                     .append("<Data>\n");
             fileWriter.write(s.toString());
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -75,9 +76,9 @@ public class XmlWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
             if (fileWriter == null || printFile == null) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
@@ -85,6 +86,15 @@ public class XmlWriter extends Data2DWriter {
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
+                return;
+            }
+            if (targetRowIndex == 0) {
+                fileWriter.close();
+                fileWriter = null;
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("NoData") + ": " + printFile);
+                status = Status.NoData;
                 return;
             }
             fileWriter.write("</Data>\n");
@@ -94,14 +104,16 @@ public class XmlWriter extends Data2DWriter {
             if (!FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.NoData;
                 return;
             }
             if (printFile == null || !printFile.exists()) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.NoData;
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.XML);
-            created = true;
+            status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }

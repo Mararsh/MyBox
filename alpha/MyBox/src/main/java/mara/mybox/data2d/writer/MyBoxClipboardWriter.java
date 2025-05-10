@@ -47,6 +47,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             if (writeHeader && headerNames != null) {
                 printer.printRecord(headerNames);
             }
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -69,7 +70,6 @@ public class MyBoxClipboardWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
             if (printer == null) {
                 showInfo(message("Failed") + ": " + printFile);
                 return;
@@ -77,14 +77,27 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             printer.flush();
             printer.close();
             printer = null;
-            if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, printFile)) {
+            if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
+                return;
+            }
+            if (targetRowIndex == 0) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("NoData") + ": " + printFile);
+                status = Status.NoData;
+                return;
+            }
+            if (!FileTools.override(tmpFile, printFile)) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (printFile == null || !printFile.exists()) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (targetData == null) {
@@ -103,7 +116,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             showInfo(message("Generated") + ": " + printFile + "  "
                     + message("FileSize") + ": " + printFile.length());
             showInfo(message("RowsNumber") + ": " + targetRowIndex);
-            created = true;
+            status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }

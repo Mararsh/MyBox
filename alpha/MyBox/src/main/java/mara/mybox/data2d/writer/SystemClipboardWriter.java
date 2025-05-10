@@ -26,6 +26,7 @@ public class SystemClipboardWriter extends Data2DWriter {
             if (writeHeader && headerNames != null) {
                 appendRow(headerNames);
             }
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -55,7 +56,17 @@ public class SystemClipboardWriter extends Data2DWriter {
 
     @Override
     public void closeWriter() {
-        created = builder != null && !builder.isEmpty();
+        if (isFailed() || builder == null) {
+            showInfo(message("Failed"));
+            status = Status.Failed;
+            return;
+        }
+        if (targetRowIndex == 0 || builder.isEmpty()) {
+            showInfo(message("NoData"));
+            status = Status.NoData;
+            return;
+        }
+        status = Status.Created;
     }
 
     @Override
