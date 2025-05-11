@@ -62,7 +62,8 @@ public class Data2DPageTools {
                     htmlRow.add(pageRow.get(0));
                 }
                 for (int col = 0; col < cNumber; col++) {
-                    String value = "<PRE>" + pageRow.get(col + 1) + "</PRE>";
+                    String value = pageRow.get(col + 1);
+                    value = value == null ? "" : "<PRE>" + value + "</PRE>";
                     String style = data2d.cellStyle(styleFilter, i, data2d.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
@@ -119,7 +120,8 @@ public class Data2DPageTools {
                         htmlRow.add(data2d.columnName(col));
                     }
                     String value = dataRow.get(col + 1);
-                    value = StringTools.replaceHtmlLineBreak(value);
+                    value = value == null ? ""
+                            : "<PRE>" + StringTools.replaceHtmlLineBreak(value) + "</PRE>";
                     String style = data2d.cellStyle(styleFilter, r, data2d.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")

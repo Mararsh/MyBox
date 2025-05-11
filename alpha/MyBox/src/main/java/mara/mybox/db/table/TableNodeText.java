@@ -28,20 +28,9 @@ public class TableNodeText extends BaseNodeTable {
 
     public final TableNodeText defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("text", ColumnType.Clob));
+        addColumn(new ColumnDefinition("text", ColumnType.Clob)
+                .setLabel(message("Texts")));
         return this;
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "text":
-                return message("Texts");
-        }
-        return super.label(name);
     }
 
     @Override

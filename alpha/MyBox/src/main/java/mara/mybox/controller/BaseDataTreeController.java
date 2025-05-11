@@ -515,8 +515,8 @@ public class BaseDataTreeController extends BaseFileController {
         }
     }
 
-    public void locate() {
-        DataTreeLocateController.open(this);
+    public void query() {
+        DataTreeQueryController.open(this);
     }
 
     /*
@@ -624,9 +624,9 @@ public class BaseDataTreeController extends BaseFileController {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("Locate"), StyleTools.getIconImageView("iconTarget.png"));
+        menu = new MenuItem(message("Query"), StyleTools.getIconImageView("iconQuery.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            locate();
+            query();
         });
         items.add(menu);
 

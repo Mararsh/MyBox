@@ -166,8 +166,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                         targetController.sourceChanged();
                     }
                 } else {
-                    alertInformation(message("NoData"));
-                    updateLogs(message("NoData"));
+                    alertInformation(message("ResultIsEmpty"));
+                    updateLogs(message("ResultIsEmpty"));
                 }
             }
 
@@ -239,8 +239,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 return false;
             }
             if (outputData == null || outputData.isEmpty()) {
-                alertInformation(message("NoData"));
-                updateLogs(message("NoData"));
+                alertInformation(message("ResultIsEmpty"));
+                updateLogs(message("ResultIsEmpty"));
                 return true;
             }
             int row = targetController.row();
@@ -297,8 +297,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             return;
         }
         if (outputData == null || outputData.isEmpty()) {
-            alertInformation(message("NoData"));
-            updateLogs(message("NoData"));
+            alertInformation(message("ResultIsEmpty"));
+            updateLogs(message("ResultIsEmpty"));
             return;
         }
         if (task != null) {
@@ -333,8 +333,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                         dataController.popDone();
                     }
                 } else {
-                    alertInformation(message("NoData"));
-                    updateLogs(message("NoData"));
+                    alertInformation(message("ResultIsEmpty"));
+                    updateLogs(message("ResultIsEmpty"));
                 }
             }
 

@@ -13,12 +13,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data2d.DataInternalTable;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
-import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.db.table.TableNodeDataColumn;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
@@ -308,11 +305,7 @@ public class DataTreeController extends BaseDataTreeController {
     }
 
     protected void manufactureData() {
-        String tname = nodeTable.getTableName();
-        DataTable dataTable = BaseTableTools.isInternalTable(tname)
-                ? new DataInternalTable() : new DataTable();
-        dataTable.setDataName(nodeTable.getTreeName()).setSheet(tname);
-        Data2DManufactureController.openDef(dataTable);
+        Data2DManufactureController.openDef(nodeTable.dataTable());
     }
 
     /*

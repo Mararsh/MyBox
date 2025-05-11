@@ -30,47 +30,29 @@ public class TableNodeImageScope extends BaseNodeTable {
 
     public final TableNodeImageScope defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("shape_type", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("color_algorithm", ColumnType.String).setLength(128));
-        addColumn(new ColumnDefinition("shape_excluded", ColumnType.Boolean));
-        addColumn(new ColumnDefinition("color_excluded", ColumnType.Boolean));
-        addColumn(new ColumnDefinition("color_threshold", ColumnType.Double));
-        addColumn(new ColumnDefinition("color_weights", ColumnType.String));
-        addColumn(new ColumnDefinition("background_file", ColumnType.File));
-        addColumn(new ColumnDefinition("outline_file", ColumnType.File));
-        addColumn(new ColumnDefinition("shape_data", ColumnType.Clob));
-        addColumn(new ColumnDefinition("color_data", ColumnType.Clob));
+        addColumn(new ColumnDefinition("shape_type", ColumnType.String)
+                .setLength(128)
+                .setLabel(message("ShapeType")));
+        addColumn(new ColumnDefinition("color_algorithm", ColumnType.String)
+                .setLength(128)
+                .setLabel(message("ColorMatchAlgorithm")));
+        addColumn(new ColumnDefinition("shape_excluded", ColumnType.Boolean)
+                .setLabel(message("ShapeExcluded")));
+        addColumn(new ColumnDefinition("color_excluded", ColumnType.Boolean)
+                .setLabel(message("ColorExcluded")));
+        addColumn(new ColumnDefinition("color_threshold", ColumnType.Double)
+                .setLabel(message("ColorMatchThreshold")));
+        addColumn(new ColumnDefinition("color_weights", ColumnType.String)
+                .setLabel(message("ColorWeights")));
+        addColumn(new ColumnDefinition("background_file", ColumnType.File)
+                .setLabel(message("Background")));
+        addColumn(new ColumnDefinition("outline_file", ColumnType.File)
+                .setLabel(message("Outline")));
+        addColumn(new ColumnDefinition("shape_data", ColumnType.Clob)
+                .setLabel(message("Shape")));
+        addColumn(new ColumnDefinition("color_data", ColumnType.Clob)
+                .setLabel(message("Colors")));
         return this;
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "shape_type":
-                return message("ShapeType");
-            case "color_algorithm":
-                return message("ColorMatchAlgorithm");
-            case "shape_excluded":
-                return message("ShapeExcluded");
-            case "color_excluded":
-                return message("ColorExcluded");
-            case "color_threshold":
-                return message("ColorMatchThreshold");
-            case "color_weights":
-                return message("ColorWeights");
-            case "background_file":
-                return message("Background");
-            case "outline_file":
-                return message("Outline");
-            case "shape_data":
-                return message("Shape");
-            case "color_data":
-                return message("Colors");
-        }
-        return super.label(name);
     }
 
     @Override

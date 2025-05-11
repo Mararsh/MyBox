@@ -29,7 +29,8 @@ public class TableNodeJShell extends BaseNodeTable {
 
     public final TableNodeJShell defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("codes", ColumnType.Clob));
+        addColumn(new ColumnDefinition("codes", ColumnType.Clob)
+                .setLabel(message("Codes")));
         return this;
     }
 
@@ -40,18 +41,6 @@ public class TableNodeJShell extends BaseNodeTable {
         }
         String codes = node.getStringValue("codes");
         return codes != null && !codes.isBlank();
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "codes":
-                return message("Codes");
-        }
-        return super.label(name);
     }
 
     @Override

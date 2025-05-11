@@ -1138,17 +1138,6 @@ public abstract class BaseTable<D> {
         return null;
     }
 
-    public String columnLabel(ColumnDefinition column) {
-        if (column == null) {
-            return null;
-        }
-        return column.label();
-    }
-
-    public String label(String columnName) {
-        return columnLabel(column(columnName));
-    }
-
     public String columnsText() {
         if (tableName == null || columns.isEmpty()) {
             return null;
@@ -1269,7 +1258,7 @@ public abstract class BaseTable<D> {
                 } else {
                     info = "";
                 }
-                info += label(column.getColumnName()) + ": " + display;
+                info += column.getLabel() + ": " + display;
             }
             return info;
         } catch (Exception e) {
@@ -1327,7 +1316,7 @@ public abstract class BaseTable<D> {
                 } else {
                     info = "";
                 }
-                info += label(column.getColumnName()) + ": " + display;
+                info += column.getLabel() + ": " + display;
             }
             return info;
         } catch (Exception e) {
@@ -1349,7 +1338,8 @@ public abstract class BaseTable<D> {
                     ? new DataInternalTable() : new DataTable();
             String sheet = DerbyBase.fixedIdentifier(tableName);
             dataTable.setSheet(sheet)
-                    .setColsNumber(columns.size());
+                    .setColsNumber(columns.size())
+                    .setRowsNumber(size(conn));
             if (this instanceof BaseNodeTable) {
                 dataTable.setDataName(((BaseNodeTable) this).getDataName());
             } else {

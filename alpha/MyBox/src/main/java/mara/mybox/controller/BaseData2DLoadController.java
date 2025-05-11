@@ -38,7 +38,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -293,14 +292,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     public void loadTmpData(int size) {
         loadData(null, data2D.tmpColumns(size), data2D.tmpData(size, 3));
-    }
-
-    public void loadMatrix(double[][] matrix) {
-        if (matrix == null || matrix.length == 0) {
-            loadNull();
-            return;
-        }
-        loadData(null, data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
     }
 
     @Override

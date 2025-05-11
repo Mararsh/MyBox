@@ -18,6 +18,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -39,7 +40,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     @FXML
     protected VBox setBox, columnBox, expressionBox;
     @FXML
-    protected HBox valueBox;
+    protected HBox operatorBox, valueBox;
     @FXML
     protected RadioButton notFilterRadio, expressionRadio,
             containRadio, containInsensitiveRadio, equalRadio,
@@ -53,7 +54,6 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     protected CheckBox excludedCheck;
 
     @FXML
-
     @Override
     public void initControls() {
         try {
@@ -123,17 +123,36 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     }
 
     @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            if (previewButton != null) {
+                StyleTools.setIconTooltips(previewButton, "iconPreview.png", message("BatchPreviewComments"));
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
     public void updateData(Data2D data) {
         try {
             data2D = data;
             columnsPane.getChildren().clear();
             if (data2D != null) {
-                for (int i = 0; i < data2D.colsNumber; i++) {
-                    String name = data2D.columnName(i);
-                    RadioButton button = new RadioButton(name);
+                RadioButton button1 = null;
+                for (Data2DColumn column : data2D.getColumns()) {
+                    RadioButton button = new RadioButton(column.getLabel());
                     button.setToggleGroup(objectGroup);
-                    button.setUserData(i);
+                    button.setUserData(column);
                     columnsPane.getChildren().add(button);
+                    if (button1 == null) {
+                        button1 = button;
+                    }
+                }
+                if (notFilterRadio == null && button1 != null) {
+                    button1.setSelected(true);
                 }
             }
 
@@ -151,7 +170,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             objectColumn = null;
             if (data2D == null
                     || objectGroup.getSelectedToggle() == null
-                    || notFilterRadio.isSelected()) {
+                    || (notFilterRadio != null && notFilterRadio.isSelected())) {
                 return;
             }
 
@@ -161,9 +180,10 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 return;
             }
 
-            objectColumn = data2D.column((int) objectGroup.getSelectedToggle().getUserData());
+            objectColumn = (Data2DColumn) objectGroup.getSelectedToggle().getUserData();
             setBox.getChildren().addAll(columnBox, excludedCheck);
             columnChanged();
+            refreshStyle(setBox);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -179,7 +199,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             if (objectColumn == null) {
                 return;
             }
-            columnBox.getChildren().add(operatorPane);
+            columnBox.getChildren().add(operatorBox);
             operatorPane.getChildren().clear();
             isSettingValues = true;
             if (objectColumn.isBooleanType()) {
@@ -295,7 +315,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     public String makeScript() {
         try {
-            if (notFilterRadio.isSelected()) {
+            if (notFilterRadio != null && notFilterRadio.isSelected()) {
                 return null;
             }
 
@@ -504,6 +524,10 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
             }
 
+            if (value != null && !value.isBlank()) {
+                TableStringValues.add(baseName + "OperandHistories", value);
+            }
+
             return script;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -579,15 +603,15 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     }
 
     @FXML
-    public void popConditionHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "ConditionHistoriesPopWhenMouseHovering", false)) {
-            showConditionHistories(event);
+    public void popOperandHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + "OperandHistoriesPopWhenMouseHovering", false)) {
+            showOperandHistories(event);
         }
     }
 
     @FXML
-    public void showConditionHistories(Event event) {
-        PopTools.popSavedValues(this, operandInput, event, baseName + "ConditionHistories");
+    public void showOperandHistories(Event event) {
+        PopTools.popSavedValues(this, operandInput, event, baseName + "OperandHistories");
     }
 
 }

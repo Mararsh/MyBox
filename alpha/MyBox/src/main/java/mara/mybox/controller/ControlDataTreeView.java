@@ -137,11 +137,10 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             protected void whenSucceeded() {
                 dataController.rootNode = rootNode;
                 setRoot(rootItem);
-                if (selectItem != null) {
-                    focusItem(selectItem);
-                }
-                if (size <= 1) {
+                if (size <= 0) {
                     dataController.whenTreeEmpty();
+                } else if (selectItem != null) {
+                    focusItem(selectItem);
                 }
             }
 

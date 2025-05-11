@@ -31,8 +31,12 @@ public class TableNodeWebFavorite extends BaseNodeTable {
 
     public final TableNodeWebFavorite defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("address", ColumnType.File).setLength(FilenameMaxLength));
-        addColumn(new ColumnDefinition("icon", ColumnType.Image).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("address", ColumnType.File)
+                .setLength(FilenameMaxLength)
+                .setLabel(message("Address")));
+        addColumn(new ColumnDefinition("icon", ColumnType.Image)
+                .setLength(FilenameMaxLength)
+                .setLabel(message("Icon")));
         return this;
     }
 
@@ -43,20 +47,6 @@ public class TableNodeWebFavorite extends BaseNodeTable {
         }
         String address = node.getStringValue("address");
         return address != null && !address.isBlank();
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "address":
-                return message("Address");
-            case "icon":
-                return message("Icon");
-        }
-        return super.label(name);
     }
 
     @Override

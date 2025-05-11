@@ -35,7 +35,7 @@ import static mara.mybox.value.Languages.message;
 public class ColumnDefinition extends BaseData {
 
     protected String tableName, columnName, referName, referTable, referColumn,
-            defaultValue, description, format;
+            defaultValue, description, format, label;
     protected ColumnType type;
     protected int index, length, width, scale, century;
     protected Color color;
@@ -94,6 +94,7 @@ public class ColumnDefinition extends BaseData {
         statistic = null;
         description = null;
         century = 2000;
+        label = null;
     }
 
     public ColumnDefinition() {
@@ -162,6 +163,7 @@ public class ColumnDefinition extends BaseData {
             description = c.description;
             fixTwoDigitYear = c.fixTwoDigitYear;
             century = c.century;
+            label = c.label;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -1027,10 +1029,6 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public String label() {
-        return columnName;
-    }
-
     public String info() {
         return info(this);
     }
@@ -1696,6 +1694,15 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+    public String getLabel() {
+        return label != null ? label : columnName;
+    }
+
+    public ColumnDefinition setLabel(String label) {
+        this.label = label;
         return this;
     }
 

@@ -10,6 +10,7 @@ import java.util.Map;
 import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -46,36 +47,23 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public final BaseNodeTable defineNodeColumns() {
-        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("order_number", ColumnType.Float));
-        addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
+        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true)
+                .setAuto(true)
+                .setLabel(message("NodeID")));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true)
+                .setLength(StringMaxLength)
+                .setLabel(message("Title")));
+        addColumn(new ColumnDefinition("order_number", ColumnType.Float)
+                .setLabel(message("OrderNumber")));
+        addColumn(new ColumnDefinition("update_time", ColumnType.Datetime)
+                .setLabel(message("UpdateTime")));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
+                .setLabel(message("ParentID"))
                 .setReferName(tableName + "_parentid_fk")
                 .setReferTable(tableName).setReferColumn(idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name.toLowerCase()) {
-            case "nodeid":
-                return message("NodeID");
-            case "title":
-                return message("Title");
-            case "order_number":
-                return message("OrderNumber");
-            case "parentid":
-                return message("ParentID");
-            case "update_time":
-                return message("UpdateTime");
-        }
-        return name;
     }
 
     @Override
@@ -157,6 +145,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return false;
         }
         return nodeExecutable;
+    }
+
+    public DataInternalTable dataTable() {
+        DataInternalTable dataTable = new DataInternalTable();
+        dataTable.setDataName(treeName).setSheet(tableName);
+        return dataTable;
     }
 
     /*
@@ -722,7 +716,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 continue;
             }
             List<String> row = new ArrayList<>();
-            row.add(label(name));
+            row.add(column.getLabel());
             row.add("<PRE><CODE>" + value + "</CODE></PRE>");
             table.add(row);
         }
@@ -787,7 +781,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (!json.isBlank()) {
                 json += ",\n";
             }
-            json += prefix + "\"" + label(name) + "\": "
+            json += prefix + "\"" + column.getLabel() + "\": "
                     + JsonTools.encode(sValue);
         }
         return json;
@@ -867,7 +861,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (value == null || value.isBlank()) {
                 continue;
             }
-            s += "\n" + label(name) + ": " + value;
+            s += "\n" + column.getLabel() + ": " + value;
 
         }
         return s;

@@ -29,7 +29,9 @@ public class TableNodeSQL extends BaseNodeTable {
 
     public final TableNodeSQL defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("statement", ColumnType.String).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("statement", ColumnType.String)
+                .setLength(FilenameMaxLength)
+                .setLabel(message("SQL")));
         return this;
     }
 
@@ -40,18 +42,6 @@ public class TableNodeSQL extends BaseNodeTable {
         }
         String sql = node.getStringValue("statement");
         return sql != null && !sql.isBlank();
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "statement":
-                return message("SQL");
-        }
-        return super.label(name);
     }
 
     @Override

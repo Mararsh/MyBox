@@ -361,7 +361,7 @@ public class Data2DSpliceController extends BaseTaskController {
         if (writer.showResult()) {
             popDone();
         } else {
-            alertInformation(message("NoData"));
+            alertInformation(message("ResultIsEmpty"));
         }
     }
 

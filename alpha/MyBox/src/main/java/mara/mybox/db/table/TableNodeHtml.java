@@ -28,20 +28,9 @@ public class TableNodeHtml extends BaseNodeTable {
 
     public final TableNodeHtml defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("html", ColumnType.Clob));
+        addColumn(new ColumnDefinition("html", ColumnType.Clob)
+                .setLabel(message("Html")));
         return this;
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "html":
-                return message("Html");
-        }
-        return super.label(name);
     }
 
     @Override

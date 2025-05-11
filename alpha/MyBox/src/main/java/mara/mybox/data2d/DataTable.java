@@ -147,7 +147,7 @@ public class DataTable extends Data2D {
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
-            if (dataID < 0 || sheet == null) {
+            if (conn == null || dataID < 0 || sheet == null) {
                 return false;
             }
             tableData2D.readDefinitionFromDB(conn, sheet);

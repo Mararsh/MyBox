@@ -10,6 +10,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -38,46 +39,54 @@ License:    Apache License Version 2.0
             <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$objectGroup" />
          </children>
       </FlowPane>
-      <HBox maxWidth="1.7976931348623157E308" spacing="2.0">
-         <children>
-            <Label text="%Object" visible="false" />
-            <FlowPane fx:id="columnsPane" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
+      <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" VBox.vgrow="ALWAYS">
+         <content>
+            <HBox maxWidth="1.7976931348623157E308" spacing="2.0">
+               <children>
+                  <Label text="%Object" visible="false" />
+                  <FlowPane fx:id="columnsPane" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+         </content>
+      </ScrollPane>
       <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
             <VBox fx:id="columnBox" spacing="5.0">
                <children>
-                  <FlowPane fx:id="operatorPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                  <HBox fx:id="operatorBox" spacing="5.0">
                      <children>
                         <Label text="%Operator" />
-                        <RadioButton fx:id="equalRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Equals">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="operatorGroup" />
-                           </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="greaterRadio" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThan" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="greaterEqualRadio" layoutX="202.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThanOrEqual" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="lessRadio" layoutX="228.0" layoutY="31.0" mnemonicParsing="false" text="%LessThan" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="lessEqualRadio" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%LessThanOrEqual" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="containRadio" mnemonicParsing="false" text="%Contains" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="containInsensitiveRadio" layoutX="374.0" layoutY="10.0" mnemonicParsing="false" text="%ContainsCaseInsensitive" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="prefixRadio" layoutX="288.0" layoutY="10.0" mnemonicParsing="false" text="%Prefix" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="suffixRadio" layoutX="154.0" layoutY="52.0" mnemonicParsing="false" text="%Suffix" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="numberRadio" layoutX="204.0" layoutY="52.0" mnemonicParsing="false" text="%IsNumber" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="zeroRadio" layoutX="295.0" layoutY="31.0" mnemonicParsing="false" text="%IsZero" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="nullRadio" layoutX="163.0" layoutY="10.0" mnemonicParsing="false" text="%NullValue" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="emptyRadio" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%EmptyValue" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="nullEmptyRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%NullEmptyValue" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="trueRadio" layoutX="295.0" layoutY="31.0" mnemonicParsing="false" text="%True" toggleGroup="$operatorGroup" />
-                        <RadioButton fx:id="falseRadio" layoutX="265.0" layoutY="52.0" mnemonicParsing="false" text="%False" toggleGroup="$operatorGroup" />
+                        <FlowPane fx:id="operatorPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <RadioButton fx:id="equalRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Equals">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="operatorGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="greaterRadio" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThan" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="greaterEqualRadio" layoutX="202.0" layoutY="10.0" mnemonicParsing="false" text="%LargerThanOrEqual" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="lessRadio" layoutX="228.0" layoutY="31.0" mnemonicParsing="false" text="%LessThan" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="lessEqualRadio" layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="%LessThanOrEqual" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="containRadio" mnemonicParsing="false" text="%Contains" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="containInsensitiveRadio" layoutX="374.0" layoutY="10.0" mnemonicParsing="false" text="%ContainsCaseInsensitive" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="prefixRadio" layoutX="288.0" layoutY="10.0" mnemonicParsing="false" text="%Prefix" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="suffixRadio" layoutX="154.0" layoutY="52.0" mnemonicParsing="false" text="%Suffix" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="numberRadio" layoutX="204.0" layoutY="52.0" mnemonicParsing="false" text="%IsNumber" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="zeroRadio" layoutX="295.0" layoutY="31.0" mnemonicParsing="false" text="%IsZero" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="nullRadio" layoutX="163.0" layoutY="10.0" mnemonicParsing="false" text="%NullValue" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="emptyRadio" layoutX="151.0" layoutY="10.0" mnemonicParsing="false" text="%EmptyValue" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="nullEmptyRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%NullEmptyValue" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="trueRadio" layoutX="295.0" layoutY="31.0" mnemonicParsing="false" text="%True" toggleGroup="$operatorGroup" />
+                              <RadioButton fx:id="falseRadio" layoutX="265.0" layoutY="52.0" mnemonicParsing="false" text="%False" toggleGroup="$operatorGroup" />
+                           </children>
+                        </FlowPane>
                      </children>
-                  </FlowPane>
-                  <HBox fx:id="valueBox" alignment="CENTER_LEFT" spacing="2.0">
+                  </HBox>
+                  <HBox fx:id="valueBox" alignment="CENTER_LEFT" spacing="5.0">
                      <children>
                         <Label fx:id="keyLabel" text="%Value" />
                         <TextField fx:id="operandInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="conditionHistoryButton" mnemonicParsing="false" onAction="#showConditionHistories" onMouseEntered="#popConditionHistories">
+                        <Button fx:id="historyOperandButton" mnemonicParsing="false" onAction="#showOperandHistories" onMouseEntered="#popOperandHistories">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

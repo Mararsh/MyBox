@@ -24,20 +24,9 @@ public class TableNodeRowExpression extends BaseNodeTable {
 
     public final TableNodeRowExpression defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("script", ColumnType.Clob));
+        addColumn(new ColumnDefinition("script", ColumnType.Clob)
+                .setLabel(message("RowExpression")));
         return this;
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "script":
-                return message("RowExpression");
-        }
-        return super.label(name);
     }
 
 }

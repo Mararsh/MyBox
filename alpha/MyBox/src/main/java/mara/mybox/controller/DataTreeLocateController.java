@@ -23,9 +23,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -59,7 +57,7 @@ public class DataTreeLocateController extends BaseChildController {
             baseName = dataController.baseName + "_Locate";
             baseTitle = dataController.baseTitle + message("Locate");
             setTitle(baseTitle);
-            valueRadio.setText(nodeTable.label(nodeTable.majorColumnName));
+//            valueRadio.setText(nodeTable.label(nodeTable.majorColumnName));
 
             objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -258,17 +256,16 @@ public class DataTreeLocateController extends BaseChildController {
     /*
         static
      */
-    public static DataTreeLocateController open(BaseDataTreeController parent) {
-        try {
-            DataTreeLocateController controller = (DataTreeLocateController) WindowTools.childStage(
-                    parent, Fxmls.DataTreeLocateFxml);
-            controller.setParameters(parent);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
+//    public static DataTreeLocateController open(BaseDataTreeController parent) {
+//        try {
+//            DataTreeLocateController controller = (DataTreeLocateController) WindowTools.childStage(
+//                    parent, Fxmls.DataTreeLocateFxml);
+//            controller.setParameters(parent);
+//            controller.requestMouse();
+//            return controller;
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//            return null;
+//        }
+//    }
 }
