@@ -176,7 +176,11 @@ License:    Apache License Version 2.0
                                                                                                 </Button>
                                                                                             </children>
                                                                                         </FlowPane>
-                                                                                        <FlowPane fx:id="otherColumnsPane" hgap="2.0" vgap="2.0" />
+                                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                                                            <content>
+                                                                                                <FlowPane fx:id="otherColumnsPane" hgap="2.0" vgap="2.0" />
+                                                                                            </content> 
+                                                                                        </ScrollPane>
                                                                                     </children>
                                                                                 </VBox>
                                                                                 <VBox layoutX="15.0" layoutY="99.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

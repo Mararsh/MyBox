@@ -47,6 +47,7 @@ public class MyBoxTablesController extends BaseData2DListController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     Map<String, BaseTable> internalTables = internalTables();
                     for (String name : internalTables.keySet()) {
+                        task.setInfo(message("Reading") + ": " + name);
                         internalTables.get(name).recordTable(conn);
                     }
                 } catch (Exception e) {

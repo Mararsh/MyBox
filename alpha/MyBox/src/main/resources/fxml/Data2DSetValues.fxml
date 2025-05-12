@@ -63,34 +63,38 @@ License:    Apache License Version 2.0
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                  <VBox fx:id="columnCheckBoxsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                      <children>
-                                          <FlowPane hgap="2.0" vgap="2.0">
-                                              <children>
-                                                  <Label text="%ColumnsToBeSet" />
-                                                  <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
-                                                      <graphic>
-                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                              </image>
-                                                          </ImageView>
-                                                      </graphic>
-                                                  </Button>
-                                                  <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
-                                                      <graphic>
-                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                              </image>
-                                                          </ImageView>
-                                                      </graphic>
-                                                  </Button>
-                                              </children>
-                                          </FlowPane>
-                                          <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
-                                      </children>
-                                  </VBox>
+                                <VBox fx:id="columnCheckBoxsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                    <children>
+                                        <FlowPane hgap="2.0" vgap="2.0">
+                                            <children>
+                                                <Label text="%ColumnsToBeSet" />
+                                                <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </FlowPane>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                            <content> 
+                                                <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                </VBox>
                             </content>
                         </ScrollPane>
                     </content>
@@ -104,28 +108,28 @@ License:    Apache License Version 2.0
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                              <CheckBox fx:id="rejectCheck" minHeight="-Infinity" mnemonicParsing="false" text="%RejectInvalidValueWhenSave" wrapText="true" />
-                              <FlowPane fx:id="invalidAsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
-                                 <children>
-                                    <Label text="%ToInvalidValue" />
-                                    <RadioButton fx:id="failInvalidRadio" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Fail">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="invalidAsGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="useInvalidRadio" mnemonicParsing="false" text="%Use" toggleGroup="$invalidAsGroup" />
-                                    <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$invalidAsGroup" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" />
-                                 </VBox.margin>
-                              </FlowPane>
-                              <Label text="%ChangeAs" />
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                 <children>
-                                              <fx:include fx:id="value" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSetValue.fxml" VBox.vgrow="ALWAYS" />
-                                 </children>
-                              </VBox>
+                                        <CheckBox fx:id="rejectCheck" minHeight="-Infinity" mnemonicParsing="false" text="%RejectInvalidValueWhenSave" wrapText="true" />
+                                        <FlowPane fx:id="invalidAsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                            <children>
+                                                <Label text="%ToInvalidValue" />
+                                                <RadioButton fx:id="failInvalidRadio" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Fail">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="invalidAsGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="useInvalidRadio" mnemonicParsing="false" text="%Use" toggleGroup="$invalidAsGroup" />
+                                                <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$invalidAsGroup" />
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets bottom="20.0" />
+                                            </VBox.margin>
+                                        </FlowPane>
+                                        <Label text="%ChangeAs" />
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <fx:include fx:id="value" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSetValue.fxml" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
                                     </children>
                                 </VBox>
                             </content>

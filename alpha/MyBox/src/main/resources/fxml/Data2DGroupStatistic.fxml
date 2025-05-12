@@ -120,7 +120,11 @@ License:    Apache License Version 2.0
                                                                                         </Button>
                                                                                     </children>
                                                                                 </FlowPane>
-                                                                                <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                                                    <content>
+                                                                                        <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                                                                    </content> 
+                                                                                </ScrollPane>
                                                                             </children>
                                                                         </VBox>
                                                                         <fx:include fx:id="statistic" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlStatisticSelections.fxml" />

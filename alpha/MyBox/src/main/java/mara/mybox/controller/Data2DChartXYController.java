@@ -147,7 +147,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
     @Override
     public String baseChartTitle() {
         String title = selectedCategory;
-        title += " - " + checkedColsNames;
+        if (checkedColsNames != null) {
+            title += " - " + checkedColsNames;
+        }
         return title;
     }
 
@@ -168,7 +170,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
                     .setDefaultCategoryLabel(selectedCategory)
                     .setInvalidAs(invalidAs);
             chartMaker.setIsXY(!xyReverseCheck.isSelected());
-            chartMaker.setDefaultValueLabel(checkedColsNames.toString());
+            if (checkedColsNames != null) {
+                chartMaker.setDefaultValueLabel(checkedColsNames.toString());
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

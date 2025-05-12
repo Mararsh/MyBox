@@ -24,11 +24,11 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DSetStylesController">
     <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%SetStyles" textAlignment="CENTER">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-      </Label>
+        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%SetStyles" textAlignment="CENTER">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Label>
         <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
@@ -186,7 +186,11 @@ License:    Apache License Version 2.0
                                                                                 </Button>
                                                                             </children>
                                                                         </FlowPane>
-                                                                        <FlowPane fx:id="columnsPane" hgap="2.0" layoutX="15.0" layoutY="15.0" vgap="2.0" />
+                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                                            <content>
+                                                                                <FlowPane fx:id="columnsPane" hgap="2.0" vgap="2.0" />
+                                                                            </content> 
+                                                                        </ScrollPane>
                                                                     </children>
                                                                 </VBox>
                                                             </children>
@@ -207,7 +211,7 @@ License:    Apache License Version 2.0
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                             </padding>
                                                             <children>
-                                                <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
+                                                                <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>
                                                     </content>

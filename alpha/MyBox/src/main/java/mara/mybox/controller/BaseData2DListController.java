@@ -105,6 +105,8 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                 }
             });
 
+            viewController.refreshTitle = true;
+
             setConditions();
 
             loadList();
@@ -139,6 +141,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                             continue;
                         }
                         if (tableData2DDefinition.queryTable(conn, referredName, Data2DDefinition.DataType.DatabaseTable) == null) {
+                            task.setInfo(message("Reading") + ": " + referredName);
                             dataTable.readDefinitionFromDB(conn, referredName);
                         }
                     }

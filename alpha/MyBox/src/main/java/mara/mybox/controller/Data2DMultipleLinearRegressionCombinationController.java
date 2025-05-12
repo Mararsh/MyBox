@@ -30,7 +30,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     protected List<String> names;
 
     @FXML
-    protected ControlData2DMultipleLinearRegressionTable resultsController;
+    protected ControlData2DMultipleLinearRegressionTable tableController;
 
     public Data2DMultipleLinearRegressionCombinationController() {
         baseTitle = message("MultipleLinearRegressionCombination");
@@ -43,7 +43,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         try {
             super.initOptions();
 
-            resultsController.setParameters(this);
+            tableController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -85,7 +85,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         if (task != null) {
             task.cancel();
         }
-        resultsController.clear();
+        tableController.clear();
         namesMap = new HashMap<>();
         taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
@@ -178,7 +178,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                             if (task == null || isCancelled()) {
                                 return;
                             }
-                            resultsController.addRow(row);
+                            tableController.addRow(row);
                         }
                     });
 
@@ -189,7 +189,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
 
             @Override
             protected void whenSucceeded() {
-                resultsController.afterRegression();
+                tableController.afterRegression();
                 rightPane.setDisable(false);
             }
 
@@ -206,13 +206,13 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     @FXML
     @Override
     public void dataAction() {
-        resultsController.dataAction();
+        tableController.dataAction();
     }
 
     @FXML
     @Override
     public void viewAction() {
-        resultsController.editAction();
+        tableController.editAction();
     }
 
 

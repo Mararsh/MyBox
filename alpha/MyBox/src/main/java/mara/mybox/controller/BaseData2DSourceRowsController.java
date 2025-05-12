@@ -43,11 +43,24 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     protected ControlData2DRowFilter filterController;
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            refreshTitle = false;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
 
             NodeStyleTools.setTooltip(selectedRadio, new Tooltip(message("SelectRowsComments")));
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

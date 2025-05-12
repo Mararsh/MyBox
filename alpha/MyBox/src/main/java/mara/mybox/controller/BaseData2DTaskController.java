@@ -896,10 +896,6 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
         if (data2D != null) {
             data2D.stopTask();
         }
-        if (dataController != null) {
-            setIconified(true);
-            dataController.setIconified(false);
-        }
         super.closeTask(ok);
     }
 
@@ -911,6 +907,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
                 tableLoadListener = null;
                 dataController.statusNotify.removeListener(tableStatusListener);
                 tableStatusListener = null;
+                dataController.setIconified(false);
             }
             dataController = null;
             data2D = null;

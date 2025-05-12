@@ -28,6 +28,7 @@ public class ControlData2DSimpleLinearRegressionTable extends BaseData2DLoadCont
         try {
             super.initValues();
             data2D = Data2D.create(Data2DDefinition.DataType.Texts);
+            refreshTitle = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

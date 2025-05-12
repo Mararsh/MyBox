@@ -8,9 +8,9 @@ License:    Apache License Version 2.0
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -39,19 +39,20 @@ License:    Apache License Version 2.0
             <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$objectGroup" />
          </children>
       </FlowPane>
-      <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" VBox.vgrow="ALWAYS">
-         <content>
-            <HBox maxWidth="1.7976931348623157E308" spacing="2.0">
+      <HBox spacing="5.0">
+         <children>
+            <Label text="%Object" visible="false" />
+            <FlowPane fx:id="columnsPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="%Object" visible="false" />
-                  <FlowPane fx:id="columnsPane" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0" HBox.hgrow="ALWAYS" />
+                  <RadioButton fx:id="columnRadio" mnemonicParsing="false" text="%Column" toggleGroup="$objectGroup" />
+                  <ComboBox fx:id="columnsList" prefWidth="200.0" />
                </children>
-            </HBox>
-         </content>
-      </ScrollPane>
+            </FlowPane>
+         </children>
+      </HBox>
       <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox fx:id="columnBox" spacing="5.0">
+            <VBox fx:id="operateBox" spacing="5.0">
                <children>
                   <HBox fx:id="operatorBox" spacing="5.0">
                      <children>
