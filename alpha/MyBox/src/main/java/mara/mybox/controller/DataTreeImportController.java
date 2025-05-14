@@ -25,7 +25,6 @@ import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
@@ -47,7 +46,7 @@ public class DataTreeImportController extends BaseBatchFileController {
     protected TableDataNodeTag nodeTagsTable;
     protected TableDataTag tagTable;
     protected DataNode parentNode;
-    protected boolean isExmaple;
+    protected boolean isExample;
 
     @FXML
     protected ToggleGroup existedGroup;
@@ -135,7 +134,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         isSettingValues = true;
         updateRadio.setSelected(true);
         isSettingValues = false;
-        isExmaple = true;
+        isExample = true;
         startFile(file);
     }
 
@@ -333,17 +332,12 @@ public class DataTreeImportController extends BaseBatchFileController {
 
     @Override
     public void afterTask(boolean ok) {
-        showCost();
+        super.afterTask(ok);
 
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
-
-        tableView.refresh();
         if (WindowTools.isRunning(dataController)) {
             dataController.refreshNode(parentNode);
 
-            if (isExmaple) {
+            if (isExample) {
                 close();
             }
         }

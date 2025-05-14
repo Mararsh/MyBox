@@ -19,7 +19,6 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
@@ -261,11 +260,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
     @Override
     public void afterTask(boolean ok) {
         goAction();
-
-        showCost();
-        if (operationBarController.miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
+        super.afterTask(ok);
     }
 
     @Override

@@ -440,14 +440,12 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
-        tableView.refresh();
-        targetPath = targetFile.getParentFile();
-        super.afterTask(ok);
-        if (archive == null) {
+    public void handleTargetFiles() {
+        if (targetFile == null || archive == null) {
             return;
         }
-
+        recordTargetFiles();
+        targetPath = targetFile.getParentFile();
         StringBuilder s = new StringBuilder();
         s.append("<h1  class=\"center\">").append(targetFile).append("</h1>\n");
         s.append("<hr>\n");

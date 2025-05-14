@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Languages;
 
@@ -77,11 +76,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
 
     @Override
     public void afterTask(boolean ok) {
-        tableView.refresh();
-
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
+        super.afterTask(ok);
         popInformation(Languages.message("CompleteFile"));
     }
 

@@ -135,10 +135,15 @@ public class Data2DSaveAsController extends BaseTaskController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void closeTask(boolean ok) {
         if (targetController.data2D != null) {
             targetController.data2D.stopTask();
         }
+        super.closeTask(ok);
+    }
+
+    @Override
+    public void afterTask(boolean ok) {
         if (taskSuccessed) {
             targetController.tableController.popInformation(message("Done"));
             close();

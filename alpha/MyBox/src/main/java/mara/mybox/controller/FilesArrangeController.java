@@ -22,7 +22,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -442,7 +441,6 @@ public class FilesArrangeController extends BaseBatchFileController {
 
     @Override
     public void afterTask(boolean ok) {
-        recordTargetFiles();
         updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
                 + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
         updateLogs(message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
@@ -456,15 +454,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                     + message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
                     + message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
         }
-        showCost();
-        if (operationBarController.miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
-
-        if (operationBarController.openCheck.isSelected()) {
-            openTarget();
-        }
-
+        super.afterTask(ok);
     }
 
     @FXML

@@ -28,7 +28,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -110,13 +109,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
-        showCost();
-        tableView.refresh();
+    public void handleTargetFiles() {
         recordTargetFiles();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
@@ -137,6 +131,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         } else {
             popInformation(message("NoFileGenerated"));
         }
+    }
+
+    @Override
+    public void afterTask(boolean ok) {
+        showCost();
+        tableView.refresh();
     }
 
     @Override

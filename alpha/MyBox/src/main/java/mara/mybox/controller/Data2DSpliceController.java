@@ -366,8 +366,9 @@ public class Data2DSpliceController extends BaseTaskController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void closeTask(boolean ok) {
         dataAController.data2D.stopTask();
         dataBController.data2D.stopTask();
+        super.closeTask(ok);
     }
 }

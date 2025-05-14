@@ -13,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.DateTools;
@@ -188,14 +187,6 @@ public class FilesFindController extends BaseBatchFileController {
                 + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         statusInput.setText(s);
-    }
-
-    @Override
-    public void afterTask(boolean ok) {
-        showCost();
-        if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
     }
 
     @FXML

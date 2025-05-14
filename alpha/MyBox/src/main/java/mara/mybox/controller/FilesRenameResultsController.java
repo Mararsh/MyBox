@@ -136,7 +136,7 @@ public class FilesRenameResultsController extends BaseTaskController {
 
     @Override
     public void afterTask(boolean ok) {
-        recordTargetFiles();
+        super.afterTask(ok);
         SoundTools.miao3();
         openTarget();
     }

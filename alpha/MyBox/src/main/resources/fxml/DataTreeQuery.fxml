@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeQueryController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeQueryController">
 <children>
       <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
          <tabs>
@@ -263,6 +263,15 @@ License:    Apache License Version 2.0
       <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>
             <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconTop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
             <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -281,11 +290,11 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+            <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconOK.png" />
+                        <Image url="@../buttons/Red/iconStart.png" />
                      </image>
                   </ImageView>
                </graphic>

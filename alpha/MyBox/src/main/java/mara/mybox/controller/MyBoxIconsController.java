@@ -11,7 +11,6 @@ import javax.imageio.ImageIO;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileWriters;
@@ -172,7 +171,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
 
     @Override
     public void afterTask(boolean ok) {
-        SoundTools.miao3();
+        super.afterTask(ok);
         popInformation(message("TakeEffectWhenReboot"));
     }
 

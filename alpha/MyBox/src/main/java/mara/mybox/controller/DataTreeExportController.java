@@ -33,11 +33,13 @@ import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.AppValues.Indent;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVPrinter;
@@ -74,7 +76,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     @FXML
     protected Label nodeLabel;
 
-    public void setParamters(BaseDataTreeController parent, DataNode node) {
+    public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
             super.setParameters(parent);
 
@@ -1067,4 +1069,14 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         return false;
     }
 
+    /*
+        static methods
+     */
+    public static DataTreeExportController open(BaseDataTreeController parent, DataNode node) {
+        DataTreeExportController controller
+                = (DataTreeExportController) WindowTools.operationStage(parent, Fxmls.DataTreeExportFxml);
+        controller.setParameters(parent, node);
+        controller.requestMouse();
+        return controller;
+    }
 }

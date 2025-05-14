@@ -28,7 +28,6 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import static mara.mybox.fxml.HelpTools.imageStories;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.image.PaletteTools;
@@ -415,7 +414,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                         DataTreeExportController exportController = (DataTreeExportController) WindowTools
                                 .openStage(Fxmls.DataTreeExportFxml);
 //                        exportController.setIconified(true);
-                        exportController.setParamters(dataController, rootNode);
+                        exportController.setParameters(dataController, rootNode);
                         exportController.selectAllFormat(false);
                         exportController.treeHtmlCheck.setSelected(true);
                         exportController.openCheck.setSelected(false);
@@ -646,10 +645,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
-        if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
+    public void handleTargetFiles() {
+        recordTargetFiles();
         openTarget();
     }
 

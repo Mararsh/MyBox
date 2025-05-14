@@ -292,10 +292,7 @@ public class DataTreeController extends BaseDataTreeController {
     }
 
     protected DataTreeExportController exportNode(DataNode node) {
-        DataTreeExportController exportController
-                = (DataTreeExportController) childStage(Fxmls.DataTreeExportFxml);
-        exportController.setParamters(this, node);
-        return exportController;
+        return DataTreeExportController.open(this, node);
     }
 
     protected void importNode(DataNode node) {

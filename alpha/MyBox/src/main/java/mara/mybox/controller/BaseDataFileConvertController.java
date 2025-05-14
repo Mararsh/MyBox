@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -66,14 +65,9 @@ public abstract class BaseDataFileConvertController extends BaseBatchFileControl
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void handleTargetFiles() {
         List<File> files = export.getPrintedFiles();
         targetFilesCount = files != null ? files.size() : 0;
-        showCost();
-        tableView.refresh();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }

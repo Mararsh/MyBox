@@ -13,7 +13,6 @@ import javafx.scene.control.TreeItem;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -211,10 +210,7 @@ public class RemotePathPutController extends BaseBatchFileController {
 
     @Override
     public void afterTask(boolean ok) {
-        tableView.refresh();
-        if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
+        super.afterTask(ok);
         if (manageController != null) {
             manageController.loadPath();
         }
