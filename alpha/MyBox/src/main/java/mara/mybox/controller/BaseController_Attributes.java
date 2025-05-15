@@ -577,7 +577,7 @@ public abstract class BaseController_Attributes {
 
     public void displayInfo(String text) {
         if (this instanceof BaseLogsController) {
-            ((BaseLogsController) this).updateLogs(text);
+            ((BaseLogsController) this).showLogs(text);
         } else {
             popInformation(text);
         }

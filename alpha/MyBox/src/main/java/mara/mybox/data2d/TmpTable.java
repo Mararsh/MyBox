@@ -210,6 +210,7 @@ public class TmpTable extends DataTable {
             if (importRows != null) {
                 return importRows(conn);
             }
+
             DataTableWriter writer = new DataTableWriter();
             writer.setTargetTable(this)
                     .setColumns(columns)

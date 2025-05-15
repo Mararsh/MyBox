@@ -136,7 +136,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     @Override
     public void afterTask(boolean ok) {
         showCost();
-        tableView.refresh();
+        if (tableView != null) {
+            tableView.refresh();
+        }
     }
 
     @Override

@@ -1,22 +1,15 @@
 package mara.mybox.controller;
 
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.fxml.FXML;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.operate.Data2DCopy;
-import mara.mybox.data2d.operate.Data2DOperate;
-import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -30,7 +23,7 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
     protected BaseDataTreeController dataController;
     protected String dataName, chainName;
     protected DataTable treeTable;
-    protected DataFileCSV results;
+    protected TmpTable results;
 
     public void setParameters(BaseDataTreeController parent) {
         try {
@@ -94,6 +87,7 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
                 }
                 return false;
             } else {
+                showLogs(message("Filter") + ": " + filter.getSourceScript());
                 return true;
             }
         } catch (Exception e) {
@@ -105,43 +99,38 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
     @Override
     public boolean doTask(FxTask currentTask) {
         try {
-            targetFile = FileTmpTools.getTempFile(".csv");
-            results = new DataFileCSV();
-            results.setCharset(Charset.forName("utf-8"))
-                    .setDelimiter(",")
-                    .setHasHeader(true)
-                    .setDataName(dataName + "_query")
-                    .setFile(targetFile);
-            Data2DWriter writer = results.selfWriter();
-            writer.setPrintFile(targetFile)
-                    .setRecordTargetFile(false)
-                    .setRecordTargetData(false)
-                    .setInvalidAs(InvalidAs.Skip);
+            treeTable.startTask(currentTask, filter);
             List<Integer> cols = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
                 cols.add(i);
             }
-            Data2DOperate operate = Data2DCopy.create(treeTable)
-                    .setIncludeRowNumber(false)
-                    .setCols(cols)
-                    .setInvalidAs(InvalidAs.Skip)
-                    .addWriter(writer)
-                    .setTask(currentTask).start();
-            return !operate.isFailed() && writer.isCompleted();
+            results = new TmpTable()
+                    .setSourceData(treeTable)
+                    .setTargetName(dataName + "_" + message("QueryResults"))
+                    .setSourcePickIndice(cols)
+                    .setImportData(true);
+            results.setTask(currentTask);
+            if (results.createTable()) {
+                showLogs("Done");
+                return true;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
         }
+        results = null;
+        return false;
     }
 
-    @FXML
     @Override
-    public void handleTargetFiles() {
-        if (targetFile == null || !targetFile.exists()) {
-            popError(message("Failed"));
-            return;
+    public void afterTask(boolean ok) {
+        treeTable.stopFilter();
+        if (results != null) {
+            if (results.getRowsNumber() > 0) {
+                DataTreeQueryResultsController.open(this, results);
+            } else {
+                alertInformation(message("ResultIsEmpty"));
+            }
         }
-        browse(targetFile);
     }
 
     /*

@@ -139,7 +139,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         this.parentController = parent;
-        this.baseName = parent.baseName;
+        this.baseName = parent.baseName + "_" + baseName;
         this.scrollType = scrollType;
     }
 

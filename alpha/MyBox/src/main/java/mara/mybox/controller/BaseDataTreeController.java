@@ -28,7 +28,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -59,7 +58,7 @@ public class BaseDataTreeController extends BaseFileController {
     @FXML
     protected ControlDataTreeTable tableController;
     @FXML
-    protected ControlWebView viewController;
+    protected ControlDataTreeNodeView viewController;
 
     public void initDataTree(BaseNodeTable table, DataNode node) {
         try {
@@ -104,8 +103,7 @@ public class BaseDataTreeController extends BaseFileController {
             }
 
             if (viewController != null) {
-                viewController.setParent(this);
-                viewController.initStyle = HtmlStyles.styleValue("Table");
+                viewController.setTree(this);
             }
 
             formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -309,14 +307,8 @@ public class BaseDataTreeController extends BaseFileController {
      */
     protected void nullView() {
         viewNode = null;
-        if (editButton != null) {
-            editButton.setVisible(false);
-        }
-        if (goButton != null) {
-            goButton.setVisible(false);
-        }
         if (viewController != null) {
-            viewController.loadContent("");
+            viewController.nullLoad();
         }
     }
 
@@ -325,51 +317,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (viewController == null || node == null) {
             return;
         }
-        viewController.popInformation(message("Loading") + ": " + node.shortDescription());
-        FxTask loadTask = new FxSingletonTask<Void>(this) {
-            private String html;
-            private DataNode stonedNode;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    stonedNode = nodeTable.query(conn, node.getNodeid());
-                    if (stonedNode == null) {
-                        return false;
-                    }
-                    html = nodeTable.valuesHtml(this, conn, controller, stonedNode,
-                            node.getHierarchyNumber(), 4);
-                    return html != null && !html.isBlank();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                viewController.loadContent(html);
-                viewNode = stonedNode;
-                if (editButton != null) {
-                    editButton.setVisible(true);
-                }
-                if (goButton != null) {
-                    goButton.setVisible(nodeTable.isNodeExecutable(viewNode));
-                }
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                viewController.closePopup();
-            }
-
-        };
-        start(loadTask, rightPane);
+        viewController.loadNode(node.getNodeid());
     }
 
     public void showNode(DataNode node) {

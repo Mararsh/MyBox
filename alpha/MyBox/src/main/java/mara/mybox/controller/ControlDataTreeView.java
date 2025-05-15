@@ -81,7 +81,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             tagTable = dataController.tagTable;
             nodeTagsTable = dataController.nodeTagsTable;
             dataName = dataController.dataName;
-            baseName = dataController.baseName;
+            baseName = dataController.baseName + "_" + baseName;
 
             if (dataController.viewController != null) {
                 viewController = dataController.viewController;

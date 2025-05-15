@@ -109,7 +109,7 @@ public class DataTableWriter extends Data2DWriter {
             targetData = targetTable;
             showInfo(message("Generated") + ": " + targetTable.getSheet() + "  "
                     + message("RowsNumber") + ": " + targetRowIndex);
-            status = Status.Created;
+            status = targetRowIndex == 0 ? Status.NoData : Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }

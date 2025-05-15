@@ -440,6 +440,13 @@ public class FilesArrangeController extends BaseBatchFileController {
     }
 
     @Override
+    public void handleTargetFiles() {
+        if (openCheck.isSelected()) {
+            openTarget();
+        }
+    }
+
+    @Override
     public void afterTask(boolean ok) {
         updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
                 + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);

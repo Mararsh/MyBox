@@ -573,11 +573,13 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     public DataFilter pickFilter(boolean allPages) {
         long max = checkMax();
         if (error != null) {
-            popError(error);
             return null;
         }
         String script = checkScript(allPages);
         if (error != null) {
+            if (script == null || script.isBlank()) {
+                return null;
+            }
             if (!PopTools.askSure(getTitle(),
                     message("RowExpressionLooksInvalid") + ": \n" + error,
                     message("SureContinue"))) {

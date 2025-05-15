@@ -36,15 +36,16 @@ public class Data2DRowFilterEdit extends BaseInputController {
 
     @Override
     public boolean checkInput() {
-        if (filterController.pickFilter(taskController.isAllPages()) == null) {
-            popError(filterController.error);
-            return false;
-        }
         return getFilter() != null;
     }
 
     public DataFilter getFilter() {
-        return filterController.pickFilter(taskController.isAllPages());
+        DataFilter filter = filterController.pickFilter(taskController.isAllPages());
+        if (filter == null) {
+            alertError(filterController.error);
+            return null;
+        }
+        return filter;
     }
 
     /*

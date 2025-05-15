@@ -1349,6 +1349,8 @@ public abstract class BaseTable<D> {
             if (dataTable == null) {
                 return null;
             }
+            dataTable.getTableData2D().setColumns(columns);
+            dataTable.getTableData2D().setForeignColumns(foreignColumns);
             long tableID = dataTable.getDataID();
             List<Data2DColumn> data2dColumns = new ArrayList<>();
             for (ColumnDefinition column : columns) {
