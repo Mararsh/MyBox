@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -106,13 +107,40 @@ License:    Apache License Version 2.0
             </Tab>
          </tabs>
       </TabPane>
-      <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="2.0">
+      <HBox alignment="CENTER_RIGHT" layoutX="15.0" layoutY="15.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
          <children>
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+            <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconSave.png" />
+                        <Image url="@../buttons/Red/iconTop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Button fx:id="locateButton" mnemonicParsing="false" onAction="#locateAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconLocation.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -126,20 +154,11 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-                                                                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconManage.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconCancel.png" />
+                        <Image url="@../buttons/Red/iconSave.png" />
                      </image>
                   </ImageView>
                </graphic>

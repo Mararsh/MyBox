@@ -1,0 +1,198 @@
+package mara.mybox.controller;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.TmpTable;
+import mara.mybox.db.Database;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.Data2DRow;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.BaseNodeTable;
+import static mara.mybox.db.table.BaseNodeTable.NodeFields;
+import mara.mybox.db.table.TableData2D;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
+
+/**
+ * @Author Mara
+ * @CreateDate 2025-5-16
+ * @License Apache License Version 2.0
+ */
+public class DataTreeQueryDescendantsController extends BaseTaskController {
+
+    protected BaseDataTreeController dataController;
+    protected BaseNodeTable nodeTable;
+    protected String tableName, dataName, chainName, orderColumns;
+    protected DataTable treeTable;
+    protected TmpTable results;
+    protected DataNode node;
+    protected PreparedStatement query, insert;
+    protected TableData2D tableData2D;
+
+    @FXML
+    protected Label nameLabel;
+
+    public void setParameters(BaseDataTreeController parent, DataNode inNode) {
+        try {
+            if (parent == null || inNode == null) {
+                close();
+                return;
+            }
+            dataController = parent;
+            parentController = parent;
+            nodeTable = dataController.nodeTable;
+            tableName = nodeTable.getTableName();
+            dataName = nodeTable.getDataName();
+            baseName = baseName + "_" + dataName;
+            node = inNode;
+
+            baseTitle = nodeTable.getTreeName() + " - " + message("QueryDescendants");
+            setTitle(baseTitle);
+
+            orderColumns = nodeTable.getOrderColumns();
+            startAction();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public boolean doTask(FxTask currentTask) {
+        String querySQL = "SELECT " + NodeFields + " FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
+        try (Connection conn = DerbyBase.getConnection()) {
+            treeTable = nodeTable.recordTable(conn);
+            if (treeTable == null) {
+                dataController.popError(message("InvalidParameters"));
+                close();
+                return false;
+            }
+            DataNode savedNode = nodeTable.readChain(currentTask, conn, node.getNodeid());
+            if (savedNode == null) {
+                dataController.popError(message("InvalidParameters"));
+                close();
+                return false;
+            }
+            showLogs(message("Node") + ":\n" + savedNode.getChainName());
+            Platform.runLater(() -> {
+                nameLabel.setText(savedNode.getChainName());
+            });
+            List<Integer> cols = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                cols.add(i);
+            }
+            results = new TmpTable()
+                    .setSourceData(treeTable)
+                    .setTargetName(dataName + "_" + message("QueryResults"))
+                    .setSourcePickIndice(cols)
+                    .setImportData(false);
+            results.setTask(currentTask);
+            if (results.createTable()) {
+                showLogs("Done");
+                return true;
+            }
+
+            tableData2D = results.getTableData2D();
+            query = conn.prepareStatement(querySQL);
+            insert = conn.prepareStatement(tableData2D.insertStatement());
+            conn.setAutoCommit(false);
+            long count = writeDescedents(currentTask, conn, savedNode.getNodeid(), 0);
+            insert.executeBatch();
+            conn.commit();
+            insert.close();
+            query.close();
+
+            results.setRowsNumber(count);
+            Data2D.saveAttributes(conn, results, results.getColumns());
+            showLogs(message("Generated") + ": " + results.getSheet() + "  "
+                    + message("RowsNumber") + ": " + count);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        results = null;
+        return false;
+    }
+
+    public long writeDescedents(FxTask currentTask, Connection conn,
+            long nodeid, long inCount) {
+        if (nodeid < 0 || (currentTask != null && !currentTask.isWorking())) {
+            return -inCount;
+        }
+        long count = inCount;
+        try {
+            query.setLong(1, nodeid);
+            try (ResultSet queryResults = query.executeQuery()) {
+                while (queryResults != null && queryResults.next()) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -count;
+                    }
+                    long childid = queryResults.getLong("nodeid");
+                    Data2DRow data2DRow = tableData2D.newRow();
+                    data2DRow.setValue(results.columnName(1), childid);
+                    data2DRow.setValue(results.columnName(2), queryResults.getObject("title"));
+                    data2DRow.setValue(results.columnName(3), queryResults.getObject("order_number"));
+                    data2DRow.setValue(results.columnName(4), queryResults.getObject("update_time"));
+                    data2DRow.setValue(results.columnName(5), queryResults.getObject("parentid"));
+                    if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
+                        insert.addBatch();
+                        if (++count % Database.BatchSize == 0) {
+                            insert.executeBatch();
+                            conn.commit();
+                            showLogs(message("Inserted") + ": " + count);
+                        }
+                    }
+
+                    count = writeDescedents(currentTask, conn, childid, count);
+                }
+            } catch (Exception e) {
+                showLogs(e.toString());
+                return -count;
+            }
+        } catch (Exception e) {
+            showLogs(e.toString());
+            return -count;
+        }
+        return count;
+    }
+
+    @Override
+    public void afterTask(boolean ok) {
+        treeTable.stopFilter();
+        if (results != null) {
+            if (results.getRowsNumber() > 0) {
+                DataTreeQueryResultsController.open(this, dataController, results);
+            } else {
+                alertInformation(message("ResultIsEmpty"));
+            }
+        }
+    }
+
+    /*
+        static
+     */
+    public static DataTreeQueryDescendantsController open(BaseDataTreeController parent, DataNode inNode) {
+        try {
+            DataTreeQueryDescendantsController controller = (DataTreeQueryDescendantsController) WindowTools
+                    .operationStage(parent, Fxmls.DataTreeQueryDescendantsFxml);
+            controller.setParameters(parent, inNode);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+}

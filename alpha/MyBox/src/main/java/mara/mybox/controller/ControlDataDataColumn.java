@@ -68,8 +68,8 @@ public class ControlDataDataColumn extends BaseDataValuesController {
      */
     public static DataTreeNodeEditorController loadColumn(BaseController parent, Data2DColumn column) {
         try {
-            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
-            controller.setTable(new TableNodeDataColumn());
+            DataTreeNodeEditorController controller
+                    = DataTreeNodeEditorController.openTable(parent, new TableNodeDataColumn());
             ((ControlDataDataColumn) controller.valuesController).editColumn(column);
             return controller;
         } catch (Exception e) {

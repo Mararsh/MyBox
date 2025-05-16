@@ -205,8 +205,8 @@ public class ControlDataSQL extends BaseDataValuesController {
      */
     public static DataTreeNodeEditorController open(BaseController parent, String sql) {
         try {
-            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
-            controller.setTable(new TableNodeSQL());
+            DataTreeNodeEditorController controller
+                    = DataTreeNodeEditorController.openTable(parent, new TableNodeSQL());
             ((ControlDataSQL) controller.valuesController).load(sql);
             return controller;
         } catch (Exception e) {

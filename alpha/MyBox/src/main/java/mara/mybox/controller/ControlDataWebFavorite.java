@@ -170,8 +170,8 @@ public class ControlDataWebFavorite extends BaseDataValuesController {
      */
     public static DataTreeNodeEditorController open(BaseController parent, String title, String address) {
         try {
-            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
-            controller.setTable(new TableNodeWebFavorite());
+            DataTreeNodeEditorController controller
+                    = DataTreeNodeEditorController.openTable(parent, new TableNodeWebFavorite());
             ((ControlDataWebFavorite) controller.valuesController).load(title, address);
             controller.requestMouse();
             return controller;

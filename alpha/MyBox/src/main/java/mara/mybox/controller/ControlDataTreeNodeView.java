@@ -18,37 +18,19 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlDataTreeNodeView extends ControlWebView {
 
-    protected BaseDataTreeController dataController;
-    protected DataTreeQueryResultsController queryController;
     protected BaseNodeTable nodeTable;
-    protected String dataName;
+    protected DataNode viewNode;
 
     @FXML
     protected FlowPane opPane;
 
-    public void setTree(BaseDataTreeController controller) {
+    public void setParameters(BaseController parent, BaseNodeTable table) {
         try {
-            dataController = controller;
-            nodeTable = dataController.nodeTable;
-            dataName = dataController.dataName;
+            nodeTable = table;
 
-            setParent(dataController);
+            setParent(parent);
             initStyle = HtmlStyles.styleValue("Table");
 
-            nullLoad();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setQuery(DataTreeQueryResultsController controller) {
-        try {
-            queryController = controller;
-            nodeTable = queryController.nodeTable;
-            dataName = queryController.dataName;
-
-            setParent(queryController);
             nullLoad();
 
         } catch (Exception e) {
@@ -95,12 +77,7 @@ public class ControlDataTreeNodeView extends ControlWebView {
                 loadContent(html);
                 opPane.setVisible(true);
                 goButton.setVisible(nodeTable.isNodeExecutable(node));
-                if (dataController != null) {
-                    dataController.viewNode = node;
-                }
-                if (queryController != null) {
-                    queryController.viewNode = node;
-                }
+                viewNode = node;
             }
 
             @Override
@@ -116,6 +93,42 @@ public class ControlDataTreeNodeView extends ControlWebView {
 
         };
         start(task, thisPane);
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        if (viewNode == null) {
+            return;
+        }
+        DataTreeNodeEditorController.loadNode(parentController, nodeTable, viewNode, false);
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (viewNode == null) {
+            return false;
+        }
+        nodeTable.popNode(parentController, viewNode);
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        if (viewNode == null) {
+            return;
+        }
+        nodeTable.executeNode(parentController, viewNode);
+    }
+
+    @FXML
+    public void locateAction() {
+        if (viewNode == null) {
+            return;
+        }
+        DataTreeController.open(nodeTable, viewNode);
     }
 
 }

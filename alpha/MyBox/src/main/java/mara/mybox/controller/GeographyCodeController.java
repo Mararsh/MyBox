@@ -34,9 +34,8 @@ public class GeographyCodeController extends DataTreeController {
         }
     }
 
-    @Override
     protected void nullView() {
-        viewNode = null;
+        mapController.viewNode = null;
         infoButton.setDisable(true);
         editButton.setDisable(true);
         mapController.clearMap();
@@ -48,7 +47,7 @@ public class GeographyCodeController extends DataTreeController {
         if (node == null) {
             return;
         }
-        mapController.loadNode(node);
+        mapController.loadNode(node.getNodeid());
     }
 
     @Override
@@ -59,10 +58,10 @@ public class GeographyCodeController extends DataTreeController {
     @FXML
     @Override
     public boolean infoAction() {
-        if (viewNode == null) {
+        if (mapController.viewNode == null) {
             return false;
         }
-        popNode(viewNode);
+        popNode(mapController.viewNode);
         return true;
     }
 

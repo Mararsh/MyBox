@@ -187,8 +187,8 @@ public class ControlDataJavascript extends BaseDataValuesController {
      */
     public static DataTreeNodeEditorController openScriptEditor(BaseController parent) {
         try {
-            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
-            controller.setTable(new TableNodeJavaScript());
+            DataTreeNodeEditorController controller
+                    = DataTreeNodeEditorController.openTable(parent, new TableNodeJavaScript());
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -79,6 +79,15 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
         switch (stageType) {
             case Branch:
                 setAlwaysTop(true, false);
+                if (parentStage != null) {
+                    parentStage.setOnHiding(new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent event) {
+                            closeStage();
+                        }
+                    });
+                }
+                break;
             case Operation:
                 if (parentStage != null) {
                     parentStage.setOnHiding(new EventHandler<WindowEvent>() {

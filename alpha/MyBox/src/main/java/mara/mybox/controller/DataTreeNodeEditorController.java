@@ -60,26 +60,15 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setTree(BaseDataTreeController controller) {
+    public void setParameters(BaseController parent, BaseNodeTable table) {
         try {
-            dataController = controller;
-            parentController = controller;
-            nodeTable = dataController.nodeTable;
-            tagTable = dataController.tagTable;
-            nodeTagsTable = dataController.nodeTagsTable;
-
-            initEditor();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setTable(BaseNodeTable table) {
-        try {
+            parentController = parent;
             nodeTable = table;
             tagTable = new TableDataTag(nodeTable);
             nodeTagsTable = new TableDataNodeTag(nodeTable);
+            if (parentController instanceof BaseDataTreeController) {
+                dataController = (BaseDataTreeController) parentController;
+            }
 
             initEditor();
 
@@ -440,9 +429,11 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             protected void whenSucceeded() {
                 if (dataRunning()) {
                     dataController.nodeSaved(parentNode, savedNode);
-                } else {
+                } else if (openCheck.isSelected()) {
                     DataTreeController c = DataTreeController.open(nodeTable, savedNode);
                     c.popSaved();
+                } else {
+                    parentController.popSaved();
                 }
                 resetStatus();
                 close();
@@ -466,6 +457,11 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     public void recoverAction() {
         resetStatus();
         loadNode(currentNode, false);
+    }
+
+    @FXML
+    public void locateAction() {
+        DataTreeController.open(nodeTable, currentNode);
     }
 
     @Override
@@ -522,10 +518,16 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeNodeEditorController open(BaseController parent) {
+    public static DataTreeNodeEditorController open() {
         DataTreeNodeEditorController controller = (DataTreeNodeEditorController) WindowTools
-                .branchStage(parent, Fxmls.DataTreeNodeEditorFxml);
-        controller.setParentController(parent);
+                .openStage(Fxmls.DataTreeNodeEditorFxml);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static DataTreeNodeEditorController open(BaseDataTreeController parent) {
+        DataTreeNodeEditorController controller = open();
+        controller.setParameters(parent, parent.nodeTable);
         controller.requestMouse();
         return controller;
     }
@@ -533,7 +535,6 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     public static DataTreeNodeEditorController loadNode(BaseDataTreeController parent,
             DataNode node, boolean execute) {
         DataTreeNodeEditorController controller = open(parent);
-        controller.setTree(parent);
         controller.loadNode(node, execute);
         controller.requestMouse();
         return controller;
@@ -545,7 +546,6 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
     public static DataTreeNodeEditorController addNode(BaseDataTreeController parent, DataNode parentNode) {
         DataTreeNodeEditorController controller = open(parent);
-        controller.setTree(parent);
         controller.addNode(parentNode);
         controller.requestMouse();
         return controller;
@@ -553,6 +553,21 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
     public static DataTreeNodeEditorController executeNode(BaseDataTreeController parent, DataNode node) {
         return loadNode(parent, node, true);
+    }
+
+    public static DataTreeNodeEditorController loadNode(BaseController parent,
+            BaseNodeTable table, DataNode node, boolean execute) {
+        DataTreeNodeEditorController controller = open();
+        controller.setParameters(parent, table);
+        controller.loadNode(node, execute);
+        return controller;
+    }
+
+    public static DataTreeNodeEditorController openTable(BaseController parent,
+            BaseNodeTable table) {
+        DataTreeNodeEditorController controller = open();
+        controller.setParameters(parent, table);
+        return controller;
     }
 
 }

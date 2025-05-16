@@ -289,6 +289,7 @@ public class Fxmls {
     public static final String DataTreeMoveFxml = "/fxml/DataTreeMove.fxml";
     public static final String DataTreeDeleteFxml = "/fxml/DataTreeDelete.fxml";
     public static final String DataTreeQueryFxml = "/fxml/DataTreeQuery.fxml";
+    public static final String DataTreeQueryDescendantsFxml = "/fxml/DataTreeQueryDescendants.fxml";
     public static final String DataTreeQueryResultsFxml = "/fxml/DataTreeQueryResults.fxml";
 
     public static final String DataSelectParentFxml = "/fxml/DataSelectParent.fxml";

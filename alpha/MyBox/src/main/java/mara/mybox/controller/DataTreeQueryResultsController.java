@@ -3,9 +3,9 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
-import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -19,12 +19,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTreeQueryResultsController extends BaseData2DLoadController {
 
-    protected DataTreeQueryController queryController;
+    protected BaseDataTreeController dataController;
     protected BaseNodeTable nodeTable;
     protected String dataName;
     protected DataTable treeTable;
     protected TmpTable results;
-    protected DataNode viewNode;
 
     @FXML
     protected ControlDataTreeNodeView viewController;
@@ -41,24 +40,24 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
         }
     }
 
-    public void setParameters(DataTreeQueryController parent, TmpTable data) {
+    public void setParameters(BaseController parent, BaseDataTreeController controller, TmpTable data) {
         try {
-            if (parent == null || data == null) {
+            if (parent == null || controller == null || data == null) {
                 close();
                 return;
             }
+            parentController = parent;
+            dataController = controller;
             results = data;
-            queryController = parent;
-            nodeTable = queryController.nodeTable;
+            nodeTable = dataController.nodeTable;
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
 
             baseTitle = nodeTable.getTreeName() + " - " + message("QueryResults");
             setTitle(baseTitle);
 
-            parent.setIconified(true);
-
-            viewController.setQuery(this);
+            parentController.setIconified(true);
+            viewController.setParameters(this, nodeTable);
 
             loadDef(results);
 
@@ -83,10 +82,23 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
     }
 
     @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        if (viewController != null) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void cleanPane() {
         try {
-            if (WindowTools.isRunning(queryController)) {
-                queryController.setIconified(false);
+            if (WindowTools.isRunning(parentController)) {
+                parentController.setIconified(false);
             }
         } catch (Exception e) {
         }
@@ -97,11 +109,12 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
     /*
         static
      */
-    public static DataTreeQueryResultsController open(DataTreeQueryController parent, TmpTable data) {
+    public static DataTreeQueryResultsController open(BaseController parent,
+            BaseDataTreeController tree, TmpTable data) {
         try {
             DataTreeQueryResultsController controller = (DataTreeQueryResultsController) WindowTools
                     .openStage(Fxmls.DataTreeQueryResultsFxml);
-            controller.setParameters(parent, data);
+            controller.setParameters(parent, tree, data);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

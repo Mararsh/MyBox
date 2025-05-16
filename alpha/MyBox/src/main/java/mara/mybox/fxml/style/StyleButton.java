@@ -678,6 +678,9 @@ public class StyleButton {
         if (id.startsWith("location")) {
             return new StyleData(id, message("Location"), "", "iconLocation.png");
         }
+        if (id.startsWith("locate")) {
+            return new StyleData(id, message("Locate"), "", "iconLocation.png");
+        }
         if (id.startsWith("imageSize")) {
             switch (id) {
                 case "imageSizeButton":

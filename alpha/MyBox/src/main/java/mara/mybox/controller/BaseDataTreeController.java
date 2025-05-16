@@ -14,6 +14,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -22,7 +23,6 @@ import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
-import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -44,7 +44,7 @@ public class BaseDataTreeController extends BaseFileController {
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
     protected String dataName;
-    protected DataNode rootNode, currentNode, viewNode, sourceNode;
+    protected DataNode rootNode, currentNode, sourceNode;
     protected SelectionType selectionType = SelectionType.None;
 
     @FXML
@@ -103,7 +103,7 @@ public class BaseDataTreeController extends BaseFileController {
             }
 
             if (viewController != null) {
-                viewController.setTree(this);
+                viewController.setParameters(this, nodeTable);
             }
 
             formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -305,15 +305,7 @@ public class BaseDataTreeController extends BaseFileController {
     /*
         operations
      */
-    protected void nullView() {
-        viewNode = null;
-        if (viewController != null) {
-            viewController.nullLoad();
-        }
-    }
-
     public void viewNode(DataNode node) {
-        nullView();
         if (viewController == null || node == null) {
             return;
         }
@@ -345,71 +337,11 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     public void executeNode(DataNode node) {
-        if (node == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        if (nodeTable instanceof TableNodeWebFavorite) {
-            FxTask exTask = new FxTask<Void>(this) {
-                private String address;
-
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        DataNode savedNode = nodeTable.query(conn, node.getNodeid());
-                        if (savedNode == null) {
-                            return false;
-                        }
-                        address = savedNode.getStringValue("address");
-                        return address != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    WebBrowserController.openAddress(address, true);
-                }
-            };
-            start(exTask, false);
-        } else {
-            DataTreeNodeEditorController.executeNode(this, node);
-        }
+        nodeTable.executeNode(this, node);
     }
 
     public void popNode(DataNode node) {
-        if (node == null) {
-            return;
-        }
-        FxTask popTask = new FxSingletonTask<Void>(this) {
-            private String html;
-            private DataNode savedNode;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = nodeTable.query(conn, node.getNodeid());
-                    if (savedNode == null) {
-                        return false;
-                    }
-                    html = nodeTable.valuesHtml(this, conn, controller, savedNode,
-                            node.getHierarchyNumber(), 4);
-                    return html != null && !html.isBlank();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                HtmlTableController.open(null, html);
-            }
-
-        };
-        start(popTask, false);
+        nodeTable.popNode(this, node);
     }
 
     public void unfoldNode(DataNode node) {
@@ -440,13 +372,20 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     protected void reloadView(DataNode node) {
-        if (viewNode != null && viewNode.equals(node)) {
+        if (viewController == null || node == null) {
+            return;
+        }
+        if (viewController.viewNode != null
+                && viewController.viewNode.equals(node)) {
             viewNode(node);
         }
     }
 
-    public boolean focusNode(DataNode node) {
-        return true;
+    public void locateNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        DataTreeController.open(nodeTable, node);
     }
 
     public void nodeSaved(DataNode parent, DataNode node) {
@@ -467,6 +406,13 @@ public class BaseDataTreeController extends BaseFileController {
         DataTreeQueryController.open(this);
     }
 
+    public void queryDescendants(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        DataTreeQueryDescendantsController.open(this, node);
+    }
+
     /*
         action
      */
@@ -474,43 +420,6 @@ public class BaseDataTreeController extends BaseFileController {
     @Override
     public void refreshAction() {
         loadTree();
-    }
-
-    @FXML
-    public void queryAction() {
-
-    }
-
-    @FXML
-    @Override
-    public boolean popAction() {
-        popNode(selectedNode());
-        return true;
-    }
-
-    @FXML
-    public void editAction() {
-        if (viewNode == null) {
-            DataNode node = selectedNode();
-            if (node == null) {
-                return;
-            }
-            viewNode = node;
-        }
-        DataTreeNodeEditorController.editNode(this, viewNode);
-    }
-
-    @FXML
-    @Override
-    public void goAction() {
-        if (viewNode == null) {
-            DataNode node = selectedNode();
-            if (node == null) {
-                return;
-            }
-            viewNode = node;
-        }
-        executeNode(viewNode);
     }
 
     @FXML
@@ -572,9 +481,15 @@ public class BaseDataTreeController extends BaseFileController {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("Query"), StyleTools.getIconImageView("iconQuery.png"));
+        menu = new MenuItem(message("Query") + " ...", StyleTools.getIconImageView("iconQuery.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             query();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("QueryDescendants"), StyleTools.getIconImageView("iconQuery.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            queryDescendants(node);
         });
         items.add(menu);
 
@@ -631,6 +546,22 @@ public class BaseDataTreeController extends BaseFileController {
         items.addAll(viewMenuItems(event, node, false));
 
         return items;
+    }
+
+    /*
+        events
+     */
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        if (viewController != null) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

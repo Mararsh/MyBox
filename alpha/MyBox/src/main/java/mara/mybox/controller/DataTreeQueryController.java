@@ -32,7 +32,6 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
                 return;
             }
             dataController = parent;
-            parentController = parent;
             nodeTable = dataController.nodeTable;
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
@@ -126,7 +125,7 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
         treeTable.stopFilter();
         if (results != null) {
             if (results.getRowsNumber() > 0) {
-                DataTreeQueryResultsController.open(this, results);
+                DataTreeQueryResultsController.open(this, dataController, results);
             } else {
                 alertInformation(message("ResultIsEmpty"));
             }

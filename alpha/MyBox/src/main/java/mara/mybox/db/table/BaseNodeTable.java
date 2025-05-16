@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.DataTreeNodeEditorController;
+import mara.mybox.controller.HtmlTableController;
+import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.db.Database;
@@ -20,6 +23,7 @@ import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.JsonTools;
@@ -871,6 +875,76 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return getValue(node, majorColumnName);
     }
 
+    /*
+        tools
+     */
+    public void popNode(BaseController controller, DataNode node) {
+        if (node == null) {
+            return;
+        }
+        FxTask popTask = new FxSingletonTask<Void>(controller) {
+            private String html;
+            private DataNode savedNode;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    savedNode = query(conn, node.getNodeid());
+                    if (savedNode == null) {
+                        return false;
+                    }
+                    html = valuesHtml(this, conn, controller, savedNode,
+                            node.getHierarchyNumber(), 4);
+                    return html != null && !html.isBlank();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                HtmlTableController.open(null, html);
+            }
+
+        };
+        controller.start(popTask, false);
+    }
+
+    public void executeNode(BaseController controller, DataNode node) {
+        if (node == null) {
+            controller.popError(message("SelectToHandle"));
+            return;
+        }
+        if (this instanceof TableNodeWebFavorite) {
+            FxTask exTask = new FxTask<Void>(controller) {
+                private String address;
+
+                @Override
+                protected boolean handle() {
+                    try (Connection conn = DerbyBase.getConnection()) {
+                        DataNode savedNode = query(conn, node.getNodeid());
+                        if (savedNode == null) {
+                            return false;
+                        }
+                        address = savedNode.getStringValue("address");
+                        return address != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    WebBrowserController.openAddress(address, true);
+                }
+            };
+            controller.start(exTask, false, message("Handling..."));
+        } else {
+            DataTreeNodeEditorController.loadNode(controller, this, node, true);
+        }
+    }
 
     /*
         get/set

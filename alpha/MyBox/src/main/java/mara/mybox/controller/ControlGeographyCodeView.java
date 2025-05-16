@@ -16,6 +16,7 @@ import mara.mybox.tools.GeographyCodeTools;
 public class ControlGeographyCodeView extends BaseMapController {
 
     protected GeographyCodeController dataController;
+    protected DataNode viewNode;
 
     public void setPatrameters(GeographyCodeController controller) {
         try {
@@ -28,8 +29,8 @@ public class ControlGeographyCodeView extends BaseMapController {
         }
     }
 
-    protected void loadNode(DataNode node) {
-        if (webEngine == null || !mapLoaded || node == null) {
+    protected void loadNode(long nodeid) {
+        if (webEngine == null || !mapLoaded || nodeid < 0) {
             return;
         }
         if (task != null) {
@@ -37,16 +38,16 @@ public class ControlGeographyCodeView extends BaseMapController {
         }
         task = new FxSingletonTask<Void>(this) {
             GeographyCode geoCode;
-            DataNode savedNode;
+            DataNode node;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = nodeTable.query(conn, node.getNodeid());
-                    if (savedNode == null) {
+                    node = nodeTable.query(conn, nodeid);
+                    if (node == null) {
                         return false;
                     }
-                    geoCode = GeographyCodeTools.fromNode(savedNode);
+                    geoCode = GeographyCodeTools.fromNode(node);
                     if (isGaoDeMap()) {
                         geoCode = GeographyCodeTools.toGCJ02(geoCode);
                     } else {
@@ -62,9 +63,9 @@ public class ControlGeographyCodeView extends BaseMapController {
             @Override
             protected void whenSucceeded() {
                 drawCode(geoCode);
-                dataController.viewNode = savedNode;
                 dataController.infoButton.setDisable(false);
                 dataController.editButton.setDisable(false);
+                viewNode = node;
             }
 
             @Override
