@@ -127,20 +127,20 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </CheckBox>
-            <Button fx:id="locateButton" mnemonicParsing="false" onAction="#locateAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconLocation.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
             <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="treeLocateButton" mnemonicParsing="false" onAction="#locateAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconTree.png" />
                      </image>
                   </ImageView>
                </graphic>

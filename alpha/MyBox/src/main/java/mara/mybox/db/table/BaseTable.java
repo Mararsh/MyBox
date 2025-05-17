@@ -1325,6 +1325,13 @@ public abstract class BaseTable<D> {
         }
     }
 
+    public String info() {
+        String info = message("TableName") + ": " + tableName + "\n";
+        info += message("columns") + ": " + columnNames() + "\n";
+        info += message("Insert") + ": " + insertStatement() + "\n";
+        return info;
+    }
+
     /*
         data 2d
      */

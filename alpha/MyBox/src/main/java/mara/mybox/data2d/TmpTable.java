@@ -82,18 +82,29 @@ public class TmpTable extends DataTable {
     }
 
     public boolean createTable() {
-        if (sourceData == null) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return createTable(conn);
+        } catch (Exception e) {
+            showError(task, e.toString());
             return false;
         }
-        if (targetName == null) {
-            targetName = sourceData.getName();
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
+    }
+
+    public boolean createTable(Connection conn) {
+        try {
+            if (sourceData == null) {
+                showError(task, message("InvalidData"));
+                return false;
+            }
+            if (targetName == null) {
+                targetName = sourceData.getName();
+            }
             List<Data2DColumn> sourceColumns = sourceData.getColumns();
             if (sourceColumns == null || sourceColumns.isEmpty()) {
                 sourceData.readColumns(conn);
             }
             if (sourceColumns == null || sourceColumns.isEmpty()) {
+                showError(task, message("InvalidData"));
                 return false;
             }
             valueIndexOffset = 1;
@@ -164,6 +175,7 @@ public class TmpTable extends DataTable {
             }
             DataTable dataTable = Data2DTableTools.createTable(task, conn, null, tmpColumns);
             if (dataTable == null) {
+                showError(task, message("Failed") + ": " + message("CreateTable"));
                 return false;
             }
             sheet = dataTable.getSheet();
@@ -192,11 +204,7 @@ public class TmpTable extends DataTable {
                 tmpOrderby = null;
             }
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            showError(task, e.toString());
             return false;
         }
         return true;
@@ -219,11 +227,7 @@ public class TmpTable extends DataTable {
             return sourceData.copy(task, writer, sourceData.columnIndices(),
                     includeRowNumber, invalidAs);
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            showError(task, e.toString());
             return -4;
         }
     }
@@ -341,11 +345,7 @@ public class TmpTable extends DataTable {
             }
             return data2DRow;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            showError(task, e.toString());
             return null;
         }
     }
@@ -378,11 +378,7 @@ public class TmpTable extends DataTable {
             conn.setAutoCommit(true);
             return pagination.rowsNumber;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            showError(task, e.toString());
             return -4;
         }
     }
@@ -414,6 +410,7 @@ public class TmpTable extends DataTable {
             }
             return (DataFileCSV) writer.getTargetData();
         } catch (Exception e) {
+            showError(task, e.toString());
             return null;
         }
     }
@@ -456,11 +453,7 @@ public class TmpTable extends DataTable {
                 count++;
             }
         } catch (Exception e) {
-            if (currentTask != null) {
-                currentTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            showError(currentTask, e.toString());
             return false;
         }
         writer.closeWriter();
@@ -509,11 +502,7 @@ public class TmpTable extends DataTable {
                         rowValues.add(results.getString(sname));
                     }
                 } catch (Exception e) {
-                    if (currentTask != null) {
-                        currentTask.setError(e.toString());
-                    } else {
-                        MyBoxLog.error(e);
-                    }
+                    showError(currentTask, e.toString());
                     return false;
                 }
                 if (i == 0) {
@@ -548,11 +537,7 @@ public class TmpTable extends DataTable {
                 writer.writeRow(rowValues);
             }
         } catch (Exception e) {
-            if (currentTask != null) {
-                currentTask.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            showError(currentTask, e.toString());
             return false;
         }
         writer.closeWriter();
@@ -591,6 +576,14 @@ public class TmpTable extends DataTable {
             tmpScript = findReplace().replace(task, script, "#{" + sourceName + "}", "#{" + tmpName + "}");
         }
         return tmpScript;
+    }
+
+    public void showError(FxTask currentTask, String err) {
+        if (currentTask != null) {
+            currentTask.setError(err);
+        } else {
+            MyBoxLog.error(err);
+        }
     }
 
     /*

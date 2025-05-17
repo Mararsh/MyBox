@@ -82,6 +82,11 @@ public class GeographyCodeController extends DataTreeController {
         mapController.optionsAction();
     }
 
+    @FXML
+    public void editAction() {
+        editNode(mapController.viewNode);
+    }
+
     @Override
     public void cleanPane() {
         try {

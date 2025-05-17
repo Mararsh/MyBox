@@ -33,11 +33,11 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
 
     protected BaseDataTreeController dataController;
     protected BaseNodeTable nodeTable;
-    protected String tableName, dataName, chainName, orderColumns;
+    protected String dataName, chainName, querySQL;
     protected DataTable treeTable;
     protected TmpTable results;
     protected DataNode node;
-    protected PreparedStatement query, insert;
+    protected PreparedStatement insert;
     protected TableData2D tableData2D;
 
     @FXML
@@ -52,7 +52,6 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
             dataController = parent;
             parentController = parent;
             nodeTable = dataController.nodeTable;
-            tableName = nodeTable.getTableName();
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
             node = inNode;
@@ -60,18 +59,15 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
             baseTitle = nodeTable.getTreeName() + " - " + message("QueryDescendants");
             setTitle(baseTitle);
 
-            orderColumns = nodeTable.getOrderColumns();
             startAction();
 
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            showLogs(e.toString());
         }
     }
 
     @Override
     public boolean doTask(FxTask currentTask) {
-        String querySQL = "SELECT " + NodeFields + " FROM " + tableName
-                + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
         try (Connection conn = DerbyBase.getConnection()) {
             treeTable = nodeTable.recordTable(conn);
             if (treeTable == null) {
@@ -99,39 +95,52 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
                     .setSourcePickIndice(cols)
                     .setImportData(false);
             results.setTask(currentTask);
-            if (results.createTable()) {
-                showLogs("Done");
-                return true;
+            if (!results.createTable(conn)) {
+                showLogs("Failed");
+                return false;
             }
 
             tableData2D = results.getTableData2D();
-            query = conn.prepareStatement(querySQL);
+            querySQL = "SELECT " + NodeFields + " FROM "
+                    + nodeTable.getTableName()
+                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY "
+                    + nodeTable.getOrderColumns();
             insert = conn.prepareStatement(tableData2D.insertStatement());
             conn.setAutoCommit(false);
             long count = writeDescedents(currentTask, conn, savedNode.getNodeid(), 0);
-            insert.executeBatch();
-            conn.commit();
+            if (count > 0) {
+                insert.executeBatch();
+                conn.commit();
+            }
             insert.close();
-            query.close();
-
+            if (count < 0) {
+                results = null;
+                return false;
+            }
             results.setRowsNumber(count);
-            Data2D.saveAttributes(conn, results, results.getColumns());
+            if (count > 0) {
+                Data2D.saveAttributes(conn, results, results.getColumns());
+            }
             showLogs(message("Generated") + ": " + results.getSheet() + "  "
                     + message("RowsNumber") + ": " + count);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            showLogs(e.toString());
+            results = null;
+            return false;
         }
-        results = null;
-        return false;
     }
 
     public long writeDescedents(FxTask currentTask, Connection conn,
             long nodeid, long inCount) {
+        if (inCount < 0) {
+            return inCount;
+        }
         if (nodeid < 0 || (currentTask != null && !currentTask.isWorking())) {
             return -inCount;
         }
         long count = inCount;
-        try {
+        try (PreparedStatement query = conn.prepareStatement(querySQL)) {
             query.setLong(1, nodeid);
             try (ResultSet queryResults = query.executeQuery()) {
                 while (queryResults != null && queryResults.next()) {
@@ -140,11 +149,11 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
                     }
                     long childid = queryResults.getLong("nodeid");
                     Data2DRow data2DRow = tableData2D.newRow();
-                    data2DRow.setValue(results.columnName(1), childid);
-                    data2DRow.setValue(results.columnName(2), queryResults.getObject("title"));
-                    data2DRow.setValue(results.columnName(3), queryResults.getObject("order_number"));
-                    data2DRow.setValue(results.columnName(4), queryResults.getObject("update_time"));
-                    data2DRow.setValue(results.columnName(5), queryResults.getObject("parentid"));
+                    data2DRow.setValue(results.columnName(1), childid + "");
+                    data2DRow.setValue(results.columnName(2), queryResults.getString("title"));
+                    data2DRow.setValue(results.columnName(3), queryResults.getObject("order_number") + "");
+                    data2DRow.setValue(results.columnName(4), queryResults.getObject("update_time") + "");
+                    data2DRow.setValue(results.columnName(5), queryResults.getLong("parentid") + "");
                     if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
                         insert.addBatch();
                         if (++count % Database.BatchSize == 0) {
@@ -153,8 +162,10 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
                             showLogs(message("Inserted") + ": " + count);
                         }
                     }
-
                     count = writeDescedents(currentTask, conn, childid, count);
+                    if (count < 0) {
+                        return count;
+                    }
                 }
             } catch (Exception e) {
                 showLogs(e.toString());
@@ -185,7 +196,7 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
     public static DataTreeQueryDescendantsController open(BaseDataTreeController parent, DataNode inNode) {
         try {
             DataTreeQueryDescendantsController controller = (DataTreeQueryDescendantsController) WindowTools
-                    .operationStage(parent, Fxmls.DataTreeQueryDescendantsFxml);
+                    .openStage(Fxmls.DataTreeQueryDescendantsFxml);
             controller.setParameters(parent, inNode);
             controller.requestMouse();
             return controller;

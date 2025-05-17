@@ -532,7 +532,11 @@ public class StyleButton {
             return new StyleData(id, message("Move"), "", "iconMove.png");
         }
         if (id.startsWith("tree")) {
-            return new StyleData(id, message("DataTree"), "", "iconTree.png");
+            if (id.startsWith("treeLocate")) {
+                return new StyleData(id, message("Locate"), "", "iconTree.png");
+            } else {
+                return new StyleData(id, message("DataTree"), "", "iconTree.png");
+            }
         }
         if (id.startsWith("csv")) {
             return new StyleData(id, "CSV", "", "iconCSV.png");
@@ -750,6 +754,9 @@ public class StyleButton {
         }
         if (id.startsWith("canvas")) {
             return new StyleData(id, message("Canvas"), "", "iconRectangle.png");
+        }
+        if (id.startsWith("target")) {
+            return new StyleData(id, message("Target"), "", "iconTarget.png");
         }
         if (id.startsWith("scope")) {
             return new StyleData(id, message("Scope"), "", "iconTarget.png");

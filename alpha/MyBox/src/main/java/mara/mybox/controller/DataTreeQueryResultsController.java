@@ -97,9 +97,15 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
     @Override
     public void cleanPane() {
         try {
+            if (results != null) {
+                results.drop();
+                results = null;
+            }
             if (WindowTools.isRunning(parentController)) {
                 parentController.setIconified(false);
+                parentController = null;
             }
+            dataController = null;
         } catch (Exception e) {
         }
         super.cleanPane();
