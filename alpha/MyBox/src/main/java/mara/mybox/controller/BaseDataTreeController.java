@@ -46,6 +46,7 @@ public class BaseDataTreeController extends BaseFileController {
     protected String dataName;
     protected DataNode rootNode, currentNode, sourceNode;
     protected SelectionType selectionType = SelectionType.None;
+    public boolean checkEmptyTree = true;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -60,7 +61,7 @@ public class BaseDataTreeController extends BaseFileController {
     @FXML
     protected ControlDataTreeNodeView viewController;
 
-    public void initDataTree(BaseNodeTable table, DataNode node) {
+    public void initDataTree(BaseNodeTable table, DataNode node, boolean checkEmpty) {
         try {
             if (table == null) {
                 return;
@@ -73,6 +74,8 @@ public class BaseDataTreeController extends BaseFileController {
             baseName = baseName + "_" + dataName;
             baseTitle = initTitle();
             setTitle(baseTitle);
+
+            checkEmptyTree = checkEmpty;
 
             treeController.setParameters(this);
             tableController.setParameters(this);
@@ -118,6 +121,10 @@ public class BaseDataTreeController extends BaseFileController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void initDataTree(BaseNodeTable table, DataNode node) {
+        initDataTree(table, node, true);
     }
 
     public void setFormat(DataNode node) {

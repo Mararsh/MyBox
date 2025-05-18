@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 
 /**
@@ -28,12 +29,12 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void RowExpression(ActionEvent event) {
-        DataTreeController.rowExpression(parentController, false);
+        DataTreeController.rowExpression(parentController, AppVariables.closeCurrentWhenOpenTool);
     }
 
     @FXML
     protected void DataColumn(ActionEvent event) {
-        DataTreeController.dataColumn(parentController, false);
+        DataTreeController.dataColumn(parentController, AppVariables.closeCurrentWhenOpenTool);
     }
 
     @FXML
@@ -53,7 +54,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openGeographyCode(ActionEvent event) {
-        openScene(Fxmls.GeographyCodeFxml);
+        GeographyCodeController.open(parentController, AppVariables.closeCurrentWhenOpenTool, true);
     }
 
     @FXML

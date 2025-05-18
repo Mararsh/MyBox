@@ -63,7 +63,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
      */
     public static Data2DAddRowsController open(BaseData2DLoadController tableViewController) {
         try {
-            Data2DAddRowsController controller = (Data2DAddRowsController) WindowTools.branchStage(
+            Data2DAddRowsController controller = (Data2DAddRowsController) WindowTools.referredTopStage(
                     tableViewController, Fxmls.Data2DAddRowsFxml);
             controller.setParameters(tableViewController);
             return controller;

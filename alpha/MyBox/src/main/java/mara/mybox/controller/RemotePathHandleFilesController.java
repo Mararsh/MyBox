@@ -177,7 +177,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             if (manageController == null) {
                 return null;
             }
-            RemotePathHandleFilesController controller = (RemotePathHandleFilesController) WindowTools.branchStage(
+            RemotePathHandleFilesController controller = (RemotePathHandleFilesController) WindowTools.referredTopStage(
                     manageController, Fxmls.RemotePathDeleteFxml);
             controller.setParameters(manageController);
             controller.requestMouse();

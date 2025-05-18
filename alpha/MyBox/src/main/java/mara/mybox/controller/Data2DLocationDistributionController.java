@@ -521,7 +521,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
      */
     public static Data2DLocationDistributionController open(BaseData2DLoadController tableController) {
         try {
-            Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.operationStage(
+            Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DLocationDistributionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

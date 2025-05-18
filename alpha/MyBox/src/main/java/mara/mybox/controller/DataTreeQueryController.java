@@ -138,7 +138,7 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
     public static DataTreeQueryController open(BaseDataTreeController parent) {
         try {
             DataTreeQueryController controller = (DataTreeQueryController) WindowTools
-                    .operationStage(parent, Fxmls.DataTreeQueryFxml);
+                    .referredStage(parent, Fxmls.DataTreeQueryFxml);
             controller.setParameters(parent);
             controller.requestMouse();
             return controller;

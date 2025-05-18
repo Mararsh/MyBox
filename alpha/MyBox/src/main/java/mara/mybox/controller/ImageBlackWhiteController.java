@@ -95,7 +95,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.operationStage(
+            ImageBlackWhiteController controller = (ImageBlackWhiteController) WindowTools.referredStage(
                     parent, Fxmls.ImageBlackWhiteFxml);
             controller.setParameters(parent);
             return controller;

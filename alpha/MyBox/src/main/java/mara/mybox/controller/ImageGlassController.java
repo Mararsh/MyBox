@@ -79,7 +79,7 @@ public class ImageGlassController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageGlassController controller = (ImageGlassController) WindowTools.operationStage(
+            ImageGlassController controller = (ImageGlassController) WindowTools.referredStage(
                     parent, Fxmls.ImageGlassFxml);
             controller.setParameters(parent);
             return controller;

@@ -483,7 +483,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
                     }
                 }
             }
-            MenuHtmlCodesController controller = (MenuHtmlCodesController) WindowTools.branchStage(
+            MenuHtmlCodesController controller = (MenuHtmlCodesController) WindowTools.referredTopStage(
                     parent, Fxmls.MenuHtmlCodesFxml);
             controller.setParameters(parent, node, x, y);
             return controller;

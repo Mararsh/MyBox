@@ -48,13 +48,26 @@ public class DataTreeController extends BaseDataTreeController {
 
     @Override
     public void whenTreeEmpty() {
-        if (AppVariables.isTesting) {
+        if (!checkEmptyTree) {
             return;
         }
         File file = nodeTable.exampleFile();
-        if (file != null && PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
+        if (file == null) {
+            return;
+        }
+        if (AppVariables.autoTestingController != null
+                || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
             importExamples(null);
         }
+    }
+
+    @Override
+    public boolean endWhenAutoTesting() {
+        if (AppVariables.autoTestingController != null) {
+            myStage.setIconified(true);
+            AppVariables.autoTestingController.sceneLoaded();
+        }
+        return false;
     }
 
     /*

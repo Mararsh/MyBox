@@ -87,7 +87,7 @@ public class ImageConvolutionController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.operationStage(
+            ImageConvolutionController controller = (ImageConvolutionController) WindowTools.referredStage(
                     parent, Fxmls.ImageConvolutionFxml);
             controller.setParameters(parent);
             return controller;

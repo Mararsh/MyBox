@@ -67,7 +67,7 @@ public class Data2DSortController extends BaseData2DTaskTargetsController {
      */
     public static Data2DSortController open(BaseData2DLoadController tableController) {
         try {
-            Data2DSortController controller = (Data2DSortController) WindowTools.operationStage(
+            Data2DSortController controller = (Data2DSortController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DSortFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

@@ -19,7 +19,8 @@ import static mara.mybox.value.Languages.message;
 public class AutoTestingCasesController extends BaseTableViewController<TestCase> {
 
     @FXML
-    protected TableColumn<TestCase, String> typeColumn, operationColumn, objectColumn, versionColumn, stageColumn;
+    protected TableColumn<TestCase, String> typeColumn, operationColumn,
+            objectColumn, versionColumn, stageColumn;
 
     @FXML
     protected CheckBox wrapCheck;
@@ -49,7 +50,7 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
     public void initControls() {
         try {
             super.initControls();
-            tableData.setAll(TestCase.testCases());
+            tableData.setAll(TestCase.interfaceCases());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

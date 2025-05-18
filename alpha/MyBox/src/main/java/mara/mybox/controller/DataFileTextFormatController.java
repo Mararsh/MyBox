@@ -109,7 +109,7 @@ public class DataFileTextFormatController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            DataFileTextFormatController controller = (DataFileTextFormatController) WindowTools.branchStage(
+            DataFileTextFormatController controller = (DataFileTextFormatController) WindowTools.referredTopStage(
                     parent, Fxmls.DataFileTextFormatFxml);
             controller.setParameters(parent);
             return controller;

@@ -53,7 +53,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
      */
     public static Data2DRowFilterEdit open(BaseData2DTaskController handleController, DataFilter filter) {
         try {
-            Data2DRowFilterEdit controller = (Data2DRowFilterEdit) WindowTools.branchStage(
+            Data2DRowFilterEdit controller = (Data2DRowFilterEdit) WindowTools.referredTopStage(
                     handleController, Fxmls.Data2DRowFilterEditFxml);
             controller.setParameters(handleController, filter);
             return controller;

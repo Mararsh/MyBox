@@ -299,7 +299,7 @@ public class MathFunctionDataController extends BaseChildController {
      */
     public static MathFunctionDataController open(ControlDataMathFunction editorController) {
         try {
-            MathFunctionDataController controller = (MathFunctionDataController) WindowTools.operationStage(
+            MathFunctionDataController controller = (MathFunctionDataController) WindowTools.referredStage(
                     editorController.nodeEditor, Fxmls.MathFunctionDataFxml);
             controller.setParameters(editorController);
             controller.requestMouse();

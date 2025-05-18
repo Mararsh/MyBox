@@ -200,7 +200,7 @@ public class FileBrowseController extends BaseController {
             if (parent == null) {
                 return null;
             }
-            FileBrowseController controller = (FileBrowseController) WindowTools.branchStage(
+            FileBrowseController controller = (FileBrowseController) WindowTools.referredTopStage(
                     parent, Fxmls.FileBrowseFxml);
             if (controller != null) {
                 controller.setParameter(parent);

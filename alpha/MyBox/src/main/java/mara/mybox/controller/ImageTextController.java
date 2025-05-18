@@ -154,7 +154,7 @@ public class ImageTextController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageTextController controller = (ImageTextController) WindowTools.operationStage(
+            ImageTextController controller = (ImageTextController) WindowTools.referredStage(
                     parent, Fxmls.ImageTextFxml);
             controller.setParameters(parent);
             return controller;

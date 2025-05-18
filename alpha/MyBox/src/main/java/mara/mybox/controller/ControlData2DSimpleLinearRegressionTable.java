@@ -136,7 +136,7 @@ public class ControlData2DSimpleLinearRegressionTable extends BaseData2DLoadCont
         } else {
             try {
                 Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools
-                        .operationStage(regressController.parentController, Fxmls.Data2DSimpleLinearRegressionFxml);
+                        .referredStage(regressController.parentController, Fxmls.Data2DSimpleLinearRegressionFxml);
                 controller.categoryColumnSelector.getItems().setAll(selected.get(2));
                 controller.categoryColumnSelector.getSelectionModel().select(0);
                 controller.valueColumnSelector.getItems().setAll(selected.get(1));

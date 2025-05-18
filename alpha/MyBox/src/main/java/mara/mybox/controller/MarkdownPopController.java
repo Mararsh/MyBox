@@ -89,7 +89,7 @@ public class MarkdownPopController extends TextPopController {
      */
     public static MarkdownPopController open(BaseController parent) {
         try {
-            MarkdownPopController controller = (MarkdownPopController) WindowTools.popStage(parent, Fxmls.MarkdownPopFxml);
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.topStage(parent, Fxmls.MarkdownPopFxml);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -617,7 +617,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
      */
     public static Data2DGroupStatisticController open(BaseData2DLoadController tableController) {
         try {
-            Data2DGroupStatisticController controller = (Data2DGroupStatisticController) WindowTools.operationStage(
+            Data2DGroupStatisticController controller = (Data2DGroupStatisticController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DGroupStatisticFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

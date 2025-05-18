@@ -224,7 +224,7 @@ public class RemotePathPutController extends BaseBatchFileController {
             if (manageController == null) {
                 return null;
             }
-            RemotePathPutController controller = (RemotePathPutController) WindowTools.branchStage(
+            RemotePathPutController controller = (RemotePathPutController) WindowTools.referredTopStage(
                     manageController, Fxmls.RemotePathPutFxml);
             controller.setParameters(manageController);
             controller.requestMouse();

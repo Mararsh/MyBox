@@ -187,7 +187,7 @@ public class ColorInputController extends BaseController {
                 ((ColorInputController) object).close();
             }
         }
-        ColorInputController controller = (ColorInputController) WindowTools.branchStage(parent, Fxmls.ColorInputFxml);
+        ColorInputController controller = (ColorInputController) WindowTools.referredTopStage(parent, Fxmls.ColorInputFxml);
         controller.setParameters(parent);
         return controller;
     }

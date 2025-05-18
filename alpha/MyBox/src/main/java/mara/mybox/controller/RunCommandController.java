@@ -146,7 +146,7 @@ public class RunCommandController extends HtmlPopController {
      */
     public static RunCommandController open(BaseController parent, String cmd) {
         try {
-            RunCommandController controller = (RunCommandController) WindowTools.branchStage(
+            RunCommandController controller = (RunCommandController) WindowTools.referredTopStage(
                     parent, Fxmls.RunCommandFxml);
             controller.run(cmd);
             return controller;

@@ -255,7 +255,9 @@ public class MyBoxLog extends BaseData {
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
-            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Debug));
+            String logText = println(myboxLog,
+                    type == LogType.Error
+                    || (AppVariables.detailedDebugLogs && type == LogType.Debug));
             System.out.print(logText);
             if (LastMyBoxLog != null && LastMyBoxLog.equalTo(myboxLog)) {
                 return myboxLog;

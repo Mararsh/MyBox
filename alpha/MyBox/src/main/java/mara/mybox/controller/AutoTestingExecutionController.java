@@ -21,7 +21,6 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.ErrorNotify;
-import static mara.mybox.value.AppVariables.isTesting;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -34,7 +33,8 @@ import static mara.mybox.value.Languages.message;
 public class AutoTestingExecutionController extends BaseTableViewController<TestCase> {
 
     protected AutoTestingCasesController casesController;
-    protected int currentIndex, interval = 2000;
+    protected BaseController currentController;
+    protected int currentIndex, delay = 1000;
     protected TestCase currentCase;
     protected List<TestCase> testCases;
     protected boolean canceled;
@@ -44,7 +44,8 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     @FXML
     protected TableColumn<TestCase, Integer> aidColumn;
     @FXML
-    protected TableColumn<TestCase, String> typeColumn, operationColumn, objectColumn, versionColumn, stageColumn, statusColumn;
+    protected TableColumn<TestCase, String> typeColumn, operationColumn,
+            objectColumn, versionColumn, stageColumn, statusColumn;
 
     public AutoTestingExecutionController() {
         baseTitle = Languages.message("TestExecution");
@@ -113,7 +114,8 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             errorListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (isTesting && currentCase != null && currentIndex >= 0) {
+                    if (AppVariables.autoTestingController != null
+                            && currentCase != null && currentIndex >= 0) {
                         currentCase.setStatus(Status.Fail);
                         tableData.set(currentIndex, currentCase);
                     }
@@ -158,6 +160,9 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             stopCases();
             return;
         }
+        if (AppVariables.autoTestingController != null) {
+            AppVariables.autoTestingController.stopCases();
+        }
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         startButton.setUserData("started");
@@ -170,7 +175,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         }
         tableView.refresh();
         canceled = false;
-        AppVariables.isTesting = true;
+        AppVariables.autoTestingController = this;
         currentIndex = 0;
         ErrorNotify.addListener(errorListener);
         caseNotify.addListener(caseListener);
@@ -183,24 +188,26 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         caseNotify.removeListener(caseListener);
         currentIndex = -1;
         currentCase = null;
+        currentController = null;
         StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
         startButton.applyCss();
         startButton.setUserData(null);
-        AppVariables.isTesting = false;
+        AppVariables.autoTestingController = null;
     }
 
     public void goCurrentCase() {
         try {
             currentCase = null;
+            currentController = null;
             if (canceled || testCases == null || currentIndex < 0 || currentIndex >= testCases.size()) {
                 stopCases();
                 return;
             }
-            AppVariables.isTesting = true;
+            AppVariables.autoTestingController = this;
             currentCase = tableData.get(currentIndex);
             currentCase.setStatus(Status.Testing);
             tableData.set(currentIndex, currentCase);
-            tableView.scrollTo(currentCase);
+            tableView.scrollTo(currentIndex - 5);
             runCurrentCase();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -214,72 +221,82 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                 stopCases();
                 return;
             }
-            BaseController currentController = null;
+            currentController = null;
             String fxml = currentCase.getFxml();
             if (fxml.endsWith("/DataTree.fxml")) {
-                String fname = currentCase.getObject();
-                if (message("TextTree").equals(fname)) {
-                    currentController = DataTreeController.textTree(null, false);
-                } else if (message("HtmlTree").equals(fname)) {
-                    currentController = DataTreeController.htmlTree(null, false);
-                } else if (message("WebFavorite").equals(fname)) {
-                    currentController = DataTreeController.webFavorite(null, false);
-                } else if (message("DatabaseSQL").equals(fname)) {
-                    currentController = DataTreeController.sql(null, false);
-                } else if (message("MathFunction").equals(fname)) {
-                    currentController = DataTreeController.mathFunction(null, false);
-                } else if (message("ImageScope").equals(fname)) {
-                    currentController = DataTreeController.imageScope(null, false);
-                } else if (message("JShell").equals(fname)) {
-                    currentController = DataTreeController.jShell(null, false);
-                } else if (message("JEXL").equals(fname)) {
-                    currentController = DataTreeController.jexl(null, false);
-                } else if (message("JavaScript").equals(fname)) {
-                    currentController = DataTreeController.javascript(null, false);
-                } else if (message("RowExpression").equals(fname)) {
-                    currentController = DataTreeController.rowExpression(null, false);
-                } else if (message("DataColumn").equals(fname)) {
-                    currentController = DataTreeController.dataColumn(null, false);
-                }
+                runTreeCase(currentCase.getObject());
+                return;
             } else {
                 currentController = openStage(currentCase.getFxml());
             }
             if (currentController == null) {
-                currentCase.setStatus(Status.Fail);
-                tableData.set(currentIndex, currentCase);
-                tableView.scrollTo(currentCase);
-            } else {
-                BaseController runingController = currentController;
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(() -> {
-                            if (runingController != null) {
-                                runingController.close();
-                            }
-                            if (currentCase != null && currentCase.getStatus() != Status.Fail) {
-                                currentCase.setStatus(Status.Success);
-                                tableData.set(currentIndex, currentCase);
-                                tableView.scrollTo(currentCase);
-                            }
-                            currentIndex++;
-                            caseNotify();
-                        });
-                        Platform.requestNextPulse();
-                    }
-                }, interval);
-                return;
+                endCase(false);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
-            if (currentCase != null) {
-                currentCase.setStatus(Status.Fail);
-                tableData.set(currentIndex, currentCase);
-                tableView.scrollTo(currentCase);
-            }
+            endCase(false);
         }
-        currentIndex++;
-        caseNotify();
+    }
+
+    public void runTreeCase(String object) {
+        try {
+            if (object == null) {
+                endCase(false);
+                return;
+            }
+            if (message("TextTree").equals(object)) {
+                currentController = DataTreeController.textTree(null, false);
+            } else if (message("HtmlTree").equals(object)) {
+                currentController = DataTreeController.htmlTree(null, false);
+            } else if (message("WebFavorite").equals(object)) {
+                currentController = DataTreeController.webFavorite(null, false);
+            } else if (message("DatabaseSQL").equals(object)) {
+                currentController = DataTreeController.sql(null, false);
+            } else if (message("MathFunction").equals(object)) {
+                currentController = DataTreeController.mathFunction(null, false);
+            } else if (message("ImageScope").equals(object)) {
+                currentController = DataTreeController.imageScope(null, false);
+            } else if (message("JShell").equals(object)) {
+                currentController = DataTreeController.jShell(null, false);
+            } else if (message("JEXL").equals(object)) {
+                currentController = DataTreeController.jexl(null, false);
+            } else if (message("JavaScript").equals(object)) {
+                currentController = DataTreeController.javascript(null, false);
+            } else if (message("RowExpression").equals(object)) {
+                currentController = DataTreeController.rowExpression(null, false);
+            } else if (message("DataColumn").equals(object)) {
+                currentController = DataTreeController.dataColumn(null, false);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            endCase(false);
+        }
+    }
+
+    public void sceneLoaded() {
+        if (canceled || currentCase == null) {
+            stopCases();
+            return;
+        }
+        endCase(currentCase.getStatus() != Status.Fail);
+    }
+
+    public void endCase(boolean success) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    if (currentCase != null) {
+                        currentCase.setStatus(success ? Status.Success : Status.Fail);
+                        tableData.set(currentIndex, currentCase);
+                    }
+                    currentIndex++;
+                    caseNotify();
+                });
+                Platform.requestNextPulse();
+            }
+        }, delay);
+
     }
 
     @Override
@@ -300,7 +317,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
      */
     public static AutoTestingExecutionController open(AutoTestingCasesController parent, List<TestCase> testCases) {
         try {
-            AutoTestingExecutionController controller = (AutoTestingExecutionController) WindowTools.branchStage(
+            AutoTestingExecutionController controller = (AutoTestingExecutionController) WindowTools.referredTopStage(
                     parent, Fxmls.AutoTestingExecutionFxml);
             controller.setParameters(parent, testCases);
             return controller;

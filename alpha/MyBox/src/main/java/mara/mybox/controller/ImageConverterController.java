@@ -215,7 +215,7 @@ public class ImageConverterController extends BaseChildController {
         static methods
      */
     public static ImageConverterController open(BaseImageController parent) {
-        ImageConverterController controller = (ImageConverterController) WindowTools.branchStage(
+        ImageConverterController controller = (ImageConverterController) WindowTools.referredTopStage(
                 parent, Fxmls.ImageConverterFxml);
         if (controller != null) {
             controller.setParameters(parent);

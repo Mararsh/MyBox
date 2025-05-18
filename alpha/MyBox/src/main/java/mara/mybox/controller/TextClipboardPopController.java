@@ -171,7 +171,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
             }
             closeAll();
             TextClipboardPopController controller
-                    = (TextClipboardPopController) WindowTools.branchStage(parent, Fxmls.TextClipboardPopFxml);
+                    = (TextClipboardPopController) WindowTools.referredTopStage(parent, Fxmls.TextClipboardPopFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

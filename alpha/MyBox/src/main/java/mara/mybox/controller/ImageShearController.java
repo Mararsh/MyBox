@@ -68,7 +68,7 @@ public class ImageShearController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageShearController controller = (ImageShearController) WindowTools.operationStage(
+            ImageShearController controller = (ImageShearController) WindowTools.referredStage(
                     parent, Fxmls.ImageShearFxml);
             controller.setParameters(parent);
             return controller;

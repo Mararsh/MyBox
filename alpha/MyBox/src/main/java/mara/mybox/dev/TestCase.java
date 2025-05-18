@@ -62,7 +62,7 @@ public class TestCase {
     /*
         static
      */
-    public static List<TestCase> testCases() {
+    public static List<TestCase> interfaceCases() {
         List<TestCase> cases = new ArrayList<>();
         try {
             int index = 1;

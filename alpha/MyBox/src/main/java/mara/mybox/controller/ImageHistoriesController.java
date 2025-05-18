@@ -500,7 +500,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
      */
     public static ImageHistoriesController open(ImageEditorController parent) {
         try {
-            ImageHistoriesController controller = (ImageHistoriesController) WindowTools.branchStage(
+            ImageHistoriesController controller = (ImageHistoriesController) WindowTools.referredTopStage(
                     parent, Fxmls.ImageHistoriesFxml);
             controller.setParameters(parent);
             controller.requestMouse();

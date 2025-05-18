@@ -370,23 +370,21 @@ public class MyBoxDocumentsController extends BaseTaskController {
     }
 
     protected void finishNotify() {
-        AppVariables.isTesting = false;
         finishNotify.set(!finishNotify.get());
     }
 
     protected boolean treeHtml(String tableName, String lang) {
         try {
-            AppVariables.isTesting = true;
             CurrentLangName = lang;
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
             BaseNodeTable nodeTable = BaseNodeTable.create(tableName);
             nodeTable.truncate();
             DataTreeController dataController;
             if (tableName.equals("GeographyCode")) {
-                dataController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+                dataController = GeographyCodeController.open(null, false, false);
             } else {
                 dataController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-                dataController.initDataTree(nodeTable, null);
+                dataController.initDataTree(nodeTable, null, false);
             }
             if (dataController == null) {
                 finishNotify();

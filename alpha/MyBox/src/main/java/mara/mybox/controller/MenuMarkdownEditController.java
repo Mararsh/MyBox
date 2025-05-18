@@ -514,7 +514,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
                     }
                 }
             }
-            MenuMarkdownEditController controller = (MenuMarkdownEditController) WindowTools.branchStage(
+            MenuMarkdownEditController controller = (MenuMarkdownEditController) WindowTools.referredTopStage(
                     parent, Fxmls.MenuMarkdownEditFxml);
             controller.setParameters(parent, node, x, y);
             return controller;

@@ -364,7 +364,7 @@ public class MenuWebviewController extends MenuController {
                     }
                 }
             }
-            MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
+            MenuWebviewController controller = (MenuWebviewController) WindowTools.referredTopStage(
                     parent, Fxmls.MenuWebviewFxml);
             return controller;
         } catch (Exception e) {

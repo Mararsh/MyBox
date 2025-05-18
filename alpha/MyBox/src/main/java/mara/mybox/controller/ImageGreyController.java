@@ -52,7 +52,7 @@ public class ImageGreyController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageGreyController controller = (ImageGreyController) WindowTools.operationStage(
+            ImageGreyController controller = (ImageGreyController) WindowTools.referredStage(
                     parent, Fxmls.ImageGreyFxml);
             controller.setParameters(parent);
             return controller;

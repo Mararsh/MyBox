@@ -67,7 +67,7 @@ public class ImageRectangleController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageRectangleController controller = (ImageRectangleController) WindowTools.operationStage(
+            ImageRectangleController controller = (ImageRectangleController) WindowTools.referredStage(
                     parent, Fxmls.ImageRectangleFxml);
             controller.setParameters(parent);
             return controller;

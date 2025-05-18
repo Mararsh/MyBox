@@ -87,7 +87,7 @@ public class ImageSepiaController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSepiaController controller = (ImageSepiaController) WindowTools.operationStage(
+            ImageSepiaController controller = (ImageSepiaController) WindowTools.referredStage(
                     parent, Fxmls.ImageSepiaFxml);
             controller.setParameters(parent);
             return controller;

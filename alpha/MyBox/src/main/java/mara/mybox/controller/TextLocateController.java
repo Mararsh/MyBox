@@ -191,7 +191,7 @@ public class TextLocateController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            TextLocateController controller = (TextLocateController) WindowTools.branchStage(
+            TextLocateController controller = (TextLocateController) WindowTools.referredTopStage(
                     parent, Fxmls.TextLocateFxml);
             controller.setParameters(parent);
             return controller;

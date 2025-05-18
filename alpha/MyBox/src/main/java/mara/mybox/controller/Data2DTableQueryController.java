@@ -88,7 +88,7 @@ public class Data2DTableQueryController extends ControlDataSQL {
      */
     public static Data2DTableQueryController open(BaseData2DLoadController parent) {
         try {
-            Data2DTableQueryController controller = (Data2DTableQueryController) WindowTools.operationStage(parent, Fxmls.Data2DTableQueryFxml);
+            Data2DTableQueryController controller = (Data2DTableQueryController) WindowTools.referredStage(parent, Fxmls.Data2DTableQueryFxml);
             controller.setParameters(parent);
             controller.requestMouse();
             return controller;

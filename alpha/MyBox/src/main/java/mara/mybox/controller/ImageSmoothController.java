@@ -89,7 +89,7 @@ public class ImageSmoothController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSmoothController controller = (ImageSmoothController) WindowTools.operationStage(
+            ImageSmoothController controller = (ImageSmoothController) WindowTools.referredStage(
                     parent, Fxmls.ImageSmoothFxml);
             controller.setParameters(parent);
             return controller;

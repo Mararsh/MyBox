@@ -417,7 +417,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
      */
     public static FileBackupController load(BaseController parent, String name) {
         try {
-            FileBackupController controller = (FileBackupController) WindowTools.branchStage(
+            FileBackupController controller = (FileBackupController) WindowTools.referredTopStage(
                     parent, Fxmls.FileBackupFxml);
             controller.setParameters(parent, name);
             controller.requestMouse();

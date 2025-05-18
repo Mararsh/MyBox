@@ -119,7 +119,7 @@ public class TextEditorSaveAsController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            TextEditorSaveAsController controller = (TextEditorSaveAsController) WindowTools.branchStage(
+            TextEditorSaveAsController controller = (TextEditorSaveAsController) WindowTools.referredTopStage(
                     parent, Fxmls.TextEditorSaveAsFxml);
             controller.setParameters(parent);
             return controller;

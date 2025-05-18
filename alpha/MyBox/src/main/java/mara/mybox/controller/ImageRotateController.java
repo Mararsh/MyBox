@@ -115,7 +115,7 @@ public class ImageRotateController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRotateController controller = (ImageRotateController) WindowTools.operationStage(
+            ImageRotateController controller = (ImageRotateController) WindowTools.referredStage(
                     parent, Fxmls.ImageRotateFxml);
             controller.setParameters(parent);
             return controller;

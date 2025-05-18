@@ -154,7 +154,7 @@ public class ImageMarginsController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageMarginsController controller = (ImageMarginsController) WindowTools.operationStage(
+            ImageMarginsController controller = (ImageMarginsController) WindowTools.referredStage(
                     parent, Fxmls.ImageMarginsFxml);
             controller.setParameters(parent);
             return controller;

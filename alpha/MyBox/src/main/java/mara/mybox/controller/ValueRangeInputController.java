@@ -117,7 +117,7 @@ public class ValueRangeInputController extends BaseInputController {
      */
     public static ValueRangeInputController open(BaseController parent, Data2DColumn column, ValueRange range) {
         try {
-            ValueRangeInputController controller = (ValueRangeInputController) WindowTools.branchStage(
+            ValueRangeInputController controller = (ValueRangeInputController) WindowTools.referredTopStage(
                     parent, Fxmls.ValueRangeInputFxml);
             controller.setParameters(parent, column, range);
             return controller;

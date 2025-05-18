@@ -185,7 +185,7 @@ public class JsonOptionsController extends BaseController {
      */
     public static JsonOptionsController open() {
         try {
-            JsonOptionsController controller = (JsonOptionsController) WindowTools.popStage(null, Fxmls.JsonOptionsFxml);
+            JsonOptionsController controller = (JsonOptionsController) WindowTools.topStage(null, Fxmls.JsonOptionsFxml);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

@@ -132,7 +132,7 @@ public class ImageCropController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageCropController controller = (ImageCropController) WindowTools.operationStage(
+            ImageCropController controller = (ImageCropController) WindowTools.referredStage(
                     parent, Fxmls.ImageCropFxml);
             controller.setParameters(parent);
             return controller;

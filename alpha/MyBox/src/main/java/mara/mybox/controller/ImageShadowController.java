@@ -90,7 +90,7 @@ public class ImageShadowController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageShadowController controller = (ImageShadowController) WindowTools.operationStage(
+            ImageShadowController controller = (ImageShadowController) WindowTools.referredStage(
                     parent, Fxmls.ImageShadowFxml);
             controller.setParameters(parent);
             return controller;

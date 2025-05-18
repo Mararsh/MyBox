@@ -389,7 +389,7 @@ public class MenuTextEditController extends MenuTextBaseController {
                     }
                 }
             }
-            MenuTextEditController controller = (MenuTextEditController) WindowTools.branchStage(
+            MenuTextEditController controller = (MenuTextEditController) WindowTools.referredTopStage(
                     parent, Fxmls.MenuTextEditFxml);
             controller.setParameters(parent, node, x, y);
             return controller;

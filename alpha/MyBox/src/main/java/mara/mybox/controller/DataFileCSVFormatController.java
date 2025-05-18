@@ -109,7 +109,7 @@ public class DataFileCSVFormatController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            DataFileCSVFormatController controller = (DataFileCSVFormatController) WindowTools.branchStage(
+            DataFileCSVFormatController controller = (DataFileCSVFormatController) WindowTools.referredTopStage(
                     parent, Fxmls.DataFileCSVFormatFxml);
             controller.setParameters(parent);
             return controller;

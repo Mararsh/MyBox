@@ -61,7 +61,7 @@ public class MarkdownOptionsController extends BaseChildController {
                 return open();
             }
             MarkdownOptionsController controller
-                    = (MarkdownOptionsController) WindowTools.branchStage(parent, Fxmls.MarkdownOptionsFxml);
+                    = (MarkdownOptionsController) WindowTools.referredTopStage(parent, Fxmls.MarkdownOptionsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

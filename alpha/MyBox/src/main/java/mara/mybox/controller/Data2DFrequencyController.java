@@ -120,7 +120,7 @@ public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
      */
     public static Data2DFrequencyController open(BaseData2DLoadController tableController) {
         try {
-            Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.operationStage(
+            Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DFrequencyFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

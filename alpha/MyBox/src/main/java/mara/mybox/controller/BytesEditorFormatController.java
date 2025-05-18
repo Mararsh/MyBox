@@ -188,7 +188,7 @@ public class BytesEditorFormatController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            BytesEditorFormatController controller = (BytesEditorFormatController) WindowTools.branchStage(
+            BytesEditorFormatController controller = (BytesEditorFormatController) WindowTools.referredTopStage(
                     parent, Fxmls.BytesEditorFormatFxml);
             controller.setParameters(parent);
             return controller;

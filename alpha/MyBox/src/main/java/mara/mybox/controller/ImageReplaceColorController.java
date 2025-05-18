@@ -115,7 +115,7 @@ public class ImageReplaceColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageReplaceColorController controller = (ImageReplaceColorController) WindowTools.operationStage(
+            ImageReplaceColorController controller = (ImageReplaceColorController) WindowTools.referredStage(
                     parent, Fxmls.ImageReplaceColorFxml);
             controller.setParameters(parent);
             return controller;

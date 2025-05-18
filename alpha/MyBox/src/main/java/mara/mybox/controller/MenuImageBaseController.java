@@ -492,7 +492,7 @@ public class MenuImageBaseController extends MenuController {
                     }
                 }
             }
-            MenuImageBaseController controller = (MenuImageBaseController) WindowTools.branchStage(
+            MenuImageBaseController controller = (MenuImageBaseController) WindowTools.referredTopStage(
                     imageController, Fxmls.MenuImageBaseFxml);
             controller.setParameters(imageController, x, y);
             return controller;

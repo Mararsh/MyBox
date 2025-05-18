@@ -71,7 +71,7 @@ public abstract class BaseController_Attributes {
     protected Pagination pagination;
 
     public static enum StageType {
-        Normal, Operation, Branch, Child, Pop, Popup, OneOpen
+        Normal, Child, RefferredTop, Referred, Fork, Top, Popup, OneOpen
     }
 
     public static enum SaveAsType {
@@ -240,14 +240,15 @@ public abstract class BaseController_Attributes {
         return getMyStage() != null
                 && mainMenuController != null
                 && myStage.getOwner() == null
-                && stageType != StageType.Branch
+                && stageType != StageType.RefferredTop
+                && stageType != StageType.Referred
                 && stageType != StageType.Child
-                && stageType != StageType.Pop
+                && stageType != StageType.Top
                 && stageType != StageType.Popup;
     }
 
     public boolean isPopup() {
-        if (stageType == StageType.Pop
+        if (stageType == StageType.Top
                 || stageType == StageType.Popup) {
             return true;
         }

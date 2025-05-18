@@ -74,7 +74,7 @@ public class TextDelimiterController extends BaseController {
      */
     public static TextDelimiterController open(BaseController parent, String initName, boolean isRead, boolean canRegx) {
         try {
-            TextDelimiterController controller = (TextDelimiterController) WindowTools.branchStage(
+            TextDelimiterController controller = (TextDelimiterController) WindowTools.referredTopStage(
                     parent, Fxmls.TextDelimiterFxml);
             controller.setParameters(parent, initName, isRead, canRegx);
             return controller;

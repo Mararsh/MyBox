@@ -82,7 +82,7 @@ public class ImageEdgeController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageEdgeController controller = (ImageEdgeController) WindowTools.operationStage(
+            ImageEdgeController controller = (ImageEdgeController) WindowTools.referredStage(
                     parent, Fxmls.ImageEdgeFxml);
             controller.setParameters(parent);
             return controller;

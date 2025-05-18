@@ -169,7 +169,7 @@ public class TableAddRowsController extends BaseBranchController {
      */
     public static TableAddRowsController open(BaseTableViewController tableViewController) {
         try {
-            TableAddRowsController controller = (TableAddRowsController) WindowTools.branchStage(
+            TableAddRowsController controller = (TableAddRowsController) WindowTools.referredTopStage(
                     tableViewController, Fxmls.TableAddRowsFxml);
             controller.setParameters(tableViewController);
             return controller;

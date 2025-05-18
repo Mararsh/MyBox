@@ -96,7 +96,7 @@ public class ControlImageConvolution extends BaseController {
 
     @FXML
     public void manageAction() {
-        popStage(Fxmls.ConvolutionKernelManagerFxml);
+        topStage(Fxmls.ConvolutionKernelManagerFxml);
         setIconified(true);
     }
 

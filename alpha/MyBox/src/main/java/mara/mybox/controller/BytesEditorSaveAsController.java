@@ -58,7 +58,7 @@ public class BytesEditorSaveAsController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            BytesEditorSaveAsController controller = (BytesEditorSaveAsController) WindowTools.branchStage(
+            BytesEditorSaveAsController controller = (BytesEditorSaveAsController) WindowTools.referredTopStage(
                     parent, Fxmls.BytesEditorSaveAsFxml);
             controller.setParameters(parent);
             return controller;

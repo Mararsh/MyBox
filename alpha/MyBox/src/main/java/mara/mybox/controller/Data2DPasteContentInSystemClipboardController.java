@@ -55,7 +55,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseData2DPas
      */
     public static Data2DPasteContentInSystemClipboardController open(Data2DManufactureController parent, String text) {
         try {
-            Data2DPasteContentInSystemClipboardController controller = (Data2DPasteContentInSystemClipboardController) WindowTools.branchStage(
+            Data2DPasteContentInSystemClipboardController controller = (Data2DPasteContentInSystemClipboardController) WindowTools.referredTopStage(
                     parent, Fxmls.Data2DPasteContentInSystemClipboardFxml);
             controller.setParameters(parent, text);
             controller.requestMouse();

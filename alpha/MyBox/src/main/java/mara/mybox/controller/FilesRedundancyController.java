@@ -248,7 +248,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             popInformation(message("NoRedundancy"));
 
         } else {
-            FilesRedundancyResultsController controller = (FilesRedundancyResultsController) WindowTools.branchStage(
+            FilesRedundancyResultsController controller = (FilesRedundancyResultsController) WindowTools.referredTopStage(
                     this, Fxmls.FilesRedundancyResultsFxml);
             if (controller != null) {
                 controller.loadRedundancy(redundancy);

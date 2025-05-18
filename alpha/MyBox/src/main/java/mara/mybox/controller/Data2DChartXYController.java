@@ -206,7 +206,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
      */
     public static Data2DChartXYController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartXYController controller = (Data2DChartXYController) WindowTools.operationStage(
+            Data2DChartXYController controller = (Data2DChartXYController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DChartXYFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

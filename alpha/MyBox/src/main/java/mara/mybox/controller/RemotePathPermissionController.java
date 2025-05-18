@@ -213,7 +213,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
             if (manageController == null) {
                 return null;
             }
-            RemotePathPermissionController controller = (RemotePathPermissionController) WindowTools.branchStage(
+            RemotePathPermissionController controller = (RemotePathPermissionController) WindowTools.referredTopStage(
                     manageController, Fxmls.RemotePathPermissionFxml);
             controller.setParameters(manageController);
             controller.requestMouse();

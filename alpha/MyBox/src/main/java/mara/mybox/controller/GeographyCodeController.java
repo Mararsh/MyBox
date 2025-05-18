@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,12 +23,9 @@ public class GeographyCodeController extends DataTreeController {
         baseTitle = message("GeographyCode");
     }
 
-    @Override
-    public void initControls() {
+    public void initCodes(boolean checkEmpty) {
         try {
-            super.initControls();
-
-            initDataTree(new TableNodeGeographyCode(), null);
+            initDataTree(new TableNodeGeographyCode(), null, checkEmpty);
 
             mapController.setPatrameters(this);
 
@@ -94,6 +94,26 @@ public class GeographyCodeController extends DataTreeController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static methods
+     */
+    public static GeographyCodeController open(BaseController pController, boolean replaceScene, boolean checkEmpty) {
+        try {
+            GeographyCodeController controller;
+            if ((replaceScene || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
+                controller = (GeographyCodeController) pController.loadScene(Fxmls.GeographyCodeFxml);
+            } else {
+                controller = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+            }
+            controller.initCodes(checkEmpty);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

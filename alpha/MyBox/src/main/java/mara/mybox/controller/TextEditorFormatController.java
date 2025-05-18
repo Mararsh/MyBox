@@ -67,7 +67,7 @@ public class TextEditorFormatController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            TextEditorFormatController controller = (TextEditorFormatController) WindowTools.branchStage(
+            TextEditorFormatController controller = (TextEditorFormatController) WindowTools.referredTopStage(
                     parent, Fxmls.TextEditorFormatFxml);
             controller.setParameters(parent);
             return controller;

@@ -123,7 +123,7 @@ public class XmlOptionsController extends BaseController {
      */
     public static XmlOptionsController open() {
         try {
-            XmlOptionsController controller = (XmlOptionsController) WindowTools.popStage(null, Fxmls.XmlOptionsFxml);
+            XmlOptionsController controller = (XmlOptionsController) WindowTools.topStage(null, Fxmls.XmlOptionsFxml);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

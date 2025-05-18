@@ -173,7 +173,7 @@ public class ImagePopController extends BaseImageController {
      */
     public static ImagePopController open(BaseController parent) {
         try {
-            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            ImagePopController controller = (ImagePopController) WindowTools.topStage(parent, Fxmls.ImagePopFxml);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

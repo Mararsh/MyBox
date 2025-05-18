@@ -1074,7 +1074,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
      */
     public static DataTreeExportController open(BaseDataTreeController parent, DataNode node) {
         DataTreeExportController controller
-                = (DataTreeExportController) WindowTools.operationStage(parent, Fxmls.DataTreeExportFxml);
+                = (DataTreeExportController) WindowTools.referredStage(parent, Fxmls.DataTreeExportFxml);
         controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;

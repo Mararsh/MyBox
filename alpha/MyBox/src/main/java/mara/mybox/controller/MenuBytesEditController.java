@@ -220,7 +220,7 @@ public class MenuBytesEditController extends MenuTextEditController {
                     }
                 }
             }
-            MenuBytesEditController controller = (MenuBytesEditController) WindowTools.branchStage(
+            MenuBytesEditController controller = (MenuBytesEditController) WindowTools.referredTopStage(
                     parent, Fxmls.MenuBytesEditFxml);
             controller.setParameters(parent, node, x, y);
             return controller;

@@ -87,7 +87,7 @@ public class ImageSharpenController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSharpenController controller = (ImageSharpenController) WindowTools.operationStage(
+            ImageSharpenController controller = (ImageSharpenController) WindowTools.referredStage(
                     parent, Fxmls.ImageSharpenFxml);
             controller.setParameters(parent);
             return controller;

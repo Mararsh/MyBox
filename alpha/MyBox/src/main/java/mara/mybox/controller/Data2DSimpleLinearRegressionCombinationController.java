@@ -137,7 +137,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     public static Data2DSimpleLinearRegressionCombinationController open(BaseData2DLoadController tableController) {
         try {
             Data2DSimpleLinearRegressionCombinationController controller
-                    = (Data2DSimpleLinearRegressionCombinationController) WindowTools.operationStage(
+                    = (Data2DSimpleLinearRegressionCombinationController) WindowTools.referredStage(
                             tableController, Fxmls.Data2DSimpleLinearRegressionCombinationFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

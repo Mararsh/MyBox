@@ -147,7 +147,7 @@ public class HtmlPopController extends BaseWebViewController {
             if (parent == null || srcWebView == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
+            HtmlPopController controller = (HtmlPopController) WindowTools.topStage(parent, Fxmls.HtmlPopFxml);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
                 controller.openWebView(parent.baseName, srcWebView, c.webViewController == null ? null : c.webViewController.address);
@@ -166,7 +166,7 @@ public class HtmlPopController extends BaseWebViewController {
             if (parent == null || html == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
+            HtmlPopController controller = (HtmlPopController) WindowTools.topStage(parent, Fxmls.HtmlPopFxml);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
                 controller.openHtml(parent.baseName, html, c.webViewController == null ? null : c.webViewController.address);
@@ -185,7 +185,7 @@ public class HtmlPopController extends BaseWebViewController {
             if (html == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
+            HtmlPopController controller = (HtmlPopController) WindowTools.topStage(parent, Fxmls.HtmlPopFxml);
             controller.openHtml("HtmlPop", html, null);
             controller.requestMouse();
             return controller;
@@ -200,7 +200,7 @@ public class HtmlPopController extends BaseWebViewController {
             if (parent == null || address == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
+            HtmlPopController controller = (HtmlPopController) WindowTools.topStage(parent, Fxmls.HtmlPopFxml);
             controller.openAddress(parent.baseName, address);
             return controller;
         } catch (Exception e) {

@@ -635,7 +635,7 @@ public class ImageOptionsController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            ImageOptionsController controller = (ImageOptionsController) WindowTools.branchStage(
+            ImageOptionsController controller = (ImageOptionsController) WindowTools.referredTopStage(
                     parent, Fxmls.ImageOptionsFxml);
             controller.setParameters(parent);
             return controller;

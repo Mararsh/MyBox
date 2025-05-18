@@ -14,6 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
+import mara.mybox.controller.AutoTestingExecutionController;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
@@ -48,7 +49,7 @@ public class AppVariables {
             titleTrimSize, menuMaxLen, blockMatrixThreshold;
     public static long maxDemoImage;
     public static float sparseMatrixThreshold;
-    public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
+    public static boolean handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, operationWindowIconifyParent, recordWindowsSizeLocation,
             controlDisplayText, commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
@@ -60,6 +61,7 @@ public class AppVariables {
     public static SimpleBooleanProperty ErrorNotify;
     public static Map<RenderingHints.Key, Object> ImageHints;
     public static StyleData.StyleColor ControlColor;
+    public static AutoTestingExecutionController autoTestingController;
 
     public static void initAppVaribles() {
         try {
@@ -69,7 +71,7 @@ public class AppVariables {
             CurrentBundle = Languages.getBundle();
             ignoreDbUnavailable = false;
             ErrorNotify = new SimpleBooleanProperty(false);
-            isTesting = false;
+            autoTestingController = null;
 
             loadAppVaribles();
 
