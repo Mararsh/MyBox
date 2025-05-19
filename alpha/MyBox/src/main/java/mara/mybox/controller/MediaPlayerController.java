@@ -241,8 +241,10 @@ public class MediaPlayerController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+    public boolean afterSceneLoaded() {
+        if (!super.afterSceneLoaded()) {
+            return false;
+        }
 
         // https://stackoverflow.com/questions/43785310/how-to-disable-press-esc-to-exit-full-screen-mode-meassage-in-javafx
         getMyStage().setFullScreenExitHint(message("MediaFullScreenComments"));
@@ -256,7 +258,7 @@ public class MediaPlayerController extends BaseController {
                 }
             }
         });
-
+        return true;
     }
 
     @Override

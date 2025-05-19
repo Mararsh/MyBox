@@ -197,6 +197,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (root != null) {
             root.setExpanded(true);
         }
+        notifyLoaded();
+    }
+
+    public void notifyLoaded() {
         loadedNotify.set(!loadedNotify.get());
     }
 

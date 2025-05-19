@@ -188,7 +188,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         try {
             updateInterfaceStatus();
 
-            statusNotify.set(!statusNotify.get());
+            if (statusNotify != null) {
+                statusNotify.set(!statusNotify.get());
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -237,6 +237,7 @@ public abstract class BaseController_Attributes {
     }
 
     public boolean isIndependantStage() {
+//        MyBoxLog.console(baseName + "  " + myFxml + "  " + stageType);
         return getMyStage() != null
                 && mainMenuController != null
                 && myStage.getOwner() == null

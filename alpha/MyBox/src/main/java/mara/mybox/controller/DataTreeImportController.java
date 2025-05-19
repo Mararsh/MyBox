@@ -67,12 +67,20 @@ public class DataTreeImportController extends BaseBatchFileController {
                 return;
             }
             dataController = controller;
-            parentNode = node != null ? node : dataController.rootNode;
 
             nodeTable = dataController.nodeTable;
             nodeTagsTable = dataController.nodeTagsTable;
             tagTable = dataController.tagTable;
             dataName = dataController.dataName;
+
+            parentNode = node != null ? node : dataController.rootNode;
+            if (parentNode == null) {
+                parentNode = nodeTable.getRoot();
+            }
+            if (parentNode == null) {
+                close();
+                return;
+            }
 
             baseName = baseName + "_" + dataName;
             baseTitle = nodeTable.getTreeName() + " - "

@@ -75,9 +75,11 @@ public class FunctionsListController extends ControlWebView {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (!super.afterSceneLoaded()) {
+                return false;
+            }
 
             FunctionsList list = new FunctionsList(getMainMenu(), true, Languages.getLangName());
             table = list.make();
@@ -85,9 +87,10 @@ public class FunctionsListController extends ControlWebView {
             if (table != null) {
                 webView.getEngine().loadContent(table.html());
             }
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return false;
         }
     }
 

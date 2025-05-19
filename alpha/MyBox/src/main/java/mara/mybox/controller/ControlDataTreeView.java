@@ -149,6 +149,12 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     }
 
     @Override
+    public void notifyLoaded() {
+        super.notifyLoaded();
+        dataController.notifyLoaded();
+    }
+
+    @Override
     public void focusItem(TreeItem<DataNode> nodeitem) {
         super.focusItem(nodeitem);
         try {

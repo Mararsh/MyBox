@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -46,7 +47,8 @@ public class BaseDataTreeController extends BaseFileController {
     protected String dataName;
     protected DataNode rootNode, currentNode, sourceNode;
     protected SelectionType selectionType = SelectionType.None;
-    public boolean checkEmptyTree = true;
+    protected final SimpleBooleanProperty loadedNotify;
+    public boolean checkEmptyTree = true, testing = false;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -60,6 +62,10 @@ public class BaseDataTreeController extends BaseFileController {
     protected ControlDataTreeTable tableController;
     @FXML
     protected ControlDataTreeNodeView viewController;
+
+    public BaseDataTreeController() {
+        loadedNotify = new SimpleBooleanProperty(false);
+    }
 
     public void initDataTree(BaseNodeTable table, DataNode node, boolean checkEmpty) {
         try {
@@ -191,6 +197,10 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     public void whenTreeEmpty() {
+    }
+
+    public void notifyLoaded() {
+        loadedNotify.set(!loadedNotify.get());
     }
 
 

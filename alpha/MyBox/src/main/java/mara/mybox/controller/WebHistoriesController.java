@@ -108,13 +108,17 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (!super.afterSceneLoaded()) {
+                return false;
+            }
             refreshTimes();
             loadTableData();
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return false;
         }
     }
 

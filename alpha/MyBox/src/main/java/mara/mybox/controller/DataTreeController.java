@@ -48,26 +48,33 @@ public class DataTreeController extends BaseDataTreeController {
 
     @Override
     public void whenTreeEmpty() {
-        if (!checkEmptyTree) {
+        if (!checkEmptyTree || testing) {
             return;
         }
         File file = nodeTable.exampleFile();
-        if (file == null) {
-            return;
-        }
-        if (AppVariables.autoTestingController != null
-                || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
+        if (file != null
+                && PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
             importExamples(null);
         }
     }
 
     @Override
-    public boolean endWhenAutoTesting() {
+    public boolean endForAutoTestingWhenSceneLoaded() {
         if (AppVariables.autoTestingController != null) {
+            testing = true;
             myStage.setIconified(true);
             AppVariables.autoTestingController.sceneLoaded();
         }
         return false;
+    }
+
+    @Override
+    public void notifyLoaded() {
+        super.notifyLoaded();
+        if (testing) {
+            MyBoxLog.console(nodeTable.getTableName());
+            close();
+        }
     }
 
     /*
@@ -673,6 +680,17 @@ public class DataTreeController extends BaseDataTreeController {
     /*
         static methods
      */
+    public static DataTreeController open() {
+        try {
+            DataTreeController controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static DataTreeController open(BaseController pController, boolean replaceScene, BaseNodeTable table) {
         try {
             if (table == null) {
@@ -682,9 +700,9 @@ public class DataTreeController extends BaseDataTreeController {
             if ((replaceScene || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
                 controller = (DataTreeController) pController.loadScene(Fxmls.DataTreeFxml);
             } else {
-                controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+                controller = open();
             }
-            controller.requestMouse();
+
             controller.initDataTree(table, null);
             return controller;
         } catch (Exception e) {
@@ -695,9 +713,8 @@ public class DataTreeController extends BaseDataTreeController {
 
     public static DataTreeController open(BaseNodeTable table, DataNode node) {
         try {
-            DataTreeController controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+            DataTreeController controller = open();
             controller.initDataTree(table, node);
-            controller.setAlwaysOnTop();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

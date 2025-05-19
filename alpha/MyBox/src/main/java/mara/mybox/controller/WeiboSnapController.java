@@ -887,9 +887,11 @@ public class WeiboSnapController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (!super.afterSceneLoaded()) {
+                return false;
+            }
 
             // Webview need be initialized for weibo.com.
 //            if (SystemConfig.getBoolean("WeiboRunFirstTime" + AppValues.AppVersion, true)) {
@@ -911,8 +913,10 @@ public class WeiboSnapController extends BaseController {
 //                    SystemConfig.setBoolean("WeiboRunFirstTime" + AppValues.AppVersion, false);
 //                }
 //            }
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return false;
         }
     }
 

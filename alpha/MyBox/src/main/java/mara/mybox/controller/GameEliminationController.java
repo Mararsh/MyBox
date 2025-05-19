@@ -238,9 +238,12 @@ public class GameEliminationController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+    public boolean afterSceneLoaded() {
+        if (!super.afterSceneLoaded()) {
+            return false;
+        }
         loadChesses(true);
+        return true;
     }
 
     public void loadChesses(boolean resetGame) {

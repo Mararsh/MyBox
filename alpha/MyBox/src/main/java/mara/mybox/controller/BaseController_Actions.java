@@ -496,6 +496,9 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             LoadingController controller = (LoadingController) WindowTools.popupStage(
                     myController, Fxmls.LoadingFxml);
+            if (controller == null) {
+                return null;
+            }
             controller.init(task);
             if (info != null) {
                 controller.setInfo(info);

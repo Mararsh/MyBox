@@ -312,8 +312,8 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
-        writeNamesPane();
         dataController.viewNode(dataController.currentNode);
+        writeNamesPane();
     }
 
     public void writeNamesPane() {
@@ -342,8 +342,8 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
                     }
                 });
                 namesPane.getChildren().add(unfoldLink);
-
             }
+            dataController.notifyLoaded();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

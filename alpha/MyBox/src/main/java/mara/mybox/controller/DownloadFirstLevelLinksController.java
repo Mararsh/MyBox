@@ -451,15 +451,18 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (!super.afterSceneLoaded()) {
+                return false;
+            }
             if (targetPathInputController.pickFile() == null) {
                 tabPane.getSelectionModel().select(optionsTab);
             }
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 

@@ -34,6 +34,24 @@ public class GeographyCodeController extends DataTreeController {
         }
     }
 
+    public void testCodes() {
+        try {
+            nodeTable = new TableNodeGeographyCode();
+            nodeTable.clearData();
+
+            MyBoxLog.console(nodeTable.getTableName());
+
+            initDataTree(nodeTable, null, false);
+            mapController.setPatrameters(this);
+
+            MyBoxLog.console(nodeTable.getTableName());
+            importExamples(null);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     protected void nullView() {
         mapController.viewNode = null;
         infoButton.setDisable(true);
@@ -99,13 +117,25 @@ public class GeographyCodeController extends DataTreeController {
     /*
         static methods
      */
+    public static GeographyCodeController open() {
+        try {
+            GeographyCodeController controller
+                    = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static GeographyCodeController open(BaseController pController, boolean replaceScene, boolean checkEmpty) {
         try {
             GeographyCodeController controller;
             if ((replaceScene || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
                 controller = (GeographyCodeController) pController.loadScene(Fxmls.GeographyCodeFxml);
             } else {
-                controller = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+                controller = open();
             }
             controller.initCodes(checkEmpty);
             controller.requestMouse();

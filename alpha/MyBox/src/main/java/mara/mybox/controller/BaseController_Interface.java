@@ -414,14 +414,14 @@ public abstract class BaseController_Interface extends BaseController_Files {
      */
     // This is called automatically after TOP scene is loaded.
     // Notice embedded fxml will NOT call this automatically.
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
             getMyScene();
             getMyStage();
             isTopPane = true;
 
-            if (endWhenAutoTesting()) {
-                return;
+            if (endForAutoTestingWhenSceneLoaded()) {
+                return false;
             }
 
             myStage.setMinWidth(minSize);
@@ -430,7 +430,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             refreshStyle();
 
             if (this instanceof LoadingController) {
-                return;
+                return true;
             }
 
             setStageStatus();
@@ -476,13 +476,15 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 onTopCheck.setSelected(myStage.isAlwaysOnTop());
                 isSettingValues = false;
             }
+            return true;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
-    public boolean endWhenAutoTesting() {
+    public boolean endForAutoTestingWhenSceneLoaded() {
         if (AppVariables.autoTestingController == null) {
             return false;
         }

@@ -13,6 +13,18 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
+import mara.mybox.db.table.BaseNodeTable;
+import mara.mybox.db.table.TableNodeDataColumn;
+import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeImageScope;
+import mara.mybox.db.table.TableNodeJEXL;
+import mara.mybox.db.table.TableNodeJShell;
+import mara.mybox.db.table.TableNodeJavaScript;
+import mara.mybox.db.table.TableNodeMathFunction;
+import mara.mybox.db.table.TableNodeRowExpression;
+import mara.mybox.db.table.TableNodeSQL;
+import mara.mybox.db.table.TableNodeText;
+import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.TestCase;
 import mara.mybox.dev.TestCase.Status;
@@ -20,7 +32,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.ErrorNotify;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -34,12 +45,13 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
 
     protected AutoTestingCasesController casesController;
     protected BaseController currentController;
-    protected int currentIndex, delay = 1000;
+    protected int currentIndex, delay = 200;
     protected TestCase currentCase;
     protected List<TestCase> testCases;
     protected boolean canceled;
-    protected ChangeListener<Boolean> errorListener, caseListener;
+    protected ChangeListener<Boolean> caseListener;
     protected final SimpleBooleanProperty caseNotify;
+    protected final Object lock = new Object();
 
     @FXML
     protected TableColumn<TestCase, Integer> aidColumn;
@@ -111,17 +123,6 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         try {
             super.initControls();
 
-            errorListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (AppVariables.autoTestingController != null
-                            && currentCase != null && currentIndex >= 0) {
-                        currentCase.setStatus(Status.Fail);
-                        tableData.set(currentIndex, currentCase);
-                    }
-                }
-            };
-
             caseListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
@@ -154,14 +155,9 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     @FXML
     @Override
     public void startAction() {
-        ErrorNotify.removeListener(errorListener);
-        caseNotify.removeListener(caseListener);
         if (startButton.getUserData() != null) {
             stopCases();
             return;
-        }
-        if (AppVariables.autoTestingController != null) {
-            AppVariables.autoTestingController.stopCases();
         }
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
@@ -170,49 +166,36 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
         window.setX(0);
         window.setY(0);
 
-        for (TestCase testCase : tableData) {
-            testCase.setStatus(Status.NotTested);
+        synchronized (lock) {
+            for (TestCase testCase : tableData) {
+                testCase.setStatus(Status.NotTested);
+            }
+            canceled = false;
+            currentIndex = 0;
+            caseNotify.addListener(caseListener);
+            AppVariables.autoTestingController = this;
         }
         tableView.refresh();
-        canceled = false;
-        AppVariables.autoTestingController = this;
-        currentIndex = 0;
-        ErrorNotify.addListener(errorListener);
-        caseNotify.addListener(caseListener);
         caseNotify();
     }
 
-    public void stopCases() {
-        canceled = true;
-        ErrorNotify.removeListener(errorListener);
-        caseNotify.removeListener(caseListener);
-        currentIndex = -1;
-        currentCase = null;
-        currentController = null;
-        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-        startButton.applyCss();
-        startButton.setUserData(null);
-        AppVariables.autoTestingController = null;
-    }
-
     public void goCurrentCase() {
-        try {
-            currentCase = null;
-            currentController = null;
-            if (canceled || testCases == null || currentIndex < 0 || currentIndex >= testCases.size()) {
-                stopCases();
-                return;
-            }
-            AppVariables.autoTestingController = this;
-            currentCase = tableData.get(currentIndex);
-            currentCase.setStatus(Status.Testing);
-            tableData.set(currentIndex, currentCase);
-            tableView.scrollTo(currentIndex - 5);
-            runCurrentCase();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+        if (canceled || testCases == null
+                || currentIndex < 0 || currentIndex >= testCases.size()) {
+            stopCases();
+            return;
         }
-
+        synchronized (lock) {
+            try {
+                currentCase = tableData.get(currentIndex);
+                currentCase.setStatus(Status.Testing);
+            } catch (Exception e) {
+                MyBoxLog.console(e.toString());
+            }
+        }
+        tableData.set(currentIndex, currentCase);
+        tableView.scrollTo(currentIndex - 5);
+        runCurrentCase();
     }
 
     public void runCurrentCase() {
@@ -221,16 +204,21 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                 stopCases();
                 return;
             }
-            currentController = null;
             String fxml = currentCase.getFxml();
-            if (fxml.endsWith("/DataTree.fxml")) {
+            if (fxml.endsWith("/GeographyCodeFxml.fxml")) {
+                currentCase.setType(TestCase.Type.Function);
+                GeographyCodeController.open().testCodes();
+
+            } else if (fxml.endsWith("/DataTree.fxml")) {
                 runTreeCase(currentCase.getObject());
-                return;
+
             } else {
-                currentController = openStage(currentCase.getFxml());
-            }
-            if (currentController == null) {
-                endCase(false);
+                synchronized (lock) {
+                    currentController = openStage(fxml);
+                }
+                if (currentController == null) {
+                    endCase(false);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -239,38 +227,43 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     }
 
     public void runTreeCase(String object) {
-        try {
-            if (object == null) {
-                endCase(false);
-                return;
-            }
-            if (message("TextTree").equals(object)) {
-                currentController = DataTreeController.textTree(null, false);
-            } else if (message("HtmlTree").equals(object)) {
-                currentController = DataTreeController.htmlTree(null, false);
-            } else if (message("WebFavorite").equals(object)) {
-                currentController = DataTreeController.webFavorite(null, false);
-            } else if (message("DatabaseSQL").equals(object)) {
-                currentController = DataTreeController.sql(null, false);
-            } else if (message("MathFunction").equals(object)) {
-                currentController = DataTreeController.mathFunction(null, false);
-            } else if (message("ImageScope").equals(object)) {
-                currentController = DataTreeController.imageScope(null, false);
-            } else if (message("JShell").equals(object)) {
-                currentController = DataTreeController.jShell(null, false);
-            } else if (message("JEXL").equals(object)) {
-                currentController = DataTreeController.jexl(null, false);
-            } else if (message("JavaScript").equals(object)) {
-                currentController = DataTreeController.javascript(null, false);
-            } else if (message("RowExpression").equals(object)) {
-                currentController = DataTreeController.rowExpression(null, false);
-            } else if (message("DataColumn").equals(object)) {
-                currentController = DataTreeController.dataColumn(null, false);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+        if (object == null) {
             endCase(false);
+            return;
         }
+        BaseNodeTable table = null;
+        if (message("TextTree").equals(object)) {
+            table = new TableNodeText();
+        } else if (message("HtmlTree").equals(object)) {
+            table = new TableNodeHtml();
+        } else if (message("WebFavorite").equals(object)) {
+            table = new TableNodeWebFavorite();
+        } else if (message("DatabaseSQL").equals(object)) {
+            table = new TableNodeSQL();
+        } else if (message("MathFunction").equals(object)) {
+            table = new TableNodeMathFunction();
+        } else if (message("ImageScope").equals(object)) {
+            table = new TableNodeImageScope();
+        } else if (message("JShell").equals(object)) {
+            table = new TableNodeJShell();
+        } else if (message("JEXL").equals(object)) {
+            table = new TableNodeJEXL();
+        } else if (message("JavaScript").equals(object)) {
+            table = new TableNodeJavaScript();
+        } else if (message("RowExpression").equals(object)) {
+            table = new TableNodeRowExpression();
+        } else if (message("DataColumn").equals(object)) {
+            table = new TableNodeDataColumn();
+        }
+        if (table == null) {
+            endCase(false);
+            return;
+        }
+        currentCase.setType(TestCase.Type.Function);
+        table.clearData();
+        DataTreeController tree = DataTreeController.open();
+        tree.initDataTree(table, null, false);
+        tree.importExamples(null);
     }
 
     public void sceneLoaded() {
@@ -278,32 +271,61 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             stopCases();
             return;
         }
-        endCase(currentCase.getStatus() != Status.Fail);
+        endCase(true);
+    }
+
+    public void errorHappened() {
+        if (canceled || currentCase == null) {
+            stopCases();
+            return;
+        }
+        if (currentController != null) {
+            currentController.close();
+        }
+        endCase(false);
     }
 
     public void endCase(boolean success) {
+        if (!success && currentCase != null) {
+            MyBoxLog.console(currentIndex + "   " + currentCase.getFxml() + ": Failed");
+        }
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    if (currentCase != null) {
-                        currentCase.setStatus(success ? Status.Success : Status.Fail);
-                        tableData.set(currentIndex, currentCase);
+                    synchronized (lock) {
+                        currentController = null;
+                        if (currentCase != null) {
+                            currentCase.setStatus(success ? Status.Success : Status.Fail);
+                            tableData.set(currentIndex, currentCase);
+                        }
+                        currentIndex++;
                     }
-                    currentIndex++;
                     caseNotify();
                 });
                 Platform.requestNextPulse();
             }
         }, delay);
+    }
 
+    public void stopCases() {
+        synchronized (lock) {
+            canceled = true;
+            caseNotify.removeListener(caseListener);
+            currentIndex = -1;
+            currentCase = null;
+            currentController = null;
+            AppVariables.autoTestingController = null;
+        }
+        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
+        startButton.applyCss();
+        startButton.setUserData(null);
     }
 
     @Override
     public void cleanPane() {
         try {
             stopCases();
-            errorListener = null;
             caseListener = null;
             casesController = null;
         } catch (Exception e) {

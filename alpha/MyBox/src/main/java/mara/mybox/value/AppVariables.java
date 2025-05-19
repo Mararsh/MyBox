@@ -12,7 +12,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.controller.AutoTestingExecutionController;
 import mara.mybox.db.Database;
@@ -58,7 +57,6 @@ public class AppVariables {
     public static TextClipboardMonitor TextClipMonitor;
     public static ImageClipboardMonitor ImageClipMonitor;
     public static Timer ExitTimer;
-    public static SimpleBooleanProperty ErrorNotify;
     public static Map<RenderingHints.Key, Object> ImageHints;
     public static StyleData.StyleColor ControlColor;
     public static AutoTestingExecutionController autoTestingController;
@@ -70,7 +68,6 @@ public class AppVariables {
             CurrentLangName = Languages.getLangName();
             CurrentBundle = Languages.getBundle();
             ignoreDbUnavailable = false;
-            ErrorNotify = new SimpleBooleanProperty(false);
             autoTestingController = null;
 
             loadAppVaribles();
