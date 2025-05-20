@@ -81,9 +81,10 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
                 close();
                 return false;
             }
-            showLogs(message("Node") + ":\n" + savedNode.getChainName());
+            chainName = savedNode.getChainName();
+            showLogs(message("Node") + ":\n" + chainName);
             Platform.runLater(() -> {
-                nameLabel.setText(savedNode.getChainName());
+                nameLabel.setText(chainName);
             });
             List<Integer> cols = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
@@ -180,10 +181,13 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
 
     @Override
     public void afterTask(boolean ok) {
-        treeTable.stopFilter();
         if (results != null) {
             if (results.getRowsNumber() > 0) {
-                DataTreeQueryResultsController.open(this, dataController, results);
+                DataTreeQueryResultsController.open(this, dataController,
+                        message("QueryDescendants") + "\n"
+                        + message("DataTree") + ": " + nodeTable.getDataName() + "\n"
+                        + message("Node") + ": " + chainName,
+                        results);
             } else {
                 alertInformation(message("ResultIsEmpty"));
             }

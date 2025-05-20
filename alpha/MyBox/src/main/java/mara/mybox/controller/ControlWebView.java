@@ -1391,7 +1391,7 @@ public class ControlWebView extends BaseController {
 
                 menu = new MenuItem(message("Script"), StyleTools.getIconImageView("iconScript.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    ControlDataJavascript.open(this);
+                    HtmlJavaScriptController.open(parentController, this);
                 });
                 codesMenu.getItems().add(menu);
 

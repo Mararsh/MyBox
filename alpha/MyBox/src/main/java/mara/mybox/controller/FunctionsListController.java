@@ -95,6 +95,7 @@ public class FunctionsListController extends ControlWebView {
     }
 
     public void functionsList(MyBoxDocumentsController maker, File path, String lang) {
+        setIconified(true);
         FxTask docTask = new FxTask<Void>(this) {
 
             @Override
@@ -123,6 +124,7 @@ public class FunctionsListController extends ControlWebView {
     }
 
     public void verificationList(MyBoxDocumentsController maker, File path, String lang) {
+        setIconified(true);
         FxTask docTask = new FxTask<Void>(this) {
 
             @Override

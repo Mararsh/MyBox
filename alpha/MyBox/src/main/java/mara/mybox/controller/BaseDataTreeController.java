@@ -67,6 +67,20 @@ public class BaseDataTreeController extends BaseFileController {
         loadedNotify = new SimpleBooleanProperty(false);
     }
 
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            if (viewController != null) {
+                leftPaneControl = viewController.leftPaneControl;
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void initDataTree(BaseNodeTable table, DataNode node, boolean checkEmpty) {
         try {
             if (table == null) {
@@ -386,6 +400,10 @@ public class BaseDataTreeController extends BaseFileController {
             tableController.refreshNode(node);
         }
         reloadView(node);
+    }
+
+    public void importedNode(DataNode node) {
+        refreshNode(node);
     }
 
     protected void reloadView(DataNode node) {

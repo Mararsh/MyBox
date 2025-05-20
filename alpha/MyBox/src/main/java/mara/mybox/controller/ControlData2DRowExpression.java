@@ -97,4 +97,11 @@ public class ControlData2DRowExpression extends ControlDataRowExpression {
         PopTools.popDataPlaceHolders(this, event, scriptInput, baseName + "Placeholders", data2D);
     }
 
+    @FXML
+    public void infoAction(Event event) {
+        if (data2D != null) {
+            HtmlPopController.showHtml(this, data2D.dataInfo());
+        }
+    }
+
 }

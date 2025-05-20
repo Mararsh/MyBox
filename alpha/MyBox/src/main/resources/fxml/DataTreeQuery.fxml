@@ -34,6 +34,15 @@ License:    Apache License Version 2.0
                      <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
+                              <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconInfo.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                               <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                  <children>
                                     <Label minHeight="-Infinity" text="%MaxRowsTake" wrapText="true" />

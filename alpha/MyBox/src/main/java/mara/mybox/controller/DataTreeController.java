@@ -60,22 +60,37 @@ public class DataTreeController extends BaseDataTreeController {
 
     @Override
     public boolean endForAutoTestingWhenSceneLoaded() {
-        if (AppVariables.autoTestingController != null) {
+        return false;
+    }
+
+    public void autoTesting(BaseNodeTable table) {
+        try {
             testing = true;
             myStage.setIconified(true);
             AppVariables.autoTestingController.sceneLoaded();
+
+            nodeTable = table;
+            nodeTable.clearData();
+
+            initDataTree(nodeTable, null, false);
+
+            importExamples(null);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        return false;
     }
 
     @Override
     public void notifyLoaded() {
         super.notifyLoaded();
-        if (testing) {
-            MyBoxLog.console(nodeTable.getTableName());
-            close();
+        if (!testing) {
+            return;
         }
+        popNode(rootNode);
+        close();
     }
+
 
     /*
         operations

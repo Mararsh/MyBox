@@ -14,17 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
 import mara.mybox.db.table.BaseNodeTable;
-import mara.mybox.db.table.TableNodeDataColumn;
-import mara.mybox.db.table.TableNodeHtml;
-import mara.mybox.db.table.TableNodeImageScope;
-import mara.mybox.db.table.TableNodeJEXL;
-import mara.mybox.db.table.TableNodeJShell;
-import mara.mybox.db.table.TableNodeJavaScript;
-import mara.mybox.db.table.TableNodeMathFunction;
-import mara.mybox.db.table.TableNodeRowExpression;
-import mara.mybox.db.table.TableNodeSQL;
-import mara.mybox.db.table.TableNodeText;
-import mara.mybox.db.table.TableNodeWebFavorite;
+import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.TestCase;
 import mara.mybox.dev.TestCase.Status;
@@ -206,11 +196,16 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             }
             String fxml = currentCase.getFxml();
             if (fxml.endsWith("/GeographyCodeFxml.fxml")) {
-                currentCase.setType(TestCase.Type.Function);
-                GeographyCodeController.open().testCodes();
+                GeographyCodeController.open()
+                        .autoTesting(new TableNodeGeographyCode());
 
             } else if (fxml.endsWith("/DataTree.fxml")) {
-                runTreeCase(currentCase.getObject());
+                BaseNodeTable table = BaseNodeTable.create(currentCase.getObject());
+                if (table == null) {
+                    endCase(false);
+                    return;
+                }
+                DataTreeController.open().autoTesting(table);
 
             } else {
                 synchronized (lock) {
@@ -224,46 +219,6 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             MyBoxLog.debug(e);
             endCase(false);
         }
-    }
-
-    public void runTreeCase(String object) {
-        if (object == null) {
-            endCase(false);
-            return;
-        }
-        BaseNodeTable table = null;
-        if (message("TextTree").equals(object)) {
-            table = new TableNodeText();
-        } else if (message("HtmlTree").equals(object)) {
-            table = new TableNodeHtml();
-        } else if (message("WebFavorite").equals(object)) {
-            table = new TableNodeWebFavorite();
-        } else if (message("DatabaseSQL").equals(object)) {
-            table = new TableNodeSQL();
-        } else if (message("MathFunction").equals(object)) {
-            table = new TableNodeMathFunction();
-        } else if (message("ImageScope").equals(object)) {
-            table = new TableNodeImageScope();
-        } else if (message("JShell").equals(object)) {
-            table = new TableNodeJShell();
-        } else if (message("JEXL").equals(object)) {
-            table = new TableNodeJEXL();
-        } else if (message("JavaScript").equals(object)) {
-            table = new TableNodeJavaScript();
-        } else if (message("RowExpression").equals(object)) {
-            table = new TableNodeRowExpression();
-        } else if (message("DataColumn").equals(object)) {
-            table = new TableNodeDataColumn();
-        }
-        if (table == null) {
-            endCase(false);
-            return;
-        }
-        currentCase.setType(TestCase.Type.Function);
-        table.clearData();
-        DataTreeController tree = DataTreeController.open();
-        tree.initDataTree(table, null, false);
-        tree.importExamples(null);
     }
 
     public void sceneLoaded() {

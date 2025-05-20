@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -34,22 +35,10 @@ public class GeographyCodeController extends DataTreeController {
         }
     }
 
-    public void testCodes() {
-        try {
-            nodeTable = new TableNodeGeographyCode();
-            nodeTable.clearData();
-
-            MyBoxLog.console(nodeTable.getTableName());
-
-            initDataTree(nodeTable, null, false);
-            mapController.setPatrameters(this);
-
-            MyBoxLog.console(nodeTable.getTableName());
-            importExamples(null);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    @Override
+    public void autoTesting(BaseNodeTable table) {
+        super.autoTesting(table);
+        mapController.setPatrameters(this);
     }
 
     protected void nullView() {

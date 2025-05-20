@@ -125,7 +125,11 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
         treeTable.stopFilter();
         if (results != null) {
             if (results.getRowsNumber() > 0) {
-                DataTreeQueryResultsController.open(this, dataController, results);
+                DataTreeQueryResultsController.open(this, dataController,
+                        message("QueryDescendants") + "\n"
+                        + message("DataTree") + ": " + nodeTable.getDataName() + "\n"
+                        + message("Condition") + ": \n" + filter.toString(),
+                        results);
             } else {
                 alertInformation(message("ResultIsEmpty"));
             }

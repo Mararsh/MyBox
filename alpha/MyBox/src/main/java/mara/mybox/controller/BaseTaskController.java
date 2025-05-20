@@ -148,7 +148,8 @@ public class BaseTaskController extends BaseLogsController {
         }
         handleTargetFiles();
         taskClosedNotify.set(!taskClosedNotify.get());
-        if (miaoCheck != null && miaoCheck.isSelected()) {
+        if (miaoCheck != null && miaoCheck.isSelected()
+                && AppVariables.autoTestingController == null) {
             SoundTools.miao3();
         }
         afterTask(ok);

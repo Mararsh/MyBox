@@ -62,12 +62,12 @@ public class TestCase {
     /*
         static
      */
-    public static List<TestCase> interfaceCases() {
+    public static List<TestCase> testCases() {
         List<TestCase> cases = new ArrayList<>();
         try {
             int index = 1;
-            cases.add(new TestCase(index++, message("TextTree"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("HtmlTree"), Fxmls.DataTreeFxml));
+            cases.add(new TestCase(index++, message("TextTree"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("HtmlTree"), Fxmls.DataTreeFxml).setType(Type.Data));
             cases.add(new TestCase(index++, message("PdfView"), Fxmls.PdfViewFxml));
             cases.add(new TestCase(index++, message("PdfConvertImagesBatch"), Fxmls.PdfConvertImagesBatchFxml));
             cases.add(new TestCase(index++, message("PdfImagesConvertBatch"), Fxmls.PdfImagesConvertBatchFxml));
@@ -150,7 +150,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImageOCRBatch"), Fxmls.ImageOCRBatchFxml));
             cases.add(new TestCase(index++, message("ManageColors"), Fxmls.ColorsManageFxml));
             cases.add(new TestCase(index++, message("ColorQuery"), Fxmls.ColorQueryFxml));
-            cases.add(new TestCase(index++, message("ImageScope"), Fxmls.DataTreeFxml));
+            cases.add(new TestCase(index++, message("ImageScope"), Fxmls.DataTreeFxml).setType(Type.Data));
             cases.add(new TestCase(index++, message("DrawChromaticityDiagram"), Fxmls.ChromaticityDiagramFxml));
             cases.add(new TestCase(index++, message("IccProfileEditor"), Fxmls.IccProfileEditorFxml));
             cases.add(new TestCase(index++, message("RGBColorSpaces"), Fxmls.RGBColorSpacesFxml));
@@ -178,14 +178,14 @@ public class TestCase {
             cases.add(new TestCase(index++, message("MatrixUnaryCalculation"), Fxmls.MatrixUnaryCalculationFxml));
             cases.add(new TestCase(index++, message("MatricesBinaryCalculation"), Fxmls.MatricesBinaryCalculationFxml));
             cases.add(new TestCase(index++, message("DatabaseTable"), Fxmls.DataTablesFxml));
-            cases.add(new TestCase(index++, message("RowExpression"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("DataColumn"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("MathFunction"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("JShell"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("JEXL"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("JavaScript"), Fxmls.DataTreeFxml));
-            cases.add(new TestCase(index++, message("GeographyCode"), Fxmls.GeographyCodeFxml));
+            cases.add(new TestCase(index++, message("RowExpression"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("DataColumn"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("MathFunction"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("JShell"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("JEXL"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("JavaScript"), Fxmls.DataTreeFxml).setType(Type.Data));
+            cases.add(new TestCase(index++, message("GeographyCode"), Fxmls.GeographyCodeFxml).setType(Type.Data));
             cases.add(new TestCase(index++, message("ConvertCoordinate"), Fxmls.ConvertCoordinateFxml));
             cases.add(new TestCase(index++, message("BarcodeCreator"), Fxmls.BarcodeCreatorFxml));
             cases.add(new TestCase(index++, message("BarcodeDecoder"), Fxmls.BarcodeDecoderFxml));
@@ -226,7 +226,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("GameMine"), Fxmls.GameMineFxml));
 
             cases.add(new TestCase(index++, message("WebBrowser"), Fxmls.WebBrowserFxml));
-            cases.add(new TestCase(index++, message("WebFavorite"), Fxmls.DataTreeFxml));
+            cases.add(new TestCase(index++, message("WebFavorite"), Fxmls.DataTreeFxml).setType(Type.Data));
             cases.add(new TestCase(index++, message("WebHistories"), Fxmls.WebHistoriesFxml));
             cases.add(new TestCase(index++, message("QueryNetworkAddress"), Fxmls.NetworkQueryAddressFxml));
             cases.add(new TestCase(index++, message("QueryDNSBatch"), Fxmls.NetworkQueryDNSBatchFxml));
@@ -299,8 +299,9 @@ public class TestCase {
         return message(type.name());
     }
 
-    public void setType(Type type) {
+    public TestCase setType(Type type) {
         this.type = type;
+        return this;
     }
 
     public Stage getStage() {

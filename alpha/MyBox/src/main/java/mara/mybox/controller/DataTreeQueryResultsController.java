@@ -21,7 +21,7 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
 
     protected BaseDataTreeController dataController;
     protected BaseNodeTable nodeTable;
-    protected String dataName;
+    protected String info;
     protected DataTable treeTable;
     protected TmpTable results;
 
@@ -33,14 +33,15 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
         try {
             super.initValues();
 
-            rightPaneControl = viewController.rightPaneControl;
+            leftPaneControl = viewController.leftPaneControl;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void setParameters(BaseController parent, BaseDataTreeController controller, TmpTable data) {
+    public void setParameters(BaseController parent,
+            BaseDataTreeController controller, String conditions, TmpTable data) {
         try {
             if (parent == null || controller == null || data == null) {
                 close();
@@ -50,8 +51,8 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
             dataController = controller;
             results = data;
             nodeTable = dataController.nodeTable;
-            dataName = nodeTable.getDataName();
-            baseName = baseName + "_" + dataName;
+            baseName = baseName + "_" + nodeTable.getDataName();
+            info = conditions;
 
             baseTitle = nodeTable.getTreeName() + " - " + message("QueryResults");
             setTitle(baseTitle);
@@ -81,6 +82,20 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
         viewController.loadNode(Long.parseLong(row.get(2)));
     }
 
+    @FXML
+    public void dataAction(Event event) {
+        if (results != null) {
+            Data2DManufactureController.openDef(results);
+        }
+    }
+
+    @FXML
+    public void infoAction(Event event) {
+        if (info != null) {
+            TextPopController.loadText(info);
+        }
+    }
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (super.keyEventsFilter(event)) {
@@ -95,12 +110,13 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
     }
 
     @Override
+    public boolean needStageVisitHistory() {
+        return false;
+    }
+
+    @Override
     public void cleanPane() {
         try {
-            if (results != null) {
-                results.drop();
-                results = null;
-            }
             if (WindowTools.isRunning(parentController)) {
                 parentController.setIconified(false);
                 parentController = null;
@@ -116,11 +132,11 @@ public class DataTreeQueryResultsController extends BaseData2DLoadController {
         static
      */
     public static DataTreeQueryResultsController open(BaseController parent,
-            BaseDataTreeController tree, TmpTable data) {
+            BaseDataTreeController tree, String conditions, TmpTable data) {
         try {
             DataTreeQueryResultsController controller = (DataTreeQueryResultsController) WindowTools
-                    .openStage(Fxmls.DataTreeQueryResultsFxml);
-            controller.setParameters(parent, tree, data);
+                    .forkStage(parent, Fxmls.DataTreeQueryResultsFxml);
+            controller.setParameters(parent, tree, conditions, data);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

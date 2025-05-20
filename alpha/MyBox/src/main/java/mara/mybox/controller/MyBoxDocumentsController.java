@@ -322,16 +322,16 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected boolean trees() {
         try {
             List<TreeCase> cases = new ArrayList<>();
-            cases.add(new TreeCase("Text", "zh"));
-            cases.add(new TreeCase("Text", "en"));
-            cases.add(new TreeCase("Html", "zh"));
-            cases.add(new TreeCase("Html", "en"));
+            cases.add(new TreeCase("TextTree", "zh"));
+            cases.add(new TreeCase("TextTree", "en"));
+            cases.add(new TreeCase("HtmlTree", "zh"));
+            cases.add(new TreeCase("HtmlTree", "en"));
             cases.add(new TreeCase("MathFunction", "zh"));
             cases.add(new TreeCase("MathFunction", "en"));
             cases.add(new TreeCase("WebFavorite", "zh"));
             cases.add(new TreeCase("WebFavorite", "en"));
-            cases.add(new TreeCase("SQL", "zh"));
-            cases.add(new TreeCase("SQL", "en"));
+            cases.add(new TreeCase("DatabaseSQL", "zh"));
+            cases.add(new TreeCase("DatabaseSQL", "en"));
             cases.add(new TreeCase("ImageScope", "zh"));
             cases.add(new TreeCase("ImageScope", "en"));
             cases.add(new TreeCase("JShell", "zh"));
@@ -390,7 +390,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 finishNotify();
                 return false;
             }
-//            treeController.setIconified(true);
+            dataController.setIconified(true);
             DataNode rootNode = nodeTable.getRoot();
             if (rootNode == null) {
                 finishNotify();
@@ -401,7 +401,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
 //            popInformation(message("Handling") + ": " + tableName);
             DataTreeImportController importController = (DataTreeImportController) WindowTools
                     .openStage(Fxmls.DataTreeImportFxml);
-//            importController.setIconified(true);
+            importController.setIconified(true);
             importController.miaoCheck.setSelected(false);
             importController.importExamples(dataController, rootNode, nodeTable.exampleFileLang(lang));
             importController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {

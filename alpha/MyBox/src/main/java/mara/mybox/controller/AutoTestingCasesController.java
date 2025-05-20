@@ -50,7 +50,7 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
     public void initControls() {
         try {
             super.initControls();
-            tableData.setAll(TestCase.interfaceCases());
+            tableData.setAll(TestCase.testCases());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

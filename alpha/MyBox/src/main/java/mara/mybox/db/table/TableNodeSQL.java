@@ -19,7 +19,7 @@ public class TableNodeSQL extends BaseNodeTable {
     public TableNodeSQL() {
         tableName = "Node_SQL";
         treeName = message("DatabaseSQL");
-        dataName = message("SQL");
+        dataName = message("DatabaseSQL");
         dataFxml = Fxmls.ControlDataSQLFxml;
         examplesFileName = "SQL";
         majorColumnName = "statement";

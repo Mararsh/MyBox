@@ -164,31 +164,30 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (name == null) {
             return null;
         }
-        switch (name) {
-            case "Text":
-                return new TableNodeText();
-            case "Html":
-                return new TableNodeHtml();
-            case "MathFunction":
-                return new TableNodeMathFunction();
-            case "WebFavorite":
-                return new TableNodeWebFavorite();
-            case "SQL":
-                return new TableNodeSQL();
-            case "ImageScope":
-                return new TableNodeImageScope();
-            case "JShell":
-                return new TableNodeJShell();
-            case "JEXL":
-                return new TableNodeJEXL();
-            case "JavaScript":
-                return new TableNodeJavaScript();
-            case "RowExpression":
-                return new TableNodeRowExpression();
-            case "DataColumn":
-                return new TableNodeDataColumn();
-            case "GeographyCode":
-                return new TableNodeGeographyCode();
+        if (Languages.match("TextTree", name)) {
+            return new TableNodeText();
+        } else if (Languages.match("HtmlTree", name)) {
+            return new TableNodeHtml();
+        } else if (Languages.match("MathFunction", name)) {
+            return new TableNodeMathFunction();
+        } else if (Languages.match("WebFavorite", name)) {
+            return new TableNodeWebFavorite();
+        } else if (Languages.match("DatabaseSQL", name)) {
+            return new TableNodeSQL();
+        } else if (Languages.match("ImageScope", name)) {
+            return new TableNodeImageScope();
+        } else if (Languages.match("JShell", name)) {
+            return new TableNodeJShell();
+        } else if (Languages.match("JEXL", name)) {
+            return new TableNodeJEXL();
+        } else if (Languages.match("JavaScript", name)) {
+            return new TableNodeJavaScript();
+        } else if (Languages.match("RowExpression", name)) {
+            return new TableNodeRowExpression();
+        } else if (Languages.match("DataColumn", name)) {
+            return new TableNodeDataColumn();
+        } else if (Languages.match("GeographyCode", name)) {
+            return new TableNodeGeographyCode();
         }
         return null;
     }
