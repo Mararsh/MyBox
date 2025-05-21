@@ -87,7 +87,6 @@ public class DataTreeController extends BaseDataTreeController {
         if (!testing) {
             return;
         }
-        popNode(rootNode);
         close();
     }
 

@@ -493,17 +493,30 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         return selected == null || selected.isEmpty() || selected.contains(index);
     }
 
-    public void markFileHandling(int index) {
+    public void clearHandling() {
+        for (int i = 0; i < tableData.size(); i++) {
+            FileInformation file = fileInformation(i);
+            if (file != null) {
+                file.setHandled(null);
+            }
+        }
+        tableView.refresh();
+    }
+
+    public void markFileHandling(FileInformation file) {
+        if (file == null) {
+            return;
+        }
+        int index = (int) file.getTableIndex();
+        if (index < 0 || index >= tableData.size()) {
+            return;
+        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                FileInformation d = fileInformation(index);
-                if (d == null) {
-                    return;
-                }
                 isSettingValues = true;
                 currentIndex = index;
-                d.setHandled(null);
+                file.setHandled(null);
                 tableData.set(index, tableData.get(index));
                 isSettingValues = false;
                 tableView.scrollTo(index);
@@ -511,17 +524,20 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         });
     }
 
-    public void markFileHandled(int index, String message) {
+    public void markFileHandled(FileInformation file, String message) {
+        if (file == null) {
+            return;
+        }
+        int index = (int) file.getTableIndex();
+        if (index < 0 || index >= tableData.size()) {
+            return;
+        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                FileInformation d = fileInformation(index);
-                if (d == null) {
-                    return;
-                }
                 isSettingValues = true;
                 currentIndex = -1;
-                d.setHandled(message);
+                file.setHandled(message);
                 tableData.set(index, tableData.get(index));
                 isSettingValues = false;
                 tableView.scrollTo(index);
@@ -529,8 +545,8 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         });
     }
 
-    public void markFileHandled(int index) {
-        markFileHandled(index, message("Yes"));
+    public void markFileHandled(FileInformation file) {
+        markFileHandled(file, message("Yes"));
     }
 
     public void stopCountSize() {

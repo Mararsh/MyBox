@@ -64,16 +64,15 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             doc = null;
             targetFilesCount = 0;
             targetFiles = new LinkedHashMap<>();
-            currentParameters.currentSourceFile = srcFile;
-            PdfInformation info = (PdfInformation) tableData.get(currentParameters.currentIndex);
+            PdfInformation info = currentPdf();
             currentParameters.fromPage = info.getFromPage();
             if (actualParameters.fromPage <= 0) {
                 actualParameters.fromPage = 1;
             }
             currentParameters.toPage = info.getToPage();
             currentParameters.password = info.getUserPassword();
-            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
-                    currentParameters.password)) {
+            File pdfFile = currentSourceFile();
+            try (PDDocument pd = Loader.loadPDF(pdfFile, currentParameters.password)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
@@ -81,7 +80,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 currentParameters.currentTargetPath = targetPath;
                 if (currentParameters.targetSubDir) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
-                            + FileNameTools.prefix(currentParameters.currentSourceFile.getName()));
+                            + FileNameTools.prefix(pdfFile.getName()));
                     if (!currentParameters.currentTargetPath.exists()) {
                         currentParameters.currentTargetPath.mkdirs();
                     }
@@ -199,7 +198,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             info.setModificationDate(Calendar.getInstance());
             info.setProducer("MyBox v" + AppValues.AppVersion);
             info.setAuthor(UserConfig.getString("AuthorKey", System.getProperty("user.name")));
-            String targetPrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName());
+            String targetPrefix = FileNameTools.prefix(currentSourceFile().getName());
             int total = docs.size();
             for (PDDocument pd : docs) {
                 if (currentTask == null || !currentTask.isWorking()) {

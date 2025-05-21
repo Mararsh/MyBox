@@ -14,7 +14,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
 import mara.mybox.db.table.BaseNodeTable;
-import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.TestCase;
 import mara.mybox.dev.TestCase.Status;
@@ -196,8 +195,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
             }
             String fxml = currentCase.getFxml();
             if (fxml.endsWith("/GeographyCodeFxml.fxml")) {
-                GeographyCodeController.open()
-                        .autoTesting(new TableNodeGeographyCode());
+                GeographyCodeController.open().autoTesting();
 
             } else if (fxml.endsWith("/DataTree.fxml")) {
                 BaseNodeTable table = BaseNodeTable.create(currentCase.getObject());

@@ -46,6 +46,14 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
         setFileType(VisitHistory.FileType.PDF);
     }
 
+    public PdfInformation currentPdf() {
+        try {
+            return (PdfInformation) currentParameters.currentSourceFile;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @FXML
     @Override
     public boolean makePreviewParameters() {
@@ -79,9 +87,8 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
         int generated = 0;
         doc = null;
         try {
-            currentParameters.currentSourceFile = srcFile;
             if (!isPreview) {
-                PdfInformation info = tableData.get(currentParameters.currentIndex);
+                PdfInformation info = currentPdf();
                 currentParameters.fromPage = info.getFromPage();
                 if (currentParameters.fromPage <= 0) {
                     currentParameters.fromPage = 1;
@@ -91,8 +98,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.startPage = currentParameters.fromPage;
                 currentParameters.currentPage = currentParameters.fromPage;
             }
-            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
-                    currentParameters.password)) {
+            try (PDDocument pd = Loader.loadPDF(srcFile, currentParameters.password)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
@@ -101,7 +107,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.currentTargetPath = targetPath;
                 if (currentParameters.targetSubDir) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
-                            + FileNameTools.prefix(currentParameters.currentSourceFile.getName()));
+                            + FileNameTools.prefix(srcFile.getName()));
                     if (!currentParameters.currentTargetPath.exists()) {
                         currentParameters.currentTargetPath.mkdirs();
                     }

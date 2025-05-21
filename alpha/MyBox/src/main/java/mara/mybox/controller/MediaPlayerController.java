@@ -330,7 +330,7 @@ public class MediaPlayerController extends BaseController {
             mediaView.setMediaPlayer(null);
             mediaView.setFitHeight(50);
             mediaView.setFitWidth(50);
-            tableController.markFileHandling(-1);
+            tableController.clearHandling();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -661,7 +661,7 @@ public class MediaPlayerController extends BaseController {
         }
         myStage.setTitle(getBaseTitle() + " - " + currentMedia.getAddress());
         isSettingValues = true;
-        tableController.markFileHandling(currentIndex);
+        tableController.markFileHandling(info);
         isSettingValues = false;
         if (!currentMedia.getURI().getScheme().startsWith("file")) {
             popInformation(message("ReadingStreamMedia...") + "\n" + currentMedia.getAddress(), 6000);

@@ -8,10 +8,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.image.data.ImageAttributes;
-import mara.mybox.image.tools.ImageConvertTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.data.ImageAttributes;
+import mara.mybox.image.tools.ImageConvertTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -90,7 +90,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
     @Override
     public boolean preHandlePages(FxTask currentTask) {
         try {
-            File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
+            File tFile = makeTargetFile(FileNameTools.prefix(currentSourceFile().getName()),
                     ".pdf", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             tmpFile = FileTmpTools.getTempFile();

@@ -108,9 +108,8 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
         int generated = 0;
         doc = null;
         try {
-            currentParameters.currentSourceFile = srcFile;
             if (!isPreview) {
-                PdfInformation info = tableData.get(currentParameters.currentIndex);
+                PdfInformation info = currentPdf();
                 actualParameters.fromPage = info.getFromPage();
                 if (actualParameters.fromPage <= 0) {
                     actualParameters.fromPage = 1;
@@ -120,9 +119,8 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                 actualParameters.startPage = actualParameters.fromPage;
                 actualParameters.currentPage = actualParameters.fromPage;
             }
-
-            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
-                    currentParameters.password)) {
+            File pdfFile = currentSourceFile();
+            try (PDDocument pd = Loader.loadPDF(pdfFile, currentParameters.password)) {
                 doc = pd;
 
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
@@ -132,7 +130,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                 updateFileProgress(0, total);
                 currentParameters.currentTargetPath = targetPath;
 
-                String filePrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName());
+                String filePrefix = FileNameTools.prefix(pdfFile.getName());
                 if (separatedHtml) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + File.separator + filePrefix);
                     if (!currentParameters.currentTargetPath.exists()) {

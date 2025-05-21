@@ -63,11 +63,12 @@ public class HtmlMergeAsMarkdownController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
             if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
+            File file = info.getFile();
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }

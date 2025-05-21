@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
+import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -131,11 +132,12 @@ public class MyBoxIconsController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
             if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
+            File file = info.getFile();
             String filename = file.getName();
             if (!filename.startsWith("icon") || !filename.endsWith(".png")) {
                 return message("Skip");
@@ -165,7 +167,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             }
             return message("Successful");
         } catch (Exception e) {
-            return file + " " + e.toString();
+            return e.toString();
         }
     }
 

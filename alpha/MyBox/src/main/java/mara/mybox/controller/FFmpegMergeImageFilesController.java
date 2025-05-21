@@ -52,8 +52,8 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 if (selected && !tableView.getSelectionModel().isSelected(i)) {
                     continue;
                 }
-                tableController.markFileHandling(i);
-                FileInformation info = (FileInformation) tableData.get(i);
+                FileInformation info = tableData.get(i);
+                tableController.markFileHandling(info);
                 File file = info.getFile();
                 if (file == null) {
                     continue;
@@ -68,7 +68,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 } else {
                     result = message("NotFound");
                 }
-                tableController.markFileHandled(currentParameters.currentIndex, result);
+                tableController.markFileHandled(currentParameters.currentSourceFile, result);
             }
             if (lastFile == null) {
                 updateLogs(message("InvalidData"), true);

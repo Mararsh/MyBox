@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import mara.mybox.data.FileInformation;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -103,7 +104,8 @@ public class DataFileCSVMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File srcFile) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
+        File srcFile = info.getFile();
         if (csvSourceController.autoDetermine) {
             sourceCharset = TextFileTools.charset(srcFile);
         }

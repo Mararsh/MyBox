@@ -12,7 +12,8 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ProcessParameters implements Cloneable {
 
-    public File currentSourceFile, currentTargetPath;
+    public FileInformation currentSourceFile;
+    public File currentTargetPath;
     public int startIndex, currentIndex;
     public String status, targetPath, targetRootPath;
     public boolean targetSubDir, isBatch;
@@ -25,7 +26,7 @@ public class ProcessParameters implements Cloneable {
         try {
             ProcessParameters newCode = (ProcessParameters) super.clone();
             if (currentSourceFile != null) {
-                newCode.currentSourceFile = new File(currentSourceFile.getAbsolutePath());
+                newCode.currentSourceFile = currentSourceFile;
             }
             if (currentTargetPath != null) {
                 newCode.currentTargetPath = new File(currentTargetPath.getAbsolutePath());

@@ -43,7 +43,6 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-4-28
- * @Description
  * @License Apache License Version 2.0
  */
 public abstract class BaseBatchController<T> extends BaseTaskController {
@@ -51,7 +50,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected String targetSubdirKey;
     protected ObservableList<T> tableData;
     protected TableView<T> tableView;
-    protected List<File> sourceFiles;
+    protected List<FileInformation> selectedFiles;
     protected List<String> filesPassword;
     protected boolean sourceCheckSubdir, createDirectories, allowPaused, viewTargetPath;
     protected boolean isPreview, paused;
@@ -467,7 +466,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         actualParameters.acumStart = 1;
         actualParameters.acumDigit = 0;
 
-        sourceFiles = new ArrayList<>();
+        selectedFiles = new ArrayList<>();
         beforeTask();
 
         return makeMoreParameters();
@@ -476,7 +475,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public boolean makeMoreParameters() {
         try {
-            List<File> files = pickSourceFiles(isPreview, true);
+            List<FileInformation> files = pickSourceFiles(isPreview, true);
             isSettingValues = true;
             tableView.refresh();
             isSettingValues = false;
@@ -487,8 +486,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 return false;
             }
 
-            sourceFiles.clear();
-            sourceFiles.addAll(files);
+            selectedFiles.clear();
+            selectedFiles.addAll(files);
 
             initLogs();
             totalFilesHandled = totalItemsHandled = 0;
@@ -501,8 +500,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
     }
 
-    public List<File> pickSourceFiles(boolean onlyOne, boolean reset) {
-        List<File> files = new ArrayList<>();
+    public List<FileInformation> pickSourceFiles(boolean onlyOne, boolean reset) {
+        List<FileInformation> files = new ArrayList<>();
         try {
             if (tableData != null) {
                 ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
@@ -511,23 +510,21 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     if (d == null) {
                         continue;
                     }
+                    d.setTableIndex(i);
                     if (reset) {
                         d.setHandled("");
                     }
                     if (selected != null && !selected.isEmpty() && !selected.contains(i)) {
                         continue;
                     }
-                    File file = d.getFile();
-                    if (!files.contains(file)) {
-                        files.add(file);
-                        if (onlyOne) {
-                            break;
-                        }
+                    files.add(d);
+                    if (onlyOne) {
+                        break;
                     }
                 }
             }
             if (onlyOne && files.isEmpty()) {
-                files.add(InternalImages.exampleImageFile());
+                files.add(new FileInformation(InternalImages.exampleImageFile()));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -553,20 +550,24 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return true;
     }
 
-    public File getCurrentFile() {
-        return sourceFiles.get(currentParameters.currentIndex);
+    public File currentSourceFile() {
+        try {
+            return currentParameters.currentSourceFile.getFile();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void doCurrentProcess() {
-        if (currentParameters == null || sourceFiles.isEmpty()) {
+        if (currentParameters == null || selectedFiles.isEmpty()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         processStartTime = new Date();
         totalFilesHandled = totalItemsHandled = 0;
-        tableController.markFileHandling(-1);
+        tableController.clearHandling();
         updateInterface("Started");
         task = new FxSingletonTask<Void>(this) {
 
@@ -575,13 +576,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 if (!beforeHandleFiles(this)) {
                     return false;
                 }
-                int len = sourceFiles.size();
+                int len = selectedFiles.size();
                 updateTaskProgress(currentParameters.currentIndex, len);
                 for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
                     if (task == null || isCancelled()) {
                         break;
                     }
-                    currentParameters.currentSourceFile = sourceFiles.get(currentParameters.currentIndex);
+                    currentParameters.currentSourceFile = selectedFiles.get(currentParameters.currentIndex);
+                    tableController.markFileHandling(currentParameters.currentSourceFile);
+                    countHandling(currentParameters.currentSourceFile);
                     handleCurrentFile(this);
                     updateTaskProgress(currentParameters.currentIndex + 1, len);
                     if (task == null || isCancelled() || isPreview) {
@@ -613,7 +616,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                tableController.markFileHandling(-1);
                 closeTask(ok);
             }
 
@@ -658,15 +660,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public void handleCurrentFile(FxTask currentTask) {
         try {
-            tableController.markFileHandling(currentParameters.currentIndex);
-            currentParameters.currentSourceFile = getCurrentFile();
             String result;
-            countHandling(currentParameters.currentSourceFile);
-            if (!currentParameters.currentSourceFile.exists()) {
+            File file = currentSourceFile();
+            if (file == null || !file.exists()) {
                 result = message("NotFound");
-            } else if (currentParameters.currentSourceFile.isFile()) {
+            } else if (file.isFile()) {
                 result = handleFile(currentTask, currentParameters.currentSourceFile);
-            } else if (currentParameters.currentSourceFile.isDirectory()) {
+            } else if (file.isDirectory()) {
                 result = handleDirectory(currentTask, currentParameters.currentSourceFile);
             } else {
                 result = message("Invalid");
@@ -674,24 +674,25 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             if (!message("Successful").equals(result)) {
                 showLogs(result);
             }
-            tableController.markFileHandled(currentParameters.currentIndex, result);
+            tableController.markFileHandled(currentParameters.currentSourceFile, result);
         } catch (Exception e) {
             showLogs(e.toString());
         }
     }
 
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
             if (currentTask == null || currentTask.isCancelled()) {
                 return message("Canceled");
             }
+            File file = info.getFile();
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
             return handleFileToPath(currentTask, file, currentParameters.targetPath);
         } catch (Exception e) {
             showLogs(e.toString());
-            return file + " " + e.toString();
+            return e.toString();
         }
     }
 
@@ -816,8 +817,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return true;
     }
 
-    public String handleDirectory(FxTask currentTask, File dir) {
+    public String handleDirectory(FxTask currentTask, FileInformation info) {
         try {
+            File dir = info.getFile();
             dirFilesNumber = dirFilesHandled = 0;
             if (currentParameters.targetPath != null) {
                 File targetDir;
@@ -947,11 +949,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
     }
 
-    public void countHandling(File file) {
-        if (file == null) {
+    public void countHandling(FileInformation info) {
+        if (info == null) {
             return;
         }
-        countHandling(file.getAbsolutePath());
+        countHandling(info.getAbsolutePath());
     }
 
     public void countHandling(String name) {

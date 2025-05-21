@@ -116,19 +116,28 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public void countHandling(File file) {
-        if (file == null || !file.isFile()) {
-            return;
-        }
-        totalFilesHandled++;
-        if (totalFilesHandled % 100 == 0) {
-            updateStatusLabel(message("Checked") + ": " + totalFilesHandled);
+    public void countHandling(String name) {
+        try {
+            if (name == null) {
+                return;
+            }
+            File file = new File(name);
+            if (!file.isFile()) {
+                return;
+            }
+            totalFilesHandled++;
+            if (totalFilesHandled % 100 == 0) {
+                updateStatusLabel(message("Checked") + ": " + totalFilesHandled);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
+            File file = info.getFile();
             if (!match(file)) {
                 return done;
             }
@@ -141,8 +150,9 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(FxTask currentTask, File directory) {
+    public String handleDirectory(FxTask currentTask, FileInformation info) {
         try {
+            File directory = info.getFile();
             if (directory == null || !directory.isDirectory()) {
                 return done;
             }
@@ -155,14 +165,14 @@ public class FilesFindController extends BaseBatchFileController {
                     return done;
                 }
                 if (srcFile.isFile()) {
-                    countHandling(srcFile);
+                    countHandling(srcFile.getAbsolutePath());
                     if (!match(srcFile)) {
                         continue;
                     }
                     totalMatched++;
                     filesList.add(new FileInformation(srcFile));
                 } else if (srcFile.isDirectory()) {
-                    handleDirectory(currentTask, srcFile);
+                    handleDirectory(currentTask, new FileInformation(srcFile));
                 }
             }
             return done;

@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -81,8 +82,9 @@ public class FilesRedundancyController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
+            File file = info.getFile();
             if (!match(file)) {
                 return done;
             }
@@ -97,8 +99,9 @@ public class FilesRedundancyController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(FxTask currentTask, File directory) {
+    public String handleDirectory(FxTask currentTask, FileInformation info) {
         try {
+            File directory = info.getFile();
             if (directory == null || !directory.isDirectory()) {
                 return done;
             }
@@ -111,9 +114,9 @@ public class FilesRedundancyController extends BaseBatchFileController {
                     return done;
                 }
                 if (srcFile.isFile()) {
-                    handleFile(currentTask, srcFile);
+                    handleFile(currentTask, new FileInformation(srcFile));
                 } else if (srcFile.isDirectory()) {
-                    handleDirectory(currentTask, srcFile);
+                    handleDirectory(currentTask, new FileInformation(srcFile));
                 }
             }
             return done;

@@ -68,16 +68,15 @@ public class PdfMergeController extends BaseBatchPdfController {
         int generated = 0;
         doc = null;
         try {
-            currentParameters.currentSourceFile = srcFile;
-            PdfInformation info = tableData.get(currentParameters.currentIndex);
+            PdfInformation info = currentPdf();
             actualParameters.fromPage = info.getFromPage();
             if (actualParameters.fromPage <= 0) {
                 actualParameters.fromPage = 1;
             }
             actualParameters.toPage = info.getToPage();
             actualParameters.password = info.getUserPassword();
-            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
-                    currentParameters.password)) {
+            File pdfFile = currentSourceFile();
+            try (PDDocument pd = Loader.loadPDF(pdfFile, currentParameters.password)) {
                 doc = pd;
                 if (currentTask == null || !currentTask.isWorking()) {
                     return message("Canceled");

@@ -23,6 +23,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.FileInformation;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -277,8 +278,9 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
+            File file = info.getFile();
             if (!match(file)) {
                 return message("Skip");
             }
@@ -346,8 +348,9 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(FxTask currentTask, File dir) {
+    public String handleDirectory(FxTask currentTask, FileInformation info) {
         try {
+            File dir = info.getFile();
             if (archiver.equalsIgnoreCase(ArchiveStreamFactory.AR)) {
                 return message("Skip");
             }

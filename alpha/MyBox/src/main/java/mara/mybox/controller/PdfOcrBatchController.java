@@ -21,20 +21,20 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.tools.AlphaTools;
-import mara.mybox.image.data.ImageBinary;
-import mara.mybox.image.data.ImageContrast;
-import mara.mybox.image.data.ImageConvolution;
-import mara.mybox.image.data.PixelsOperation;
-import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.image.tools.ScaleTools;
-import mara.mybox.image.tools.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageBinary;
+import mara.mybox.image.data.ImageContrast;
+import mara.mybox.image.data.ImageConvolution;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.AlphaTools;
+import mara.mybox.image.tools.ScaleTools;
+import mara.mybox.image.tools.TransformTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -593,7 +593,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     @Override
     public void postHandlePages(FxTask currentTask) {
         try {
-            File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
+            File tFile = makeTargetFile(FileNameTools.prefix(currentSourceFile().getName()),
                     ".txt", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             if (TextFileTools.writeFile(tFile, ocrTexts) != null) {

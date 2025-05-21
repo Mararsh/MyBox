@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import mara.mybox.data.FileInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Languages;
@@ -41,7 +42,8 @@ public class PptxMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File srcFile) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
+        File srcFile = info.getFile();
         if (!match(srcFile)) {
             return Languages.message("Skip") + ": " + srcFile;
         }

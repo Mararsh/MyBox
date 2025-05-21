@@ -3,9 +3,7 @@ package mara.mybox.controller;
 //import com.github.kokorin.jaffree.ffmpeg.UrlInput;
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Date;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
@@ -23,79 +21,12 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
     }
 
     @Override
-    public void doCurrentProcess() {
-        if (currentParameters == null || tableData.isEmpty()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        processStartTime = new Date();
-        totalFilesHandled = 0;
-        updateInterface("Started");
-        task = new FxSingletonTask<Void>(this) {
-
-            @Override
-            public Void call() {
-                int len = tableData.size();
-                updateTaskProgress(currentParameters.currentIndex, len);
-
-                for (; currentParameters.currentIndex < len;
-                        currentParameters.currentIndex++) {
-                    if (task == null || isCancelled()) {
-                        break;
-                    }
-
-                    handleCurrentFile(this);
-
-                    updateTaskProgress(currentParameters.currentIndex + 1, len);
-
-                    if (task == null || isCancelled() || isPreview) {
-                        break;
-                    }
-                }
-                updateTaskProgress(currentParameters.currentIndex, len);
-                ok = true;
-
-                return null;
-            }
-
-            @Override
-            public void succeeded() {
-                super.succeeded();
-                updateInterface("Done");
-            }
-
-            @Override
-            public void cancelled() {
-                super.cancelled();
-                updateInterface("Canceled");
-            }
-
-            @Override
-            public void failed() {
-                super.failed();
-                updateInterface("Failed");
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                closeTask(ok);
-            }
-
-        };
-        start(task, false);
-    }
-
-    @Override
-    public void handleCurrentFile(FxTask currentTask) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         String result;
         try {
-            MediaInformation info = (MediaInformation) tableData.get(currentParameters.currentIndex);
+            MediaInformation info = (MediaInformation) currentParameters.currentSourceFile;
             String address = info.getAddress();
             countHandling(address);
-            tableController.markFileHandling(currentParameters.currentIndex);
             showLogs(MessageFormat.format(message("HandlingObject"), address));
             showLogs(info.getInfo());
 
@@ -137,7 +68,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             showLogs(e.toString());
             result = message("Failed");
         }
-        tableController.markFileHandled(currentParameters.currentIndex, result);
+        return result;
     }
 
 }

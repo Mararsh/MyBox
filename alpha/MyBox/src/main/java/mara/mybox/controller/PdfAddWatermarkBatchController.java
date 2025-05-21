@@ -43,7 +43,7 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
     protected ControlPdfPageAttributes attributesController;
 
     public PdfAddWatermarkBatchController() {
-        baseTitle = message("PdfAddWatermark");
+        baseTitle = message("PdfAddWatermarkBatch");
     }
 
     @Override
@@ -87,7 +87,7 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
                 return false;
             }
             File tFile = makeTargetFile(
-                    FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
+                    FileNameTools.prefix(currentSourceFile().getName()),
                     ".pdf", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             tmpFile = FileTmpTools.getTempFile();

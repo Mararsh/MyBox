@@ -48,7 +48,7 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
                         continue;
                     }
                     PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
-                    String namePrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName())
+                    String namePrefix = FileNameTools.prefix(currentSourceFile().getName())
                             + "_page" + currentParameters.currentPage + "_index" + index;
                     String suffix = pdxObject.getSuffix();
                     File tFile = makeTargetFile(namePrefix, "." + suffix, currentParameters.currentTargetPath);

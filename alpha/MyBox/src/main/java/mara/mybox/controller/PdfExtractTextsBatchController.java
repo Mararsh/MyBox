@@ -65,7 +65,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
     @Override
     public boolean preHandlePages(FxTask currentTask) {
         try {
-            File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
+            File tFile = makeTargetFile(FileNameTools.prefix(currentSourceFile().getName()),
                     ".txt", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             tmpFile = FileTmpTools.getTempFile();

@@ -53,18 +53,18 @@ public class FilesMergeController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
             if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
+            File file = info.getFile();
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
             byte[] buf = new byte[AppValues.IOBufferLength];
             int bufLen;
-            FileInformation d = (FileInformation) tableData.get(currentParameters.currentIndex);
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(d.getFile()))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 while ((bufLen = inputStream.read(buf)) > 0) {
                     if (currentTask == null || !currentTask.isWorking()) {
                         return message("Canceled");
@@ -74,7 +74,7 @@ public class FilesMergeController extends BaseBatchFileController {
             }
             return message("Handled") + ": " + file;
         } catch (Exception e) {
-            return file + " " + e.toString();
+            return e.toString();
         }
     }
 
