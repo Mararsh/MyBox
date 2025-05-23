@@ -87,6 +87,17 @@ public class Data2DManufactureController extends BaseData2DViewController {
         }
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            StyleTools.setTips(addRowsButton, message("AddRowsWithCopy") + "\nCTRL+N / ALT+N");
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
 
     /*
         format

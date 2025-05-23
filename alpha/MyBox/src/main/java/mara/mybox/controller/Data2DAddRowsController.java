@@ -28,7 +28,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
             super.setParameters(controller);
             this.dataController = controller;
 
-            rowEditController.setParameters(controller);
+            rowEditController.addRow(controller, controller.selectedItem());
 
             nameLabel.setText(message("Data") + ": " + dataController.data2D.displayName());
 

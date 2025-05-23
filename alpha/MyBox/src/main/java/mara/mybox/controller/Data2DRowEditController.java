@@ -32,7 +32,7 @@ public class Data2DRowEditController extends BaseBranchController {
             this.dataController = controller;
             this.index = index;
 
-            rowEditController.setParameters(dataController, index);
+            rowEditController.editRow(dataController, index);
 
             nameLabel.setText(message("Data") + ": " + dataController.data2D.displayName());
 
@@ -64,7 +64,7 @@ public class Data2DRowEditController extends BaseBranchController {
     @FXML
     @Override
     public void recoverAction() {
-        rowEditController.setParameters(dataController, index);
+        rowEditController.editRow(dataController, index);
     }
 
     /*

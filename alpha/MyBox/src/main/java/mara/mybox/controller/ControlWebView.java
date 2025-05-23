@@ -53,6 +53,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileReaders;
@@ -90,8 +91,7 @@ public class ControlWebView extends BaseController {
     protected final SimpleBooleanProperty addressChangedNotify, addressInvalidNotify,
             pageLoadingNotify, pageLoadedNotify;
     protected final String StyleNodeID = "MyBox__Html_Style20211118";
-    protected boolean listened, linkInNewTab;
-    public final Object lock = new Object();
+    protected boolean linkInNewTab;
 
     @FXML
     protected WebView webView;
@@ -117,7 +117,7 @@ public class ControlWebView extends BaseController {
             framesDoc = new HashMap<>();
             charset = Charset.defaultCharset();
             linkInNewTab = false;
-            defaultStyle = null;
+            defaultStyle = HtmlStyles.styleValue("Table");
             scrollType = ScrollType.Top;
             parentController = this;
         } catch (Exception e) {
@@ -165,10 +165,7 @@ public class ControlWebView extends BaseController {
             docListener = new EventListener() {
                 @Override
                 public void handleEvent(org.w3c.dom.events.Event ev) {
-                    Platform.runLater(() -> {
-                        docEvent(ev);
-                    });
-                    Platform.requestNextPulse();
+                    docEvent(ev);
                 }
             };
 
@@ -289,14 +286,12 @@ public class ControlWebView extends BaseController {
             if (element == null) {
                 return;
             }
-//                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
             if (href != null) {
                 String target = element.getAttribute("target");
-
                 HtmlElement htmlElement = new HtmlElement(element, charset);
-//                            MyBoxLog.console(target);
                 if ("click".equals(domEventType)) {
                     if (target != null && !target.equalsIgnoreCase("_blank")) {
+                        ev.stopPropagation();
                         ev.preventDefault();
                         Platform.runLater(() -> {
                             executeScript("if ( window.frames." + target
@@ -310,25 +305,31 @@ public class ControlWebView extends BaseController {
                         String clickAction = UserConfig.getString("WebViewWhenLeftClickImageOrLink", "PopMenu");
                         String url = htmlElement.getDecodedAddress();
                         if (linkInNewTab) {
+                            ev.stopPropagation();
                             ev.preventDefault();
-                            WebBrowserController.openAddress(url, true);
+                            Platform.runLater(() -> {
+                                WebBrowserController.openAddress(url, true);
+                            });
+                            Platform.requestNextPulse();
                         } else if (!"AsPage".equals(clickAction)) {
+                            ev.stopPropagation();
                             ev.preventDefault();
-                            if (clickAction == null || "PopMenu".equals(clickAction)) {
-                                Platform.runLater(() -> {
+                            Platform.runLater(() -> {
+                                if (clickAction == null || "PopMenu".equals(clickAction)) {
                                     popLinkMenu(htmlElement);
-                                });
-                                Platform.requestNextPulse();
-                            } else if ("Load".equals(clickAction)) {
-                                loadAddress(url);
-                            } else if ("System".equals(clickAction)) {
-                                browse(url);
-                            } else {
-                                WebBrowserController.openAddress(url, "OpenSwitch".equals(clickAction));
-                            }
+                                } else if ("Load".equals(clickAction)) {
+                                    loadAddress(url);
+                                } else if ("System".equals(clickAction)) {
+                                    browse(url);
+                                } else {
+                                    WebBrowserController.openAddress(url, "OpenSwitch".equals(clickAction));
+                                }
+                            });
+                            Platform.requestNextPulse();
                         }
                     }
                 } else if ("contextmenu".equals(domEventType)) {
+                    ev.stopPropagation();
                     ev.preventDefault();
                     Platform.runLater(() -> {
                         popLinkMenu(htmlElement);
@@ -337,6 +338,7 @@ public class ControlWebView extends BaseController {
                 }
 
             } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
+                ev.stopPropagation();
                 ev.preventDefault();
                 Platform.runLater(() -> {
                     popElementMenu(element);
@@ -447,9 +449,6 @@ public class ControlWebView extends BaseController {
             }
             framesDoc.clear();
             charset = Charset.defaultCharset();
-            synchronized (lock) {
-                listened = false;
-            }
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -463,14 +462,6 @@ public class ControlWebView extends BaseController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        synchronized (lock) {
-                            if (listened) {
-                                if (timer != null) {
-                                    timer.cancel();
-                                }
-                                return;
-                            }
-                        }
                         initDoc(webEngine.getDocument());
                     });
                     Platform.requestNextPulse();
@@ -483,20 +474,22 @@ public class ControlWebView extends BaseController {
 
     private boolean initDoc(Document doc) {
         try {
-            synchronized (lock) {
-                if (listened || doc == null) {
-                    return false;
-                }
+            if (doc == null) {
+                return false;
             }
             Object winObject = executeScript("window");
             Object docObject = executeScript("document");
             if (winObject == null || docObject == null) {
                 return false;
             }
+            if (timer != null) {
+                timer.cancel();
+            }
+            setListeners(doc);
+
             ((JSObject) winObject).setMember("control", this);
             String js = "if ( document.addEventListener ) "
-                    + "{ control.setListeners(); \n"
-                    + "  document.addEventListener('mouseover', (event) => {\n"
+                    + "{  document.addEventListener('mouseover', (event) => {\n"
                     + "      const link = event.target.closest('a');\n"
                     + "      if (link && link.href) {\n"
                     + "        try {\n"
@@ -508,11 +501,8 @@ public class ControlWebView extends BaseController {
                     + "  document.addEventListener('mouseout', (event) => {\n"
                     + "     control.setWebViewLabel(null);})\n"
                     + "} ";
-
             executeScript(js);
-            if (timer != null) {
-                timer.cancel();
-            }
+
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -520,14 +510,7 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    public void setListeners() {
-        setListeners(webEngine.getDocument());
-        synchronized (lock) {
-            listened = true;
-        }
-    }
-
-    private synchronized void setListeners(Document doc) {
+    public void setListeners(Document doc) {
         try {
             if (doc == null) {
                 return;
@@ -535,6 +518,7 @@ public class ControlWebView extends BaseController {
             EventTarget t = (EventTarget) doc.getDocumentElement();
             t.addEventListener("contextmenu", docListener, true);
             t.addEventListener("click", docListener, true);
+
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

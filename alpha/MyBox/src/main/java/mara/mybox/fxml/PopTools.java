@@ -125,16 +125,8 @@ public class PopTools {
             }
         } else if (Desktop.isDesktopSupported()) {
             // https://stackoverflow.com/questions/23176624/javafx-freeze-on-desktop-openfile-desktop-browseuri?r=SearchResults
-            // interface are blocked after system explorer is opened. Happened again after javafx 17.0.2
-//            new Thread(() -> {
-//                try {
-//                    Desktop.getDesktop().browse(uri);
-//                } catch (Exception e) {
-//                    MyBoxLog.debug(e);
-//                }
-//            }).start();
             try {
-                Runtime.getRuntime().exec(new String[]{"explorer.exe", uri.toString()});
+                Desktop.getDesktop().browse(uri);
                 return;
             } catch (Exception e) {
                 MyBoxLog.debug(e);
