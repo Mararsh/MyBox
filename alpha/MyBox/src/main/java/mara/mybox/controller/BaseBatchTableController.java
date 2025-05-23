@@ -55,7 +55,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseBatchTableController<P> extends BaseTableViewController<P> {
 
-    protected long totalFilesNumber, totalFilesSize, fileSelectorSize, fileSelectorTime, currentIndex;
+    protected long totalFilesNumber, totalFilesSize, fileSelectorSize, fileSelectorTime, currentTableIndex;
     protected FileSelectorType fileSelectorType;
     protected boolean countSubdir;
 
@@ -311,7 +311,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             if (handledColumn != null) {
                 handledColumn.setCellValueFactory(new PropertyValueFactory<>("handled"));
             }
-            currentIndex = -1;
+            currentTableIndex = -1;
             if (currentIndexColumn != null) {
                 currentIndexColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));  // not care column value
                 currentIndexColumn.setCellFactory(new Callback<TableColumn<P, Long>, TableCell<P, Long>>() {
@@ -330,7 +330,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                                 if (empty || item == null) {
                                     return;
                                 }
-                                if (getIndex() == currentIndex) {
+                                if (getIndex() == currentTableIndex) {
                                     setGraphic(imageview);
                                 }
                             }
@@ -494,6 +494,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     public void clearHandling() {
+        currentTableIndex = -1;
         for (int i = 0; i < tableData.size(); i++) {
             FileInformation file = fileInformation(i);
             if (file != null) {
@@ -515,11 +516,11 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             @Override
             public void run() {
                 isSettingValues = true;
-                currentIndex = index;
+                currentTableIndex = index;
                 file.setHandled(null);
                 tableData.set(index, tableData.get(index));
                 isSettingValues = false;
-                tableView.scrollTo(index);
+                tableView.scrollTo(index - 5);
             }
         });
     }
@@ -536,11 +537,11 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             @Override
             public void run() {
                 isSettingValues = true;
-                currentIndex = -1;
+                currentTableIndex = -1;
                 file.setHandled(message);
                 tableData.set(index, tableData.get(index));
                 isSettingValues = false;
-                tableView.scrollTo(index);
+                tableView.scrollTo(index - 5);
             }
         });
     }

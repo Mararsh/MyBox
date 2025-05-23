@@ -109,12 +109,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private List<List<String>> rows;
 
             @Override
             protected boolean handle() {
-                rows = pickCSV(this);
-                return true;
+                return pickCSV(this);
             }
 
             @Override
@@ -124,11 +122,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                if (ok && rows != null) {
-                    isSettingValues = true;
-                    tableData.setAll(rows);
-                    data2D.setPageData(tableData);
-                    isSettingValues = false;
+                if (ok) {
                     switchFormat();
                 } else {
                     isSettingValues = true;
@@ -260,8 +254,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
         start(loadTask, false);
     }
 
-    public List<List<String>> pickCSV(FxTask task) {
+    public boolean pickCSV(FxTask task) {
         try {
+            if (!csvRadio.isSelected() || !isCSVModified || isCSVpicked) {
+                return true;
+            }
             if (delimiterName == null) {
                 delimiterName = ",";
             }
@@ -271,7 +268,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                 int colsNumber = data2D.columnsNumber();
                 List<List<String>> data = data2D.decodeCSV(task, text, delimiterName, false);
                 if (data == null) {
-                    return null;
+                    return false;
                 }
                 long startindex = data2D.getStartRowOfCurrentPage();
                 for (int i = 0; i < data.size(); i++) {
@@ -290,10 +287,16 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     rows.add(nrow);
                 }
             }
-            return rows;
+            isSettingValues = true;
+            tableData.setAll(rows);
+            data2D.setPageData(tableData);
+            isSettingValues = false;
+            isCSVModified = false;
+            isCSVpicked = false;
+            return true;
         } catch (Exception e) {
             displayError(e.toString());
-            return null;
+            return false;
         }
     }
 
@@ -338,14 +341,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!super.isValidPageData()) {
             return false;
         }
-        if (csvRadio.isSelected() && isCSVModified && !isCSVpicked) {
-            List<List<String>> rows = pickCSV(null);
-            if (rows == null) {
-                return false;
-            }
-            setPageData(rows);
-            isCSVpicked = true;
+        if (!pickCSV(null)) {
+            return false;
         }
+        isCSVpicked = true;
         return true;
     }
 
@@ -714,11 +713,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         if (data2D.isTmpData()) {
-            if (data2D.isTable()) {
-                Data2DTableCreateController.open(this);
-            } else {
-                Data2DSaveAsController.save(this);
-            }
+            saveTmp();
             return;
         }
         if (task != null) {
@@ -732,6 +727,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected boolean handle() {
                 try {
+                    if (!pickCSV(this)) {
+                        return false;
+                    }
                     needBackup = data2D.needBackup();
                     if (needBackup) {
                         backup = addBackup(this, data2D.getFile());
@@ -768,6 +766,17 @@ public class Data2DManufactureController extends BaseData2DViewController {
             }
         };
         start(task);
+    }
+
+    public void saveTmp() {
+        if (!pickCSV(null)) {
+            return;
+        }
+        if (data2D.isTable()) {
+            Data2DTableCreateController.open(this);
+        } else {
+            Data2DSaveAsController.save(this);
+        }
     }
 
     @FXML

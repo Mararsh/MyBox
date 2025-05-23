@@ -160,7 +160,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
                     imageType = ImageType.ARGB;
                 }
             }
-            BufferedImage pageImage = renderer.renderImageWithDPI(currentParameters.currentPage - 1, // 0-based
+            BufferedImage pageImage = renderer.renderImageWithDPI(pageIndex, // 0-based
                     attributes.getDensity(), imageType);
             String targetFormat = attributes.getImageFormat();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
@@ -192,7 +192,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
     public File makeTargetFile() {
         try {
             String namePrefix = FileNameTools.prefix(currentSourceFile().getName())
-                    + "_page" + currentParameters.currentPage;
+                    + "_page" + (pageIndex + 1);
             if (!"ico".equals(attributes.getImageFormat())) {
                 if (appendColorCheck.isSelected()) {
                     if (message("IccProfile").equals(attributes.getColorSpaceName())) {

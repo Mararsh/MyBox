@@ -111,22 +111,23 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
             if (!isPreview) {
                 PdfInformation info = currentPdf();
                 actualParameters.fromPage = info.getFromPage();
-                if (actualParameters.fromPage <= 0) {
-                    actualParameters.fromPage = 1;
+                if (actualParameters.fromPage < 0) {
+                    actualParameters.fromPage = 0;
                 }
                 actualParameters.toPage = info.getToPage();
                 actualParameters.password = info.getUserPassword();
                 actualParameters.startPage = actualParameters.fromPage;
-                actualParameters.currentPage = actualParameters.fromPage;
+                pageIndex = actualParameters.fromPage;
             }
             File pdfFile = currentSourceFile();
             try (PDDocument pd = Loader.loadPDF(pdfFile, currentParameters.password)) {
                 doc = pd;
 
-                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                if (currentParameters.toPage <= 0
+                        || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
                 }
-                int total = currentParameters.toPage - currentParameters.fromPage + 1;
+                int total = currentParameters.toPage - currentParameters.fromPage;
                 updateFileProgress(0, total);
                 currentParameters.currentTargetPath = targetPath;
 
@@ -136,25 +137,28 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                     if (!currentParameters.currentTargetPath.exists()) {
                         currentParameters.currentTargetPath.mkdirs();
                     }
-                    for (currentParameters.currentPage = currentParameters.startPage;
-                            currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
+                    for (pageIndex = currentParameters.startPage;
+                            pageIndex < currentParameters.toPage; pageIndex++) {
                         if (currentTask == null || currentTask.isCancelled()) {
                             break;
                         }
-                        updateLogs(Languages.message("HandlingPage") + ":" + currentParameters.currentPage, true, true);
+                        int interfaceIndex = pageIndex + 1;
+                        updateLogs(Languages.message("HandlingPage") + ":" + interfaceIndex, true, true);
                         String fileName = currentParameters.currentTargetPath + File.separator
-                                + filePrefix + "_p" + currentParameters.currentPage;
-                        File htmlFile = writeHhml(fileName, currentParameters.currentPage, currentParameters.currentPage);
+                                + filePrefix + "_p" + interfaceIndex;
+                        File htmlFile = writeHhml(fileName, interfaceIndex, interfaceIndex);
                         if (htmlFile != null) {
                             generated++;
                             targetFileGenerated(htmlFile);
                         }
-                        updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
+                        updateFileProgress(pageIndex - currentParameters.fromPage + 1, total);
                     }
 
                 } else {
                     String fileName = currentParameters.currentTargetPath + File.separator + filePrefix;
-                    File htmlFile = writeHhml(fileName, currentParameters.startPage, currentParameters.toPage);
+                    File htmlFile = writeHhml(fileName,
+                            currentParameters.startPage + 1,
+                            currentParameters.toPage);
                     if (htmlFile != null) {
                         generated++;
                         targetFileGenerated(htmlFile);
@@ -165,15 +169,16 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
 
                 doc.close();
             }
-            currentParameters.startPage = 1;
+            currentParameters.startPage = 0;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
-                currentParameters.currentPage - currentParameters.fromPage, generated);
+                pageIndex - currentParameters.fromPage, generated);
     }
 
+    // 1-base, include end
     protected File writeHhml(String fileName, int start, int end) {
         try {
             File htmlFile = new File(fileName + ".html");
@@ -205,7 +210,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
             }
             PDFDomTree parser = new PDFDomTree(domConfig);
             parser.setStartPage(start);                                       // 1-based
-            parser.setEndPage(end);
+            parser.setEndPage(end);                                          // include
             try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
                 parser.writeText(doc, output);
                 return htmlFile;

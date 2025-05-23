@@ -112,7 +112,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
     public int handleCurrentPage(FxTask currentTask) {
         int count = 0;
         try {
-            PDPage sourcePage = doc.getPage(currentParameters.currentPage - 1);  // 0-based
+            PDPage sourcePage = doc.getPage(pageIndex);  // 0-based
             PDResources pdResources = sourcePage.getResources();
             pdResources.getXObjectNames();
             Iterable<COSName> iterable = pdResources.getXObjectNames();
@@ -147,7 +147,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                 return count;
             }
             if (copyAllCheck.isSelected()) {
-                targetDoc.getPage(currentParameters.currentPage - 1).setResources(pdResources);
+                targetDoc.getPage(pageIndex).setResources(pdResources);
             } else {
                 targetDoc.addPage(sourcePage);
             }

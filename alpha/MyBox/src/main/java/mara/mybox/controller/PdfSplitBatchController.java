@@ -66,15 +66,16 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             targetFiles = new LinkedHashMap<>();
             PdfInformation info = currentPdf();
             currentParameters.fromPage = info.getFromPage();
-            if (actualParameters.fromPage <= 0) {
-                actualParameters.fromPage = 1;
+            if (actualParameters.fromPage < 0) {
+                actualParameters.fromPage = 0;
             }
             currentParameters.toPage = info.getToPage();
             currentParameters.password = info.getUserPassword();
             File pdfFile = currentSourceFile();
             try (PDDocument pd = Loader.loadPDF(pdfFile, currentParameters.password)) {
                 doc = pd;
-                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                if (currentParameters.toPage <= 0
+                        || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
                 }
                 currentParameters.currentTargetPath = targetPath;
@@ -113,6 +114,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 currentParameters.toPage - currentParameters.fromPage, targetFilesCount);
     }
 
+    // 1-based  include end
     private Splitter splitter(int from, int to, int size) {
         try {
             if (from < 1 || to < 1 || to < from || size <= 0) {
@@ -144,14 +146,20 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
     }
 
     private int splitByPagesSize(FxTask currentTask, PDDocument source) {
-        return split(currentTask, source, currentParameters.fromPage, currentParameters.toPage, splitController.size);
+        return split(currentTask, source,
+                currentParameters.fromPage + 1,
+                currentParameters.toPage,
+                splitController.size);
     }
 
     private int splitByFilesNumber(FxTask currentTask, PDDocument source) {
         try {
-            int total = currentParameters.toPage - currentParameters.fromPage + 1;
+            int total = currentParameters.toPage - currentParameters.fromPage;
             int size = splitController.size(total, splitController.number);
-            return split(currentTask, source, currentParameters.fromPage, currentParameters.toPage, size);
+            return split(currentTask, source,
+                    currentParameters.fromPage + 1,
+                    currentParameters.toPage,
+                    size);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return 0;
@@ -168,8 +176,8 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 }
                 int start = list.get(i++);
                 int end = list.get(i++);
-                if (start < currentParameters.fromPage) {
-                    start = currentParameters.fromPage;
+                if (start < currentParameters.fromPage + 1) {
+                    start = currentParameters.fromPage + 1;
                 }
                 if (end > currentParameters.toPage) {
                     end = currentParameters.toPage;

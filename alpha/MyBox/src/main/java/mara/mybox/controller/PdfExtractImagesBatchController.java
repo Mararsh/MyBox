@@ -34,7 +34,7 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
     public int handleCurrentPage(FxTask currentTask) {
         int index = 0;
         try {
-            PDPage page = doc.getPage(currentParameters.currentPage - 1);  // 0-based
+            PDPage page = doc.getPage(pageIndex);  // 0-based
             PDResources pdResources = page.getResources();
             Iterable<COSName> iterable = pdResources.getXObjectNames();
             if (iterable != null) {
@@ -49,7 +49,7 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
                     }
                     PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
                     String namePrefix = FileNameTools.prefix(currentSourceFile().getName())
-                            + "_page" + currentParameters.currentPage + "_index" + index;
+                            + "_page" + (pageIndex + 1) + "_index" + index;
                     String suffix = pdxObject.getSuffix();
                     File tFile = makeTargetFile(namePrefix, "." + suffix, currentParameters.currentTargetPath);
                     if (ImageFileWriters.writeImageFile(currentTask, pdxObject.getImage(), suffix, tFile.getAbsolutePath())) {

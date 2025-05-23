@@ -81,13 +81,14 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
     public int handleCurrentPage(FxTask currentTask) {
         int len = 0;
         try {
-            stripper.setStartPage(currentParameters.currentPage);  // 1-based
-            stripper.setEndPage(currentParameters.currentPage);
+            int index = pageIndex + 1;// 1-based
+            stripper.setStartPage(index);
+            stripper.setEndPage(index);
             String text = stripper.getText(doc);
             if (text != null && !text.trim().isEmpty()) {
                 fileWriter.write(text);
                 if (separator != null) {
-                    String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
+                    String s = separator.replace("<Page Number>", index + " ");
                     s = s.replace("<Total Number>", doc.getNumberOfPages() + "");
                     fileWriter.write(s);
                     fileWriter.write(System.getProperty("line.separator"));

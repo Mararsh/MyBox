@@ -445,7 +445,14 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return;
         }
-        DataTreeQueryDescendantsController.open(this, node);
+        DataTreeQueryDescendantsController.open(this, node, false);
+    }
+
+    public void queryChildren(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        DataTreeQueryDescendantsController.open(this, node, true);
     }
 
     /*
@@ -519,6 +526,12 @@ public class BaseDataTreeController extends BaseFileController {
         menu = new MenuItem(message("Query") + " ...", StyleTools.getIconImageView("iconQuery.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             query();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("QueryChildren"), StyleTools.getIconImageView("iconQuery.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            queryChildren(node);
         });
         items.add(menu);
 

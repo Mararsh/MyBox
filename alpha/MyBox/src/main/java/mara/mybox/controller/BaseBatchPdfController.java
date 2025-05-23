@@ -24,7 +24,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
 
     protected ControlPdfsTable pdfsTableController;
     protected String password, currentTargetFile;
-    protected int fromPage, toPage, startPage;
+    protected int fromPage, toPage, startPage;  // 0-based, exclude end
     protected PDDocument doc;
 
     public BaseBatchPdfController() {
@@ -68,12 +68,11 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
             return false;
         }
         PdfInformation info = tableData.get(0);
-        int page = info.getFromPage();
+        pageIndex = info.getFromPage();
         previewParameters.password = info.getUserPassword();
-        previewParameters.fromPage = page;
-        previewParameters.toPage = page;
-        previewParameters.startPage = page;
-        previewParameters.currentPage = page;
+        previewParameters.fromPage = pageIndex;
+        previewParameters.toPage = pageIndex;
+        previewParameters.startPage = pageIndex;
         previewParameters.status = "start";
         currentParameters = previewParameters;
         isPreview = true;
@@ -90,17 +89,18 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
             if (!isPreview) {
                 PdfInformation info = currentPdf();
                 currentParameters.fromPage = info.getFromPage();
-                if (currentParameters.fromPage <= 0) {
-                    currentParameters.fromPage = 1;
+                if (currentParameters.fromPage < 0) {
+                    currentParameters.fromPage = 0;
                 }
                 currentParameters.toPage = info.getToPage();
                 currentParameters.password = info.getUserPassword();
-                currentParameters.startPage = currentParameters.fromPage;
-                currentParameters.currentPage = currentParameters.fromPage;
+                pageIndex = currentParameters.fromPage;
+                currentParameters.startPage = pageIndex;
             }
             try (PDDocument pd = Loader.loadPDF(srcFile, currentParameters.password)) {
                 doc = pd;
-                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                if (currentParameters.toPage <= 0
+                        || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
                 }
 
@@ -113,17 +113,17 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                     }
                 }
                 if (preHandlePages(currentTask)) {
-                    int total = currentParameters.toPage - currentParameters.fromPage + 1;
+                    int total = currentParameters.toPage - currentParameters.fromPage;
                     updateFileProgress(0, total);
-                    for (currentParameters.currentPage = currentParameters.startPage;
-                            currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
+                    for (pageIndex = currentParameters.startPage;
+                            pageIndex < currentParameters.toPage; pageIndex++) {
                         if (currentTask == null || currentTask.isCancelled()) {
                             break;
                         }
 
                         generated += handleCurrentPage(currentTask);
 
-                        updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
+                        updateFileProgress(pageIndex - currentParameters.fromPage + 1, total);
                     }
                 }
                 postHandlePages(currentTask);
@@ -132,7 +132,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                     doc = null;
                 }
             }
-            currentParameters.startPage = 1;
+            currentParameters.startPage = 0;
         } catch (InvalidPasswordException e) {
             return message("PasswordIncorrect");
         } catch (Exception e) {
@@ -141,7 +141,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
         }
         updateInterface("CompleteFile");
         showLogs(MessageFormat.format(message("HandlePagesGenerateNumber"),
-                currentParameters.currentPage - currentParameters.fromPage, generated));
+                pageIndex - currentParameters.fromPage, generated));
         return message("Successful");
     }
 

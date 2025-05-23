@@ -14,12 +14,10 @@ public class ProcessParameters implements Cloneable {
 
     public FileInformation currentSourceFile;
     public File currentTargetPath;
-    public int startIndex, currentIndex;
     public String status, targetPath, targetRootPath;
     public boolean targetSubDir, isBatch;
-    public int fromPage, toPage, startPage, acumFrom, acumStart, acumDigit;
+    public int fromPage, toPage, startPage; // 0-based, exclude end
     public String password;
-    public int currentPage;
 
     @Override
     public Object clone() throws CloneNotSupportedException {

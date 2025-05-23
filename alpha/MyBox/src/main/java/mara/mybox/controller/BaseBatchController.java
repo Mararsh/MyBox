@@ -51,6 +51,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected ObservableList<T> tableData;
     protected TableView<T> tableView;
     protected List<FileInformation> selectedFiles;
+    protected int fileIndex, pageIndex; // 0-based
     protected List<String> filesPassword;
     protected boolean sourceCheckSubdir, createDirectories, allowPaused, viewTargetPath;
     protected boolean isPreview, paused;
@@ -407,13 +408,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public boolean makeActualParameters() {
         if (paused && currentParameters != null) {
-            currentParameters.startIndex = currentParameters.currentIndex;
-            currentParameters.startPage = currentParameters.currentPage;
+            currentParameters.startPage = pageIndex;
             actualParameters = currentParameters;
             return true;
         }
         actualParameters = new ProcessParameters();
-        actualParameters.currentIndex = 0;
+        fileIndex = 0;
+        pageIndex = 0;
         targetPath = null;
 
         sourceCheckSubdir = UserConfig.getBoolean("FilesTableHandleSubdir", true);
@@ -458,13 +459,10 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
         createDirectories = UserConfig.getBoolean("FilesTableCreateSubdir", true);
 
-        actualParameters.fromPage = 1;
+        actualParameters.fromPage = 0;
         actualParameters.toPage = 0;
-        actualParameters.startPage = 1;
+        actualParameters.startPage = 0;
         actualParameters.password = "";
-        actualParameters.acumFrom = 1;
-        actualParameters.acumStart = 1;
-        actualParameters.acumDigit = 0;
 
         selectedFiles = new ArrayList<>();
         beforeTask();
@@ -577,22 +575,22 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     return false;
                 }
                 int len = selectedFiles.size();
-                updateTaskProgress(currentParameters.currentIndex, len);
-                for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
+                updateTaskProgress(fileIndex, len);
+                for (; fileIndex < len; fileIndex++) {
                     if (task == null || isCancelled()) {
                         break;
                     }
-                    currentParameters.currentSourceFile = selectedFiles.get(currentParameters.currentIndex);
+                    currentParameters.currentSourceFile = selectedFiles.get(fileIndex);
                     tableController.markFileHandling(currentParameters.currentSourceFile);
                     countHandling(currentParameters.currentSourceFile);
                     handleCurrentFile(this);
-                    updateTaskProgress(currentParameters.currentIndex + 1, len);
+                    updateTaskProgress(fileIndex + 1, len);
                     if (task == null || isCancelled() || isPreview) {
                         break;
                     }
                 }
                 afterHandleFiles(this);
-                updateTaskProgress(currentParameters.currentIndex, len);
+                updateTaskProgress(fileIndex, len);
                 return true;
             }
 

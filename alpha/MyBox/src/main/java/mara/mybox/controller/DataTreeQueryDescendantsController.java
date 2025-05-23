@@ -8,6 +8,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
@@ -39,11 +40,14 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
     protected DataNode node;
     protected PreparedStatement insert;
     protected TableData2D tableData2D;
+    protected boolean all;
 
+    @FXML
+    protected Tab nodeTab;
     @FXML
     protected Label nameLabel;
 
-    public void setParameters(BaseDataTreeController parent, DataNode inNode) {
+    public void setParameters(BaseDataTreeController parent, DataNode inNode, boolean onlyChildren) {
         try {
             if (parent == null || inNode == null) {
                 close();
@@ -55,8 +59,12 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
             node = inNode;
+            all = !onlyChildren;
 
-            baseTitle = nodeTable.getTreeName() + " - " + message("QueryDescendants");
+            String name = all ? message("QueryDescendants") : message("QueryChildren");
+            nodeTab.setText(name);
+
+            baseTitle = nodeTable.getTreeName() + " - " + name;
             setTitle(baseTitle);
 
             startAction();
@@ -108,7 +116,7 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
                     + nodeTable.getOrderColumns();
             insert = conn.prepareStatement(tableData2D.insertStatement());
             conn.setAutoCommit(false);
-            long count = writeDescedents(currentTask, conn, savedNode.getNodeid(), 0);
+            long count = writeDescedents(currentTask, conn, savedNode.getNodeid(), 0, all);
             if (count > 0) {
                 insert.executeBatch();
                 conn.commit();
@@ -133,7 +141,7 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
     }
 
     public long writeDescedents(FxTask currentTask, Connection conn,
-            long nodeid, long inCount) {
+            long nodeid, long inCount, boolean all) {
         if (inCount < 0) {
             return inCount;
         }
@@ -163,7 +171,9 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
                             showLogs(message("Inserted") + ": " + count);
                         }
                     }
-                    count = writeDescedents(currentTask, conn, childid, count);
+                    if (all) {
+                        count = writeDescedents(currentTask, conn, childid, count, all);
+                    }
                     if (count < 0) {
                         return count;
                     }
@@ -197,11 +207,12 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
     /*
         static
      */
-    public static DataTreeQueryDescendantsController open(BaseDataTreeController parent, DataNode inNode) {
+    public static DataTreeQueryDescendantsController open(BaseDataTreeController parent,
+            DataNode inNode, boolean onlyChildren) {
         try {
             DataTreeQueryDescendantsController controller = (DataTreeQueryDescendantsController) WindowTools
                     .openStage(Fxmls.DataTreeQueryDescendantsFxml);
-            controller.setParameters(parent, inNode);
+            controller.setParameters(parent, inNode, onlyChildren);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

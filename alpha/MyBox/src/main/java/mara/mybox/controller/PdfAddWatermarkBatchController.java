@@ -125,7 +125,7 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
 
     @Override
     public int handleCurrentPage(FxTask currentTask) {
-        pdPage = doc.getPage(currentParameters.currentPage - 1);  // 0-based
+        pdPage = doc.getPage(pageIndex - 1);  // 0-based
         try (PDPageContentStream cs = new PDPageContentStream(doc, pdPage,
                 PDPageContentStream.AppendMode.APPEND, true, true)) {
 
@@ -304,7 +304,7 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
             cs.setFont(numberFont, attributesController.numberSize);
             cs.setStrokingColor(attributesController.numberColor);
             cs.setNonStrokingColor(attributesController.numberColor);
-            String num = currentParameters.currentPage + " / " + totalPages;
+            String num = pageIndex + " / " + totalPages;
             cs.newLineAtOffset(pageWidth - PdfTools.DefaultMargin
                     - PdfTools.fontWidth(numberFont, num, attributesController.numberSize),
                     PdfTools.fontHeight(numberFont, attributesController.numberSize));
