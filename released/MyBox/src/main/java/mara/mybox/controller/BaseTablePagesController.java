@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.data.Pagination;
 import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.db.DerbyBase;
@@ -27,7 +26,7 @@ import static mara.mybox.value.Languages.message;
 public abstract class BaseTablePagesController<P> extends BaseTableViewController<P> {
 
     protected String tableName, idColumnName, queryConditions, orderColumns, queryConditionsString;
-    protected int editingIndex, viewingIndex;
+
     protected boolean dataSizeLoaded, loadInBackground;
 
     public BaseTablePagesController() {
@@ -92,7 +91,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
                         return false;
                     }
                     data = readPageData(this, conn);
-                    pagination.updatePageEnd(data.size());
+                    pagination.updatePageEnd(data != null ? data.size() : 0);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -125,15 +124,9 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         }
     }
 
+    @Override
     public void postLoadedTableData() {
-        isSettingValues = true;
-        tableView.refresh();
-        isSettingValues = false;
-        checkSelected();
-        editNull();
-        viewNull();
-        tableChanged(false);
-        notifyLoaded();
+        super.postLoadedTableData();
         if (!dataSizeLoaded) {
             loadDataSize();
         }
@@ -154,7 +147,9 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
-        paginationController.reset();
+        if (paginationController != null) {
+            paginationController.reset();
+        }
         dataSizeLoaded = true;
         tableChanged(changed);
         editNull();
@@ -173,199 +168,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     /*
         data
      */
-    public P newData() {
-        return null;
-    }
-
-    public int addRows(int index, int number) {
-        if (number < 1) {
-            return -1;
-        }
-        List<P> list = new ArrayList<>();
-        for (int i = 0; i < number; i++) {
-            list.add(newData());
-        }
-        return addRows(index, list);
-    }
-
-    public int addRows(int index, List<P> list) {
-        if (list == null || list.isEmpty()) {
-            return -1;
-        }
-        if (index < 0) {
-            index = tableData.size();
-        }
-        isSettingValues = true;
-        tableData.addAll(index, list);
-        tableView.scrollTo(index - 5);
-        isSettingValues = false;
-        tableChanged(true);
-        return list.size();
-    }
-
-    public P dataCopy(P data) {
-        return data;
-    }
-
-    public void copySelected() {
-        List<P> selected = selectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        P newData = null;
-        for (P data : selected) {
-            newData = dataCopy(data);
-            tableData.add(newData);
-        }
-        tableView.scrollTo(newData);
-        isSettingValues = false;
-        tableChanged(true);
-    }
-
-    public String cellString(int row, int col) {
-        try {
-            return tableView.getColumns().get(col).getCellData(row).toString();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<List<String>> dataList() {
-        try {
-            if (tableData.isEmpty()) {
-                return null;
-            }
-            int rowsSelectionColumnIndex = -1;
-            if (rowsSelectionColumn != null) {
-                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-            }
-            int colsNumber = tableView.getColumns().size();
-            List<List<String>> data = new ArrayList<>();
-            for (int r = 0; r < tableData.size(); r++) {
-                List<String> row = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    if (c == rowsSelectionColumnIndex) {
-                        continue;
-                    }
-                    String s = null;
-                    try {
-                        s = tableView.getColumns().get(c).getCellData(r).toString();
-                    } catch (Exception e) {
-                    }
-                    row.add(s);
-                }
-                data.add(row);
-            }
-            return data;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    @FXML
-    @Override
-    public void addAction() {
-        editNull();
-    }
-
-    @FXML
-    @Override
-    public void addRowsAction() {
-        TableAddRowsController.open(this);
-    }
-
-    @FXML
-    public void popAddMenu(MouseEvent mouseEvent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu = new MenuItem(message("AddInFront"));
-            menu.setOnAction((ActionEvent event) -> {
-                addRows(0, 1);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("AddInEnd"));
-            menu.setOnAction((ActionEvent event) -> {
-                addRows(-1, 1);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("AddBeforeSelected"));
-            menu.setOnAction((ActionEvent event) -> {
-                addRows(selectedIndix(), 1);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("AddAfterSelected"));
-            menu.setOnAction((ActionEvent event) -> {
-                addRows(selectedIndix() + 1, 1);
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            popEventMenu(mouseEvent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    @Override
-    public void editAction() {
-        edit(selectedIndix());
-    }
-
-    public void editNull() {
-        editingIndex = -1;
-    }
-
-    public void edit(int index) {
-        if (index < 0 || tableData == null || index >= tableData.size()) {
-            editNull();
-            return;
-        }
-        editingIndex = index;
-    }
-
-    @FXML
-    @Override
-    public void viewAction() {
-        view(selectedIndix());
-    }
-
-    public void viewNull() {
-        viewingIndex = -1;
-    }
-
-    public void view(int index) {
-        if (index < 0 || tableData == null || index >= tableData.size()) {
-            viewNull();
-            return;
-        }
-        viewingIndex = index;
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        copySelected();
-    }
-
-    @FXML
-    public void insertAction() {
-        addRows(selectedIndix(), 1);
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        edit(editingIndex);
-    }
-
     @FXML
     @Override
     public void deleteAction() {
@@ -456,30 +258,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
     protected void afterClear() {
         resetView(false);
-    }
-
-    @FXML
-    @Override
-    public void deleteRowsAction() {
-        List<P> selected = selectedItems();
-        if (selected == null || selected.isEmpty()) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        isSettingValues = true;
-        tableData.removeAll(selected);
-        isSettingValues = false;
-        tableChanged(true);
-    }
-
-    public void deleteAllRows() {
-        isSettingValues = true;
-        if (!PopTools.askSure(getTitle(), message("SureClearTable"))) {
-            return;
-        }
-        tableData.clear();
-        isSettingValues = false;
-        tableChanged(true);
     }
 
     @FXML

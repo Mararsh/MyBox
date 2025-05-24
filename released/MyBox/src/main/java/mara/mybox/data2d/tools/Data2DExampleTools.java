@@ -33,6 +33,7 @@ import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -281,7 +282,7 @@ public class Data2DExampleTools {
             chinaMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message(lang, "ChinaNationalBureauOfStatistics"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             menu.setOnAction((ActionEvent event) -> {
                 controller.browse("https://data.stats.gov.cn/");
             });
@@ -401,7 +402,7 @@ public class Data2DExampleTools {
             regressionMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message(lang, "AboutDataAnalysis"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             menu.setOnAction((ActionEvent event) -> {
                 controller.openHtml(HelpTools.aboutDataAnalysis());
             });

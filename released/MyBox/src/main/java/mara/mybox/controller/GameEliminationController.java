@@ -238,9 +238,12 @@ public class GameEliminationController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+    public boolean afterSceneLoaded() {
+        if (!super.afterSceneLoaded()) {
+            return false;
+        }
         loadChesses(true);
+        return true;
     }
 
     public void loadChesses(boolean resetGame) {
@@ -275,7 +278,7 @@ public class GameEliminationController extends BaseController {
                             }
                         }
                     }
-                    if (items.size() < minimumAdjacent) {
+                    if (items.size() <= minimumAdjacent) {
                         for (ImageItem pitem : predefinedItems) {
                             boolean existed = false;
                             for (ImageItem eitem : items) {
@@ -287,11 +290,10 @@ public class GameEliminationController extends BaseController {
                             if (!existed) {
                                 items.add(pitem);
                             }
-                            if (items.size() >= minimumAdjacent) {
+                            if (items.size() > minimumAdjacent) {
                                 break;
                             }
                         }
-                        items.addAll(predefinedItems.subList(4, 6));
                     }
                     return true;
                 } catch (Exception e) {

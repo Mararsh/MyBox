@@ -284,11 +284,11 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean hasPage() {
-        return isValidDefinition() && pageData != null;
+        return hasColumns() && pageData != null;
     }
 
     public boolean hasPageData() {
-        return isValidDefinition() && pageData != null && !pageData.isEmpty();
+        return hasColumns() && pageData != null && !pageData.isEmpty();
     }
 
     public boolean isPagesChanged() {
@@ -419,7 +419,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<String> columnNames() {
         try {
-            if (!isValidDefinition()) {
+            if (!hasColumns()) {
                 return null;
             }
             List<String> names = new ArrayList<>();
@@ -479,7 +479,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<Integer> columnIndices() {
         try {
-            if (!isValidDefinition()) {
+            if (!hasColumns()) {
                 return null;
             }
             List<Integer> indices = new ArrayList<>();
@@ -531,9 +531,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    @Override
-    public boolean isValidDefinition() {
-        return super.isValidDefinition() && columns != null && !columns.isEmpty();
+    public boolean hasColumns() {
+        return isValidDefinition() && columns != null && !columns.isEmpty();
     }
 
     public int newColumnIndex() {
@@ -597,7 +596,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public void resetStatistic() {
-        if (!isValidDefinition()) {
+        if (!hasColumns()) {
             return;
         }
         for (Data2DColumn column : columns) {
@@ -622,7 +621,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<String> placeholders(boolean allStatistic) {
         try {
-            if (!isValidDefinition()) {
+            if (!hasColumns()) {
                 return null;
             }
             List<String> list = new ArrayList<>();

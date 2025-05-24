@@ -54,6 +54,7 @@ public class DataTableWriter extends Data2DWriter {
             targetData = targetTable;
             validateValue = true;
             showInfo(message("Writing") + " " + targetTable.getName());
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -89,9 +90,15 @@ public class DataTableWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
-            if (conn == null || targetTable == null) {
+            if (conn == null || targetTable == null || insert == null) {
                 showInfo(message("Failed"));
+                status = Status.Failed;
+                return;
+            }
+            if (isFailed()) {
+                insert.close();
+                showInfo(message("Failed"));
+                status = Status.Failed;
                 return;
             }
             insert.executeBatch();
@@ -102,7 +109,7 @@ public class DataTableWriter extends Data2DWriter {
             targetData = targetTable;
             showInfo(message("Generated") + ": " + targetTable.getSheet() + "  "
                     + message("RowsNumber") + ": " + targetRowIndex);
-            created = true;
+            status = targetRowIndex == 0 ? Status.NoData : Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }

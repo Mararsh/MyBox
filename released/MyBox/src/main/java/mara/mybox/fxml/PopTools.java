@@ -76,6 +76,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.StringTools;
@@ -124,16 +125,8 @@ public class PopTools {
             }
         } else if (Desktop.isDesktopSupported()) {
             // https://stackoverflow.com/questions/23176624/javafx-freeze-on-desktop-openfile-desktop-browseuri?r=SearchResults
-            // interface are blocked after system explorer is opened. Happened again after javafx 17.0.2
-//            new Thread(() -> {
-//                try {
-//                    Desktop.getDesktop().browse(uri);
-//                } catch (Exception e) {
-//                    MyBoxLog.debug(e);
-//                }
-//            }).start();
             try {
-                Runtime.getRuntime().exec(new String[]{"explorer.exe", uri.toString()});
+                Desktop.getDesktop().browse(uri);
                 return;
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -283,7 +276,7 @@ public class PopTools {
             String baseName = controller.getBaseName();
 
             MenuItem menu = new MenuItem(message("HtmlStyle"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 
@@ -381,7 +374,7 @@ public class PopTools {
 
             String baseName = parent.getBaseName();
             MenuItem menu = new MenuItem(message("WindowStyle"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setStyle(attributeTextStyle());
             items.add(menu);
             items.add(new SeparatorMenuItem());
 

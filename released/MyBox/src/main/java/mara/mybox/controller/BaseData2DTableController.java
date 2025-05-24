@@ -19,7 +19,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import mara.mybox.data.Pagination;
@@ -189,7 +188,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         try {
             updateInterfaceStatus();
 
-            statusNotify.set(!statusNotify.get());
+            if (statusNotify != null) {
+                statusNotify.set(!statusNotify.get());
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -202,7 +203,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
             sourceFile = data2D != null ? data2D.getFile() : null;
             if (dataManufactureButton != null) {
-                dataManufactureButton.setDisable(!isValidData());
+                dataManufactureButton.setDisable(invalidData());
             }
 
             if (dataLabel != null) {
@@ -231,8 +232,12 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
     }
 
-    public boolean isValidData() {
-        return data2D != null && data2D.isValidDefinition();
+    public boolean invalidData() {
+        return data2D == null || !data2D.isValidDefinition();
+    }
+
+    public boolean hasColumns() {
+        return data2D != null && data2D.hasColumns();
     }
 
     public void notifySaved() {
@@ -276,7 +281,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 ? 2 : 1;
     }
 
-    public void makeColumns() {
+    public boolean makeColumns() {
         try {
             isSettingValues = true;
             tableData.clear();
@@ -287,10 +292,13 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             isSettingValues = false;
             widthChanged = false;
 
-            if (!isValidData()) {
-                return;
+            if (invalidData()) {
+                return false;
             }
             List<Data2DColumn> columns = data2D.getColumns();
+            if (columns == null) {
+                return true;
+            }
             TableColor tableColor = null;
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
@@ -390,15 +398,16 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                     }
                 });
             }
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        return isValidData();
+        return !invalidData();
     }
 
     @Override
@@ -426,7 +435,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public void loadDataSize() {
-        if (!isValidData() || data2D.isTmpData()) {
+        if (!hasColumns() || data2D.isTmpData()) {
             setLoaded();
             return;
         }
@@ -487,7 +496,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     protected void afterLoaded() {
-        if (!isValidData() || data2D.isTmpData()) {
+        if (invalidData() || data2D.isTmpData()) {
             setLoaded();
             return;
         }
@@ -524,7 +533,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public boolean isShowPagination() {
-        return isValidData() && dataSizeLoaded && !data2D.isTmpData();
+        return !invalidData() && dataSizeLoaded && !data2D.isTmpData();
     }
 
 
@@ -549,7 +558,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             if (this instanceof Data2DManufactureController) {
                 menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    ((Data2DManufactureController) this).definitonAction();
+                    ((Data2DManufactureController) this).definitionAction();
                 });
                 items.add(menu);
 
@@ -664,10 +673,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
      */
     public Data2D getData2D() {
         return data2D;
-    }
-
-    public TableView<List<String>> getTableView() {
-        return tableView;
     }
 
     public ObservableList<List<String>> getTableData() {

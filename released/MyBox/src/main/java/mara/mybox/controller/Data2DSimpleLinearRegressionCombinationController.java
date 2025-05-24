@@ -22,7 +22,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     protected SimpleLinearRegression simpleRegression;
 
     @FXML
-    protected ControlData2DSimpleLinearRegressionTable resultsController;
+    protected ControlData2DSimpleLinearRegressionTable tableController;
 
     public Data2DSimpleLinearRegressionCombinationController() {
         baseTitle = message("SimpleLinearRegressionCombination");
@@ -35,7 +35,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
         try {
             super.initOptions();
 
-            resultsController.setParameters(this);
+            tableController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -47,7 +47,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
         if (task != null) {
             task.cancel();
         }
-        resultsController.clear();
+        tableController.clear();
         taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
@@ -105,7 +105,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                             if (task == null || isCancelled()) {
                                 return;
                             }
-                            resultsController.addRow(row);
+                            tableController.addRow(row);
                         }
                     });
 
@@ -116,7 +116,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
             @Override
             protected void whenSucceeded() {
-                resultsController.afterRegression();
+                tableController.afterRegression();
                 rightPane.setDisable(false);
             }
 
@@ -137,7 +137,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     public static Data2DSimpleLinearRegressionCombinationController open(BaseData2DLoadController tableController) {
         try {
             Data2DSimpleLinearRegressionCombinationController controller
-                    = (Data2DSimpleLinearRegressionCombinationController) WindowTools.operationStage(
+                    = (Data2DSimpleLinearRegressionCombinationController) WindowTools.referredStage(
                             tableController, Fxmls.Data2DSimpleLinearRegressionCombinationFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

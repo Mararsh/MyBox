@@ -11,7 +11,6 @@ import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.db.DerbyBase;
@@ -148,7 +147,7 @@ public class DataTable extends Data2D {
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
-            if (dataID < 0 || sheet == null) {
+            if (conn == null || dataID < 0 || sheet == null) {
                 return false;
             }
             tableData2D.readDefinitionFromDB(conn, sheet);
@@ -461,29 +460,6 @@ public class DataTable extends Data2D {
             return -4;
         }
         return tableData2DDefinition.deleteUserTable(conn, name);
-    }
-
-    public boolean query(FxTask task, Data2DWriter writer,
-            String query, String rowNumberName) {
-        if (writer == null || query == null || query.isBlank()) {
-            return false;
-        }
-        if (task != null) {
-            task.setInfo(query);
-        }
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query);
-                ResultSet results = statement.executeQuery()) {
-            return Data2DTableTools.write(task, this, writer, results, rowNumberName,
-                    scale, InvalidAs.Empty);
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-            return false;
-        }
     }
 
     public Object mode(Connection conn, String colName) {

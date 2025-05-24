@@ -13,13 +13,14 @@ import mara.mybox.tools.GeographyCodeTools;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class GeographyCodeViewController extends BaseMapController {
+public class ControlGeographyCodeView extends BaseMapController {
 
-    protected GeographyCodeController treeController;
+    protected GeographyCodeController dataController;
+    protected DataNode viewNode;
 
     public void setPatrameters(GeographyCodeController controller) {
         try {
-            treeController = controller;
+            dataController = controller;
 
             initMap();
 
@@ -28,8 +29,8 @@ public class GeographyCodeViewController extends BaseMapController {
         }
     }
 
-    protected void loadNode(DataNode node) {
-        if (webEngine == null || !mapLoaded || node == null) {
+    protected void loadNode(long nodeid) {
+        if (webEngine == null || !mapLoaded || nodeid < 0) {
             return;
         }
         if (task != null) {
@@ -37,16 +38,16 @@ public class GeographyCodeViewController extends BaseMapController {
         }
         task = new FxSingletonTask<Void>(this) {
             GeographyCode geoCode;
-            DataNode savedNode;
+            DataNode node;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = treeController.nodeTable.query(conn, node.getNodeid());
-                    if (savedNode == null) {
+                    node = nodeTable.query(conn, nodeid);
+                    if (node == null) {
                         return false;
                     }
-                    geoCode = GeographyCodeTools.fromNode(savedNode);
+                    geoCode = GeographyCodeTools.fromNode(node);
                     if (isGaoDeMap()) {
                         geoCode = GeographyCodeTools.toGCJ02(geoCode);
                     } else {
@@ -62,9 +63,9 @@ public class GeographyCodeViewController extends BaseMapController {
             @Override
             protected void whenSucceeded() {
                 drawCode(geoCode);
-                treeController.currentNode = savedNode;
-                treeController.infoButton.setDisable(false);
-                treeController.editButton.setDisable(false);
+                dataController.infoButton.setDisable(false);
+                dataController.editButton.setDisable(false);
+                viewNode = node;
             }
 
             @Override
@@ -72,7 +73,7 @@ public class GeographyCodeViewController extends BaseMapController {
             }
 
         };
-        start(task, treeController.rightPane);
+        start(task, dataController.rightPane);
     }
 
 }

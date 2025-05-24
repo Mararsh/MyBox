@@ -142,7 +142,7 @@ public class ImageReduceColorsController extends BasePixelsController {
             return;
         }
         HtmlTableController controller
-                = (HtmlTableController) WindowTools.popStage(this, Fxmls.HtmlTableFxml);
+                = (HtmlTableController) WindowTools.topStage(this, Fxmls.HtmlTableFxml);
         controller.loadTable(quanTable);
     }
 
@@ -168,7 +168,7 @@ public class ImageReduceColorsController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.operationStage(
+            ImageReduceColorsController controller = (ImageReduceColorsController) WindowTools.referredStage(
                     parent, Fxmls.ImageReduceColorsFxml);
             controller.setParameters(parent);
             return controller;

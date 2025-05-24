@@ -19,8 +19,9 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.getBound;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.image.ImageViewTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -96,7 +97,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             }
             if (!info.isBlank()) {
                 menu = new MenuItem(info);
-                menu.setStyle("-fx-text-fill: #2e598a;");
+                menu.setStyle(attributeTextStyle());
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
             }

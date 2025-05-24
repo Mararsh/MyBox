@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -58,7 +59,7 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
     }
 
     @Override
-    public void itemClicked() {
+    public void clicked(Event event) {
         ImageClipboard clip = selectedItem();
         if (clip == null) {
             return;

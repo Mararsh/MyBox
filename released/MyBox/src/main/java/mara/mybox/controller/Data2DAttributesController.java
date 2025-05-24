@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
@@ -16,6 +17,7 @@ import javafx.scene.web.WebView;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.FileBackup;
+import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -36,6 +38,9 @@ public class Data2DAttributesController extends BaseChildController {
 
     protected Data2DManufactureController dataController;
     protected TableData2DDefinition tableData2DDefinition;
+    protected TableData2DColumn tableData2DColumn;
+    protected Data2D data2D;
+    protected ObservableList<List<String>> tableData;
     protected String dataName;
     protected short scale;
     protected int maxRandom;
@@ -115,7 +120,7 @@ public class Data2DAttributesController extends BaseChildController {
     public boolean isInvalid() {
         return dataController == null
                 || !dataController.isShowing()
-                || !dataController.isValidPageData();
+                || dataController.invalidData();
     }
 
     protected void setParameters(Data2DManufactureController controller) {
@@ -125,8 +130,6 @@ public class Data2DAttributesController extends BaseChildController {
                 close();
                 return;
             }
-            tableData2DDefinition = dataController.tableData2DDefinition;
-
             loadValues();
 
             dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
@@ -147,18 +150,29 @@ public class Data2DAttributesController extends BaseChildController {
                 close();
                 return;
             }
-            Data2D data2D = dataController.data2D;
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
+            tableData = dataController.tableData;
+            data2D = dataController.data2D.cloneAll();
             columnsController.setParameters(this);
 
             isSettingValues = true;
-            idInput.setText(data2D.getDataID() >= 0 ? data2D.getDataID() + "" : message("NewData"));
-            timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
-            dataTypeInput.setText(data2D.getTypeName());
+            if (idInput != null) {
+                idInput.setText(data2D.getDataID() >= 0 ? data2D.getDataID() + "" : message("NewData"));
+            }
+            if (timeInput != null) {
+                timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
+            }
+            if (dataTypeInput != null) {
+                dataTypeInput.setText(data2D.getTypeName());
+            }
             dataNameInput.setText(data2D.getDataName());
             scaleSelector.setValue(data2D.getScale() + "");
             randomSelector.setValue(data2D.getMaxRandom() + "");
             descInput.setText(data2D.getComments());
-            webView.getEngine().loadContent(HtmlWriteTools.table(data2D.pageInfo()));
+            if (webView != null) {
+                webView.getEngine().loadContent(HtmlWriteTools.table(data2D.pageInfo()));
+            }
             attributesChanged(false);
             columnsChanged(false);
             isSettingValues = false;
@@ -192,7 +206,7 @@ public class Data2DAttributesController extends BaseChildController {
         } else {
             columnsTab.setText(message("Columns"));
         }
-        String title = baseTitle + " - " + dataController.data2D.displayName();
+        String title = baseTitle + " - " + data2D.displayName();
         if (columnsChanged || attributesChanged) {
             title += " *";
         }
@@ -241,7 +255,6 @@ public class Data2DAttributesController extends BaseChildController {
             return null;
         }
 
-        Data2D data2D = dataController.data2D.cloneAll();
         data2D.setDataName(dataName);
         data2D.setScale(scale);
         data2D.setMaxRandom(maxRandom);
@@ -258,7 +271,7 @@ public class Data2DAttributesController extends BaseChildController {
         if (attributes == null) {
             return;
         }
-        if (attributes.isMutiplePages()) {
+        if (dataController.data2D != null && attributes.isMutiplePages()) {
             handleMutiplePages(attributes);
         } else {
             handlePage(attributes);
@@ -267,7 +280,7 @@ public class Data2DAttributesController extends BaseChildController {
 
     public void handlePage(Data2D attributes) {
         List<List<String>> pageData = new ArrayList<>();
-        for (List<String> rowValues : dataController.tableData) {
+        for (List<String> rowValues : tableData) {
             List<String> newRow = new ArrayList<>();
             newRow.add(rowValues.get(0));
             for (Data2DColumn column : attributes.getColumns()) {
@@ -284,7 +297,11 @@ public class Data2DAttributesController extends BaseChildController {
         for (Data2DColumn column : attributes.getColumns()) {
             column.setIndex(colIndex++);
         }
-        dataController.data2D.cloneData(attributes);
+        if (dataController.data2D == null) {
+            dataController.data2D = attributes;
+        } else {
+            dataController.data2D.cloneData(attributes);
+        }
         dataController.makeColumns();
         dataController.updateTable(pageData);
         dataController.tableChanged(true);
@@ -366,7 +383,7 @@ public class Data2DAttributesController extends BaseChildController {
     /*
         static
      */
-    public static Data2DAttributesController open(Data2DManufactureController tableController) {
+    public static Data2DAttributesController edit(Data2DManufactureController tableController) {
         try {
             Data2DAttributesController controller = (Data2DAttributesController) WindowTools.childStage(
                     tableController, Fxmls.Data2DAttributesFxml);

@@ -592,7 +592,7 @@ public class MapOptionsController extends BaseController {
                 return null;
             }
             MapOptionsController controller = (MapOptionsController) mapController
-                    .branchStage(Fxmls.MapOptionsFxml);
+                    .referredTopStage(Fxmls.MapOptionsFxml);
             controller.requestMouse();
             controller.setParameters(mapController);
             return controller;

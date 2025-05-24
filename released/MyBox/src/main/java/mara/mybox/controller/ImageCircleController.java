@@ -67,7 +67,7 @@ public class ImageCircleController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageCircleController controller = (ImageCircleController) WindowTools.operationStage(
+            ImageCircleController controller = (ImageCircleController) WindowTools.referredStage(
                     parent, Fxmls.ImageCircleFxml);
             controller.setParameters(parent);
             return controller;

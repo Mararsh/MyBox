@@ -519,7 +519,6 @@ public class GameMineController extends BaseWebViewController {
     }
 
     protected void displayChess(int v, int h, ChessStatus status, int value) {
-        MyBoxLog.console(status + "   " + value);
         AnchorPane apane = chessBoard[v][h];
         apane.getChildren().clear();
         Rectangle rect = new Rectangle();

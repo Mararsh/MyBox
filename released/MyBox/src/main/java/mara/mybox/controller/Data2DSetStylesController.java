@@ -129,7 +129,7 @@ public class Data2DSetStylesController extends BaseController {
             getMyStage().setTitle(baseTitle + " - " + tableController.data2D.displayName());
 
             listController.sourceChanged();
-            filterController.setData2D(tableController.data2D.cloneAll().setController(this));
+            filterController.updateData(tableController.data2D.cloneAll().setController(this));
 
             columnsPane.getChildren().clear();
             for (Data2DColumn column : tableController.data2D.getColumns()) {
@@ -412,7 +412,7 @@ public class Data2DSetStylesController extends BaseController {
      */
     public static Data2DSetStylesController open(BaseData2DLoadController tableController) {
         try {
-            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.operationStage(
+            Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DSetStylesFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

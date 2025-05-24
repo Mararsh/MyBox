@@ -26,9 +26,13 @@ public class TableNodeJEXL extends BaseNodeTable {
 
     public final TableNodeJEXL defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("script", ColumnType.Clob));
-        addColumn(new ColumnDefinition("context", ColumnType.Clob));
-        addColumn(new ColumnDefinition("parameters", ColumnType.String).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("script", ColumnType.Clob)
+                .setLabel(message("JexlScript")));
+        addColumn(new ColumnDefinition("context", ColumnType.Clob)
+                .setLabel(message("JexlContext")));
+        addColumn(new ColumnDefinition("parameters", ColumnType.String)
+                .setLength(FilenameMaxLength)
+                .setLabel(message("JexlParamters")));
         return this;
     }
 
@@ -39,22 +43,6 @@ public class TableNodeJEXL extends BaseNodeTable {
         }
         String script = node.getStringValue("script");
         return script != null && !script.isBlank();
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "script":
-                return message("JexlScript");
-            case "context":
-                return message("JexlContext");
-            case "parameters":
-                return message("JexlParamters");
-        }
-        return super.label(name);
     }
 
 }

@@ -35,6 +35,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -279,7 +280,7 @@ public class ControlColorsPane extends BaseController {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(colorData.title()));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         Rectangle dis = new Rectangle(rectSize, rectSize);
         dis.setFill(colorData.getColor());
         dis.setStroke(Color.BLACK);

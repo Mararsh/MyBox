@@ -381,7 +381,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         return false;
     }
 
@@ -496,6 +496,9 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             LoadingController controller = (LoadingController) WindowTools.popupStage(
                     myController, Fxmls.LoadingFxml);
+            if (controller == null) {
+                return null;
+            }
             controller.init(task);
             if (info != null) {
                 controller.setInfo(info);
@@ -782,7 +785,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         items.addAll(menuItems);
 
         MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-//        menu.setStyle("-fx-text-fill: #2e598a;");
+//        menu.setStyle(attributeTextStyle());
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();

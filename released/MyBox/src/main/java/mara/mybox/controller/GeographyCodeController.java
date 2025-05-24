@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -14,18 +17,15 @@ import static mara.mybox.value.Languages.message;
 public class GeographyCodeController extends DataTreeController {
 
     @FXML
-    protected GeographyCodeViewController mapController;
+    protected ControlGeographyCodeView mapController;
 
     public GeographyCodeController() {
         baseTitle = message("GeographyCode");
     }
 
-    @Override
-    public void initControls() {
+    public void initCodes(boolean checkEmpty) {
         try {
-            super.initControls();
-
-            initDataTree(new TableNodeGeographyCode(), null);
+            initDataTree(new TableNodeGeographyCode(), null, checkEmpty);
 
             mapController.setPatrameters(this);
 
@@ -34,30 +34,52 @@ public class GeographyCodeController extends DataTreeController {
         }
     }
 
-    @Override
-    public void loadCurrent(DataNode node) {
-        nullCurrent();
-        if (node == null) {
-            return;
+    public void autoTesting() {
+        try {
+            testing = true;
+            myStage.setIconified(true);
+            AppVariables.autoTestingController.sceneLoaded();
+
+            nodeTable = new TableNodeGeographyCode();
+            nodeTable.clearData();
+
+            initDataTree(nodeTable, null, false);
+            mapController.setPatrameters(this);
+
+            importExamples(null);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        mapController.loadNode(node);
     }
 
-    @Override
-    protected void nullCurrent() {
-        currentNode = null;
+    protected void nullView() {
+        mapController.viewNode = null;
         infoButton.setDisable(true);
         editButton.setDisable(true);
         mapController.clearMap();
     }
 
+    @Override
+    public void viewNode(DataNode node) {
+        nullView();
+        if (node == null) {
+            return;
+        }
+        mapController.loadNode(node.getNodeid());
+    }
+
+    @Override
+    public void showNode(DataNode node) {
+        viewNode(node);
+    }
+
     @FXML
     @Override
     public boolean infoAction() {
-        if (currentNode == null) {
+        if (mapController.viewNode == null) {
             return false;
         }
-        popNode(currentNode);
+        popNode(mapController.viewNode);
         return true;
     }
 
@@ -78,6 +100,11 @@ public class GeographyCodeController extends DataTreeController {
         mapController.optionsAction();
     }
 
+    @FXML
+    public void editAction() {
+        editNode(mapController.viewNode);
+    }
+
     @Override
     public void cleanPane() {
         try {
@@ -85,6 +112,38 @@ public class GeographyCodeController extends DataTreeController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static methods
+     */
+    public static GeographyCodeController open() {
+        try {
+            GeographyCodeController controller
+                    = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static GeographyCodeController open(BaseController pController, boolean replaceScene, boolean checkEmpty) {
+        try {
+            GeographyCodeController controller;
+            if ((replaceScene || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
+                controller = (GeographyCodeController) pController.loadScene(Fxmls.GeographyCodeFxml);
+            } else {
+                controller = open();
+            }
+            controller.initCodes(checkEmpty);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

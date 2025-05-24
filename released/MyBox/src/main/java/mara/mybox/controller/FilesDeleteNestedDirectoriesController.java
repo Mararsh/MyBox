@@ -1,10 +1,10 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Languages;
 
@@ -49,15 +49,13 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
     @Override
     public void handleCurrentFile(FxTask currentTask) {
         try {
-            tableController.markFileHandling(currentParameters.currentIndex);
-            currentParameters.currentSourceFile = getCurrentFile();
-            countHandling(currentParameters.currentSourceFile);
             String result;
-            if (!currentParameters.currentSourceFile.exists()) {
+            File file = currentSourceFile();
+            if (!file.exists()) {
                 result = Languages.message("NotFound");
-            } else if (currentParameters.currentSourceFile.isDirectory()) {
-                FileDeleteTools.deleteNestedDir(currentTask, currentParameters.currentSourceFile);
-                if (currentParameters.currentSourceFile.exists()) {
+            } else if (file.isDirectory()) {
+                FileDeleteTools.deleteNestedDir(currentTask, file);
+                if (file.exists()) {
                     result = Languages.message("Failed");
                 } else {
                     result = Languages.message("DeletedSuccessfully");
@@ -69,7 +67,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
                 updateLogs(result);
             }
             totalItemsHandled++;
-            tableController.markFileHandled(currentParameters.currentIndex, result);
+            tableController.markFileHandled(currentParameters.currentSourceFile, result);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -77,11 +75,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
 
     @Override
     public void afterTask(boolean ok) {
-        tableView.refresh();
-
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
+        super.afterTask(ok);
         popInformation(Languages.message("CompleteFile"));
     }
 

@@ -136,7 +136,7 @@ public class MenuImageViewController extends MenuImageBaseController {
                         }
                     }
                 }
-                MenuImageViewController menu = (MenuImageViewController) WindowTools.branchStage(
+                MenuImageViewController menu = (MenuImageViewController) WindowTools.referredTopStage(
                         controller, Fxmls.MenuImageViewFxml);
                 menu.setParameters(controller, x, y);
                 return menu;

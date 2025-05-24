@@ -363,8 +363,8 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
     @Override
     public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
-            String filePassword = rowInfo.getUserPassword();
+            PdfInformation pdfInfo = currentPdf();
+            String filePassword = pdfInfo.getUserPassword();
             File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(srcFile, tmpFile);
             if (currentTask == null || !currentTask.isWorking()) {

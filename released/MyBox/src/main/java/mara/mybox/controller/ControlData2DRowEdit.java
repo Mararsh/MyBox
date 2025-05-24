@@ -61,24 +61,32 @@ public class ControlData2DRowEdit extends BaseController {
     @FXML
     protected Button locationButton;
 
-    public void setParameters(BaseData2DLoadController editController) {
+    public void addRow(BaseData2DLoadController controller, List<String> row) {
         try {
-            this.editController = editController;
+            editController = controller;
             rowIndex = -1;
 
             makeInputs();
+            if (row != null) {
+                List<String> copy = new ArrayList<>();
+                copy.add(null);
+                copy.addAll(row.subList(1, row.size()));
+                loadRow(editController.data2D.getColumns(), copy);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void setParameters(BaseData2DLoadController editController, int index) {
+    public void editRow(BaseData2DLoadController editController, int index) {
         try {
             this.editController = editController;
             rowIndex = index;
 
             makeInputs();
-            loadRow(index);
+            loadRow(editController.data2D.getColumns(),
+                    editController.tableData.get(index));
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -324,15 +332,12 @@ public class ControlData2DRowEdit extends BaseController {
         }
     }
 
-    public void loadRow(int index) {
+    public void loadRow(List<Data2DColumn> columns, List<String> row) {
         try {
-            List<String> row = editController.tableData.get(index);
-            if (row == null) {
+            if (columns == null || row == null) {
                 return;
             }
-            rowIndex = index;
             indexInput.setText(row.get(0));
-            List<Data2DColumn> columns = editController.data2D.getColumns();
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);
                 Object input = inputs.get(column);

@@ -92,6 +92,7 @@ public class DataFileExcelWriter extends Data2DWriter {
                     cell.setCellStyle(horizontalCenter);
                 }
             }
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -118,8 +119,9 @@ public class DataFileExcelWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
             if (xssfBook == null || xssfSheet == null || tmpFile == null) {
+                showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             for (int i = 0; i < headerNames.size(); i++) {
@@ -130,14 +132,27 @@ public class DataFileExcelWriter extends Data2DWriter {
             }
             xssfBook.close();
             xssfBook = null;
-            if (isFailed() || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, printFile, true)) {
+            if (isFailed() || !tmpFile.exists()) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
+                return;
+            }
+            if (targetRowIndex == 0) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("NoData") + ": " + printFile);
+                status = Status.NoData;
+                return;
+            }
+            if (!FileTools.override(tmpFile, printFile, true)) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (printFile == null || !printFile.exists()) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.Excel);
@@ -154,7 +169,7 @@ public class DataFileExcelWriter extends Data2DWriter {
                         .setRowsNumber(targetRowIndex);
                 Data2D.saveAttributes(conn(), targetData, columns);
             }
-            created = true;
+            status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }

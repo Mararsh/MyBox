@@ -11,6 +11,7 @@ import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -884,13 +885,13 @@ public class ImageAnalyseController extends BaseController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == imageTab) {
-            imageController.menuAction();
+            imageController.menuAction(event);
             return true;
         }
-        return super.menuAction();
+        return super.menuAction(event);
     }
 
     @FXML

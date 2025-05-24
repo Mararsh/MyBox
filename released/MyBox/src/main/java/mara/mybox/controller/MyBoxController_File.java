@@ -103,7 +103,7 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
             loadScene(Fxmls.FilesDeleteNestedDirFxml);
         });
 
-        Menu fileDeleteMenu = new Menu(Languages.message("FilesDelete"));
+        Menu fileDeleteMenu = new Menu(Languages.message("Delete"));
         fileDeleteMenu.getItems().addAll(
                 DeleteJavaTemporaryPathFiles, DeleteEmptyDirectories, filesDelete, DeleteNestedDirectories
         );

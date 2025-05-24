@@ -10,13 +10,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import mara.mybox.image.data.ImageAttributes;
-import mara.mybox.image.tools.ScaleTools;
+import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.data.ImageAttributes;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -125,8 +126,8 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
             @Override
             protected boolean handle() {
                 try {
-                    List<File> sources = pickSourceFiles(true, false);
-                    File demoFile = sources.get(0);
+                    List<FileInformation> sources = pickSourceFiles(true, false);
+                    File demoFile = sources.get(0).getFile();
                     BufferedImage demoImage = ImageFileReaders.readImage(this, demoFile);
                     if (demoTask == null || !demoTask.isWorking()) {
                         return false;

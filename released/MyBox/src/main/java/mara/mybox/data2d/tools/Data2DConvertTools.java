@@ -50,8 +50,20 @@ public class Data2DConvertTools {
         if (type == null) {
             return null;
         }
-        return FileTmpTools.generateFile(prefix,
-                type == Data2D_Attributes.TargetType.Excel ? "xlsx" : type.name().toLowerCase());
+        String ext;
+        switch (type) {
+            case Excel:
+                ext = "xlsx";
+                break;
+            case Text:
+            case Matrix:
+                ext = "txt";
+                break;
+            default:
+                ext = type.name().toLowerCase();
+                break;
+        }
+        return FileTmpTools.generateFile(prefix, ext);
     }
 
     public static DataFileText toText(FxTask task, DataFileCSV csvData, String targetName, File targetFile) {

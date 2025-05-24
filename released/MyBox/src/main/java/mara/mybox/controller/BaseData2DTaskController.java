@@ -39,7 +39,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DTaskController extends BaseOperationController {
+public abstract class BaseData2DTaskController extends BaseFileController {
 
     protected BaseData2DLoadController dataController;
     protected Data2D data2D;
@@ -171,7 +171,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             }
             sourceController.dataChanged(data2D);
 
-            filterController.setData2D(data2D);
+            filterController.updateData(data2D);
 
             makeSortList();
             isSettingValues = true;
@@ -336,7 +336,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             if (isSettingValues) {
                 return true;
             }
-            if (data2D == null || !data2D.isValidDefinition()) {
+            if (data2D == null || !data2D.hasColumns()) {
                 popError(message("NoData"));
                 return false;
             }
@@ -421,7 +421,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             if (sortController == null) {
                 return;
             }
-            if (!data2D.isValidDefinition()) {
+            if (!data2D.hasColumns()) {
                 sortController.loadNames(null);
                 return;
             }
@@ -886,7 +886,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
             sourceController.selectedRadio.setSelected(true);
         }
         filterController.load(controller.filterController.scriptInput.getText(),
-                controller.filterController.trueRadio.isSelected());
+                !controller.filterController.excluded());
         filterController.maxInput.setText(controller.filterController.maxInput.getText());
         scaleSelector.getSelectionModel().select(controller.scale + "");
     }
@@ -907,6 +907,7 @@ public abstract class BaseData2DTaskController extends BaseOperationController {
                 tableLoadListener = null;
                 dataController.statusNotify.removeListener(tableStatusListener);
                 tableStatusListener = null;
+                dataController.setIconified(false);
             }
             dataController = null;
             data2D = null;

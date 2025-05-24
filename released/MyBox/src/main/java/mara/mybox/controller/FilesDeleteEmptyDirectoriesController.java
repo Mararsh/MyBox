@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
@@ -44,15 +45,13 @@ public class FilesDeleteEmptyDirectoriesController extends BaseBatchFileControll
     @Override
     public void handleCurrentFile(FxTask currentTask) {
         try {
-            tableController.markFileHandling(currentParameters.currentIndex);
-            currentParameters.currentSourceFile = getCurrentFile();
-            countHandling(currentParameters.currentSourceFile);
             String result;
-            if (!currentParameters.currentSourceFile.exists()) {
+            File file = currentSourceFile();
+            if (!file.exists()) {
                 result = Languages.message("NotFound");
-            } else if (currentParameters.currentSourceFile.isDirectory()) {
+            } else if (file.isDirectory()) {
                 int count = FileDeleteTools.deleteEmptyDir(currentTask,
-                        currentParameters.currentSourceFile, trashRadio.isSelected());
+                        file, trashRadio.isSelected());
                 result = MessageFormat.format(Languages.message("DeleteEmptyDirectoriesCount"), count);
                 totalDeleted += count;
             } else {
@@ -62,7 +61,7 @@ public class FilesDeleteEmptyDirectoriesController extends BaseBatchFileControll
                 updateLogs(result);
             }
             totalItemsHandled++;
-            tableController.markFileHandled(currentParameters.currentIndex, result);
+            tableController.markFileHandled(currentParameters.currentSourceFile, result);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

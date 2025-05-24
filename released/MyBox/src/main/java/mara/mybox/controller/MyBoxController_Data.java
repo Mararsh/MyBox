@@ -104,7 +104,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem GeographyCode = new MenuItem(message("GeographyCode"));
         GeographyCode.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.GeographyCodeFxml);
+            GeographyCodeController.open(this, true, true);
         });
 
         MenuItem LocationInMap = new MenuItem(message("LocationInMap"));

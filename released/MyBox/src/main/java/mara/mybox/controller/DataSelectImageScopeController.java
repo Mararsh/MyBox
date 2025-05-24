@@ -27,14 +27,8 @@ public class DataSelectImageScopeController extends BaseDataSelectController {
                 return;
             }
             pixelsController = controller;
-            nodeTable = new TableNodeImageScope();
-            dataName = nodeTable.getDataName();
-            baseName = baseName + "_" + dataName;
 
-            baseTitle = nodeTable.getTreeName() + " - " + message("SelectNode");
-            setTitle(baseTitle);
-
-            loadTree();
+            initDataTree(new TableNodeImageScope(), null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -44,7 +38,7 @@ public class DataSelectImageScopeController extends BaseDataSelectController {
     @FXML
     @Override
     public void okAction() {
-        DataNode node = selectedValue();
+        DataNode node = selectedNode();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;

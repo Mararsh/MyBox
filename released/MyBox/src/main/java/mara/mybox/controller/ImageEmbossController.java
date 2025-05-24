@@ -84,7 +84,7 @@ public class ImageEmbossController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageEmbossController controller = (ImageEmbossController) WindowTools.operationStage(
+            ImageEmbossController controller = (ImageEmbossController) WindowTools.referredStage(
                     parent, Fxmls.ImageEmbossFxml);
             controller.setParameters(parent);
             return controller;

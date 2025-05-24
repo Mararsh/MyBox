@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -87,7 +88,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
     }
 
     @Override
-    public void itemClicked() {
+    public void clicked(Event event) {
         editAction();
     }
 

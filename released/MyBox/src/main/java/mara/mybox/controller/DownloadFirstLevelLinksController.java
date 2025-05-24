@@ -80,7 +80,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-11
  * @License Apache License Version 2.0
  */
-public class DownloadFirstLevelLinksController extends BaseTablePagesController<Link> {
+public class DownloadFirstLevelLinksController extends BaseTableViewController<Link> {
 
     protected final ObservableList<Link> downloadingData, failedData;
     protected int maxThreadsNumber, maxLogs, maxRetries;
@@ -451,15 +451,18 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (!super.afterSceneLoaded()) {
+                return false;
+            }
             if (targetPathInputController.pickFile() == null) {
                 tabPane.getSelectionModel().select(optionsTab);
             }
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -822,7 +825,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void doubleClicked(Event event) {
         openLink();
     }
 

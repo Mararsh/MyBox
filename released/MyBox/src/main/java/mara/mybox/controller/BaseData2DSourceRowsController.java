@@ -43,11 +43,24 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     protected ControlData2DRowFilter filterController;
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            refreshTitle = false;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
 
             NodeStyleTools.setTooltip(selectedRadio, new Tooltip(message("SelectRowsComments")));
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -127,7 +140,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             data.addAll(dataController.tableData);
             makeColumns();
             updateTable(data);
-            postLoadedTableData();
             refreshControls();
             if (data2D.getFile() != null) {
                 recordFileOpened(data2D.getFile());
@@ -200,7 +212,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     // If none selected then select all
     public boolean checkedRows() {
         try {
-            MyBoxLog.console(data2D != null);
             if (data2D == null) {
                 return false;
             }
@@ -259,7 +270,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     }
 
     public boolean hasData() {
-        return data2D != null && data2D.isValidDefinition() && !tableData.isEmpty();
+        return data2D != null && data2D.hasColumns() && !tableData.isEmpty();
     }
 
     /*

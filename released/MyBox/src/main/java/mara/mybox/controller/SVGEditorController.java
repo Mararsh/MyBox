@@ -21,6 +21,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
@@ -192,7 +193,7 @@ public class SvgEditorController extends XmlEditorController {
             items.add(new SeparatorMenuItem());
 
             MenuItem menuItem = new MenuItem("http://dev.w3.org/SVG/tools/svgweb/samples/svg-files/");
-            menuItem.setStyle("-fx-text-fill: #2e598a;");
+            menuItem.setStyle(attributeTextStyle());
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -222,7 +223,7 @@ public class SvgEditorController extends XmlEditorController {
             items.add(new SeparatorMenuItem());
 
             menuItem = new MenuItem("https://github.com/apache/xmlgraphics-batik/tree/main/samples");
-            menuItem.setStyle("-fx-text-fill: #2e598a;");
+            menuItem.setStyle(attributeTextStyle());
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {

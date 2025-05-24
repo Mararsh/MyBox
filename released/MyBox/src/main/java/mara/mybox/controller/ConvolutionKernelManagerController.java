@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -48,7 +49,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ConvolutionKernelManagerController extends BaseTablePagesController<ConvolutionKernel> {
+public class ConvolutionKernelManagerController extends BaseTableViewController<ConvolutionKernel> {
 
     private int width, height, type, edge_Op;
     private boolean matrixValid;
@@ -147,7 +148,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
     }
 
     @Override
-    public void itemClicked() {
+    public void clicked(Event event) {
         editAction();
     }
 

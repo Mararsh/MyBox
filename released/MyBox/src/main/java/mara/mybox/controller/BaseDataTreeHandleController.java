@@ -12,19 +12,19 @@ import mara.mybox.fxml.WindowTools;
  */
 public abstract class BaseDataTreeHandleController extends BaseTaskController {
 
-    protected BaseDataTreeViewController treeController;
+    protected BaseDataTreeController dataController;
     protected BaseNodeTable nodeTable;
     protected String dataName, chainName;
 
-    public void setParameters(BaseDataTreeViewController parent) {
+    public void setParameters(BaseDataTreeController parent) {
         try {
             if (parent == null) {
                 close();
                 return;
             }
-            treeController = parent;
+            dataController = parent;
             parentController = parent;
-            nodeTable = treeController.nodeTable;
+            nodeTable = dataController.nodeTable;
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
 
@@ -33,8 +33,8 @@ public abstract class BaseDataTreeHandleController extends BaseTaskController {
         }
     }
 
-    public boolean treeRunning() {
-        return WindowTools.isRunning(treeController);
+    public boolean dataRunning() {
+        return WindowTools.isRunning(dataController);
     }
 
     public boolean parentRunning() {

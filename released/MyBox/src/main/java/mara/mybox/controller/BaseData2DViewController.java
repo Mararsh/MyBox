@@ -295,7 +295,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadHtml(boolean pop) {
-        if (data2D == null || !data2D.isValidDefinition()) {
+        if (invalidData()) {
             if (pop) {
                 popError(message("NoData"));
             } else {
@@ -316,7 +316,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                         UserConfig.getBoolean(baseName + "HtmlShowColumns", true),
                         UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true),
                         UserConfig.getBoolean(baseName + "HtmlShowTitle", true));
-                return html != null;
+                return true;
             }
 
             @Override
@@ -330,7 +330,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             @Override
             protected void whenSucceeded() {
                 if (pop) {
-                    HtmlPopController.openHtml(myController, html);
+                    if (html == null) {
+                        popInformation(message("NoData"));
+                    } else {
+                        HtmlPopController.openHtml(myController, html);
+                    }
                 } else {
                     webViewController.loadContent(html);
                 }
@@ -449,11 +453,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         data
      */
     @Override
-    public void makeColumns() {
+    public boolean makeColumns() {
         if (tableRadio != null && !tableRadio.isSelected()) {
-            return;
+            return true;
         }
-        super.makeColumns();
+        return super.makeColumns();
     }
 
     @Override
@@ -470,7 +474,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     public void saveWidths() {
         try {
             if (data2D == null || !dataSizeLoaded
-                    || !isValidPageData() || !widthChanged) {
+                    || invalidData() || !widthChanged) {
                 return;
             }
             data2D.saveAttributes();
@@ -525,7 +529,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         try {
             closePopup();
             if (data2D == null) {
@@ -537,7 +541,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 return true;
 
             } else if (tableRadio.isSelected()) {
-                popTableMenu();
+                popTableMenu(event);
                 return true;
 
             } else if (textsRadio.isSelected()) {
@@ -769,6 +773,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
+
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"),

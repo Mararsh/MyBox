@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -14,16 +15,16 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.tools.CombineTools;
-import mara.mybox.image.data.ImageCombine;
-import mara.mybox.image.data.ImageCombine.ArrayType;
-import mara.mybox.image.data.ImageCombine.CombineSizeType;
-import mara.mybox.image.data.ImageInformation;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.image.data.ImageCombine;
+import mara.mybox.image.data.ImageCombine.ArrayType;
+import mara.mybox.image.data.ImageCombine.CombineSizeType;
+import mara.mybox.image.data.ImageInformation;
+import mara.mybox.image.tools.CombineTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -507,15 +508,15 @@ public class ImagesSpliceController extends BaseController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         if (viewBox.isFocused() || viewBox.isFocusWithin()) {
-            viewController.menuAction();
+            viewController.menuAction(event);
             return true;
         } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
-            tableController.menuAction();
+            tableController.menuAction(event);
             return true;
         }
-        return super.menuAction();
+        return super.menuAction(event);
     }
 
     @FXML

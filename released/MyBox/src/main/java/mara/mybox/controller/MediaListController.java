@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextInputDialog;
@@ -21,7 +22,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class MediaListController extends BaseTablePagesController<MediaList> {
+public class MediaListController extends BaseTableViewController<MediaList> {
 
     protected MediaPlayerController playerController;
 
@@ -62,7 +63,7 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void doubleClicked(Event event) {
         playAction();
     }
 

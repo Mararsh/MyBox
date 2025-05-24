@@ -30,7 +30,7 @@ public class PdfInformation extends FileInformation {
 
     protected String userPassword, ownerPassword, title, subject, author, creator, producer, keywords;
     protected float version;
-    protected int numberOfPages, fromPage, toPage;
+    protected int numberOfPages, fromPage, toPage; // 0-based, exclude end
     protected String firstPageSize, firstPageSize2, error;
     protected PDDocument doc;
     protected PDDocumentOutline outline;
@@ -42,8 +42,8 @@ public class PdfInformation extends FileInformation {
 
     public PdfInformation(File file) {
         super(file);
-        fromPage = 1;
-        toPage = -1;
+        fromPage = 0;
+        toPage = 0;
         doc = null;
     }
 
@@ -218,6 +218,14 @@ public class PdfInformation extends FileInformation {
         }
     }
 
+    // cell values
+    public int getFrom() {
+        return fromPage + 1;
+    }
+
+    public int getTo() {
+        return toPage;
+    }
 
     /*
         get/set

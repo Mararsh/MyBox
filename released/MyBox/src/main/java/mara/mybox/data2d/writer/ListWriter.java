@@ -24,6 +24,7 @@ public class ListWriter extends Data2DWriter {
             if (writeHeader && headerNames != null) {
                 rows.add(headerNames);
             }
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -41,11 +42,22 @@ public class ListWriter extends Data2DWriter {
 
     @Override
     public void closeWriter() {
-        created = rows != null && !rows.isEmpty();
+        if (isFailed() || rows == null) {
+            showInfo(message("Failed"));
+            status = Status.Failed;
+            return;
+        }
+        if (targetRowIndex == 0 || rows.isEmpty()) {
+            showInfo(message("NoData"));
+            status = Status.NoData;
+            return;
+        }
+        status = Status.Created;
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
+        return true;
     }
 
     public List<List<String>> getRows() {

@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.operate.Data2DSaveAs;
 import mara.mybox.data2d.writer.Data2DWriter;
@@ -8,6 +9,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.Data2DDefinition.DataType.CSV;
 import static mara.mybox.db.data.Data2DDefinition.DataType.DatabaseTable;
 import static mara.mybox.db.data.Data2DDefinition.DataType.Excel;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
 import static mara.mybox.db.data.Data2DDefinition.DataType.MyBoxClipboard;
 import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
@@ -15,7 +17,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
 
 /**
  * @Author Mara
@@ -121,18 +122,28 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     @Override
     public void afterSuccess() {
-        if (saveTmp) {
-            targetController.tableController.loadDef(writer.getTargetData(), false);
+        Data2D results = writer.getTargetData();
+        if (results != null) {
+            if (saveTmp) {
+                targetController.tableController.loadDef(results, false);
+            } else {
+                writer.showResult();
+            }
         } else {
-            writer.showResult();
+            alertInformation(message("NoData"));
         }
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void closeTask(boolean ok) {
         if (targetController.data2D != null) {
             targetController.data2D.stopTask();
         }
+        super.closeTask(ok);
+    }
+
+    @Override
+    public void afterTask(boolean ok) {
         if (taskSuccessed) {
             targetController.tableController.popInformation(message("Done"));
             close();

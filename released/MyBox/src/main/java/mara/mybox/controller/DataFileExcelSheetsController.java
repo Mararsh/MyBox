@@ -311,7 +311,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            DataFileExcelSheetsController controller = (DataFileExcelSheetsController) WindowTools.branchStage(
+            DataFileExcelSheetsController controller = (DataFileExcelSheetsController) WindowTools.referredTopStage(
                     parent, Fxmls.DataFileExcelSheetsFxml);
             controller.setParameters(parent);
             return controller;

@@ -46,7 +46,7 @@ public class Data2DSortController extends BaseData2DTaskTargetsController {
     @Override
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         try {
-            TmpTable tmpTable = tmpTable(targetController.name(), checkedColsIndices, showRowNumber());
+            TmpTable tmpTable = tmpTable(targetController.dataName(), checkedColsIndices, showRowNumber());
             if (tmpTable == null) {
                 return false;
             }
@@ -67,7 +67,7 @@ public class Data2DSortController extends BaseData2DTaskTargetsController {
      */
     public static Data2DSortController open(BaseData2DLoadController tableController) {
         try {
-            Data2DSortController controller = (Data2DSortController) WindowTools.operationStage(
+            Data2DSortController controller = (Data2DSortController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DSortFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

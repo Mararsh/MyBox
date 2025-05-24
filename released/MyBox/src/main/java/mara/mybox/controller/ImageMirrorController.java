@@ -53,7 +53,7 @@ public class ImageMirrorController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageMirrorController controller = (ImageMirrorController) WindowTools.operationStage(
+            ImageMirrorController controller = (ImageMirrorController) WindowTools.referredStage(
                     parent, Fxmls.ImageMirrorFxml);
             controller.setParameters(parent);
             return controller;

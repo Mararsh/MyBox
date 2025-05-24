@@ -206,7 +206,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
             if (parent == null) {
                 return null;
             }
-            ImageShapeOptionsController controller = (ImageShapeOptionsController) WindowTools.branchStage(
+            ImageShapeOptionsController controller = (ImageShapeOptionsController) WindowTools.referredTopStage(
                     parent, Fxmls.ImageShapeOptionsFxml);
             controller.setParameters(parent, withStroke);
             return controller;

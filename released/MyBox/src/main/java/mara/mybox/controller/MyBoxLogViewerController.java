@@ -65,17 +65,20 @@ public class MyBoxLogViewerController extends HtmlTableController {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (!super.afterSceneLoaded()) {
+                return false;
+            }
 
             myStage.setWidth(600);
             myStage.setHeight(500);
             myStage.setY(5);
             myStage.setX(NodeTools.getScreen().getWidth() - 610);
-
+            return true;
         } catch (Exception e) {
             System.out.println(e.toString());
+            return false;
         }
     }
 

@@ -29,7 +29,8 @@ public class TableNodeJavaScript extends BaseNodeTable {
 
     public final TableNodeJavaScript defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("script", ColumnType.Clob));
+        addColumn(new ColumnDefinition("script", ColumnType.Clob)
+                .setLabel(message("JavaScript")));
         return this;
     }
 
@@ -40,18 +41,6 @@ public class TableNodeJavaScript extends BaseNodeTable {
         }
         String script = node.getStringValue("script");
         return script != null && !script.isBlank();
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "script":
-                return message("JavaScript");
-        }
-        return super.label(name);
     }
 
     @Override

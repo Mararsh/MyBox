@@ -14,6 +14,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
@@ -24,12 +25,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.tools.AlphaTools;
-import mara.mybox.image.data.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.AlphaTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -158,28 +159,28 @@ public class ImageOCRController extends BaseController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         if (optionsBox.isFocused() || optionsBox.isFocusWithin()) {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                sourceController.menuAction();
+                sourceController.menuAction(event);
                 return true;
             } else if (tab == processTab) {
-                preprocessController.menuAction();
+                preprocessController.menuAction(event);
                 return true;
             }
         }
 
         if (htmlTab.isSelected()) {
-            htmlController.menuAction();
+            htmlController.menuAction(event);
             return true;
 
         } else if (regionsTab.isSelected()) {
-            regionsTableController.menuAction();
+            regionsTableController.menuAction(event);
             return true;
 
         } else if (wordsTab.isSelected()) {
-            wordsTableController.menuAction();
+            wordsTableController.menuAction(event);
             return true;
         }
 

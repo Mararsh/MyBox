@@ -282,7 +282,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
      */
     public static Data2DChartComparisonBarsController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartComparisonBarsController controller = (Data2DChartComparisonBarsController) WindowTools.operationStage(
+            Data2DChartComparisonBarsController controller = (Data2DChartComparisonBarsController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DChartComparisonBarsFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

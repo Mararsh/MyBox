@@ -12,20 +12,19 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ProcessParameters implements Cloneable {
 
-    public File currentSourceFile, currentTargetPath;
-    public int startIndex, currentIndex;
+    public FileInformation currentSourceFile;
+    public File currentTargetPath;
     public String status, targetPath, targetRootPath;
     public boolean targetSubDir, isBatch;
-    public int fromPage, toPage, startPage, acumFrom, acumStart, acumDigit;
+    public int fromPage, toPage, startPage; // 0-based, exclude end
     public String password;
-    public int currentPage;
 
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
             ProcessParameters newCode = (ProcessParameters) super.clone();
             if (currentSourceFile != null) {
-                newCode.currentSourceFile = new File(currentSourceFile.getAbsolutePath());
+                newCode.currentSourceFile = currentSourceFile;
             }
             if (currentTargetPath != null) {
                 newCode.currentTargetPath = new File(currentTargetPath.getAbsolutePath());

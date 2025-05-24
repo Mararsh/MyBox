@@ -42,6 +42,7 @@ public class JsonWriter extends Data2DWriter {
             s.append("{\"Data\": [\n");
             fileWriter.write(s.toString());
             isFirstRow = true;
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -87,9 +88,9 @@ public class JsonWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
-            if (fileWriter == null) {
+            if (fileWriter == null || printFile == null) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
@@ -97,6 +98,15 @@ public class JsonWriter extends Data2DWriter {
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
+                return;
+            }
+            if (targetRowIndex == 0) {
+                fileWriter.close();
+                fileWriter = null;
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("NoData") + ": " + printFile);
+                status = Status.NoData;
                 return;
             }
             fileWriter.write("\n]}\n");
@@ -106,26 +116,28 @@ public class JsonWriter extends Data2DWriter {
             if (!FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.NoData;
                 return;
             }
             if (printFile == null || !printFile.exists()) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.NoData;
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.JSON);
-            created = true;
+            status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
         if (printFile == null || !printFile.exists()) {
-            showError(message("Failed"));
-            return;
+            return false;
         }
         JsonEditorController.open(printFile);
+        return true;
     }
 
 }

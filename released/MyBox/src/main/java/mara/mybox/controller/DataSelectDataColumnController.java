@@ -25,13 +25,7 @@ public class DataSelectDataColumnController extends BaseDataSelectController {
         try {
             super.initControls();
 
-            nodeTable = new TableNodeDataColumn();
-            dataName = nodeTable.getDataName();
-
-            baseTitle = nodeTable.getTreeName() + " - " + message("SelectNode");
-            setTitle(baseTitle);
-
-            loadTree();
+            initDataTree(new TableNodeDataColumn(), null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -65,7 +59,7 @@ public class DataSelectDataColumnController extends BaseDataSelectController {
     @FXML
     @Override
     public void okAction() {
-        DataNode node = selectedValue();
+        DataNode node = selectedNode();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;

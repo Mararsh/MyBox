@@ -79,7 +79,7 @@ public abstract class BaseData2DChartFx extends BaseController {
                     @Override
                     public void handle(MouseEvent event) {
                         if (event.getButton() == MouseButton.SECONDARY) {
-                            menuAction();
+                            menuAction(event);
                         }
                     }
                 });

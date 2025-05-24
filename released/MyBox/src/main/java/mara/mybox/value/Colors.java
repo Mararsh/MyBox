@@ -1,8 +1,14 @@
 package mara.mybox.value;
 
 import java.awt.Color;
-import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
+import static mara.mybox.fxml.style.StyleData.StyleColor.Blue;
+import static mara.mybox.fxml.style.StyleData.StyleColor.Customize;
+import static mara.mybox.fxml.style.StyleData.StyleColor.Green;
+import static mara.mybox.fxml.style.StyleData.StyleColor.LightBlue;
+import static mara.mybox.fxml.style.StyleData.StyleColor.Orange;
+import static mara.mybox.fxml.style.StyleData.StyleColor.Pink;
+import mara.mybox.image.tools.ColorConvertTools;
 
 /**
  * @Author Mara
@@ -14,34 +20,43 @@ public class Colors {
     public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     public static Color color(StyleColor inStyle, boolean dark) {
-        StyleColor style = inStyle;
+        return ColorConvertTools.rgba2color("0x" + colorValue(inStyle, dark) + "FF");
+    }
+
+    public static String colorValue(StyleColor inStyle, boolean dark) {
         String color;
-        if (style == null) {
-            style = StyleColor.Red;
+        try {
+            StyleColor style = inStyle;
+            if (style == null) {
+                style = StyleColor.Red;
+            }
+            switch (style) {
+                case Blue:
+                    color = dark ? "003472" : "E3F9FD";
+                    break;
+                case LightBlue:
+                    color = dark ? "4C8DAE" : "D6ECF0";
+                    break;
+                case Pink:
+                    color = dark ? "9E004F" : "FFFFFF";
+                    break;
+                case Orange:
+                    color = dark ? "622A1D" : "FFF8D8";
+                    break;
+                case Green:
+                    color = dark ? "0D3928" : "E0F0E9";
+                    break;
+                case Customize:
+                    color = dark ? customizeColorDarkValue() : customizeColorLightValue();
+                    color = color.substring(2, 8);
+                    break;
+                default:
+                    color = dark ? "C32136" : "FBD5CF";
+            }
+        } catch (Exception e) {
+            color = dark ? "C32136" : "FBD5CF";
         }
-        switch (style) {
-            case Blue:
-                color = dark ? "0x003472FF" : "0xE3F9FDFF";
-                break;
-            case LightBlue:
-                color = dark ? "0x4C8DAEFF" : "0xD6ECF0FF";
-                break;
-            case Pink:
-                color = dark ? "0x9E004FFF" : "0xFFFFFFFF";
-                break;
-            case Orange:
-                color = dark ? "0x622A1DFF" : "0xFFF8D8FF";
-                break;
-            case Green:
-                color = dark ? "0x0D3928FF" : "0xE0F0E9FF";
-                break;
-            case Customize:
-                color = dark ? customizeColorDarkValue() : customizeColorLightValue();
-                break;
-            default:
-                color = dark ? "0xC32136FF" : "0xFBD5CFFF";
-        }
-        return ColorConvertTools.rgba2color(color);
+        return color;
     }
 
     public static String customizeColorDarkValue() {

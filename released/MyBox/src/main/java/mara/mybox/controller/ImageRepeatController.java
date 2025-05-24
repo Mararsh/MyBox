@@ -6,6 +6,7 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -17,10 +18,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.tools.RepeatTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.image.tools.RepeatTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -260,15 +261,15 @@ public class ImageRepeatController extends BaseController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         if (targetBox.isFocused() || targetBox.isFocusWithin()) {
-            targetController.menuAction();
+            targetController.menuAction(event);
             return true;
         } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
-            sourceController.menuAction();
+            sourceController.menuAction(event);
             return true;
         }
-        return super.menuAction();
+        return super.menuAction(event);
     }
 
     @FXML

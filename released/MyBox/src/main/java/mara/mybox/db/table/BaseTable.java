@@ -903,7 +903,9 @@ public abstract class BaseTable<D> {
         if (tableName == null) {
             return null;
         }
-        return "SELECT COUNT(*) FROM " + DerbyBase.fixedIdentifier(tableName);
+        return "SELECT COUNT("
+                + (idColumnName != null ? idColumnName : "*")
+                + ") FROM " + DerbyBase.fixedIdentifier(tableName);
     }
 
     public int size() {
@@ -1136,17 +1138,6 @@ public abstract class BaseTable<D> {
         return null;
     }
 
-    public String columnLabel(ColumnDefinition column) {
-        if (column == null) {
-            return null;
-        }
-        return column.label();
-    }
-
-    public String label(String columnName) {
-        return columnLabel(column(columnName));
-    }
-
     public String columnsText() {
         if (tableName == null || columns.isEmpty()) {
             return null;
@@ -1267,7 +1258,7 @@ public abstract class BaseTable<D> {
                 } else {
                     info = "";
                 }
-                info += label(column.getColumnName()) + ": " + display;
+                info += column.getLabel() + ": " + display;
             }
             return info;
         } catch (Exception e) {
@@ -1325,13 +1316,20 @@ public abstract class BaseTable<D> {
                 } else {
                     info = "";
                 }
-                info += label(column.getColumnName()) + ": " + display;
+                info += column.getLabel() + ": " + display;
             }
             return info;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public String info() {
+        String info = message("TableName") + ": " + tableName + "\n";
+        info += message("columns") + ": " + columnNames() + "\n";
+        info += message("Insert") + ": " + insertStatement() + "\n";
+        return info;
     }
 
     /*
@@ -1347,7 +1345,8 @@ public abstract class BaseTable<D> {
                     ? new DataInternalTable() : new DataTable();
             String sheet = DerbyBase.fixedIdentifier(tableName);
             dataTable.setSheet(sheet)
-                    .setColsNumber(columns.size());
+                    .setColsNumber(columns.size())
+                    .setRowsNumber(size(conn));
             if (this instanceof BaseNodeTable) {
                 dataTable.setDataName(((BaseNodeTable) this).getDataName());
             } else {
@@ -1357,6 +1356,8 @@ public abstract class BaseTable<D> {
             if (dataTable == null) {
                 return null;
             }
+            dataTable.getTableData2D().setColumns(columns);
+            dataTable.getTableData2D().setForeignColumns(foreignColumns);
             long tableID = dataTable.getDataID();
             List<Data2DColumn> data2dColumns = new ArrayList<>();
             for (ColumnDefinition column : columns) {

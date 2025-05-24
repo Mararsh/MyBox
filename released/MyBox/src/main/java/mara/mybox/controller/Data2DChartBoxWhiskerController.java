@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
@@ -699,13 +700,13 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
         if (tab == chartTab) {
-            return chartController.menuAction();
+            return chartController.menuAction(event);
 
         } else if (tab == statisticDataTab) {
-            return statisticDataController.menuAction();
+            return statisticDataController.menuAction(event);
 
         }
         return false;
@@ -761,7 +762,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
      */
     public static Data2DChartBoxWhiskerController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartBoxWhiskerController controller = (Data2DChartBoxWhiskerController) WindowTools.operationStage(
+            Data2DChartBoxWhiskerController controller = (Data2DChartBoxWhiskerController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DChartBoxWhiskerFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

@@ -14,7 +14,7 @@ public abstract class BaseBranchController extends BaseFileController {
         try {
             super.initValues();
 
-            stageType = StageType.Branch;
+            stageType = StageType.RefferredTop;
 
         } catch (Exception e) {
             MyBoxLog.error(e);

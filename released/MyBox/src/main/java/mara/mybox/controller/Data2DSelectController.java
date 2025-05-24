@@ -60,7 +60,7 @@ public class Data2DSelectController extends BaseChildController {
      */
     public static Data2DSelectController open(BaseData2DLoadController caller) {
         try {
-            Data2DSelectController controller = (Data2DSelectController) WindowTools.openStage(Fxmls.Data2DSelectFxml);
+            Data2DSelectController controller = (Data2DSelectController) WindowTools.childStage(caller, Fxmls.Data2DSelectFxml);
             controller.setParameters(caller);
             return controller;
         } catch (Exception e) {

@@ -325,7 +325,8 @@ public class MenuWebviewController extends MenuController {
         if (webViewController == null) {
             return;
         }
-        ControlDataJavascript.open(webViewController);
+        HtmlJavaScriptController.open(parentController, webViewController);
+        close();
     }
 
     @Override
@@ -364,8 +365,9 @@ public class MenuWebviewController extends MenuController {
                     }
                 }
             }
-            MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
+            MenuWebviewController controller = (MenuWebviewController) WindowTools.referredTopStage(
                     parent, Fxmls.MenuWebviewFxml);
+            controller.setParameters(parent, null);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

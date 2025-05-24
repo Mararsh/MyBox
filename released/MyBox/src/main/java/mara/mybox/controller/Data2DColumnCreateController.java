@@ -65,7 +65,7 @@ public class Data2DColumnCreateController extends BaseBranchController {
      */
     public static Data2DColumnCreateController open(BaseData2DColumnsController columnsController) {
         try {
-            Data2DColumnCreateController controller = (Data2DColumnCreateController) WindowTools.branchStage(
+            Data2DColumnCreateController controller = (Data2DColumnCreateController) WindowTools.referredTopStage(
                     columnsController, Fxmls.Data2DColumnCreateFxml);
             controller.setParameters(columnsController);
             controller.requestMouse();

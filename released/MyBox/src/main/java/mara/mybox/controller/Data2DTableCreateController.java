@@ -78,7 +78,7 @@ public class Data2DTableCreateController extends BaseChildController {
         if (isSettingValues) {
             return true;
         }
-        if (data2D == null || !data2D.isValidDefinition()) {
+        if (data2D == null || !data2D.hasColumns()) {
             popError(message("NoData"));
             return false;
         }

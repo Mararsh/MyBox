@@ -215,31 +215,35 @@ public class GameMineController extends BaseWebViewController {
                             if (disclosed <= 0) {
                                 timing();
                             }
-                            if (event.getClickCount() > 1) {
-                                discloseAll(i, j);
-                            } else {
+                            if (event.getButton() == MouseButton.SECONDARY) {
                                 if (chessStatus[i][j] == ChessStatus.Disclosed) {
                                     return;
                                 }
-                                if (event.getButton() == MouseButton.PRIMARY) {
+                                switch (chessStatus[i][j]) {
+                                    case Closed:
+                                        chessStatus[i][j] = ChessStatus.Marked;
+                                        break;
+                                    case Marked:
+                                        chessStatus[i][j] = ChessStatus.Suspected;
+                                        break;
+                                    case Suspected:
+                                        chessStatus[i][j] = ChessStatus.Closed;
+                                        break;
+                                }
+                                displayChess(i, j);
+
+                            } else {
+                                if (event.getClickCount() > 1) {
+                                    discloseAll(i, j);
+                                } else {
+                                    if (chessStatus[i][j] == ChessStatus.Disclosed) {
+                                        return;
+                                    }
                                     if (chessValue[i][j] < 0) {
                                         failed();
                                     } else {
                                         disclose(i, j);
                                     }
-                                } else if (event.getButton() == MouseButton.SECONDARY) {
-                                    switch (chessStatus[i][j]) {
-                                        case Closed:
-                                            chessStatus[i][j] = ChessStatus.Marked;
-                                            break;
-                                        case Marked:
-                                            chessStatus[i][j] = ChessStatus.Suspected;
-                                            break;
-                                        case Suspected:
-                                            chessStatus[i][j] = ChessStatus.Closed;
-                                            break;
-                                    }
-                                    displayChess(i, j);
                                 }
                             }
                         }

@@ -1027,7 +1027,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         try {
             closePopup();
 
@@ -1036,7 +1036,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
                 return true;
 
             } else if (treeRadio.isSelected()) {
-                domController.popFunctionsMenu(null);
+                domController.popFunctionsMenu(event);
                 return true;
 
             } else if (mdRadio.isSelected()) {
@@ -1048,7 +1048,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
                 return true;
 
             } else if (htmlRadio.isSelected()) {
-                webViewController.menuAction();
+                webViewController.menuAction(event);
                 return true;
 
             }

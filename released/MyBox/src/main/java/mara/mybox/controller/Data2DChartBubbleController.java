@@ -185,7 +185,7 @@ public class Data2DChartBubbleController extends BaseData2DChartController {
      */
     public static Data2DChartBubbleController open(BaseData2DLoadController tableController) {
         try {
-            Data2DChartBubbleController controller = (Data2DChartBubbleController) WindowTools.operationStage(
+            Data2DChartBubbleController controller = (Data2DChartBubbleController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DChartBubbleFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

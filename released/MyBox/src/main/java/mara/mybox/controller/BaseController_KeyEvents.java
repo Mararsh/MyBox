@@ -759,7 +759,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF6() {
-        return menuAction();
+        return menuAction(null);
     }
 
     public boolean keyF7() {

@@ -146,18 +146,13 @@ public class BaseTaskController extends BaseLogsController {
             updateLogs(message("Completed") + " " + message("Cost")
                     + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
         }
+        handleTargetFiles();
         taskClosedNotify.set(!taskClosedNotify.get());
-        afterTask(ok);
-    }
-
-    public void afterTask(boolean ok) {
-        recordTargetFiles();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
+        if (miaoCheck != null && miaoCheck.isSelected()
+                && AppVariables.autoTestingController == null) {
             SoundTools.miao3();
         }
-        if (openCheck != null && openCheck.isSelected()) {
-            openTarget();
-        }
+        afterTask(ok);
         if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
             new Timer().schedule(new TimerTask() {
                 @Override
@@ -167,8 +162,17 @@ public class BaseTaskController extends BaseLogsController {
                     });
                 }
             }, 500);
-
         }
+    }
+
+    public void handleTargetFiles() {
+        recordTargetFiles();
+        if (openCheck != null && openCheck.isSelected()) {
+            openTarget();
+        }
+    }
+
+    public void afterTask(boolean ok) {
     }
 
     public void cancelTask() {

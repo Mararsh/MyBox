@@ -14,7 +14,6 @@ import javafx.scene.control.TreeItem;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -168,9 +167,6 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     @Override
     public void afterTask(boolean ok) {
         showLogs(doneString + ": " + doneCount);
-        if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
     }
 
     /*
@@ -181,7 +177,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             if (manageController == null) {
                 return null;
             }
-            RemotePathHandleFilesController controller = (RemotePathHandleFilesController) WindowTools.branchStage(
+            RemotePathHandleFilesController controller = (RemotePathHandleFilesController) WindowTools.referredTopStage(
                     manageController, Fxmls.RemotePathDeleteFxml);
             controller.setParameters(manageController);
             controller.requestMouse();

@@ -80,14 +80,14 @@ public class Data2DSpliceController extends BaseTaskController {
     public boolean checkOptions() {
         try {
             tabPane.getSelectionModel().select(aTab);
-            if (dataAController.data2D == null || !dataAController.data2D.isValidDefinition()) {
+            if (dataAController.data2D == null || !dataAController.data2D.hasColumns()) {
                 popError(message("DataA") + ": " + message("NoData"));
                 return false;
             } else if (!dataAController.checkSelections()) {
                 return false;
             }
             tabPane.getSelectionModel().select(bTab);
-            if (dataBController.data2D == null || !dataBController.data2D.isValidDefinition()) {
+            if (dataBController.data2D == null || !dataBController.data2D.hasColumns()) {
                 popError(message("DataB") + ": " + message("NoData"));
                 return false;
             } else if (!dataBController.checkSelections()) {
@@ -154,7 +154,7 @@ public class Data2DSpliceController extends BaseTaskController {
             writer.closeWriter();
             csvA.drop();
             csvB.drop();
-            return writer.isCreated();
+            return writer.isCompleted();
         } catch (Exception e) {
             error = e.toString();
             return false;
@@ -358,12 +358,17 @@ public class Data2DSpliceController extends BaseTaskController {
 
     @Override
     public void afterSuccess() {
-        writer.showResult();
+        if (writer.showResult()) {
+            popDone();
+        } else {
+            alertInformation(message("ResultIsEmpty"));
+        }
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void closeTask(boolean ok) {
         dataAController.data2D.stopTask();
         dataBController.data2D.stopTask();
+        super.closeTask(ok);
     }
 }

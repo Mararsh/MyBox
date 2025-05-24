@@ -20,6 +20,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import mara.mybox.data.FileInformation;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -164,8 +165,9 @@ public class TextFilesMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
+            File file = info.getFile();
             TextEditInformation sourceInfo = new TextEditInformation(file, null);
             if (sourceEncodingAutoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInfo);
@@ -192,7 +194,7 @@ public class TextFilesMergeController extends FilesMergeController {
             }
             return message("Handled") + ": " + file;
         } catch (Exception e) {
-            return file + " " + e.toString();
+            return e.toString();
         }
     }
 

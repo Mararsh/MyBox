@@ -26,7 +26,6 @@ import mara.mybox.data.FileUnarchive;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
@@ -529,10 +528,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
-        sourceVBox.setDisable(false);
-        selectionVBox.setDisable(false);
-        targetVBox.setDisable(false);
+    public void handleTargetFiles() {
+        recordTargetFiles();
         if (fileUnarchive.getArchiveSuccess() > 0) {
             openTarget();
         }
@@ -541,14 +538,16 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 alertError(message("CharsetIncorrect"));
             }
         }
+    }
+
+    @Override
+    public void afterTask(boolean ok) {
+        sourceVBox.setDisable(false);
+        selectionVBox.setDisable(false);
+        targetVBox.setDisable(false);
         showLogs(MessageFormat.format(message("FileUnarchived"),
                 message("Selected") + ":" + selected.size(),
                 fileUnarchive.getArchiveSuccess(), fileUnarchive.getArchiveFail()));
-        super.afterTask(ok);
-        recordTargetFiles();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
     }
 
     /*

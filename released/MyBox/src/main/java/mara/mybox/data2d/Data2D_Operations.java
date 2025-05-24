@@ -195,7 +195,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setType(Data2DStatistic.Type.Rows)
                     .addWriter(writer)
                     .setCols(cols).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -297,7 +297,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs)
                     .addWriter(writer)
                     .setTask(task).start();
-            if (operate.isFailed() || !writer.isCreated()) {
+            if (operate.isFailed() || !writer.isCompleted()) {
                 return -2;
             }
             return operate.getHandledCount();
@@ -407,7 +407,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .addWriter(writer)
                     .setIncludeRowNumber(includeRowNumber)
                     .setCols(cols).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -479,7 +479,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             operate.setInvalidAs(invalidAs).setScale(scale)
                     .addWriter(writer)
                     .setCols(cols).setOtherCols(otherCols).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -528,7 +528,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             operate.setInvalidAs(invalidAs).setScale(scale)
                     .addWriter(writer)
                     .setCols(cols).setOtherCols(otherCols).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -556,7 +556,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             operate.setInvalidAs(invalidAs).setScale(scale)
                     .addWriter(writer)
                     .setCols(cols).setOtherCols(otherCols).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -581,7 +581,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .addWriter(writer)
                     .setScale(scale)
                     .setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -633,7 +633,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -687,7 +687,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -741,7 +741,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -787,7 +787,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -834,7 +834,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -885,7 +885,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -915,7 +915,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            return !operate.isFailed() && writer.isCompleted();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

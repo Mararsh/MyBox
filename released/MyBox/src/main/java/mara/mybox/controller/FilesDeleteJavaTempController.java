@@ -66,9 +66,12 @@ public class FilesDeleteJavaTempController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+    public boolean afterSceneLoaded() {
+        if (!super.afterSceneLoaded()) {
+            return false;
+        }
         startButton.requestFocus();
+        return true;
     }
 
     @FXML

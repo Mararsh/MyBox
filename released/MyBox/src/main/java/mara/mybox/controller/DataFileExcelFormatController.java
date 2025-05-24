@@ -76,7 +76,7 @@ public class DataFileExcelFormatController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            DataFileExcelFormatController controller = (DataFileExcelFormatController) WindowTools.branchStage(
+            DataFileExcelFormatController controller = (DataFileExcelFormatController) WindowTools.referredTopStage(
                     parent, Fxmls.DataFileExcelFormatFxml);
             controller.setParameters(parent);
             return controller;

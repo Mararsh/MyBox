@@ -274,7 +274,7 @@ public class WindowTools {
     public static BaseController childStage(BaseController parent, String newFxml) {
         try {
             if (parent == null) {
-                return null;
+                return openStage(newFxml);
             }
             BaseController c = openStage(parent.getMyWindow(), newFxml,
                     AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);
@@ -282,50 +282,6 @@ public class WindowTools {
                 return null;
             }
             c.setParent(parent, StageType.Child);
-            return c;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static BaseController branchStage(BaseController parent, String newFxml) {
-        try {
-            BaseController c = openStage(newFxml);
-            if (c == null) {
-                return null;
-            }
-            c.setParent(parent, StageType.Branch);
-            return c;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static BaseController operationStage(BaseController parent, String newFxml) {
-        try {
-            BaseController c = openStage(newFxml);
-            if (c == null) {
-                return null;
-            }
-            c.setParent(parent, StageType.Operation);
-            return c;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static BaseController popStage(BaseController parent, String newFxml) {
-        try {
-            BaseController c = parent != null
-                    ? openStage(parent.getMyWindow(), newFxml)
-                    : openStage(newFxml);
-            if (c == null) {
-                return null;
-            }
-            c.setParent(parent, StageType.Pop);
             return c;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -350,6 +306,65 @@ public class WindowTools {
             return null;
         }
     }
+
+    public static BaseController referredTopStage(BaseController parent, String newFxml) {
+        try {
+            BaseController c = openStage(newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.RefferredTop);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController forkStage(BaseController parent, String newFxml) {
+        try {
+            BaseController c = openStage(newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Fork);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController referredStage(BaseController parent, String newFxml) {
+        try {
+            BaseController c = openStage(newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Referred);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController topStage(BaseController parent, String newFxml) {
+        try {
+            BaseController c = parent != null
+                    ? openStage(parent.getMyWindow(), newFxml)
+                    : openStage(newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Top);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
 
     /*
      * handle stage

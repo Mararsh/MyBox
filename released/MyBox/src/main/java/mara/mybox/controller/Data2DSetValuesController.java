@@ -541,7 +541,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
      */
     public static Data2DSetValuesController open(Data2DManufactureController dataController) {
         try {
-            Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.operationStage(
+            Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.referredStage(
                     dataController, Fxmls.Data2DSetValuesFxml);
             controller.setParameters(dataController);
             controller.requestMouse();

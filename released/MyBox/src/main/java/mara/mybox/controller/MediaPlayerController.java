@@ -241,8 +241,10 @@ public class MediaPlayerController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+    public boolean afterSceneLoaded() {
+        if (!super.afterSceneLoaded()) {
+            return false;
+        }
 
         // https://stackoverflow.com/questions/43785310/how-to-disable-press-esc-to-exit-full-screen-mode-meassage-in-javafx
         getMyStage().setFullScreenExitHint(message("MediaFullScreenComments"));
@@ -256,7 +258,7 @@ public class MediaPlayerController extends BaseController {
                 }
             }
         });
-
+        return true;
     }
 
     @Override
@@ -328,7 +330,7 @@ public class MediaPlayerController extends BaseController {
             mediaView.setMediaPlayer(null);
             mediaView.setFitHeight(50);
             mediaView.setFitWidth(50);
-            tableController.markFileHandling(-1);
+            tableController.clearHandling();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -659,7 +661,7 @@ public class MediaPlayerController extends BaseController {
         }
         myStage.setTitle(getBaseTitle() + " - " + currentMedia.getAddress());
         isSettingValues = true;
-        tableController.markFileHandling(currentIndex);
+        tableController.markFileHandling(info);
         isSettingValues = false;
         if (!currentMedia.getURI().getScheme().startsWith("file")) {
             popInformation(message("ReadingStreamMedia...") + "\n" + currentMedia.getAddress(), 6000);

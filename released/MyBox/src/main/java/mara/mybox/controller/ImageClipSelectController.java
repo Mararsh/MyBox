@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.image.Image;
@@ -79,7 +80,7 @@ public class ImageClipSelectController extends BaseImageClipController {
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void doubleClicked(Event event) {
         okAction();
     }
 
@@ -147,7 +148,7 @@ public class ImageClipSelectController extends BaseImageClipController {
             if (parent == null) {
                 return null;
             }
-            ImageClipSelectController controller = (ImageClipSelectController) WindowTools.branchStage(
+            ImageClipSelectController controller = (ImageClipSelectController) WindowTools.childStage(
                     parent, Fxmls.ImageClipSelectFxml);
             controller.setParameters(parent);
             return controller;

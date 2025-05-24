@@ -113,6 +113,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     }
 
     @FXML
+    @Override
     public void insertAction() {
         int index = selectedIndix();
         if (index < 0) {

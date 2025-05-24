@@ -138,10 +138,14 @@ public class ControlTargetFile extends ControlFileSelecter {
     }
 
     public void setFile(int type, String name, String prefix, String ext) {
+        setFile(type, name, FileTmpTools.generateFile(prefix, ext));
+    }
+
+    public void setFile(int type, String name, File file) {
         defaultFile = null;
         setFileType(type);
         baseName = name;
-        inputFile(FileTmpTools.generateFile(prefix, ext));
+        inputFile(file);
     }
 
     @Override

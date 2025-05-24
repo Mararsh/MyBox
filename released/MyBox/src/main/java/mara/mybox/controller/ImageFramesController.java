@@ -125,7 +125,7 @@ public class ImageFramesController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            ImageFramesController controller = (ImageFramesController) WindowTools.branchStage(
+            ImageFramesController controller = (ImageFramesController) WindowTools.referredTopStage(
                     parent, Fxmls.ImageFramesFxml);
             controller.setParameters(parent);
             return controller;

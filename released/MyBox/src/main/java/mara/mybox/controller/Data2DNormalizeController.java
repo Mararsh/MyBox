@@ -150,7 +150,7 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
      */
     public static Data2DNormalizeController open(BaseData2DLoadController tableController) {
         try {
-            Data2DNormalizeController controller = (Data2DNormalizeController) WindowTools.operationStage(
+            Data2DNormalizeController controller = (Data2DNormalizeController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DNormalizeFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

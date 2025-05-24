@@ -17,6 +17,7 @@ import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.toShape;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
@@ -220,7 +221,7 @@ public class ControlSvgTree extends ControlXmlTree {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(treeItem)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 

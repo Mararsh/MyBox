@@ -176,14 +176,13 @@ public class Data2DExportController extends BaseData2DTaskController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void closeTask(boolean ok) {
         try {
             if (export != null) {
                 export.end();
                 export = null;
             }
-            data2D.stopTask();
-            super.afterTask(ok);
+            super.closeTask(ok);
             dataBox.setDisable(false);
             filterVBox.setDisable(false);
             formatVBox.setDisable(false);
@@ -198,7 +197,7 @@ public class Data2DExportController extends BaseData2DTaskController {
      */
     public static Data2DExportController open(BaseData2DLoadController tableController) {
         try {
-            Data2DExportController controller = (Data2DExportController) WindowTools.operationStage(
+            Data2DExportController controller = (Data2DExportController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DExportFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

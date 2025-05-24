@@ -194,7 +194,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                 return;
             }
             String fxml = currentCase.getFxml();
-            if (fxml.endsWith("/GeographyCodeFxml.fxml")) {
+            if (fxml.endsWith("/GeographyCode.fxml")) {
                 GeographyCodeController.open().autoTesting();
 
             } else if (fxml.endsWith("/DataTree.fxml")) {

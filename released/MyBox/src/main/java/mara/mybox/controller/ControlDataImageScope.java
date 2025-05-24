@@ -177,9 +177,9 @@ public class ControlDataImageScope extends BaseDataValuesController {
      */
     public static DataTreeNodeEditorController open(BaseController parent, ImageScope scope) {
         try {
-            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
-            controller.setTable(new TableNodeImageScope());
-            ((ControlDataImageScope) controller.dataController).loadScope(scope);
+            DataTreeNodeEditorController controller
+                    = DataTreeNodeEditorController.openTable(parent, new TableNodeImageScope());
+            ((ControlDataImageScope) controller.valuesController).loadScope(scope);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

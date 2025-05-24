@@ -241,7 +241,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         if (treeItem == null) {
             return null;
         }
-        List<MenuItem> items = foldMenuItems(treeItem);
+        List<MenuItem> items = foldMenuItems();
         MenuItem menu;
 
         XmlTreeNode node = treeItem.getValue();

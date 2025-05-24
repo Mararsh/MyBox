@@ -551,9 +551,9 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
      */
     public static DataTreeNodeEditorController editCode(BaseController parent, GeographyCode code) {
         try {
-            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
-            controller.setTable(new TableNodeGeographyCode());
-            ((ControlDataGeographyCode) controller.dataController).loadGeographyCode(code);
+            DataTreeNodeEditorController controller
+                    = DataTreeNodeEditorController.openTable(parent, new TableNodeGeographyCode());
+            ((ControlDataGeographyCode) controller.valuesController).loadGeographyCode(code);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

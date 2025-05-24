@@ -146,7 +146,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void setTree(DataTreeController controller) {
+    public void setTree(BaseDataTreeController controller) {
         try {
             nodeTagsController = null;
             parentController = controller;
@@ -339,7 +339,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
         return controller;
     }
 
-    public static DataTreeTagsController manage(DataTreeController treeController) {
+    public static DataTreeTagsController manage(BaseDataTreeController treeController) {
         DataTreeTagsController controller
                 = (DataTreeTagsController) WindowTools.openStage(Fxmls.DataTreeTagsFxml);
         controller.setTree(treeController);

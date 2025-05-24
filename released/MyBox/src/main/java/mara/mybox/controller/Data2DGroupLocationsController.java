@@ -21,7 +21,7 @@ public class Data2DGroupLocationsController extends Data2DLocationDistributionCo
      */
     public static Data2DGroupLocationsController open(BaseData2DLoadController tableController) {
         try {
-            Data2DGroupLocationsController controller = (Data2DGroupLocationsController) WindowTools.operationStage(
+            Data2DGroupLocationsController controller = (Data2DGroupLocationsController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DChartGroupXYFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

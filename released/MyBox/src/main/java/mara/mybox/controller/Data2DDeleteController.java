@@ -152,7 +152,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
      */
     public static Data2DDeleteController open(Data2DManufactureController tableController) {
         try {
-            Data2DDeleteController controller = (Data2DDeleteController) WindowTools.operationStage(
+            Data2DDeleteController controller = (Data2DDeleteController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DDeleteFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

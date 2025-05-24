@@ -319,7 +319,7 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
      */
     public static Data2DStatisticController open(BaseData2DLoadController tableController) {
         try {
-            Data2DStatisticController controller = (Data2DStatisticController) WindowTools.operationStage(
+            Data2DStatisticController controller = (Data2DStatisticController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DStatisticFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

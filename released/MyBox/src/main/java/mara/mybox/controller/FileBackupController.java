@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -171,7 +172,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
     }
 
     @Override
-    public void itemDoubleClicked() {
+    public void doubleClicked(Event event) {
         useBackup();
     }
 
@@ -416,7 +417,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
      */
     public static FileBackupController load(BaseController parent, String name) {
         try {
-            FileBackupController controller = (FileBackupController) WindowTools.branchStage(
+            FileBackupController controller = (FileBackupController) WindowTools.referredTopStage(
                     parent, Fxmls.FileBackupFxml);
             controller.setParameters(parent, name);
             controller.requestMouse();

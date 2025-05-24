@@ -56,7 +56,7 @@ public class TextIntervalInputController extends BaseChildController {
                 return null;
             }
             TextIntervalInputController controller
-                    = (TextIntervalInputController) WindowTools.branchStage(parent, Fxmls.TextIntervalInputFxml);
+                    = (TextIntervalInputController) WindowTools.referredTopStage(parent, Fxmls.TextIntervalInputFxml);
             controller.setParameter(parent);
             return controller;
         } catch (Exception e) {

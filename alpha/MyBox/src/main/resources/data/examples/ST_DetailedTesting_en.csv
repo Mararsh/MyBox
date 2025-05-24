@@ -11,7 +11,7 @@ win,MyBox v6.8.7,Function,Automatical  Testing,import data of trees,"1. Select i
 2. Execute testings, verify that data are imported automatically for trees.
 3. Test ""Geography Code"" separately.",pass,2025-05-23 09:19:02,
 win,MyBox v6.8.7,Function,Automatical  Testing,trigger test cases,"1. All interfaces, except for data trees, are closed after they are opened automatically.
-2. Next test case is triggerred when current interface is closed.",,2025-05-23 09:19:07,
+2. Next test case is triggerred when current interface is closed.",pass,2025-05-23 09:19:07,
 win,MyBox v6.8.7,Function,Manufacture Data,edit data in table mode,"1. Switch to table mode.
 2. Modify data, and click Save. Verify that updates are saved correctly.
 3. Modify data, and switch to other modes. Verify that updates are synchronized to other modes.",pass,2025-05-23 09:19:10,

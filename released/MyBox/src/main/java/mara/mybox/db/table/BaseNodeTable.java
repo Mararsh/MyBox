@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.DataTreeNodeEditorController;
+import mara.mybox.controller.HtmlTableController;
+import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -19,6 +23,7 @@ import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.JsonTools;
@@ -46,36 +51,23 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public final BaseNodeTable defineNodeColumns() {
-        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("order_number", ColumnType.Float));
-        addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
+        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true)
+                .setAuto(true)
+                .setLabel(message("NodeID")));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true)
+                .setLength(StringMaxLength)
+                .setLabel(message("Title")));
+        addColumn(new ColumnDefinition("order_number", ColumnType.Float)
+                .setLabel(message("OrderNumber")));
+        addColumn(new ColumnDefinition("update_time", ColumnType.Datetime)
+                .setLabel(message("UpdateTime")));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
+                .setLabel(message("ParentID"))
                 .setReferName(tableName + "_parentid_fk")
                 .setReferTable(tableName).setReferColumn(idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name.toLowerCase()) {
-            case "nodeid":
-                return message("NodeID");
-            case "title":
-                return message("Title");
-            case "order_number":
-                return message("OrderNumber");
-            case "parentid":
-                return message("ParentID");
-            case "update_time":
-                return message("UpdateTime");
-        }
-        return name;
     }
 
     @Override
@@ -159,6 +151,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return nodeExecutable;
     }
 
+    public DataInternalTable dataTable() {
+        DataInternalTable dataTable = new DataInternalTable();
+        dataTable.setDataName(treeName).setSheet(tableName);
+        return dataTable;
+    }
+
     /*
         static
      */
@@ -166,31 +164,30 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (name == null) {
             return null;
         }
-        switch (name) {
-            case "Text":
-                return new TableNodeText();
-            case "Html":
-                return new TableNodeHtml();
-            case "MathFunction":
-                return new TableNodeMathFunction();
-            case "WebFavorite":
-                return new TableNodeWebFavorite();
-            case "SQL":
-                return new TableNodeSQL();
-            case "ImageScope":
-                return new TableNodeImageScope();
-            case "JShell":
-                return new TableNodeJShell();
-            case "JEXL":
-                return new TableNodeJEXL();
-            case "JavaScript":
-                return new TableNodeJavaScript();
-            case "RowExpression":
-                return new TableNodeRowExpression();
-            case "DataColumn":
-                return new TableNodeDataColumn();
-            case "GeographyCode":
-                return new TableNodeGeographyCode();
+        if (Languages.match("TextTree", name)) {
+            return new TableNodeText();
+        } else if (Languages.match("HtmlTree", name)) {
+            return new TableNodeHtml();
+        } else if (Languages.match("MathFunction", name)) {
+            return new TableNodeMathFunction();
+        } else if (Languages.match("WebFavorite", name)) {
+            return new TableNodeWebFavorite();
+        } else if (Languages.match("DatabaseSQL", name)) {
+            return new TableNodeSQL();
+        } else if (Languages.match("ImageScope", name)) {
+            return new TableNodeImageScope();
+        } else if (Languages.match("JShell", name)) {
+            return new TableNodeJShell();
+        } else if (Languages.match("JEXL", name)) {
+            return new TableNodeJEXL();
+        } else if (Languages.match("JavaScript", name)) {
+            return new TableNodeJavaScript();
+        } else if (Languages.match("RowExpression", name)) {
+            return new TableNodeRowExpression();
+        } else if (Languages.match("DataColumn", name)) {
+            return new TableNodeDataColumn();
+        } else if (Languages.match("GeographyCode", name)) {
+            return new TableNodeGeographyCode();
         }
         return null;
     }
@@ -201,6 +198,15 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     @Override
     public DataNode newData() {
         return DataNode.create();
+    }
+
+    public DataNode createRoot() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return createRoot(conn);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
     }
 
     private DataNode createRoot(Connection conn) {
@@ -244,12 +250,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             DataNode root = query(conn, RootID);
             if (root == null) {
                 root = createRoot(conn);
-            } else {
-                if (treeName != null && !treeName.equals(root.getTitle())) {
-                    root.setTitle(treeName);
-                    root = updateData(conn, root);
-                }
             }
+            if (treeName != null && !treeName.equals(root.getTitle())) {
+                root.setTitle(treeName);
+            }
+            root.setHierarchyNumber("").setChainName(root.getTitle());
+            root = updateData(conn, root);
             return root;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -285,15 +291,16 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     // its decentants will be deleted automatically
-    public long deleteNode(Connection conn, long nodeid) {
-        if (conn == null || nodeid < 0) {
+    public long deleteNode(long nodeid) {
+        if (nodeid < 0) {
             return -1;
         }
         if (nodeid == RootID) {
-            return createRoot(conn) != null ? 1 : -3;
+            return createRoot() != null ? 1 : -3;
         }
         String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -302,13 +309,14 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public long deleteDecentants(Connection conn, long nodeid) {
-        if (conn == null || nodeid < 0) {
+    public long deleteDecentants(long nodeid) {
+        if (nodeid < 0) {
             return -1;
         }
         String sql = "DELETE FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -340,12 +348,18 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public boolean hasChildren(Connection conn, long nodeid) {
+    public boolean hasChildren(Connection conn, DataNode node) {
+        if (node == null || node.getChildrenSize() == 0) {
+            return false;
+        }
+        if (node.getChildrenSize() > 0) {
+            return true;
+        }
         boolean hasChildren = false;
         String sql = "SELECT nodeid FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, nodeid);
+            statement.setLong(1, node.getNodeid());
             try (ResultSet results = statement.executeQuery()) {
                 hasChildren = results != null && results.next();
             }
@@ -355,12 +369,29 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return hasChildren;
     }
 
+    public long childrenSize(Connection conn, long nodeid) {
+        String sql = "SELECT count(nodeid) FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid";
+        long size = -1;
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, nodeid);
+            conn.setAutoCommit(true);
+            ResultSet results = statement.executeQuery();
+            if (results != null && results.next()) {
+                size = results.getInt(1);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return size;
+    }
+
     public DataNode copyNode(Connection conn, DataNode sourceNode, DataNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             return null;
         }
         try {
-            DataNode newNode = sourceNode.copy()
+            DataNode newNode = sourceNode.cloneAll()
                     .setNodeid(-1).setParentid(targetNode.getNodeid());
             newNode = insertData(conn, newNode);
             if (newNode == null) {
@@ -397,7 +428,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                             return -count;
                         }
                         DataNode childNode = readData(results);
-                        DataNode newNode = childNode.copy()
+                        DataNode newNode = childNode.cloneAll()
                                 .setNodeid(-1).setParentid(targetid);
                         newNode = insertData(conn, newNode);
                         if (newNode == null) {
@@ -486,39 +517,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return chainName;
     }
 
-    public List<DataNode> ancestors(long id) {
-        if (id < 0) {
-            return null;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return ancestors(conn, id);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public List<DataNode> ancestors(Connection conn, long id) {
-        if (conn == null || id < 0) {
-            return null;
-        }
-        List<DataNode> ancestors = null;
-        DataNode node = query(conn, id);
-        if (node == null || node.isRoot()) {
-            return ancestors;
-        }
-        long parentid = node.getParentid();
-        DataNode parent = query(conn, parentid);
-        if (parent != null) {
-            ancestors = ancestors(conn, parentid);
-            if (ancestors == null) {
-                ancestors = new ArrayList<>();
-            }
-            ancestors.add(parent);
-        }
-        return ancestors;
-    }
-
     public DataNode find(Connection conn, long parent, String title) {
         if (conn == null || title == null || title.isBlank()) {
             return null;
@@ -586,6 +584,76 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return count;
     }
 
+    public DataNode readChain(FxTask<Void> task, Connection conn, DataNode node) {
+        return readChain(task, conn, node == null ? RootID : node.getNodeid());
+    }
+
+    public DataNode readChain(FxTask<Void> task, Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return null;
+        }
+        String chainName = "";
+        List<DataNode> chainNodes = new ArrayList<>();
+        DataNode node = query(conn, id);
+        if (node == null) {
+            return node;
+        }
+        chainNodes.add(node);
+        DataNode child = node, parent;
+        long parentid, childid;
+        String h = "";
+        while (true) {
+            if (conn == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            childid = child.getNodeid();
+            parentid = child.getParentid();
+            if (parentid == childid || childid == RootID) {
+                break;
+            }
+            parent = query(conn, parentid);
+            if (parent == null) {
+                break;
+            }
+            chainName = parent.getTitle() + TitleSeparater + chainName;
+            chainNodes.add(0, parent);
+            String sql = "SELECT nodeid FROM " + tableName
+                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
+            int index = -1;
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setLong(1, parentid);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results != null && results.next()) {
+                        index++;
+                        long itemid = results.getLong("nodeid");
+                        if (itemid == childid) {
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                    return null;
+                }
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+                return null;
+            }
+            if (index < 0) {
+                return null;
+            }
+            child.setIndex(index);
+            h = "." + (index + 1) + h;
+            child = parent;
+        }
+        node.setChainNodes(chainNodes);
+        node.setChainName(chainName + node.getTitle());
+        if (h.startsWith(".")) {
+            h = h.substring(1, h.length());
+        }
+        node.setHierarchyNumber(h);
+        return node;
+    }
+
     /*
         values
      */
@@ -651,7 +719,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 continue;
             }
             List<String> row = new ArrayList<>();
-            row.add(label(name));
+            row.add(column.getLabel());
             row.add("<PRE><CODE>" + value + "</CODE></PRE>");
             table.add(row);
         }
@@ -716,7 +784,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (!json.isBlank()) {
                 json += ",\n";
             }
-            json += prefix + "\"" + label(name) + "\": "
+            json += prefix + "\"" + column.getLabel() + "\": "
                     + JsonTools.encode(sValue);
         }
         return json;
@@ -796,62 +864,86 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (value == null || value.isBlank()) {
                 continue;
             }
-            s += "\n" + label(name) + ": " + value;
+            s += "\n" + column.getLabel() + ": " + value;
 
         }
         return s;
-    }
-
-    public String makeHierarchyNumber(Connection conn, DataNode node) {
-        if (node == null || node.getNodeid() == node.getParentid()) {
-            return "";
-        }
-        String h = "";
-        DataNode parent = query(conn, node.getParentid());
-        DataNode child = node;
-        long parentid, childid;
-        while (parent != null) {
-            parentid = parent.getNodeid();
-            childid = child.getNodeid();
-            String sql = "SELECT nodeid FROM " + tableName
-                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
-            int index = -1;
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setLong(1, parentid);
-                try (ResultSet results = statement.executeQuery()) {
-                    while (results != null && results.next()) {
-                        index++;
-                        long itemid = results.getLong("nodeid");
-                        if (itemid == childid) {
-                            break;
-                        }
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.console(e);
-                    return null;
-                }
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-                return null;
-            }
-            if (index < 0) {
-                return "";
-            }
-            h = "." + (index + 1) + h;
-            child = parent;
-            parent = query(conn, child.getParentid());
-        }
-        if (h.startsWith(".")) {
-            h = h.substring(1, h.length());
-        }
-        node.setHierarchyNumber(h);
-        return h;
     }
 
     public Object majorValue(DataNode node) {
         return getValue(node, majorColumnName);
     }
 
+    /*
+        tools
+     */
+    public void popNode(BaseController controller, DataNode node) {
+        if (node == null) {
+            return;
+        }
+        FxTask popTask = new FxSingletonTask<Void>(controller) {
+            private String html;
+            private DataNode savedNode;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    savedNode = query(conn, node.getNodeid());
+                    if (savedNode == null) {
+                        return false;
+                    }
+                    html = valuesHtml(this, conn, controller, savedNode,
+                            node.getHierarchyNumber(), 4);
+                    return html != null && !html.isBlank();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                HtmlTableController.open(null, html);
+            }
+
+        };
+        controller.start(popTask, false);
+    }
+
+    public void executeNode(BaseController controller, DataNode node) {
+        if (node == null) {
+            controller.popError(message("SelectToHandle"));
+            return;
+        }
+        if (this instanceof TableNodeWebFavorite) {
+            FxTask exTask = new FxTask<Void>(controller) {
+                private String address;
+
+                @Override
+                protected boolean handle() {
+                    try (Connection conn = DerbyBase.getConnection()) {
+                        DataNode savedNode = query(conn, node.getNodeid());
+                        if (savedNode == null) {
+                            return false;
+                        }
+                        address = savedNode.getStringValue("address");
+                        return address != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    WebBrowserController.openAddress(address, true);
+                }
+            };
+            controller.start(exTask, false, message("Handling..."));
+        } else {
+            DataTreeNodeEditorController.loadNode(controller, this, node, true);
+        }
+    }
 
     /*
         get/set

@@ -44,13 +44,13 @@ public class ControlData2DRowExpression extends ControlDataRowExpression {
         }
     }
 
-    public void setData2D(Data2D data2D) {
-        this.data2D = data2D;
+    public void updateData(Data2D data) {
+        data2D = data;
     }
 
     public boolean checkExpression(boolean allPages) {
         error = null;
-        if (data2D == null || !data2D.isValidDefinition()) {
+        if (data2D == null || !data2D.hasColumns()) {
             error = message("InvalidData");
             return false;
         }
@@ -95,6 +95,13 @@ public class ControlData2DRowExpression extends ControlDataRowExpression {
     @FXML
     public void showPlaceholders(Event event) {
         PopTools.popDataPlaceHolders(this, event, scriptInput, baseName + "Placeholders", data2D);
+    }
+
+    @FXML
+    public void infoAction(Event event) {
+        if (data2D != null) {
+            HtmlPopController.showHtml(this, data2D.dataInfo());
+        }
     }
 
 }

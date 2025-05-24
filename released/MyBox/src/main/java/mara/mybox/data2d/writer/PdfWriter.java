@@ -40,6 +40,7 @@ public class PdfWriter extends Data2DWriter {
                 pdfTable = PaginatedPdfTable.create();
             }
             pdfTable.setColumns(headerNames).createDoc(tmpFile);
+            status = Status.Openned;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -69,8 +70,7 @@ public class PdfWriter extends Data2DWriter {
     @Override
     public void closeWriter() {
         try {
-            created = false;
-            if (pdfTable == null) {
+            if (pdfTable == null || printFile == null) {
                 showInfo(message("Failed") + ": " + printFile);
                 return;
             }
@@ -80,30 +80,43 @@ public class PdfWriter extends Data2DWriter {
             pageRows = null;
             pdfTable.closeDoc();
             pdfTable = null;
-            if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, printFile)) {
+            if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
+                return;
+            }
+            if (targetRowIndex == 0) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("NoData") + ": " + printFile);
+                status = Status.NoData;
+                return;
+            }
+            if (!FileTools.override(tmpFile, printFile)) {
+                FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             if (printFile == null || !printFile.exists()) {
                 showInfo(message("Failed") + ": " + printFile);
+                status = Status.Failed;
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.PDF);
-            created = true;
+            status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
         }
     }
 
     @Override
-    public void showResult() {
+    public boolean showResult() {
         if (printFile == null || !printFile.exists()) {
-            showError(message("Failed"));
-            return;
+            return false;
         }
         PdfViewController.open(printFile);
+        return true;
     }
 
     /*

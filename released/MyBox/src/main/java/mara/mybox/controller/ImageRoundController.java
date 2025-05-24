@@ -86,7 +86,7 @@ public class ImageRoundController extends BaseImageEditController {
             if (parent == null) {
                 return null;
             }
-            ImageRoundController controller = (ImageRoundController) WindowTools.operationStage(
+            ImageRoundController controller = (ImageRoundController) WindowTools.referredStage(
                     parent, Fxmls.ImageRoundFxml);
             controller.setParameters(parent);
             return controller;

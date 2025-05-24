@@ -21,20 +21,20 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.tools.AlphaTools;
-import mara.mybox.image.data.ImageBinary;
-import mara.mybox.image.data.ImageContrast;
-import mara.mybox.image.data.ImageConvolution;
-import mara.mybox.image.data.PixelsOperation;
-import mara.mybox.image.data.PixelsOperationFactory;
-import mara.mybox.image.tools.ScaleTools;
-import mara.mybox.image.tools.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageBinary;
+import mara.mybox.image.data.ImageContrast;
+import mara.mybox.image.data.ImageConvolution;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.AlphaTools;
+import mara.mybox.image.tools.ScaleTools;
+import mara.mybox.image.tools.TransformTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -309,8 +309,8 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
 
     @Override
     public int handleCurrentPage(FxTask currentTask) {
-        int num;
-        updateLogs(message("HandlingPage") + ":" + currentParameters.currentPage, true, true);
+        int num, index = pageIndex + 1;
+        updateLogs(message("HandlingPage") + ":" + index, true, true);
         pageStart = new Date().getTime();
         if (convertRadio.isSelected()) {
             num = convertPage(currentTask);
@@ -318,7 +318,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             num = extractPage(currentTask);
         }
         if (num > 0 && separatorCheck.isSelected()) {
-            String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
+            String s = separator.replace("<Page Number>", index + " ");
             s = s.replace("<Total Number>", doc.getNumberOfPages() + "");
             ocrTexts += s + System.getProperty("line.separator");
         }
@@ -330,20 +330,20 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         try {
             // ImageType.BINARY work bad while ImageType.RGB works best
             BufferedImage bufferedImage
-                    = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, ImageType.RGB);    // 0-based
+                    = renderer.renderImageWithDPI(pageIndex, dpi, ImageType.RGB);    // 0-based
             text = ocr(currentTask, bufferedImage);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         if (text != null) {
-            String s = message("Page") + ":" + currentParameters.currentPage + "   "
+            String s = message("Page") + ":" + (pageIndex + 1) + "   "
                     + MessageFormat.format(message("OCRresults"),
                             text.length(), DateTools.datetimeMsDuration(new Date().getTime() - pageStart));
             updateLogs(s, true, true);
             ocrTexts += text + System.getProperty("line.separator");
             return 1;
         } else {
-            String s = message("Failed") + ":" + currentParameters.currentPage;
+            String s = message("Failed") + ":" + (pageIndex + 1);
             updateLogs(s, true, true);
             return 0;
         }
@@ -353,7 +353,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         int count = 0;
         String text = "";
         try {
-            PDPage page = doc.getPage(currentParameters.currentPage - 1);  // 0-based
+            PDPage page = doc.getPage(pageIndex);  // 0-based
             PDResources pdResources = page.getResources();
             Iterable<COSName> iterable = pdResources.getXObjectNames();
             if (iterable != null) {
@@ -390,7 +390,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             return count;
         }
         if (!text.isBlank()) {
-            String s = message("Page") + ":" + currentParameters.currentPage + "   "
+            String s = message("Page") + ":" + (pageIndex + 1) + "   "
                     + MessageFormat.format(message("OCRresults"),
                             text.length(), DateTools.datetimeMsDuration(new Date().getTime() - pageStart));
             updateLogs(s, true, true);
@@ -593,7 +593,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     @Override
     public void postHandlePages(FxTask currentTask) {
         try {
-            File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
+            File tFile = makeTargetFile(FileNameTools.prefix(currentSourceFile().getName()),
                     ".txt", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             if (TextFileTools.writeFile(tFile, ocrTexts) != null) {

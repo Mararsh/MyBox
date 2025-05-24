@@ -202,7 +202,7 @@ public class Data2DManageQueryController extends BaseChildController {
      */
     public static Data2DManageQueryController open(BaseData2DListController manageController) {
         try {
-            Data2DManageQueryController controller = (Data2DManageQueryController) WindowTools.branchStage(
+            Data2DManageQueryController controller = (Data2DManageQueryController) WindowTools.referredTopStage(
                     manageController, Fxmls.Data2DManageQueryFxml);
             controller.setParameters(manageController);
             controller.requestMouse();

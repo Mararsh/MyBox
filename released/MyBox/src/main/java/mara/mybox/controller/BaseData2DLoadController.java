@@ -31,13 +31,13 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.DataType;
+import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -54,7 +54,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         status
      */
     public boolean isValidPageData() {
-        if (!isValidData() || tableData == null) {
+        if (!hasColumns() || tableData == null) {
             return false;
         }
         return true;
@@ -117,20 +117,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         return true;
     }
 
-    public boolean loadNull() {
-        return createData(null);
-    }
-
-    public void dataSaved() {
-        try {
-            popInformation(message("Saved"));
-            notifySaved();
-            readData(true);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public synchronized void readData(boolean reloadSize) {
         if (data2D == null) {
             loadNull();
@@ -177,8 +163,9 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         try {
             resetStatus();
             makeColumns();
-            if (!isValidData()) {
+            if (invalidData()) {
                 resetData();
+                postLoadedTableData();
                 return;
             }
             dataSizeLoaded = !readSize;
@@ -291,7 +278,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
             updateTable(rows);
-            postLoadedTableData();
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
             }
@@ -300,48 +286,61 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
     }
 
-    public void updateTable(List<List<String>> data) {
-        setPageData(data);
-    }
-
-    public void setPageData(List<List<String>> data) {
-        try {
-            isSettingValues = true;
-            tableData.setAll(data);
-            data2D.setPageData(tableData);
-            isSettingValues = false;
-            tableView.refresh();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public boolean loadNull() {
+        return createData(null);
     }
 
     public void loadTmpData(int size) {
         loadData(null, data2D.tmpColumns(size), data2D.tmpData(size, 3));
     }
 
-    public void loadMatrix(double[][] matrix) {
-        if (matrix == null || matrix.length == 0) {
-            loadNull();
-            return;
-        }
-        loadData(null, data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
-    }
-
     @Override
     public void sourceFileChanged(File file) {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            resetStatus();
-            setData(Data2D.create(Data2DDefinition.type(file)));
-            beforeOpenFile();
-            data2D.initFile(file);
-            readData(true);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (file == null || !checkBeforeNextAction()) {
+            return;
         }
+        resetStatus();
+        task = new FxSingletonTask<Void>(this) {
+
+            protected Data2D fileData;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    if (tableData2DDefinition == null) {
+                        tableData2DDefinition = new TableData2DDefinition();
+                    }
+                    Data2DDefinition def = tableData2DDefinition.queryFile(conn, file);
+                    if (def == null) {
+                        fileData = Data2D.create(Data2DDefinition.type(file));
+                    } else {
+                        fileData = Data2D.create(def.dataType);
+                        fileData.cloneDef(def);
+                    }
+                    fileData.initFile(file);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (fileData != null) {
+                    setData(fileData);
+                    beforeOpenFile();
+                    readData(true);
+                }
+            }
+
+        };
+        start(task, thisPane);
     }
 
     public void beforeOpenFile() {
@@ -487,6 +486,33 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
         };
         start(task, thisPane);
+    }
+
+    public void updateTable(List<List<String>> data) {
+        setPageData(data);
+        postLoadedTableData();
+    }
+
+    public void setPageData(List<List<String>> data) {
+        try {
+            isSettingValues = true;
+            tableData.setAll(data);
+            data2D.setPageData(tableData);
+            isSettingValues = false;
+            tableView.refresh();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void dataSaved() {
+        try {
+            popInformation(message("Saved"));
+            notifySaved();
+            readData(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*

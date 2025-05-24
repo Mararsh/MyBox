@@ -29,6 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -81,29 +82,31 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     public void initTree() {
         try {
-            hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
-            hierarchyColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {
-                @Override
-                public TreeTableCell<NodeP, String> call(TreeTableColumn<NodeP, String> param) {
+            if (hierarchyColumn != null) {
+                hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
+                hierarchyColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {
+                    @Override
+                    public TreeTableCell<NodeP, String> call(TreeTableColumn<NodeP, String> param) {
 
-                    TreeTableCell<NodeP, String> cell = new TreeTableCell<NodeP, String>() {
-                        @Override
-                        public void updateItem(String item, boolean empty) {
-                            super.updateItem(item, empty);
-                            setGraphic(null);
-                            if (empty || item == null) {
-                                setText(null);
-                                return;
-                            }
-                            TreeItem<NodeP> treeItem = getTreeTableView().getTreeItem(getIndex());
-                            String hierarchyNumber = makeHierarchyNumber(treeItem);
-                            setText(hierarchyNumber);
+                        TreeTableCell<NodeP, String> cell = new TreeTableCell<NodeP, String>() {
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                setGraphic(null);
+                                if (empty || item == null) {
+                                    setText(null);
+                                    return;
+                                }
+                                TreeItem<NodeP> treeItem = getTreeTableView().getTreeItem(getIndex());
+                                String hierarchyNumber = makeHierarchyNumber(treeItem);
+                                setText(hierarchyNumber);
 //                            setHierarchyNumber(treeItem.getValue(), hierarchyNumber);
-                        }
-                    };
-                    return cell;
-                }
-            });
+                            }
+                        };
+                        return cell;
+                    }
+                });
+            }
 
             titleColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
             titleColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {
@@ -194,6 +197,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (root != null) {
             root.setExpanded(true);
         }
+        notifyLoaded();
+    }
+
+    public void notifyLoaded() {
         loadedNotify.set(!loadedNotify.get());
     }
 
@@ -502,7 +509,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
@@ -534,7 +541,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
         List<MenuItem> items = new ArrayList<>();
         if (!treeItem.isLeaf()) {
-            items.addAll(foldMenuItems(treeItem));
+            items.addAll(foldMenuItems());
 
             items.add(new SeparatorMenuItem());
         }
@@ -611,7 +618,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     public List<MenuItem> makeFunctionsMenu(TreeItem<NodeP> item) {
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
@@ -625,7 +632,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return viewMenuItems(item);
     }
 
-    public List<MenuItem> foldMenuItems(TreeItem<NodeP> item) {
+    public List<MenuItem> foldMenuItems() {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
@@ -743,7 +750,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setStyle(attributeTextStyle());
         items.add(menu);
         items.add(new SeparatorMenuItem());
 

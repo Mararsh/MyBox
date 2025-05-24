@@ -10,6 +10,7 @@ import java.util.Map;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.data.FileInformation;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -75,7 +76,8 @@ public class DataFileExcelMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File srcFile) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
+        File srcFile = info.getFile();
         String result;
         try (Workbook sourceBook = WorkbookFactory.create(srcFile)) {
             List<String> rowData = new ArrayList<>();

@@ -335,17 +335,21 @@ public class ConvertCoordinateController extends BaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (!super.afterSceneLoaded()) {
+                return false;
+            }
 
             decimalInput.setText("48.853411");
             longitudeInput.setText("117.0983");
             latitudeInput.setText("36.25551");
             csConvert();
 
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 

@@ -8,8 +8,8 @@ License:    Apache License Version 2.0
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -19,27 +19,53 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
-            <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
+                <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconView.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <RadioButton fx:id="treeRadio" mnemonicParsing="false" selected="true">
                <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconView.png" />
+                        <Image url="@../buttons/Red/iconTree.png" />
                      </image>
                   </ImageView>
                </graphic>
-            </Button>
+               <toggleGroup>
+                  <ToggleGroup fx:id="formatGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="tableRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconGrid.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </RadioButton>
                 <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectTargetNode" wrapText="true" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <TreeTableView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-         <columns>
-            <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
-            <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
-            <TreeTableColumn fx:id="idColumn" text="%ID" />
-            <TreeTableColumn fx:id="timeColumn" prefWidth="180.0" text="%ModifiedTime" />
-            <TreeTableColumn fx:id="orderColumn" text="%OrderNumber" />
-         </columns>
-        </TreeTableView>
-      <Label fx:id="treeLabel" />
+        <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <children>
+                <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeTable.fxml" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+                <VBox fx:id="treeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeView.fxml" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+       
     </children>
 </VBox>

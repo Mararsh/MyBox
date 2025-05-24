@@ -11,8 +11,6 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -165,26 +163,6 @@ public class BaseData2DPasteController extends ControlData2DSource {
         } catch (Exception e) {
         }
         super.cleanPane();
-    }
-
-    /*
-        static methods
-     */
-    public static BaseData2DPasteController open(Data2DManufactureController target) {
-        try {
-            if (target == null) {
-                return null;
-            }
-            BaseData2DPasteController controller
-                    = (BaseData2DPasteController) WindowTools.branchStage(
-                            target, Fxmls.Data2DPasteContentInMyBoxClipboardFxml);
-            controller.setParameters(target);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
 }

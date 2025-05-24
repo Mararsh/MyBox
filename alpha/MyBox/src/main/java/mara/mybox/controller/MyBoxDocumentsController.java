@@ -276,7 +276,6 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     protected boolean testing(String lang) {
         try {
-            MyBoxLog.console(lang);
             DataFileCSV data = TestEnvironment(lang);
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_TestEnvironment_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);

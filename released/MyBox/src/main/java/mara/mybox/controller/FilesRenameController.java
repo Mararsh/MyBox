@@ -350,12 +350,13 @@ public class FilesRenameController extends BaseBatchFileController {
     @Override
     public void afterTask(boolean ok) {
         try {
+            super.afterTask(ok);
             if (names == null || names.isEmpty()) {
                 popError(message("SelectToHandle"));
                 return;
             }
             FilesRenameResultsController controller
-                    = (FilesRenameResultsController) WindowTools.branchStage(this, Fxmls.FilesRenameResultsFxml);
+                    = (FilesRenameResultsController) WindowTools.referredTopStage(this, Fxmls.FilesRenameResultsFxml);
             controller.handleFiles(names);
         } catch (Exception e) {
             MyBoxLog.error(e);

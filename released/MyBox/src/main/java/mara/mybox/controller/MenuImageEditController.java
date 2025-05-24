@@ -72,7 +72,7 @@ public class MenuImageEditController extends MenuImageViewController {
                         }
                     }
                 }
-                MenuImageEditController controller = (MenuImageEditController) WindowTools.branchStage(
+                MenuImageEditController controller = (MenuImageEditController) WindowTools.referredTopStage(
                         editor, Fxmls.MenuImageEditFxml);
                 controller.setParameters(editor, x, y);
                 return controller;

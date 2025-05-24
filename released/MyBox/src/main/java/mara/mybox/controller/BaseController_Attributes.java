@@ -71,7 +71,7 @@ public abstract class BaseController_Attributes {
     protected Pagination pagination;
 
     public static enum StageType {
-        Normal, Operation, Branch, Child, Pop, Popup, OneOpen
+        Normal, Child, RefferredTop, Referred, Fork, Top, Popup, OneOpen
     }
 
     public static enum SaveAsType {
@@ -237,17 +237,19 @@ public abstract class BaseController_Attributes {
     }
 
     public boolean isIndependantStage() {
+//        MyBoxLog.console(baseName + "  " + myFxml + "  " + stageType);
         return getMyStage() != null
                 && mainMenuController != null
                 && myStage.getOwner() == null
-                && stageType != StageType.Branch
+                && stageType != StageType.RefferredTop
+                && stageType != StageType.Referred
                 && stageType != StageType.Child
-                && stageType != StageType.Pop
+                && stageType != StageType.Top
                 && stageType != StageType.Popup;
     }
 
     public boolean isPopup() {
-        if (stageType == StageType.Pop
+        if (stageType == StageType.Top
                 || stageType == StageType.Popup) {
             return true;
         }
@@ -577,7 +579,7 @@ public abstract class BaseController_Attributes {
 
     public void displayInfo(String text) {
         if (this instanceof BaseLogsController) {
-            ((BaseLogsController) this).updateLogs(text);
+            ((BaseLogsController) this).showLogs(text);
         } else {
             popInformation(text);
         }

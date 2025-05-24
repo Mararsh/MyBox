@@ -64,7 +64,6 @@ public class ControlData2DSetValue extends BaseController {
         try {
             this.handleController = handleController;
 
-            thisPane.getChildren().remove(tabPane);
             setBox.getChildren().clear();
 
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -238,7 +237,7 @@ public class ControlData2DSetValue extends BaseController {
 
     public void setData2D(Data2D data2D) {
         this.data2D = data2D;
-        expressionController.setData2D(data2D);
+        expressionController.updateData(data2D);
     }
 
     public void setMatrixPane(boolean isAvailable) {

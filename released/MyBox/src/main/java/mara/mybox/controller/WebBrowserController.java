@@ -23,9 +23,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -131,7 +133,7 @@ public class WebBrowserController extends BaseController {
             MenuItem menu;
             if (title != null && !title.isBlank()) {
                 menu = new MenuItem(StringTools.menuPrefix(title));
-                menu.setStyle("-fx-text-fill: #2e598a;");
+                menu.setStyle(attributeTextStyle());
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
             }
@@ -139,83 +141,15 @@ public class WebBrowserController extends BaseController {
             int index = tabPane.getTabs().indexOf(tab);
 
             if (tab == initTab) {
-                Menu exampleMenu = new Menu(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
-
-                menu = new MenuItem(message("WebFavorite"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://mara-mybox.sourceforge.io/mybox_examples_Node_Web_Favorite_"
-                            + (Languages.isChinese() ? "zh" : "en") + ".html",
-                            true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://sci-hub.se");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://sci-hub.se", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://zm-digicol.dpm.org.cn");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://zm-digicol.dpm.org.cn", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://bing.com");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://bing.com", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://baidu.com");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://baidu.com", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://weibo.com");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://weibo.com", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://www.kunnu.com");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://www.kunnu.com", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("http://nga.178.com");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("http://nga.178.com", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://www.radio.cn");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://www.radio.cn", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://openjfx.io/javadoc/23/");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://openjfx.io/javadoc/23/", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://docs.oracle.com/en/java/javase/23/docs/api/index.html");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://docs.oracle.com/en/java/javase/23/docs/api/index.html", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                menu = new MenuItem("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadAddress("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html", true);
-                });
-                exampleMenu.getItems().add(menu);
-
-                items.add(exampleMenu);
+                Menu exampleMenu = exampleMenu();
+                if (exampleMenu != null) {
+                    items.add(exampleMenu);
+                }
+                Menu historiesMenu = historiesMenu();
+                if (historiesMenu != null) {
+                    items.add(historiesMenu);
+                }
+                items.add(new SeparatorMenuItem());
             }
 
             menu = new MenuItem(message("AddAtRight"), StyleTools.getIconImageView("iconAdd.png"));
@@ -311,13 +245,13 @@ public class WebBrowserController extends BaseController {
                 items.add(funcMenu);
 
             } else {
-                menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStar.png"));
+                menu = new MenuItem(message("WebFavorites") + " ...", StyleTools.getIconImageView("iconStar.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     DataTreeController.webFavorite(myController, false);
                 });
                 items.add(menu);
 
-                menu = new MenuItem(message("WebHistories"), StyleTools.getIconImageView("iconHistory.png"));
+                menu = new MenuItem(message("WebHistories") + " ...", StyleTools.getIconImageView("iconHistory.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     WebHistoriesController.oneOpen();
                 });
@@ -340,6 +274,114 @@ public class WebBrowserController extends BaseController {
             popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public Menu exampleMenu() {
+        try {
+            Menu exampleMenu = new Menu(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
+
+            MenuItem menu = new MenuItem(message("WebFavorite"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://mara-mybox.sourceforge.io/mybox_examples_Node_Web_Favorite_"
+                        + (Languages.isChinese() ? "zh" : "en") + ".html",
+                        true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://sci-hub.se");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://sci-hub.se", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://zm-digicol.dpm.org.cn");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://zm-digicol.dpm.org.cn", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://bing.com");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://bing.com", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://baidu.com");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://baidu.com", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://weibo.com");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://weibo.com", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://www.kunnu.com");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://www.kunnu.com", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("http://nga.178.com");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("http://nga.178.com", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://www.radio.cn");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://www.radio.cn", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://openjfx.io/javadoc/23/");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://openjfx.io/javadoc/23/", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://docs.oracle.com/en/java/javase/23/docs/api/index.html");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://docs.oracle.com/en/java/javase/23/docs/api/index.html", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            menu = new MenuItem("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadAddress("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html", true);
+            });
+            exampleMenu.getItems().add(menu);
+
+            return exampleMenu;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public Menu historiesMenu() {
+        try {
+            Menu historiesMenu = new Menu(message("Histories"), StyleTools.getIconImageView("iconHistory.png"));
+
+            List<String> histories = new TableWebHistory().recent(16);
+
+            for (String address : histories) {
+                MenuItem menu = new MenuItem(StringTools.menuPrefix(address));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    loadAddress(address, true);
+                });
+                historiesMenu.getItems().add(menu);
+            }
+
+            return historiesMenu;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

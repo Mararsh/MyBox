@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.List;
 import java.util.Map;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -58,7 +59,7 @@ public class ControlData2DChartPie extends BaseData2DChartFx {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Data2DChartPieOptionsController.open(this);
         return true;
     }

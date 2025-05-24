@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.data.FileInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -39,11 +40,12 @@ public class HtmlFramesetController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
             if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
+            File file = info.getFile();
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }

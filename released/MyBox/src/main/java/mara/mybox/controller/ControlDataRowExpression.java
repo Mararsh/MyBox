@@ -88,9 +88,9 @@ public class ControlDataRowExpression extends BaseDataValuesController {
      */
     public static DataTreeNodeEditorController open(BaseController parent, String script) {
         try {
-            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
-            controller.setTable(new TableNodeRowExpression());
-            ((ControlDataRowExpression) controller.dataController).edit(script);
+            DataTreeNodeEditorController controller
+                    = DataTreeNodeEditorController.openTable(parent, new TableNodeRowExpression());
+            ((ControlDataRowExpression) controller.valuesController).edit(script);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

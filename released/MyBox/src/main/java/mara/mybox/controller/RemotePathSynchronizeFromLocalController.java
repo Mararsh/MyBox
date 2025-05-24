@@ -60,7 +60,6 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
 
     @Override
     public void afterTask(boolean ok) {
-        super.afterTask(ok);
         remoteController.disconnect();
         sourceBox.setDisable(false);
         remoteBox.setDisable(false);

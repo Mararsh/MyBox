@@ -19,31 +19,24 @@ import static mara.mybox.value.Languages.message;
 public class DataSelectParentController extends BaseDataSelectController {
 
     protected DataTreeNodeEditorController editor;
-    protected DataNode sourceNode;
 
     @FXML
     protected Label nodeLabel;
 
-    public void setParameters(DataTreeNodeEditorController parent, DataNode node) {
+    public void setParameters(DataTreeNodeEditorController controller,
+            DataNode node, DataNode parentNode) {
         try {
-            if (parent == null) {
+            if (controller == null) {
                 close();
                 return;
             }
-            editor = parent;
-            nodeTable = editor.nodeTable;
-            dataName = nodeTable.getDataName();
-            baseName = baseName + "_" + dataName;
-
+            editor = controller;
             sourceNode = node;
             if (sourceNode != null) {
                 nodeLabel.setText(message("SourceNode") + ": " + sourceNode.shortDescription());
             }
 
-            baseTitle = nodeTable.getTreeName() + " - " + message("SelectParentNode");
-            setTitle(baseTitle);
-
-            loadTree(sourceNode);
+            initDataTree(editor.nodeTable, parentNode);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -51,14 +44,14 @@ public class DataSelectParentController extends BaseDataSelectController {
     }
 
     @Override
-    public boolean isSourceNode(DataNode node) {
-        return equalNode(node, sourceNode);
+    public String initTitle() {
+        return nodeTable.getTreeName() + " - " + message("SelectParentNode");
     }
 
     @FXML
     @Override
     public void okAction() {
-        DataNode targetNode = selectedValue();
+        DataNode targetNode = selectedNode();
         if (targetNode == null) {
             popError(message("SelectToHandle"));
             return;
@@ -100,9 +93,11 @@ public class DataSelectParentController extends BaseDataSelectController {
     /*
         static methods
      */
-    public static DataSelectParentController open(DataTreeNodeEditorController parent, DataNode node) {
-        DataSelectParentController controller = (DataSelectParentController) WindowTools.childStage(parent, Fxmls.DataSelectParentFxml);
-        controller.setParameters(parent, node);
+    public static DataSelectParentController open(DataTreeNodeEditorController parent,
+            DataNode sourceNode, DataNode parentNode) {
+        DataSelectParentController controller = (DataSelectParentController) WindowTools
+                .childStage(parent, Fxmls.DataSelectParentFxml);
+        controller.setParameters(parent, sourceNode, parentNode);
         controller.requestMouse();
         return controller;
     }

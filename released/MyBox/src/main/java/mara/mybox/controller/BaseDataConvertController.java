@@ -173,12 +173,15 @@ public class BaseDataConvertController extends BaseTaskController {
         }
     }
 
+    public String matrixType() {
+        return matrixOptionsController != null
+                ? matrixOptionsController.pickType() : "Double";
+    }
+
     public DataMatrixWriter pickMatrixWriter() {
         try {
             DataMatrixWriter writer = new DataMatrixWriter();
-            String type = matrixOptionsController != null
-                    ? matrixOptionsController.pickType() : "Double";
-            writer.setDataType(type)
+            writer.setDataType(matrixType())
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(DataMatrix.MatrixDelimiter)
                     .setWriteHeader(false);

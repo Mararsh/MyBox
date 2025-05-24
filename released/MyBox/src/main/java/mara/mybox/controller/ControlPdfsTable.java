@@ -129,7 +129,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             });
             userPasswordColumn.getStyleClass().add("editable-column");
 
-            fromColumn.setCellValueFactory(new PropertyValueFactory<>("fromPage"));
+            fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
             fromColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
                 TableAutoCommitCell<PdfInformation, Integer> cell
                         = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
@@ -142,7 +142,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                                 return false;
                             }
                             PdfInformation row = tableData.get(editingRow);
-                            row.setFromPage(value);
+                            row.setFromPage(value - 1);   // 0-based
                             return super.setCellValue(value);
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
@@ -154,7 +154,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             });
             fromColumn.getStyleClass().add("editable-column");
 
-            toColumn.setCellValueFactory(new PropertyValueFactory<>("toPage"));
+            toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
             toColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
                 TableAutoCommitCell<PdfInformation, Integer> cell
                         = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
@@ -167,7 +167,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                                 return false;
                             }
                             PdfInformation row = tableData.get(editingRow);
-                            row.setToPage(value);
+                            row.setToPage(value);  //exclude end
                             return super.setCellValue(value);
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
@@ -245,8 +245,8 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             if (userPassword) {
                 info.setUserPassword(password);
             }
-            info.setFromPage(fromPage);
-            info.setToPage(toPage);
+            info.setFromPage(fromPage - 1); // 0-based
+            info.setToPage(toPage + 1);   //exclude end
         }
         tableView.refresh();
 

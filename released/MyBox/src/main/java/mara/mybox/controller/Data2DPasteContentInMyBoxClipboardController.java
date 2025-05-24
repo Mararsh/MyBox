@@ -25,7 +25,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseData2DPast
                 return null;
             }
             Data2DPasteContentInMyBoxClipboardController controller
-                    = (Data2DPasteContentInMyBoxClipboardController) WindowTools.branchStage(
+                    = (Data2DPasteContentInMyBoxClipboardController) WindowTools.referredTopStage(
                             target, Fxmls.Data2DPasteContentInMyBoxClipboardFxml);
             controller.setParameters(target);
             controller.requestMouse();

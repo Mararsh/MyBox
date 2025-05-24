@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
 import mara.mybox.db.data.Data2DColumn;
@@ -65,7 +66,7 @@ public class ControlData2DChartXY extends BaseData2DChartFx {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         if (optionsController != null) {
             optionsController.close();
         }

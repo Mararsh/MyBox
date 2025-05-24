@@ -63,7 +63,7 @@ public class TextFilterController extends BaseChildController {
             if (parent == null) {
                 return null;
             }
-            TextFilterController controller = (TextFilterController) WindowTools.branchStage(
+            TextFilterController controller = (TextFilterController) WindowTools.referredTopStage(
                     parent, Fxmls.TextFilterFxml);
             controller.setParameters(parent);
             return controller;

@@ -141,14 +141,6 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         }
     }
 
-    @Override
-    public void afterTask(boolean ok) {
-        super.afterTask(ok);
-        if (openCheck.isSelected()) {
-            openTarget();
-        }
-    }
-
     /*
         static methods
      */
@@ -157,7 +149,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             if (manageController == null) {
                 return null;
             }
-            RemotePathGetController controller = (RemotePathGetController) WindowTools.branchStage(
+            RemotePathGetController controller = (RemotePathGetController) WindowTools.referredTopStage(
                     manageController, Fxmls.RemotePathGetFxml);
             controller.setParameters(manageController);
             controller.requestMouse();

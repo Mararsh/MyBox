@@ -62,7 +62,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfOCRBatch" text="%PdfOCRBatch" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openPdfAddWatermark" text="%PdfAddWatermark" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openPdfAddWatermark" text="%PdfAddWatermarkBatch" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfSplitBatch" text="%PdfSplitBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
@@ -121,6 +121,7 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%Texts">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
+                                        <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextFindBatch" text="%TextFindBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextReplaceBatch" text="%TextReplaceBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#TextFilterBatch" text="%TextFilterBatch" />
@@ -356,7 +357,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesCopy" text="%FilesCopy" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesMove" text="%FilesMove" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <Menu mnemonicParsing="false" text="%FilesDelete">
+                                <Menu mnemonicParsing="false" text="%Delete">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteSysTempPath" text="%DeleteJavaIOTemporaryPathFiles" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteEmptyDirectories" text="%DeleteEmptyDirectories" />

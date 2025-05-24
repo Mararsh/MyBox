@@ -29,7 +29,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
+public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     protected BaseData2DTaskController taskController;
     protected String groupName, timeName, expression, filledExpression;
@@ -118,8 +118,8 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             columnSelector.getItems().clear();
             tableData.clear();
             isSettingValues = false;
-            expressionController.setData2D(taskController.data2D);
-            if (!taskController.data2D.isValidDefinition()) {
+            expressionController.updateData(taskController.data2D);
+            if (!taskController.data2D.hasColumns()) {
                 return;
             }
             List<String> names = taskController.data2D.columnNames();
@@ -141,7 +141,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
     }
 
     public void loadColumnNames() {
-        if (!taskController.data2D.isValidDefinition()) {
+        if (!taskController.data2D.hasColumns()) {
             return;
         }
         List<String> names;

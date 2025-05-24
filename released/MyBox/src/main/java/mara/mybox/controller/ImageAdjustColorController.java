@@ -106,7 +106,7 @@ public class ImageAdjustColorController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageAdjustColorController controller = (ImageAdjustColorController) WindowTools.operationStage(
+            ImageAdjustColorController controller = (ImageAdjustColorController) WindowTools.referredStage(
                     parent, Fxmls.ImageAdjustColorFxml);
             controller.setParameters(parent);
             return controller;

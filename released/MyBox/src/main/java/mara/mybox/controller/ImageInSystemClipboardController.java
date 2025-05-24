@@ -162,9 +162,12 @@ public class ImageInSystemClipboardController extends BaseImageController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+    public boolean afterSceneLoaded() {
+        if (!super.afterSceneLoaded()) {
+            return false;
+        }
         updateStatus();
+        return true;
     }
 
     @Override

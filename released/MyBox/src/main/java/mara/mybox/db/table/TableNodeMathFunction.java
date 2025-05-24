@@ -25,26 +25,13 @@ public class TableNodeMathFunction extends BaseNodeTable {
 
     public final TableNodeMathFunction defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("variables", ColumnType.String));
-        addColumn(new ColumnDefinition("expression", ColumnType.Clob));
-        addColumn(new ColumnDefinition("domain", ColumnType.Clob));
+        addColumn(new ColumnDefinition("variables", ColumnType.String)
+                .setLabel(message("Variables")));
+        addColumn(new ColumnDefinition("expression", ColumnType.Clob)
+                .setLabel(message("Expression")));
+        addColumn(new ColumnDefinition("domain", ColumnType.Clob)
+                .setLabel(message("FunctionDomain")));
         return this;
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "variables":
-                return message("Variables");
-            case "expression":
-                return message("Expression");
-            case "domain":
-                return message("FunctionDomain");
-        }
-        return super.label(name);
     }
 
 }

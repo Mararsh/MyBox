@@ -352,16 +352,4 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         tabPane.setDisable(true);
     }
 
-    /*
-        pane
-     */
-    @Override
-    public void cleanPane() {
-        try {
-
-        } catch (Exception e) {
-        }
-        super.cleanPane();
-    }
-
 }

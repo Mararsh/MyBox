@@ -26,7 +26,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -88,6 +87,17 @@ public class Data2DManufactureController extends BaseData2DViewController {
         }
     }
 
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            StyleTools.setTips(addRowsButton, message("AddRowsWithCopy") + "\nCTRL+N / ALT+N");
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
 
     /*
         format
@@ -102,7 +112,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (isSettingValues) {
             return;
         }
-        if (!isValidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
+        if (invalidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
             switchFormat();
             return;
         }
@@ -110,12 +120,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private List<List<String>> rows;
 
             @Override
             protected boolean handle() {
-                rows = pickCSV(this);
-                return true;
+                return pickCSV(this);
             }
 
             @Override
@@ -125,11 +133,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                if (ok && rows != null) {
-                    isSettingValues = true;
-                    tableData.setAll(rows);
-                    data2D.setPageData(tableData);
-                    isSettingValues = false;
+                if (ok) {
                     switchFormat();
                 } else {
                     isSettingValues = true;
@@ -261,8 +265,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
         start(loadTask, false);
     }
 
-    public List<List<String>> pickCSV(FxTask task) {
+    public boolean pickCSV(FxTask task) {
         try {
+            if (!csvRadio.isSelected() || !isCSVModified || isCSVpicked) {
+                return true;
+            }
             if (delimiterName == null) {
                 delimiterName = ",";
             }
@@ -272,7 +279,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                 int colsNumber = data2D.columnsNumber();
                 List<List<String>> data = data2D.decodeCSV(task, text, delimiterName, false);
                 if (data == null) {
-                    return null;
+                    return false;
                 }
                 long startindex = data2D.getStartRowOfCurrentPage();
                 for (int i = 0; i < data.size(); i++) {
@@ -291,10 +298,16 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     rows.add(nrow);
                 }
             }
-            return rows;
+            isSettingValues = true;
+            tableData.setAll(rows);
+            data2D.setPageData(tableData);
+            isSettingValues = false;
+            isCSVModified = false;
+            isCSVpicked = false;
+            return true;
         } catch (Exception e) {
             displayError(e.toString());
-            return null;
+            return false;
         }
     }
 
@@ -306,7 +319,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         try {
             super.updateStatus();
 
-            boolean invalidData = !isValidData();
+            boolean invalidData = invalidData();
             mainAreaBox.setDisable(invalidData);
             opsPane.setDisable(invalidData);
             recoverButton.setDisable(invalidData || !dataSizeLoaded
@@ -339,14 +352,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!super.isValidPageData()) {
             return false;
         }
-        if (csvRadio.isSelected() && isCSVModified && !isCSVpicked) {
-            List<List<String>> rows = pickCSV(null);
-            if (rows == null) {
-                return false;
-            }
-            setPageData(rows);
-            isCSVpicked = true;
+        if (!pickCSV(null)) {
+            return false;
         }
+        isCSVpicked = true;
         return true;
     }
 
@@ -467,7 +476,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public List<String> newData() {
-        if (!isValidData()) {
+        if (invalidData()) {
             return null;
         }
         return data2D.newRow();
@@ -475,7 +484,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public List<String> dataCopy(List<String> data) {
-        if (!isValidData()) {
+        if (invalidData()) {
             return null;
         }
         return data2D.copyRow(data);
@@ -504,8 +513,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void showVerifyMenu(Event mevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
-            items.addAll(Data2DMenuTools.verifyMenus(this));
+            List<MenuItem> items = Data2DMenuTools.verifyMenus(this);
+            if (items == null) {
+                return;
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -542,6 +553,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void showTrimMenu(Event event) {
         try {
             List<MenuItem> items = Data2DMenuTools.trimMenus(this);
+            if (items == null) {
+                return;
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -573,6 +587,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void showCalculateMenu(Event event) {
         try {
             List<MenuItem> items = Data2DMenuTools.calMenus(this);
+            if (items == null) {
+                return;
+            }
 
             items.add(new SeparatorMenuItem());
 
@@ -604,7 +621,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void showChartsMenu(Event event) {
         try {
             List<MenuItem> items = Data2DMenuTools.chartMenus(this);
-
+            if (items == null) {
+                return;
+            }
             items.add(new SeparatorMenuItem());
 
             items.addAll(Data2DMenuTools.groupChartMenus(this));
@@ -632,21 +651,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
         action
      */
     @FXML
-    public void popCreateMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "CreateMenuPopWhenMouseHovering", true)) {
-            showCreateMenu(event);
+    public void createDataAction() {
+        if (!checkBeforeNextAction()) {
+            return;
         }
-    }
-
-    @FXML
-    public void showCreateMenu(Event fevent) {
-        try {
-            List<MenuItem> items = Data2DMenuTools.createMenus(baseName);
-            popEventMenu(fevent, items);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        Data2DCreateController.open(this);
     }
 
     @Override
@@ -654,25 +663,13 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!super.createData(type)) {
             return false;
         }
-        Data2DAttributesController.open(this);
-        return true;
-    }
-
-    public boolean makeMatrix(String type) {
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
-        resetStatus();
-        data2D = Data2D.create(DataType.Matrix);
-        data2D.setSheet(type);
-        loadTmpData(3);
-        Data2DAttributesController.open(this);
+        Data2DCreateController.open(this);
         return true;
     }
 
     @Override
     public boolean controlAltN() {
-        if (isValidData()) {
+        if (hasColumns()) {
             addRowsAction();
             return true;
         }
@@ -684,7 +681,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (targetIsTextInput()) {
             return false;
         }
-        if (isValidData() && isTableMode()) {
+        if (hasColumns() && isTableMode()) {
             deleteRowsAction();
             return true;
         }
@@ -693,22 +690,22 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean controlAltL() {
-        if (isValidData()) {
+        if (!invalidData()) {
             clearAction();
         }
         return false;
     }
 
     @FXML
-    public void definitonAction() {
-        if (!isValidPageData()) {
+    public void definitionAction() {
+        if (invalidData()) {
             popError(message("InvalidData"));
             return;
         }
         if (data2D.isInternalTable()) {
             infoAction();
         } else {
-            Data2DAttributesController.open(this);
+            Data2DAttributesController.edit(this);
         }
     }
 
@@ -719,7 +716,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             popError(message("CountingTotalNumber"));
             return;
         }
-        if (!isValidPageData()) {
+        if (invalidData()) {
             popError(message("InvalidData"));
             return;
         }
@@ -727,11 +724,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         if (data2D.isTmpData()) {
-            if (data2D.isTable()) {
-                Data2DTableCreateController.open(this);
-            } else {
-                Data2DSaveAsController.save(this);
-            }
+            saveTmp();
             return;
         }
         if (task != null) {
@@ -745,6 +738,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected boolean handle() {
                 try {
+                    if (!pickCSV(this)) {
+                        return false;
+                    }
                     needBackup = data2D.needBackup();
                     if (needBackup) {
                         backup = addBackup(this, data2D.getFile());
@@ -783,6 +779,17 @@ public class Data2DManufactureController extends BaseData2DViewController {
         start(task);
     }
 
+    public void saveTmp() {
+        if (!pickCSV(null)) {
+            return;
+        }
+        if (data2D.isTable()) {
+            Data2DTableCreateController.open(this);
+        } else {
+            Data2DSaveAsController.save(this);
+        }
+    }
+
     @FXML
     @Override
     public void refreshAction() {
@@ -792,7 +799,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void recoverAction() {
-        if (!isValidData() || !data2D.isTableChanged()) {
+        if (invalidData() || !data2D.isTableChanged()) {
             return;
         }
         if (data2D.isMutiplePages()) {
@@ -811,7 +818,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void addRowsAction() {
-        if (!isValidData()) {
+        if (!hasColumns()) {
             popError(message("InvalidData"));
             return;
         }
@@ -859,12 +866,12 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void clearAction() {
-        if (!isValidData()) {
+        if (invalidData()) {
             popError(message("InvalidData"));
             return;
         }
         if (data2D.isTmpData()) {
-            deleteAllRows();
+            clearWithSure();
         } else {
             super.clearAction();
         }
@@ -872,7 +879,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     protected long clearData(FxTask currentTask) {
-        if (!isValidData()) {
+        if (invalidData()) {
             return 0;
         }
         return data2D.clearData(currentTask);
@@ -882,7 +889,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void pasteContentInSystemClipboard() {
         try {
-            if (!isValidData()) {
+            if (!hasColumns()) {
                 popError(message("InvalidData"));
                 return;
             }
@@ -899,7 +906,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void pasteContentInMyboxClipboard() {
         try {
-            if (!isValidData()) {
+            if (!hasColumns()) {
                 popError(message("InvalidData"));
                 return;
             }
@@ -912,7 +919,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void myBoxClipBoard() {
-        if (!isValidData()) {
+        if (!hasColumns()) {
             popError(message("InvalidData"));
             return;
         }
@@ -1088,18 +1095,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         try {
             Data2DManufactureController controller = Data2DManufactureController.open();
             controller.createData(type);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public static Data2DManufactureController createMatrix(String type) {
-        try {
-            Data2DManufactureController controller = Data2DManufactureController.open();
-            controller.makeMatrix(type);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

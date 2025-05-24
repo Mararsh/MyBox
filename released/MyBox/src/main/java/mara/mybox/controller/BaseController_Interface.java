@@ -414,11 +414,15 @@ public abstract class BaseController_Interface extends BaseController_Files {
      */
     // This is called automatically after TOP scene is loaded.
     // Notice embedded fxml will NOT call this automatically.
-    public void afterSceneLoaded() {
+    public boolean afterSceneLoaded() {
         try {
             getMyScene();
             getMyStage();
             isTopPane = true;
+
+            if (endForAutoTestingWhenSceneLoaded()) {
+                return false;
+            }
 
             myStage.setMinWidth(minSize);
             myStage.setMinHeight(20);
@@ -426,7 +430,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             refreshStyle();
 
             if (this instanceof LoadingController) {
-                return;
+                return true;
             }
 
             setStageStatus();
@@ -472,10 +476,22 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 onTopCheck.setSelected(myStage.isAlwaysOnTop());
                 isSettingValues = false;
             }
+            return true;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
+    }
+
+    public boolean endForAutoTestingWhenSceneLoaded() {
+        if (AppVariables.autoTestingController == null) {
+            return false;
+        }
+        myStage.setIconified(true);
+        close();
+        AppVariables.autoTestingController.sceneLoaded();
+        return true;
     }
 
     public String interfaceKeysPrefix() {
@@ -619,10 +635,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
             Window owner = myStage.getOwner();
             if (owner != null) {
                 if (owner instanceof Stage) {
-                    ((Stage) owner).setIconified(true);
+                    ((Stage) owner).setIconified(set);
                 }
             } else {
-                myStage.setIconified(true);
+                myStage.setIconified(set);
             }
         } catch (Exception e) {
 //            MyBoxLog.error(e);
@@ -803,12 +819,12 @@ public abstract class BaseController_Interface extends BaseController_Files {
         return WindowTools.childStage(myController, newFxml);
     }
 
-    public BaseController branchStage(String newFxml) {
-        return WindowTools.branchStage(myController, newFxml);
+    public BaseController referredTopStage(String newFxml) {
+        return WindowTools.referredTopStage(myController, newFxml);
     }
 
-    public BaseController popStage(String newFxml) {
-        return WindowTools.popStage(myController, newFxml);
+    public BaseController topStage(String newFxml) {
+        return WindowTools.topStage(myController, newFxml);
     }
 
     public void updateStageTitle(File file) {
@@ -846,7 +862,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public boolean needStageVisitHistory() {
-        return !AppVariables.isTesting && isIndependantStage();
+        return AppVariables.autoTestingController == null
+                && isIndependantStage();
     }
 
     public static boolean checkBeforeNextAction(Node node) {

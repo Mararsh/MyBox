@@ -21,6 +21,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -97,7 +98,7 @@ public abstract class RecentVisitMenu {
                 List<String> paths = paths();
                 if (paths != null && !paths.isEmpty()) {
                     menu = new MenuItem(message("RecentAccessedDirectories"));
-                    menu.setStyle("-fx-text-fill: #2e598a;");
+                    menu.setStyle(attributeTextStyle());
                     items.add(menu);
                     for (String path : paths) {
                         menu = new MenuItem(StringTools.menuSuffix(path));
@@ -157,7 +158,7 @@ public abstract class RecentVisitMenu {
                     if (!files.isEmpty()) {
                         items.add(new SeparatorMenuItem());
                         menu = new MenuItem(message("RecentOpenedFiles"));
-                        menu.setStyle("-fx-text-fill: #2e598a;");
+                        menu.setStyle(attributeTextStyle());
                         items.add(menu);
                         for (String fname : files) {
                             menu = new MenuItem(StringTools.menuSuffix(fname));
@@ -173,7 +174,7 @@ public abstract class RecentVisitMenu {
                 if (examples != null && !examples.isEmpty()) {
                     items.add(new SeparatorMenuItem());
                     menu = new MenuItem(message("Examples"));
-                    menu.setStyle("-fx-text-fill: #2e598a;");
+                    menu.setStyle(attributeTextStyle());
                     items.add(menu);
                     for (String example : examples) {
                         menu = new MenuItem(StringTools.menuSuffix(example));

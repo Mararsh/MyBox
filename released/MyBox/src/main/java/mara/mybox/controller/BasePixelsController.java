@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -58,11 +59,11 @@ public abstract class BasePixelsController extends BaseImageEditController {
 
     @FXML
     @Override
-    public boolean menuAction() {
-        if (scopeHandler.menuAction()) {
+    public boolean menuAction(Event event) {
+        if (scopeHandler.menuAction(event)) {
             return true;
         }
-        return super.menuAction();
+        return super.menuAction(event);
     }
 
     @FXML

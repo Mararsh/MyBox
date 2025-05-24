@@ -5,14 +5,14 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.8.6</version>
+    <version>6.8.7</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
+        <maven.compiler.source>24</maven.compiler.source>
+        <maven.compiler.target>24</maven.compiler.target>
     </properties>
 
     <organization>
@@ -36,43 +36,43 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>24-ea+15</version>
+            <version>24-ea+28</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>24-ea+15</version>
+            <version>24-ea+28</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>24-ea+15</version>
+            <version>24-ea+28</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>24-ea+15</version>
+            <version>24-ea+28</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>24-ea+15</version>
+            <version>24-ea+28</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>24-ea+15</version>
+            <version>24-ea+28</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>24-ea+15</version>
+            <version>24-ea+28</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -193,17 +193,17 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.3.0</version>
+            <version>5.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.3.0</version>
+            <version>5.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>5.3.0</version>
+            <version>5.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -344,7 +344,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javaVersion>23</javaVersion>
+                <javaVersion>24</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -354,7 +354,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javaVersion>23</javaVersion>
+                <javaVersion>24</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -364,7 +364,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javaVersion>23</javaVersion>
+                <javaVersion>24</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

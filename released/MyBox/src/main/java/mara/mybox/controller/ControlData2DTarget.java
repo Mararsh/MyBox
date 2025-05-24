@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -95,8 +94,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             return false;
         }
         return !tableController.isShowing()
-                || tableController.data2D == null
-                || !tableController.data2D.isValidDefinition()
+                || tableController.invalidData()
                 || (data2D != null && tableController.data2D.getDataID() != data2D.getDataID());
     }
 
@@ -171,9 +169,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
                     case Matrix:
                         matrixRadio.setSelected(true);
                         break;
-                    case SystemClipboard:
-                        systemClipboardRadio.setSelected(true);
-                        break;
                     case MyBoxClipboard:
                         myBoxClipboardRadio.setSelected(true);
                         break;
@@ -185,6 +180,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
                             csvRadio.setSelected(true);
                             databaseRadio.setDisable(true);
                         }
+                        break;
+                    case SystemClipboard:
+                        systemClipboardRadio.setSelected(true);
                         break;
                     case JSON:
                         jsonRadio.setSelected(true);
@@ -236,45 +234,46 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (isSettingValues) {
                 return format;
             }
-            String name = name();
-            if (name == null || name.isBlank()) {
+            String dataName = dataName();
+            if (dataName == null || dataName.isBlank()) {
                 if (data2D != null) {
-                    name = data2D.getName();
+                    dataName = data2D.getName();
                 }
             }
-            if (name == null || name.isBlank()) {
+            if (dataName == null || dataName.isBlank()) {
                 if (tableController != null) {
-                    name = tableController.getTitle();
+                    dataName = tableController.getTitle();
                 }
             }
-            if (name == null || name.isBlank()) {
-                name = "Data2D";
+            if (dataName == null || dataName.isBlank()) {
+                dataName = "Data2D";
             }
             if (csvRadio.isSelected()) {
                 format = TargetType.CSV;
                 targetFileController.setFile(FileType.CSV,
-                        baseName + "TargetType" + FileType.CSV, name, "csv");
+                        baseName + "TargetType" + FileType.CSV, dataName, "csv");
                 optionsBox.getChildren().add(csvBox);
 
             } else if (excelRadio.isSelected()) {
                 format = TargetType.Excel;
                 targetFileController.setFile(FileType.Excel,
-                        baseName + "TargetType" + FileType.Excel, name, "xlsx");
+                        baseName + "TargetType" + FileType.Excel, dataName, "xlsx");
                 optionsBox.getChildren().add(excelBox);
-                currentSheetOnlyCheck.setVisible(data2D.isExcel());
+                if (currentSheetOnlyCheck != null) {
+                    currentSheetOnlyCheck.setVisible(data2D != null && data2D.isExcel());
+                }
 
             } else if (textsRadio.isSelected()) {
                 format = TargetType.Text;
                 targetFileController.setFile(FileType.Text,
-                        baseName + "TargetType" + FileType.Text, name, "txt");
+                        baseName + "TargetType" + FileType.Text, dataName, "txt");
                 optionsBox.getChildren().add(textBox);
 
             } else if (matrixRadio.isSelected()) {
                 format = TargetType.Matrix;
+                targetFileController.setFile(FileType.Text,
+                        baseName + "TargetTypeMatrix", DataMatrix.file(dataName));
                 optionsBox.getChildren().add(matrixBox);
-
-            } else if (systemClipboardRadio.isSelected()) {
-                format = TargetType.SystemClipboard;
 
             } else if (myBoxClipboardRadio.isSelected()) {
                 format = TargetType.MyBoxClipboard;
@@ -283,26 +282,29 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 format = TargetType.DatabaseTable;
                 optionsBox.getChildren().add(dbBox);
 
-            } else if (jsonRadio.isSelected()) {
+            } else if (systemClipboardRadio != null && systemClipboardRadio.isSelected()) {
+                format = TargetType.SystemClipboard;
+
+            } else if (jsonRadio != null && jsonRadio.isSelected()) {
                 format = TargetType.JSON;
                 targetFileController.setFile(FileType.JSON,
-                        baseName + "TargetType" + FileType.JSON, name, "json");
+                        baseName + "TargetType" + FileType.JSON, dataName, "json");
 
-            } else if (xmlRadio.isSelected()) {
+            } else if (xmlRadio != null && xmlRadio.isSelected()) {
                 format = TargetType.XML;
                 targetFileController.setFile(FileType.XML,
-                        baseName + "TargetType" + FileType.XML, name, "xml");
+                        baseName + "TargetType" + FileType.XML, dataName, "xml");
 
-            } else if (htmlRadio.isSelected()) {
+            } else if (htmlRadio != null && htmlRadio.isSelected()) {
                 format = TargetType.HTML;
                 targetFileController.setFile(FileType.Html,
-                        baseName + "TargetType" + FileType.Html, name, "html");
+                        baseName + "TargetType" + FileType.Html, dataName, "html");
                 optionsBox.getChildren().add(htmlBox);
 
-            } else if (pdfRadio.isSelected()) {
+            } else if (pdfRadio != null && pdfRadio.isSelected()) {
                 format = TargetType.PDF;
                 targetFileController.setFile(FileType.PDF,
-                        baseName + "TargetType" + FileType.PDF, name, "pdf");
+                        baseName + "TargetType" + FileType.PDF, dataName, "pdf");
                 optionsBox.getChildren().add(pdfBox);
 
             } else if (inTableBox != null) {
@@ -374,8 +376,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                         externalBox.getChildren().remove(externalDefBox);
                     }
                 }
-                if (matrixRadio.isSelected()
-                        || systemClipboardRadio.isSelected()
+                if ((systemClipboardRadio != null && systemClipboardRadio.isSelected())
                         || myBoxClipboardRadio.isSelected()
                         || databaseRadio.isSelected()) {
                     if (externalDefBox.getChildren().contains(fileBox)) {
@@ -483,6 +484,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 case CSV:
                 case Excel:
                 case Text:
+                case Matrix:
                 case JSON:
                 case XML:
                 case HTML:
@@ -494,14 +496,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
                     } else {
                         return true;
                     }
-//                case Matrix:
-//                case DatabaseTable:
-//                    if (name() == null) {
-//                        popError(message("InvalidParameter") + ": " + message("DataName"));
-//                        return false;
-//                    } else {
-//                        return true;
-//                    }
             }
             return true;
         } catch (Exception e) {
@@ -514,7 +508,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
         return format;
     }
 
-    public String name() {
+    public String dataName() {
         String name = nameInput.getText();
         return name != null && !name.isBlank() ? name.trim() : null;
     }
@@ -566,7 +560,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (format == null || !validateTarget()) {
                 return null;
             }
-            targetName = name();
+            targetName = dataName();
             if (targetName == null || targetName.isBlank()) {
                 if (data2D != null) {
                     targetName = data2D.getName();
@@ -582,10 +576,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
             switch (format) {
                 case DatabaseTable:
                     writer = dbController.pickTableWriter();
-                    break;
-                case Matrix:
-                    targetFile = new File(DataMatrix.filename(targetName + "_" + new Date().getTime()));
-                    writer = pickWriter(format);
                     break;
                 default:
                     if (format != TargetType.Matrix) {

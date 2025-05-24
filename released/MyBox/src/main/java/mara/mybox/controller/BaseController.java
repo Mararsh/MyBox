@@ -7,7 +7,6 @@ import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController_Attributes.StageType;
-import static mara.mybox.controller.BaseController_Attributes.StageType.Operation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.value.AppVariables;
@@ -77,20 +76,7 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
         }
         Stage parentStage = parent != null ? parent.getMyStage() : null;
         switch (stageType) {
-            case Operation:
-                if (parentStage != null) {
-                    parentStage.setOnHiding(new EventHandler<WindowEvent>() {
-                        @Override
-                        public void handle(WindowEvent event) {
-                            closeStage();
-                        }
-                    });
-                    if (AppVariables.operationWindowIconifyParent) {
-                        parentStage.setIconified(true);
-                    }
-                }
-
-            case Branch: {
+            case RefferredTop:
                 setAlwaysTop(true, false);
                 if (parentStage != null) {
                     parentStage.setOnHiding(new EventHandler<WindowEvent>() {
@@ -101,11 +87,46 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
                     });
                 }
                 break;
-            }
 
-            case Pop: {
-                setAlwaysTop(true, false);
+            case Referred:
                 if (parentStage != null) {
+                    parentStage.setOnHiding(new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent event) {
+                            closeStage();
+                        }
+                    });
+                    if (AppVariables.operationWindowIconifyParent) {
+                        parentStage.setIconified(true);
+                        myStage.setOnHiding(new EventHandler<WindowEvent>() {
+                            @Override
+                            public void handle(WindowEvent event) {
+                                if (parentStage != null && parentStage.isShowing()) {
+                                    parentStage.setIconified(false);
+                                }
+                            }
+                        });
+                    }
+                }
+                break;
+
+            case Fork:
+                if (parentStage != null && AppVariables.operationWindowIconifyParent) {
+                    parentStage.setIconified(true);
+                    myStage.setOnHiding(new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent event) {
+                            if (parentStage != null && parentStage.isShowing()) {
+                                parentStage.setIconified(false);
+                            }
+                        }
+                    });
+                }
+                break;
+
+            case Top: {
+                setAlwaysTop(true, false);
+                if (parentStage != null && parentStage.isShowing()) {
                     parentStage.setFullScreen(false);
                 }
                 break;

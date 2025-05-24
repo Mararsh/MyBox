@@ -288,7 +288,9 @@ public class Fxmls {
     public static final String DataTreeCopyFxml = "/fxml/DataTreeCopy.fxml";
     public static final String DataTreeMoveFxml = "/fxml/DataTreeMove.fxml";
     public static final String DataTreeDeleteFxml = "/fxml/DataTreeDelete.fxml";
-    public static final String DataTreeLocateFxml = "/fxml/DataTreeLocate.fxml";
+    public static final String DataTreeQueryFxml = "/fxml/DataTreeQuery.fxml";
+    public static final String DataTreeQueryDescendantsFxml = "/fxml/DataTreeQueryDescendants.fxml";
+    public static final String DataTreeQueryResultsFxml = "/fxml/DataTreeQueryResults.fxml";
 
     public static final String DataSelectParentFxml = "/fxml/DataSelectParent.fxml";
     public static final String DataSelectRowExpressionFxml = "/fxml/DataSelectRowExpression.fxml";
@@ -310,6 +312,7 @@ public class Fxmls {
     public static final String Data2DSaveRowsFxml = "/fxml/Data2DSaveRows.fxml";
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
+    public static final String Data2DCreateFxml = "/fxml/Data2DCreate.fxml";
     public static final String Data2DSelectFxml = "/fxml/Data2DSelect.fxml";
     public static final String Data2DAttributesFxml = "/fxml/Data2DAttributes.fxml";
     public static final String Data2DColumnsFxml = "/fxml/Data2DColumns.fxml";
@@ -532,6 +535,7 @@ public class Fxmls {
     public static final String FindReplaceFxml = "/fxml/FindReplace.fxml";
     public static final String FindFxml = "/fxml/Find.fxml";
     public static final String ColorsPickingFxml = "/fxml/ColorsPicking.fxml";
+    public static final String HtmlJavaScriptFxml = "/fxml/HtmlJavaScript.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";

@@ -25,7 +25,7 @@ public class FindController extends FindReplaceController {
             if (parent == null || input == null) {
                 return null;
             }
-            FindController controller = (FindController) WindowTools.branchStage(parent, Fxmls.FindFxml);
+            FindController controller = (FindController) WindowTools.referredTopStage(parent, Fxmls.FindFxml);
             controller.setInput(parent, input);
             return controller;
         } catch (Exception e) {
@@ -39,7 +39,7 @@ public class FindController extends FindReplaceController {
             if (parent == null) {
                 return null;
             }
-            FindController controller = (FindController) WindowTools.branchStage(parent, Fxmls.FindFxml);
+            FindController controller = (FindController) WindowTools.referredTopStage(parent, Fxmls.FindFxml);
             controller.setEditor(parent);
             return controller;
         } catch (Exception e) {

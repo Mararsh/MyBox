@@ -33,39 +33,70 @@ public class TableNodeGeographyCode extends BaseNodeTable {
 
     public final TableNodeGeographyCode defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("chinese_name", ColumnType.String));
-        addColumn(new ColumnDefinition("english_name", ColumnType.String));
+        addColumn(new ColumnDefinition("chinese_name", ColumnType.String)
+                .setLabel(message("ChineseName")));
+        addColumn(new ColumnDefinition("english_name", ColumnType.String)
+                .setLabel(message("EnglishName")));
         addColumn(new ColumnDefinition("level", ColumnType.EnumeratedShort)
-                .setFormat(GeographyCodeTools.addressLevelMessageNames()));
+                .setFormat(GeographyCodeTools.addressLevelMessageNames())
+                .setLabel(message("Level")));
         addColumn(new ColumnDefinition("coordinate_system", ColumnType.EnumeratedShort)
-                .setFormat(GeographyCodeTools.coordinateSystemMessageNames()));
-        addColumn(new ColumnDefinition("longitude", ColumnType.Longitude));
-        addColumn(new ColumnDefinition("latitude", ColumnType.Latitude));
-        addColumn(new ColumnDefinition("altitude", ColumnType.Double));
-        addColumn(new ColumnDefinition("precision", ColumnType.Double));
-        addColumn(new ColumnDefinition("continent", ColumnType.String));
-        addColumn(new ColumnDefinition("country", ColumnType.String));
-        addColumn(new ColumnDefinition("province", ColumnType.String));
-        addColumn(new ColumnDefinition("city", ColumnType.String));
-        addColumn(new ColumnDefinition("county", ColumnType.String));
-        addColumn(new ColumnDefinition("town", ColumnType.String));
-        addColumn(new ColumnDefinition("village", ColumnType.String));
-        addColumn(new ColumnDefinition("building", ColumnType.String));
-        addColumn(new ColumnDefinition("poi", ColumnType.String));
-        addColumn(new ColumnDefinition("code1", ColumnType.String));
-        addColumn(new ColumnDefinition("code2", ColumnType.String));
-        addColumn(new ColumnDefinition("code3", ColumnType.String));
-        addColumn(new ColumnDefinition("code4", ColumnType.String));
-        addColumn(new ColumnDefinition("code5", ColumnType.String));
-        addColumn(new ColumnDefinition("alias1", ColumnType.String));
-        addColumn(new ColumnDefinition("alias2", ColumnType.String));
-        addColumn(new ColumnDefinition("alias3", ColumnType.String));
-        addColumn(new ColumnDefinition("alias4", ColumnType.String));
-        addColumn(new ColumnDefinition("alias5", ColumnType.String));
-        addColumn(new ColumnDefinition("area", ColumnType.Double).setFormat("GroupInThousands"));
-        addColumn(new ColumnDefinition("population", ColumnType.Long).setFormat("GroupInThousands"));
-        addColumn(new ColumnDefinition("description", ColumnType.String));
-        addColumn(new ColumnDefinition("image", ColumnType.Image));
+                .setFormat(GeographyCodeTools.coordinateSystemMessageNames())
+                .setLabel(message("CoordinateSystem")));
+        addColumn(new ColumnDefinition("longitude", ColumnType.Longitude)
+                .setLabel(message("Longitude")));
+        addColumn(new ColumnDefinition("latitude", ColumnType.Latitude)
+                .setLabel(message("Latitude")));
+        addColumn(new ColumnDefinition("altitude", ColumnType.Double)
+                .setLabel(message("Altitude")));
+        addColumn(new ColumnDefinition("precision", ColumnType.Double)
+                .setLabel(message("Precision")));
+        addColumn(new ColumnDefinition("continent", ColumnType.String)
+                .setLabel(message("Continent")));
+        addColumn(new ColumnDefinition("country", ColumnType.String)
+                .setLabel(message("Country")));
+        addColumn(new ColumnDefinition("province", ColumnType.String)
+                .setLabel(message("Province")));
+        addColumn(new ColumnDefinition("city", ColumnType.String)
+                .setLabel(message("City")));
+        addColumn(new ColumnDefinition("county", ColumnType.String)
+                .setLabel(message("County")));
+        addColumn(new ColumnDefinition("town", ColumnType.String)
+                .setLabel(message("Town")));
+        addColumn(new ColumnDefinition("village", ColumnType.String)
+                .setLabel(message("Village")));
+        addColumn(new ColumnDefinition("building", ColumnType.String)
+                .setLabel(message("Building")));
+        addColumn(new ColumnDefinition("poi", ColumnType.String)
+                .setLabel(message("PointOfInterest")));
+        addColumn(new ColumnDefinition("code1", ColumnType.String)
+                .setLabel(message("Code1")));
+        addColumn(new ColumnDefinition("code2", ColumnType.String)
+                .setLabel(message("Code2")));
+        addColumn(new ColumnDefinition("code3", ColumnType.String)
+                .setLabel(message("Code3")));
+        addColumn(new ColumnDefinition("code4", ColumnType.String)
+                .setLabel(message("Code4")));
+        addColumn(new ColumnDefinition("code5", ColumnType.String)
+                .setLabel(message("Code5")));
+        addColumn(new ColumnDefinition("alias1", ColumnType.String)
+                .setLabel(message("Alias1")));
+        addColumn(new ColumnDefinition("alias2", ColumnType.String)
+                .setLabel(message("Alias2")));
+        addColumn(new ColumnDefinition("alias3", ColumnType.String)
+                .setLabel(message("Alias3")));
+        addColumn(new ColumnDefinition("alias4", ColumnType.String)
+                .setLabel(message("Alias4")));
+        addColumn(new ColumnDefinition("alias5", ColumnType.String)
+                .setLabel(message("Alias5")));
+        addColumn(new ColumnDefinition("area", ColumnType.Double).setFormat("GroupInThousands")
+                .setLabel(message("SquareMeters")));
+        addColumn(new ColumnDefinition("population", ColumnType.Long).setFormat("GroupInThousands")
+                .setLabel(message("Population")));
+        addColumn(new ColumnDefinition("description", ColumnType.String)
+                .setLabel(message("Description")));
+        addColumn(new ColumnDefinition("image", ColumnType.Image)
+                .setLabel(message("Image")));
 
         return this;
     }
@@ -88,78 +119,6 @@ public class TableNodeGeographyCode extends BaseNodeTable {
             MyBoxLog.debug(e);
             return null;
         }
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name.toLowerCase()) {
-            case "level":
-                return message("Level");
-            case "coordinate_system":
-                return message("CoordinateSystem");
-            case "longitude":
-                return message("Longitude");
-            case "latitude":
-                return message("Latitude");
-            case "altitude":
-                return message("Altitude");
-            case "precision":
-                return message("Precision");
-            case "chinese_name":
-                return message("ChineseName");
-            case "english_name":
-                return message("EnglishName");
-            case "continent":
-                return message("Continent");
-            case "country":
-                return message("Country");
-            case "province":
-                return message("Province");
-            case "city":
-                return message("City");
-            case "county":
-                return message("County");
-            case "town":
-                return message("Town");
-            case "village":
-                return message("Village");
-            case "building":
-                return message("Building");
-            case "poi":
-                return message("PointOfInterest");
-            case "code1":
-                return message("Code1");
-            case "code2":
-                return message("Code2");
-            case "code3":
-                return message("Code3");
-            case "code4":
-                return message("Code4");
-            case "code5":
-                return message("Code5");
-            case "alias1":
-                return message("Alias1");
-            case "alias2":
-                return message("Alias2");
-            case "alias3":
-                return message("Alias3");
-            case "alias4":
-                return message("Alias4");
-            case "alias5":
-                return message("Alias5");
-            case "area":
-                return message("SquareMeters");
-            case "population":
-                return message("Population");
-            case "description":
-                return message("Description");
-            case "image":
-                return message("Image");
-        }
-        return super.label(name);
     }
 
     @Override

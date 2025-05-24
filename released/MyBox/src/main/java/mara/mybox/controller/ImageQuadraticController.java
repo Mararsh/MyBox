@@ -67,7 +67,7 @@ public class ImageQuadraticController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImageQuadraticController controller = (ImageQuadraticController) WindowTools.operationStage(
+            ImageQuadraticController controller = (ImageQuadraticController) WindowTools.referredStage(
                     parent, Fxmls.ImageQuadraticFxml);
             controller.setParameters(parent);
             return controller;

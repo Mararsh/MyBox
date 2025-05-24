@@ -98,7 +98,7 @@ public class ImageSelectPixelsController extends BasePixelsController {
             if (parent == null) {
                 return null;
             }
-            ImageSelectPixelsController controller = (ImageSelectPixelsController) WindowTools.operationStage(
+            ImageSelectPixelsController controller = (ImageSelectPixelsController) WindowTools.referredStage(
                     parent, Fxmls.ImageSelectPixelsFxml);
             controller.setParameters(parent);
             return controller;

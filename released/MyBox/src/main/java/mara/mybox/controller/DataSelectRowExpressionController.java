@@ -25,13 +25,8 @@ public class DataSelectRowExpressionController extends BaseDataSelectController 
                 return;
             }
             expController = parent;
-            nodeTable = new TableNodeRowExpression();
-            dataName = nodeTable.getDataName();
 
-            baseTitle = nodeTable.getTreeName() + " - " + message("SelectNode");
-            setTitle(baseTitle);
-
-            loadTree();
+            initDataTree(new TableNodeRowExpression(), null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -41,7 +36,7 @@ public class DataSelectRowExpressionController extends BaseDataSelectController 
     @FXML
     @Override
     public void okAction() {
-        DataNode node = selectedValue();
+        DataNode node = selectedNode();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;

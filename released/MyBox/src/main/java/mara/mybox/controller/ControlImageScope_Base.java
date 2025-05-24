@@ -199,7 +199,7 @@ public abstract class ControlImageScope_Base extends BaseShapeController {
             if (size > 100) {
                 colorsSizeLabel.setStyle(NodeStyleTools.redTextStyle());
             } else {
-                colorsSizeLabel.setStyle(NodeStyleTools.blueTextStyle());
+                colorsSizeLabel.setStyle(NodeStyleTools.attributeTextStyle());
             }
             clearColorsButton.setDisable(size == 0);
             if (list.isEmpty()) {

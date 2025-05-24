@@ -41,7 +41,7 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
             super.updateStatus();
 
             if (filterController != null) {
-                filterController.setData2D(data2D);
+                filterController.updateData(data2D);
             }
             refreshControls();
             if (toolbar != null) {
@@ -100,12 +100,11 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
         columns
      */
     @Override
-    public void makeColumns() {
+    public boolean makeColumns() {
         try {
-            if (!isValidData()) {
-                return;
+            if (!super.makeColumns()) {
+                return false;
             }
-            super.makeColumns();
 
             for (int i = tableColumnStartIndex(); i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
@@ -119,8 +118,10 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
                 tableColumn.setGraphic(cb);
                 tableColumn.setText(null);
             }
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 

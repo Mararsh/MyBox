@@ -68,25 +68,27 @@ public class PdfMergeController extends BaseBatchPdfController {
         int generated = 0;
         doc = null;
         try {
-            currentParameters.currentSourceFile = srcFile;
-            PdfInformation info = tableData.get(currentParameters.currentIndex);
+            PdfInformation info = currentPdf();
             actualParameters.fromPage = info.getFromPage();
-            if (actualParameters.fromPage <= 0) {
-                actualParameters.fromPage = 1;
+            if (actualParameters.fromPage < 0) {
+                actualParameters.fromPage = 0;
             }
             actualParameters.toPage = info.getToPage();
             actualParameters.password = info.getUserPassword();
-            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
-                    currentParameters.password)) {
+            File pdfFile = currentSourceFile();
+            try (PDDocument pd = Loader.loadPDF(pdfFile, currentParameters.password)) {
                 doc = pd;
                 if (currentTask == null || !currentTask.isWorking()) {
                     return message("Canceled");
                 }
-                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                if (currentParameters.toPage <= 0
+                        || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
                 }
                 currentParameters.currentTargetPath = targetPath;
-                extractor = new PageExtractor(doc, currentParameters.fromPage, currentParameters.toPage);
+                extractor = new PageExtractor(doc,
+                        currentParameters.fromPage + 1,
+                        currentParameters.toPage);  // 1-based, inclusive
                 PDDocument subDoc = extractor.extract();
                 if (currentTask == null || !currentTask.isWorking()) {
                     return message("Canceled");
@@ -108,7 +110,7 @@ public class PdfMergeController extends BaseBatchPdfController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void handleTargetFiles() {
         try {
             if (targetDoc != null) {
                 targetDoc.save(targetFile);
@@ -132,7 +134,7 @@ public class PdfMergeController extends BaseBatchPdfController {
             MyBoxLog.error(e);
         }
         targetDoc = null;
-        super.afterTask(ok);
+        super.handleTargetFiles();
     }
 
 }

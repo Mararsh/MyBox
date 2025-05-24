@@ -8,7 +8,6 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.ErrorNotify;
 import mara.mybox.value.Languages;
 
 /**
@@ -255,7 +254,9 @@ public class MyBoxLog extends BaseData {
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
-            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Debug));
+            String logText = println(myboxLog,
+                    type == LogType.Error
+                    || (AppVariables.detailedDebugLogs && type == LogType.Debug));
             System.out.print(logText);
             if (LastMyBoxLog != null && LastMyBoxLog.equalTo(myboxLog)) {
                 return myboxLog;
@@ -277,8 +278,8 @@ public class MyBoxLog extends BaseData {
             if (!notSave) {
                 new TableMyBoxLog().writeData(myboxLog);
             }
-            if (type == LogType.Error) {
-                ErrorNotify.set(!ErrorNotify.get());
+            if (type == LogType.Error && AppVariables.autoTestingController != null) {
+                AppVariables.autoTestingController.errorHappened();
             }
             LastMyBoxLog = myboxLog;
             LastRecordTime = new Date().getTime();

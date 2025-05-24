@@ -146,7 +146,7 @@ public class GeographyCodeTools {
      */
     public static String gaodeMap(int zoom) {
         try {
-            File map = FxFileTools.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", true);
+            File map = FxFileTools.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", false);
             String html = TextFileTools.readTexts(null, map);
             html = html.replace(AppValues.GaoDeMapJavascriptKey,
                     UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapJavascriptKey))
@@ -160,7 +160,7 @@ public class GeographyCodeTools {
 
     public static File tiandituFile(boolean geodetic, int zoom) {
         try {
-            File map = FxFileTools.getInternalFile("/js/tianditu.html", "js", "tianditu.html", true);
+            File map = FxFileTools.getInternalFile("/js/tianditu.html", "js", "tianditu.html", false);
             String html = TextFileTools.readTexts(null, map);
             html = html.replace(AppValues.TianDiTuWebKey,
                     UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey))

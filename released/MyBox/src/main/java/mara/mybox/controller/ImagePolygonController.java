@@ -89,7 +89,7 @@ public class ImagePolygonController extends BaseImageShapeController {
             if (parent == null) {
                 return null;
             }
-            ImagePolygonController controller = (ImagePolygonController) WindowTools.operationStage(
+            ImagePolygonController controller = (ImagePolygonController) WindowTools.referredStage(
                     parent, Fxmls.ImagePolygonFxml);
             controller.setParameters(parent);
             return controller;

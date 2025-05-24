@@ -172,6 +172,9 @@ public class StyleRadioButton {
         if (id.startsWith("json")) {
             return new StyleData(id, "json", "", "iconJSON.png");
         }
+        if (id.startsWith("table")) {
+            return new StyleData(id, message("Table"), "", "iconGrid.png");
+        }
         return null;
     }
 

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -276,13 +277,13 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
         if (tab == modelTab) {
-            return modelController.menuAction();
+            return modelController.menuAction(event);
 
         } else if (tab == resultsTab) {
-            return regressionDataController.menuAction();
+            return regressionDataController.menuAction(event);
 
         }
         return false;
@@ -308,7 +309,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
      */
     public static Data2DMultipleLinearRegressionController open(BaseData2DLoadController tableController) {
         try {
-            Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.operationStage(
+            Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.referredStage(
                     tableController, Fxmls.Data2DMultipleLinearRegressionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

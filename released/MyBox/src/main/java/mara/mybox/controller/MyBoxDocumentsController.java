@@ -28,7 +28,6 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import static mara.mybox.fxml.HelpTools.imageStories;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.image.PaletteTools;
@@ -323,16 +322,16 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected boolean trees() {
         try {
             List<TreeCase> cases = new ArrayList<>();
-            cases.add(new TreeCase("Text", "zh"));
-            cases.add(new TreeCase("Text", "en"));
-            cases.add(new TreeCase("Html", "zh"));
-            cases.add(new TreeCase("Html", "en"));
+            cases.add(new TreeCase("TextTree", "zh"));
+            cases.add(new TreeCase("TextTree", "en"));
+            cases.add(new TreeCase("HtmlTree", "zh"));
+            cases.add(new TreeCase("HtmlTree", "en"));
             cases.add(new TreeCase("MathFunction", "zh"));
             cases.add(new TreeCase("MathFunction", "en"));
             cases.add(new TreeCase("WebFavorite", "zh"));
             cases.add(new TreeCase("WebFavorite", "en"));
-            cases.add(new TreeCase("SQL", "zh"));
-            cases.add(new TreeCase("SQL", "en"));
+            cases.add(new TreeCase("DatabaseSQL", "zh"));
+            cases.add(new TreeCase("DatabaseSQL", "en"));
             cases.add(new TreeCase("ImageScope", "zh"));
             cases.add(new TreeCase("ImageScope", "en"));
             cases.add(new TreeCase("JShell", "zh"));
@@ -371,42 +370,40 @@ public class MyBoxDocumentsController extends BaseTaskController {
     }
 
     protected void finishNotify() {
-        AppVariables.isTesting = false;
         finishNotify.set(!finishNotify.get());
     }
 
     protected boolean treeHtml(String tableName, String lang) {
         try {
-            AppVariables.isTesting = true;
             CurrentLangName = lang;
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
             BaseNodeTable nodeTable = BaseNodeTable.create(tableName);
             nodeTable.truncate();
-            DataTreeController treeController;
+            DataTreeController dataController;
             if (tableName.equals("GeographyCode")) {
-                treeController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+                dataController = GeographyCodeController.open(null, false, false);
             } else {
-                treeController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-                treeController.initDataTree(nodeTable);
+                dataController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+                dataController.initDataTree(nodeTable, null, false);
             }
-            if (treeController == null) {
+            if (dataController == null) {
                 finishNotify();
                 return false;
             }
-//            treeController.setIconified(true);
+            dataController.setIconified(true);
             DataNode rootNode = nodeTable.getRoot();
             if (rootNode == null) {
                 finishNotify();
                 return false;
             }
-            TreeItem rootItem = new TreeItem(rootNode);
-            treeController.treeView.setRoot(rootItem);
+            TreeItem<DataNode> rootItem = new TreeItem(rootNode);
+            dataController.treeController.treeView.setRoot(rootItem);
 //            popInformation(message("Handling") + ": " + tableName);
             DataTreeImportController importController = (DataTreeImportController) WindowTools
                     .openStage(Fxmls.DataTreeImportFxml);
-//            importController.setIconified(true);
+            importController.setIconified(true);
             importController.miaoCheck.setSelected(false);
-            importController.importExamples(treeController, rootItem, nodeTable.exampleFileLang(lang));
+            importController.importExamples(dataController, rootNode, nodeTable.exampleFileLang(lang));
             importController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -415,7 +412,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                         DataTreeExportController exportController = (DataTreeExportController) WindowTools
                                 .openStage(Fxmls.DataTreeExportFxml);
 //                        exportController.setIconified(true);
-                        exportController.setParamters(treeController, rootItem);
+                        exportController.setParameters(dataController, rootNode);
                         exportController.selectAllFormat(false);
                         exportController.treeHtmlCheck.setSelected(true);
                         exportController.openCheck.setSelected(false);
@@ -434,7 +431,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                         showLogs(message("Failed"));
                                     }
                                     exportController.close();
-                                    treeController.close();
+                                    dataController.close();
                                     nodeTable.truncate();
                                     CurrentLangName = realLang;
                                     CurrentBundle = realBoundle;
@@ -646,10 +643,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
-        if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
+    public void handleTargetFiles() {
         openTarget();
     }
 

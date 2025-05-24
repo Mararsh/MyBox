@@ -10,10 +10,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
+import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -131,17 +131,18 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(FxTask currentTask, File file) {
+    public String handleFile(FxTask currentTask, FileInformation info) {
         try {
             if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
+            File file = info.getFile();
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
             return handleFileToPath(currentTask, file, targetPathName);
         } catch (Exception e) {
-            return file + " " + e.toString();
+            return e.toString();
         }
     }
 
@@ -168,8 +169,9 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(FxTask currentTask, File dir) {
+    public String handleDirectory(FxTask currentTask, FileInformation info) {
         try {
+            File dir = info.getFile();
             dirFilesNumber = dirFilesHandled = 0;
             String targetDir = targetPathName;
             if (createDirectories) {
@@ -211,10 +213,7 @@ public class RemotePathPutController extends BaseBatchFileController {
 
     @Override
     public void afterTask(boolean ok) {
-        tableView.refresh();
-        if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
+        super.afterTask(ok);
         if (manageController != null) {
             manageController.loadPath();
         }
@@ -228,7 +227,7 @@ public class RemotePathPutController extends BaseBatchFileController {
             if (manageController == null) {
                 return null;
             }
-            RemotePathPutController controller = (RemotePathPutController) WindowTools.branchStage(
+            RemotePathPutController controller = (RemotePathPutController) WindowTools.referredTopStage(
                     manageController, Fxmls.RemotePathPutFxml);
             controller.setParameters(manageController);
             controller.requestMouse();

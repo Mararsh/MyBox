@@ -2,6 +2,7 @@ package mara.mybox.db.data;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,6 +11,7 @@ import static mara.mybox.value.AppValues.InvalidDouble;
 import static mara.mybox.value.AppValues.InvalidInteger;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.AppValues.InvalidShort;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -21,12 +23,18 @@ public class DataNode extends BaseData {
     public static final String TitleSeparater = " > ";
     public static final String TagsSeparater = ";;;";
 
-    protected long nodeid, parentid;
-    protected String title, hierarchyNumber;
+    public static enum SelectionType {
+        None, Multiple, Single
+    }
+
+    protected long nodeid, parentid, index, childrenSize;
+    protected String title, hierarchyNumber, chainName;
     protected float orderNumber;
     protected Date updateTime;
     protected Map<String, Object> values;
     protected final BooleanProperty selected = new SimpleBooleanProperty(false);
+    protected List<DataNode> chainNodes;
+    protected DataNode parentNode;
 
     private void init() {
         nodeid = -1;
@@ -34,10 +42,58 @@ public class DataNode extends BaseData {
         title = null;
         updateTime = new Date();
         orderNumber = 0f;
+        chainNodes = null;
+        parentNode = null;
+        hierarchyNumber = null;
+        chainName = null;
+        index = -1;
+        childrenSize = -1;
+        selected.set(false);
     }
 
     public DataNode() {
         init();
+    }
+
+    public DataNode cloneAll() {
+        try {
+            DataNode node = create()
+                    .setNodeid(nodeid)
+                    .setParentid(parentid)
+                    .setTitle(title)
+                    .setOrderNumber(orderNumber)
+                    .setUpdateTime(updateTime)
+                    .setHierarchyNumber(hierarchyNumber)
+                    .setChainNodes(chainNodes)
+                    .setParentNode(parentNode)
+                    .setChainName(chainName)
+                    .setIndex(index)
+                    .setChildrenSize(childrenSize);
+            if (values != null) {
+                for (String key : values.keySet()) {
+                    node.setValue(key, values.get(key));
+                }
+            }
+            node.getSelected().set(selected.get());
+            return node;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String info() {
+        String info = message("ID") + ": " + nodeid + "\n";
+        info += message("Title") + ": " + title + "\n";
+        info += message("ParentID") + ": " + parentid + "\n";
+        info += message("HierarchyNumber") + ": " + hierarchyNumber + "\n";
+        info += message("ChainName") + ": " + chainName + "\n";
+        info += message("OrderNumber") + ": " + orderNumber + "\n";
+        info += message("Values") + ": " + values + "\n";
+        info += "Ancestors: " + (chainNodes != null ? chainNodes.size() : null) + "\n";
+        info += "ParentNode: " + (parentNode != null ? parentNode.getTitle() : null) + "\n";
+        info += "Index: " + index + "\n";
+        info += message("ChildrenSize") + ": " + childrenSize + "\n";
+        return info;
     }
 
     @Override
@@ -188,23 +244,6 @@ public class DataNode extends BaseData {
         }
     }
 
-    public DataNode copy() {
-        try {
-            DataNode node = create()
-                    .setParentid(parentid)
-                    .setTitle(title)
-                    .setOrderNumber(orderNumber);
-            if (values != null) {
-                for (String key : values.keySet()) {
-                    node.setValue(key, values.get(key));
-                }
-            }
-            return node;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public String shortDescription() {
         return shortDescription(title);
     }
@@ -220,7 +259,6 @@ public class DataNode extends BaseData {
         s += name;
         return s;
     }
-
 
     /*
         Static methods
@@ -302,12 +340,58 @@ public class DataNode extends BaseData {
         return hierarchyNumber;
     }
 
-    public void setHierarchyNumber(String hierarchyNumber) {
+    public DataNode setHierarchyNumber(String hierarchyNumber) {
         this.hierarchyNumber = hierarchyNumber;
+        return this;
     }
 
     public BooleanProperty getSelected() {
         return selected;
+    }
+
+    public String getChainName() {
+        return chainName;
+    }
+
+    public DataNode setChainName(String chainName) {
+        this.chainName = chainName;
+        return this;
+    }
+
+    public List<DataNode> getChainNodes() {
+        return chainNodes;
+    }
+
+    public DataNode setChainNodes(List<DataNode> nodes) {
+        this.chainNodes = nodes;
+        return this;
+    }
+
+    public DataNode getParentNode() {
+        return parentNode;
+    }
+
+    public DataNode setParentNode(DataNode parentNode) {
+        this.parentNode = parentNode;
+        return this;
+    }
+
+    public long getIndex() {
+        return index;
+    }
+
+    public DataNode setIndex(long index) {
+        this.index = index;
+        return this;
+    }
+
+    public long getChildrenSize() {
+        return childrenSize;
+    }
+
+    public DataNode setChildrenSize(long childrenSize) {
+        this.childrenSize = childrenSize;
+        return this;
     }
 
 }

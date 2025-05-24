@@ -172,7 +172,7 @@ public class ColorsPickingController extends BaseChildController {
             }
         }
         ColorsPickingController controller = (ColorsPickingController) WindowTools
-                .branchStage(parent, Fxmls.ColorsPickingFxml);
+                .referredTopStage(parent, Fxmls.ColorsPickingFxml);
         controller.setParameters(parent);
         return controller;
     }

@@ -350,7 +350,7 @@ public class MenuController extends BaseChildController {
 
             MenuController controller;
             if (UserConfig.getBoolean(conn, baseName + "AsChildWindow", false)) {
-                controller = (MenuController) WindowTools.branchStage(parent, Fxmls.MenuFxml);
+                controller = (MenuController) WindowTools.referredTopStage(parent, Fxmls.MenuFxml);
                 if (controller == null) {
                     return null;
                 }

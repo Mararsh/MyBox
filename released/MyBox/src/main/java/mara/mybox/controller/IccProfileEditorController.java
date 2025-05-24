@@ -611,12 +611,15 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
+    public boolean afterSceneLoaded() {
+        if (!super.afterSceneLoaded()) {
+            return false;
+        }
         String name = getCurrentName();
         if (name != null) {
             myStage.setTitle(getBaseTitle() + "  " + name);
         }
+        return true;
     }
 
     private String getCurrentName() {

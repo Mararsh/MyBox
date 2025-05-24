@@ -182,6 +182,14 @@ public class FileInformation {
         }
     }
 
+    public String getAbsolutePath() {
+        if (file != null) {
+            return file.getAbsolutePath();
+        } else {
+            return null;
+        }
+    }
+
     public String getFullName() {
         if (file != null) {
             return file.getAbsolutePath();

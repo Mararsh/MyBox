@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -73,7 +74,7 @@ public class FileBrowseController extends BaseController {
 
             tableView.setOnMouseClicked((MouseEvent event) -> {
                 if (event.getClickCount() > 1) {
-                    itemDoubleClicked();
+                    itemDoubleClicked(event);
                 }
             });
         } catch (Exception e) {
@@ -169,7 +170,7 @@ public class FileBrowseController extends BaseController {
         }
     }
 
-    public void itemDoubleClicked() {
+    public void itemDoubleClicked(Event event) {
         viewAction();
     }
 
@@ -199,7 +200,7 @@ public class FileBrowseController extends BaseController {
             if (parent == null) {
                 return null;
             }
-            FileBrowseController controller = (FileBrowseController) WindowTools.branchStage(
+            FileBrowseController controller = (FileBrowseController) WindowTools.referredTopStage(
                     parent, Fxmls.FileBrowseFxml);
             if (controller != null) {
                 controller.setParameter(parent);

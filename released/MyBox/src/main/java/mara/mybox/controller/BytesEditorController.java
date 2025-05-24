@@ -234,7 +234,7 @@ public class BytesEditorController extends BaseTextController {
 
     @FXML
     @Override
-    public boolean menuAction() {
+    public boolean menuAction(Event event) {
         Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
         MenuBytesEditController.openBytes(myController, mainArea, localToScreen.getX(), localToScreen.getY());
         return true;

@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
  */
 public class AppValues {
 
-    public static final boolean Alpha = true;
+    public static final boolean Alpha = false;
     public static final String AppVersion = "6.8.7";
     public static final String AppVersionDate = "2025-5-24";
     public static final String AppDerbyUser = "mara";

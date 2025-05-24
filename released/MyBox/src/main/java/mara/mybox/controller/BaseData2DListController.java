@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
@@ -104,6 +105,8 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                 }
             });
 
+            viewController.refreshTitle = true;
+
             setConditions();
 
             loadList();
@@ -138,6 +141,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                             continue;
                         }
                         if (tableData2DDefinition.queryTable(conn, referredName, Data2DDefinition.DataType.DatabaseTable) == null) {
+                            setInfo(message("Reading") + ": " + referredName);
                             dataTable.readDefinitionFromDB(conn, referredName);
                         }
                     }
@@ -170,7 +174,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     }
 
     @Override
-    public void itemClicked() {
+    public void clicked(Event event) {
         viewAction();
     }
 

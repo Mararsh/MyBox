@@ -28,6 +28,7 @@ public class ControlData2DSimpleLinearRegressionTable extends BaseData2DLoadCont
         try {
             super.initValues();
             data2D = Data2D.create(Data2DDefinition.DataType.Texts);
+            refreshTitle = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -52,14 +53,18 @@ public class ControlData2DSimpleLinearRegressionTable extends BaseData2DLoadCont
     }
 
     @Override
-    public void makeColumns() {
+    public boolean makeColumns() {
         try {
             List<Data2DColumn> cols = createColumns();
             data2D.setColumns(cols);
-            super.makeColumns();
+            if (!super.makeColumns()) {
+                return false;
+            }
             sortColumn = tableView.getColumns().get(3);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -131,7 +136,7 @@ public class ControlData2DSimpleLinearRegressionTable extends BaseData2DLoadCont
         } else {
             try {
                 Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools
-                        .operationStage(regressController.parentController, Fxmls.Data2DSimpleLinearRegressionFxml);
+                        .referredStage(regressController.parentController, Fxmls.Data2DSimpleLinearRegressionFxml);
                 controller.categoryColumnSelector.getItems().setAll(selected.get(2));
                 controller.categoryColumnSelector.getSelectionModel().select(0);
                 controller.valueColumnSelector.getItems().setAll(selected.get(1));
