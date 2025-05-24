@@ -18,6 +18,25 @@
         <DIV align="center">
             <TABLE>
                 <TR  style="font-weight:bold; "><TH>测试环境</TH><TH>版本</TH><TH>类型</TH><TH>对象</TH><TH>标题</TH><TH>步骤</TH><TH>状态</TH><TH>修改时间</TH><TH>描述</TH></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据树</PRE></CODE></TD><TD><PRE><CODE>自动切换显示模式</PRE></CODE></TD><TD><PRE><CODE>1. 使根节点的子结点数少于或等于100。
+2. 打开数据树界面，验证：自动切换到树形模式。
+3. 使根节点的子结点数大于100。
+4. 打开数据树界面，验证：自动切换到分页表格模式。</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:18:20</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据树</PRE></CODE></TD><TD><PRE><CODE>从树形切换到分页表格</PRE></CODE></TD><TD><PRE><CODE>1. 在树形模式下，选择一个节点。
+2. 切换到表格模式，验证：此节点的子结点被分页显示。</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:18:33</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据树</PRE></CODE></TD><TD><PRE><CODE>从分页表格切换到树形</PRE></CODE></TD><TD><PRE><CODE>1. 在表格模式下，展开一个节点。
+2. 切换到树形模式，验证：此节点在树形上被选择。</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:18:38</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>自动测试</PRE></CODE></TD><TD><PRE><CODE>数据树的导入</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据树的测试。
+2. 执行自动测试，验证各种数据树被自动导入。
+3. 单独测试“地理代码”。</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:02</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>自动测试</PRE></CODE></TD><TD><PRE><CODE>触发测试用例</PRE></CODE></TD><TD><PRE><CODE>1. 各个界面，除了数据树，被自动打开后即被自动关闭。
+2. 界面关闭后触发下一个测试用例。</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:07</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>表格模式下编辑数据</PRE></CODE></TD><TD><PRE><CODE>1. 切换到表格模式。
+2. 修改数据，点击保存，验证：修改被保存。
+3. 修改数据，切换到其它模式，验证：修改被同步到其它模式。</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:10</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>CSV模式下编辑数据</PRE></CODE></TD><TD><PRE><CODE>1. 切换到CSV模式。
+2. 修改数据，点击保存，验证：修改被保存。
+3. 修改数据，切换到其它模式，验证：修改被同步到其它模式。</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:15</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.3</PRE></CODE></TD><TD><PRE><CODE>非法</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>行表达式-非法值与运算符</PRE></CODE></TD><TD><PRE><CODE>1. 使用“处理数据”的“赋值”功能，检查行表达式的运算
 2. 对“字串”列，输入空值，使用运算符：+、-、*、/
 3. 对“整型”列，输入空值，使用运算符：+、-、*、/
@@ -140,23 +159,17 @@
 2.放弃</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>保存数据-多页数据</PRE></CODE></TD><TD><PRE><CODE>1.保存 
 2.放弃</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>保存数据-临时数据</PRE></CODE></TD><TD><PRE><CODE>1.保存 
+2.放弃</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>保存数据-一页数据</PRE></CODE></TD><TD><PRE><CODE>1.保存 
+2.放弃</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>保存数据-多页数据</PRE></CODE></TD><TD><PRE><CODE>1.保存 
+2.放弃</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>另存数据-源数据类型</PRE></CODE></TD><TD><PRE><CODE>CSV、Excel、文本、数据库表、粘贴板、矩阵</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>另存数据-目标格式</PRE></CODE></TD><TD><PRE><CODE>CSV、Excel、文本、MyBox粘贴板、矩阵、数据库表、系统粘贴板、JSON、XML、HTML、PDF</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>另存数据-数据状态</PRE></CODE></TD><TD><PRE><CODE>1.临时数据 
 2.一页数据 
 3.多页数据</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>界面</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>另存数据-界面</PRE></CODE></TD><TD><PRE><CODE>1.快捷键 
-2.提示 
-3.布局 
-4.响应 
-5.菜单</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>添加行</PRE></CODE></TD><TD><PRE><CODE>1. 加到开头/末尾/之上/之下
-2. 填写字段值
-3. 确定/放弃</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>复制到系统粘贴板</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据源
-2. 应用行过滤
-3. 选择列
-4. 选项：行号、列名、格式</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>粘贴系统粘贴板的内容</PRE></CODE></TD><TD><PRE><CODE>1. 按文本/CSV解析
 2. 选项：第一行定义列名
 3. 选择行和列
@@ -171,31 +184,6 @@
 4. 设置各种列值，尤其是行表达式</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>按条件删除</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据源
 2. 应用行过滤</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>设置风格</PRE></CODE></TD><TD><PRE><CODE>1. 设置数据行和列
-2. 应用行过滤
-3. 输入风格
-4. 保存风格
-5. 重叠风格，调整风格顺序</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>选项：当数据单元失去焦点时提交修改</PRE></CODE></TD><TD></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>复制/过滤/查询/转换</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据源
-2. 应用行过滤
-3. 选择列
-4. 设置选项
-5. 设置输出格式</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>排序</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据源
-2. 应用行过滤
-3. 设置排序条件
-4. 设置输出格式</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>转置</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据源
-2. 应用行过滤
-3. 选择列
-4. 设置选项
-5. 设置输出格式</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
-                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>归一化</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据源
-2. 应用行过滤
-3. 选择列
-4. 选择算法和参数
-5. 设置输出格式</PRE></CODE></TD><TD><PRE><CODE>通过</PRE></CODE></TD><TD><PRE><CODE>2024-5-18</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.1</PRE></CODE></TD><TD><PRE><CODE>功能</PRE></CODE></TD><TD><PRE><CODE>数据处理</PRE></CODE></TD><TD><PRE><CODE>分割/分组</PRE></CODE></TD><TD><PRE><CODE>1. 选择数据源
 2. 应用行过滤
 3. 选择分组类型，设置参数

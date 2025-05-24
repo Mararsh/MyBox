@@ -4,6 +4,55 @@
     </head>
     <body contenteditable="false" style="width: 900px; margin:0 auto;">
         <h1>Development Logs</h1>
+        <p>2025-5-24 v6.8.7</p>
+        <ul>
+            <li>New: 
+                <ul>
+                    <li>Data trees: 
+                        <ul>
+                            <li>Beside tree view, nodes can be view in table mode, that children are displayed in paginated table.<br>
+                                Tree is better for deep(many levels) and narrow(limited children) data while paginated table is better for shallow(limited levels) and wide(many children) data.</li>
+                            <li>Query nodes with either simple condition or filter expression.</li>
+                        </ul></li>
+                    <li>Automatical testings: Import data for data trees.</li>
+                </ul></li>
+            <li>Improve: 
+                <ul>
+                    <li>Data manufacture: 
+                        <ul>
+                            <li>Filter rows with simple condition which is comparison of single column.</li>
+                            <li>When create data, attributes, columns, rows number, and values can be set.</li>
+                            <li>Matrices can be external files.</li>
+                            <li>In interfaces of selecting columns, concern lots of columns.</li>
+                            <li>When add rows, copy values of current selected row.</li>
+                        </ul></li>
+                    <li>Trim variables of batch functions. Make all internal indices as 0-based and exclusive end.</li>
+                    <li>Make clear relationships between new stage and the caller when open stage.</li>
+                    <li>Automatical testings are changed as event driven from time driven.</li>
+                </ul></li>
+            <li>Upgrade to Java 24.</li>
+            <li>Solved problems: 
+                <ul>
+                    <li>Data manufacture: 
+                        <ul>
+                            <li>When click button Save in csv mode, updates are not saved.</li>
+                            <li>When change data in table mode, updates should be synchronized to other modes.</li>
+                            <li>Functions “Simple/Multiple Linear Regression - Combination” do not work.</li>
+                            <li>Error popped when open interface “Group Statistic”.</li>
+                            <li>In html pages, null should be displayed as empty.</li>
+                            <li>“Results are empty” should be displayed when no data is generated.</li>
+                        </ul></li>
+                    <li>When handle PDF in batch, “start page” and “end page” do not work when multiple files are selected.</li>
+                    <li>When handle files in batch, status may be updated incorrectly.</li>
+                    <li>When refer javaScript from html, javaScript executor, instead of editor, should be displayed.</li>
+                    <li>When close javaScript editor, endless loop happens.</li>
+                    <li>The “Context Menu” button does not work in html interface.</li>
+                    <li>Events listeners of html do not work sometimes.</li>
+                    <li>Game “Mine”: Double right click should not work for opening around cells.</li>
+                </ul></li>
+        </ul>
+        <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.7">Closed requirements/bugs in this version</a></p>
+        <p>Thanks for my cats GuaiGuai and BenBen. They are soft and warm lives with full of love.</p>
         <p>2025-3-30 v6.8.6</p>
         <ul>
             <li>Improve: 

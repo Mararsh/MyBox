@@ -9,32 +9,55 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2025-3-30 v6.8.6</p>
+  <p>2025-5-24 v6.8.7</p>
   <ul>
+   <li>New: 
+    <ul>
+     <li>Data trees: 
+      <ul>
+       <li>Beside tree view, nodes can be view in table mode, that children are displayed in paginated table.<br>
+         Tree is better for deep(many levels) and narrow(limited children) data while paginated table is better for shallow(limited levels) and wide(many children) data.</li>
+       <li>Query nodes with either simple condition or filter expression.</li>
+      </ul></li>
+     <li>Automatical testings: Import data for data trees.</li>
+    </ul></li>
    <li>Improve: 
     <ul>
-     <li>Redesign and implement Matrix: 
+     <li>Data manufacture: 
       <ul>
-       <li>Data type can be: Double, Float, Long, Integer, Short, Short Boolean.</li>
-       <li>Stored as internal text files.</li>
-       <li>Can be paginated.</li>
-       <li>Examples are provided.</li>
+       <li>Filter rows with simple condition which is comparison of single column.</li>
+       <li>When create data, attributes, columns, rows number, and values can be set.</li>
+       <li>Matrices can be external files.</li>
+       <li>In interfaces of selecting columns, concern lots of columns.</li>
+       <li>When add rows, copy values of current selected row.</li>
       </ul></li>
-     <li>Option “Show in left/right side” for control of pagination.</li>
-     <li>Examples of “Image Scope” are provided.</li>
+     <li>Trim variables of batch functions. Make all internal indices as 0-based and exclusive end.</li>
+     <li>Make clear relationships between new stage and the caller when open stage.</li>
+     <li>Automatical testings are changed as event driven from time driven.</li>
     </ul></li>
+   <li>Upgrade to Java 24.</li>
    <li>Solved problems: 
     <ul>
-     <li>Row expressions should be able to saved and selected.</li>
-     <li>Examples of Row Expression are incomplete.</li>
-     <li>Bubble chart of grouped data is missed.</li>
-     <li>Menu should be popped when right click data chart.</li>
-     <li>Errors popped when close data charts.</li>
-     <li>Fail to export tree XML when node is clob.</li>
-     <li>Color threshold of image scope should be double .</li>
+     <li>Data manufacture: 
+      <ul>
+       <li>When click button Save in csv mode, updates are not saved.</li>
+       <li>When change data in table mode, updates should be synchronized to other modes.</li>
+       <li>Functions “Simple/Multiple Linear Regression - Combination” do not work.</li>
+       <li>Error popped when open interface “Group Statistic”.</li>
+       <li>In html pages, null should be displayed as empty.</li>
+       <li>“Results are empty” should be displayed when no data is generated.</li>
+      </ul></li>
+     <li>When handle PDF in batch, “start page” and “end page” do not work when multiple files are selected.</li>
+     <li>When handle files in batch, status may be updated incorrectly.</li>
+     <li>When refer javaScript from html, javaScript executor, instead of editor, should be displayed.</li>
+     <li>When close javaScript editor, endless loop happens.</li>
+     <li>The “Context Menu” button does not work in html interface.</li>
+     <li>Events listeners of html do not work sometimes.</li>
+     <li>Game “Mine”: Double right click should not work for opening around cells.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.6">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.7">Closed requirements/bugs in this version</a></p>
+  <p>Thanks for my cats GuaiGuai and BenBen. They are soft and warm lives with full of love.</p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -112,19 +135,19 @@
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
      <td>280MB-</td>
-     <td>Java 23 or higher</td>
+     <td>Java 24 or higher</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
      <td>280MB-</td>
-     <td>Java 23 or higher</td>
+     <td>Java 24 or higher</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz">MyBox-mac.jar.gz</a></td>
      <td>280MB-</td>
-     <td>Java 23 or higher</td>
+     <td>Java 24 or higher</td>
     </tr>
    </tbody>
   </table>
@@ -440,8 +463,8 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8.6</td>
-     <td>2025-3-30</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -475,8 +498,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8.6</td>
-     <td>2025-3-30</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -531,29 +554,29 @@
     </tr>
     <tr>
      <td>Software Testing - Test Environment</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Base Functions’ Verification List</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Compatibility Testing</td>
-     <td>6.8.6</td>
-     <td>2025-3-30</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Detailed Testing</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html">html</a></td>
     </tr>
@@ -863,7 +886,7 @@
     <tr>
      <td></td>
      <td></td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/23/docs/api/index.html">https://docs.oracle.com/en/java/javase/23/docs/api/index.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/24/docs/api/index.html">https://docs.oracle.com/en/java/javase/24/docs/api/index.html</a></td>
     </tr>
     <tr>
      <td>JavaFx</td>
@@ -883,7 +906,7 @@
     <tr>
      <td></td>
      <td></td>
-     <td><a target=_blank href="https://openjfx.io/javadoc/23/">https://openjfx.io/javadoc/23/</a></td>
+     <td><a target=_blank href="https://openjfx.io/javadoc/24/">https://openjfx.io/javadoc/24/</a></td>
     </tr>
     <tr>
      <td>Derby</td>
@@ -898,7 +921,7 @@
     <tr>
      <td>jpackage</td>
      <td>pack</td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html</a></td>
     </tr>
     <tr>
      <td>maven</td>
@@ -1184,7 +1207,7 @@
   </table>
   <h1>Features</h1>
   <h2>Cross Platforms</h2>
-  <p>MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 23.<br>
+  <p>MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 24.<br>
     Versions before v5.3 are based on Java 8.</p>
   <h2>Internationalized</h2>
   <ol>

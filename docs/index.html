@@ -9,32 +9,55 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是图形化计算机应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2025-3-30 版本6.8.6</p>
+  <p>2025-5-24 版本6.8.7</p>
   <ul>
+   <li>新增： 
+    <ul>
+     <li>数据树： 
+      <ul>
+       <li>除了显示为树形，还可以显示为子结点的分页表格。<br>
+         树形适用于深（层次多）且窄（子结点少）的数据，分页表格适用于浅（层次少）且宽（子结点多）的数据。</li>
+       <li>查询结点，可以设置简单条件，也可以设置过滤表达式。</li>
+      </ul></li>
+     <li>自动测试：数据树的导入测试。</li>
+    </ul></li>
    <li>改进： 
     <ul>
-     <li>重新设计和实现矩阵： 
+     <li>数据处理： 
       <ul>
-       <li>数值类型可为：双精度、浮点、长整型、整型、短整型、数字布尔。</li>
-       <li>保存为内部文本文件。</li>
-       <li>可以分页。</li>
-       <li>提供示例数据。</li>
+       <li>过滤数据行时，可以直接设置简单条件，即单个数据列的比较操作。</li>
+       <li>创建数据时，可以设置属性、列、行数、值。</li>
+       <li>矩阵数据可以是外部文件。</li>
+       <li>在选择数据列的界面上，考虑有大量数据列的情形。</li>
+       <li>添加数据行时，复制当前选择行的值。</li>
       </ul></li>
-     <li>分页控件，可选靠左或靠右。</li>
-     <li>提供“图像范围”的示例。</li>
+     <li>整理批处理的变量，将所有内部索引设为基于零和排除尾值。</li>
+     <li>理清打开窗口时新窗口与调用者之间的各种关系。</li>
+     <li>自动测试由时间驱动改为事件驱动。</li>
     </ul></li>
+   <li>升级为Java 24。</li>
    <li>解决问题： 
     <ul>
-     <li>行表达式应能被保存和选择。</li>
-     <li>行表达式的示例不完整。</li>
-     <li>缺失分组气泡图。</li>
-     <li>右键点击数据图时应弹出菜单。</li>
-     <li>关闭数据图时会弹出错误。</li>
-     <li>导出clob类型的树结点XML时出错。</li>
-     <li>图像范围的颜色阈值应为双精度。</li>
+     <li>数据处理： 
+      <ul>
+       <li>当CSV模式下点击保存按钮，修改未保存。</li>
+       <li>当在表格中修改数据时，其它视图应当更新。</li>
+       <li>功能“简单/多重数据回归-组合”失效。</li>
+       <li>打开界面“数据分组统计”时弹出错误。</li>
+       <li>网页界面中，null值应显示空白。</li>
+       <li>未产生结果时应显示结果为空的信息。</li>
+      </ul></li>
+     <li>批处理pdf时，若多选文件则开始页和结尾页的设置不生效。</li>
+     <li>批处理文件时，表格的状态可能更新得不正确。</li>
+     <li>从网页引用javaScript时，应显示执行界面而不是编辑界面。</li>
+     <li>关闭编辑javaScript的界面时，内部调用会无限循环。</li>
+     <li>网页的右键菜单按钮未生效。</li>
+     <li>网页的监听事件有时未生效。</li>
+     <li>游戏“挖雷”：双击右键不应当打开周围棋子。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.6">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.7">此版本关闭的需求/问题列表</a></p>
+  <p>感谢我的猫猫乖乖和笨笨。它们柔软又温和，真是有爱的生命。</p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -112,19 +135,19 @@
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
      <td>280MB-</td>
-     <td>Java 23或更高版本</td>
+     <td>Java 24或更高版本</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
      <td>280MB-</td>
-     <td>Java 23或更高版本</td>
+     <td>Java 24或更高版本</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz">MyBox-mac.jar.gz</a></td>
      <td>280MB-</td>
-     <td>Java 23或更高版本</td>
+     <td>Java 24或更高版本</td>
     </tr>
    </tbody>
   </table>
@@ -440,8 +463,8 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.8.6</td>
-     <td>2025-3-30</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -475,8 +498,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.8.6</td>
-     <td>2025-3-30</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -531,29 +554,29 @@
     </tr>
     <tr>
      <td>软件测试-测试环境</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
     <tr>
      <td>软件测试-基本功能验证列表</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html">html</a></td>
     </tr>
     <tr>
      <td>软件测试-兼容性测试</td>
-     <td>6.8.6</td>
-     <td>2025-3-30</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
     </tr>
     <tr>
      <td>软件测试-详细测试</td>
-     <td>6.8.3</td>
-     <td>2025-1-27</td>
+     <td>6.8.7</td>
+     <td>2025-5-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html">html</a></td>
     </tr>
@@ -863,7 +886,7 @@
     <tr>
      <td></td>
      <td></td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/23/docs/api/index.html">https://docs.oracle.com/en/java/javase/23/docs/api/index.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/24/docs/api/index.html">https://docs.oracle.com/en/java/javase/24/docs/api/index.html</a></td>
     </tr>
     <tr>
      <td>JavaFx</td>
@@ -883,7 +906,7 @@
     <tr>
      <td></td>
      <td></td>
-     <td><a target=_blank href="https://openjfx.io/javadoc/23/">https://openjfx.io/javadoc/23/</a></td>
+     <td><a target=_blank href="https://openjfx.io/javadoc/24/">https://openjfx.io/javadoc/24/</a></td>
     </tr>
     <tr>
      <td>Derby</td>
@@ -898,7 +921,7 @@
     <tr>
      <td>jpackage</td>
      <td>自包含包</td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html</a></td>
     </tr>
     <tr>
      <td>maven</td>
@@ -1184,7 +1207,7 @@
   </table>
   <h1>特点</h1>
   <h2>跨平台</h2>
-  <p>MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 23的平台。<br>
+  <p>MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 24的平台。<br>
     MyBox v5.3以前的版本均基于Java 8。</p>
   <h2>国际化</h2>
   <ol>

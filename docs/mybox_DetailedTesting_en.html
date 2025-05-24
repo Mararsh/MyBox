@@ -18,6 +18,25 @@
         <DIV align="center">
             <TABLE>
                 <TR  style="font-weight:bold; "><TH>Test environment</TH><TH>Version</TH><TH>Type</TH><TH>Object</TH><TH>Title</TH><TH>Steps</TH><TH>Status</TH><TH>Modify time</TH><TH>Description</TH></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>Function</PRE></CODE></TD><TD><PRE><CODE>Data Tree</PRE></CODE></TD><TD><PRE><CODE>switch view mode automatically</PRE></CODE></TD><TD><PRE><CODE>1. Make children number of root is less than or equal to 100.
+2. Open interface of data tree, verity that tree mode is switched automatically.
+3. Make children number of root is larger than 100.
+4. Open interface of data tree, verity that table mode is switched automatically.</PRE></CODE></TD><TD><PRE><CODE>pass</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:18:20</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>Function</PRE></CODE></TD><TD><PRE><CODE>Data Tree</PRE></CODE></TD><TD><PRE><CODE>switch tree mode to table mode</PRE></CODE></TD><TD><PRE><CODE>1. In tree mode, select one node.
+2. Switch to table mode, verify that children of selected node are shown in paginated table.</PRE></CODE></TD><TD><PRE><CODE>pass</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:18:33</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>Function</PRE></CODE></TD><TD><PRE><CODE>Data Tree</PRE></CODE></TD><TD><PRE><CODE>switch table mode to tree mode</PRE></CODE></TD><TD><PRE><CODE>1. In table mode, expaned one node.
+2. Switch to tree mode, verify that the node is selected in the tree.</PRE></CODE></TD><TD><PRE><CODE>pass</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:18:38</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>Function</PRE></CODE></TD><TD><PRE><CODE>Automatical  Testing</PRE></CODE></TD><TD><PRE><CODE>import data of trees</PRE></CODE></TD><TD><PRE><CODE>1. Select items about data trees.
+2. Execute testings, verify that data are imported automatically for trees.
+3. Test "Geography Code" separately.</PRE></CODE></TD><TD><PRE><CODE>pass</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:02</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>Function</PRE></CODE></TD><TD><PRE><CODE>Automatical  Testing</PRE></CODE></TD><TD><PRE><CODE>trigger test cases</PRE></CODE></TD><TD><PRE><CODE>1. All interfaces, except for data trees, are closed after they are opened automatically.
+2. Next test case is triggerred when current interface is closed.</PRE></CODE></TD><TD><PRE><CODE>pass</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:07</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>Function</PRE></CODE></TD><TD><PRE><CODE>Manufacture Data</PRE></CODE></TD><TD><PRE><CODE>edit data in table mode</PRE></CODE></TD><TD><PRE><CODE>1. Switch to table mode.
+2. Modify data, and click Save. Verify that updates are saved correctly.
+3. Modify data, and switch to other modes. Verify that updates are synchronized to other modes.</PRE></CODE></TD><TD><PRE><CODE>pass</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:10</PRE></CODE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.7</PRE></CODE></TD><TD><PRE><CODE>Function</PRE></CODE></TD><TD><PRE><CODE>Manufacture Data</PRE></CODE></TD><TD><PRE><CODE>edit data in csv mode</PRE></CODE></TD><TD><PRE><CODE>1. Switch to csv mode.
+2. Modify data, and click Save. Verify that updates are saved correctly.
+3. Modify data, and switch to other modes. Verify that updates are synchronized to other modes.</PRE></CODE></TD><TD><PRE><CODE>pass</PRE></CODE></TD><TD><PRE><CODE>2025-05-23 09:19:15</PRE></CODE></TD><TD></TD></TR>
                 <TR><TD><PRE><CODE>win</PRE></CODE></TD><TD><PRE><CODE>MyBox v6.8.3</PRE></CODE></TD><TD><PRE><CODE>Invalid</PRE></CODE></TD><TD><PRE><CODE>Manufacture Data</PRE></CODE></TD><TD><PRE><CODE>row expression - invalid values and operators</PRE></CODE></TD><TD><PRE><CODE>1. Use function of 'Set Values' to check caluculation of row experssion
 2. To 'String' column, input null value and use operator: + - * /
 3. To 'Integer' column, input null value and use operator: + - * /
