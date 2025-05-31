@@ -163,6 +163,7 @@ public class DataTable extends Data2D {
                 if (savedColumns != null) {
                     for (Data2DColumn savedColumn : savedColumns) {
                         if (dbColumn.getColumnName().equalsIgnoreCase(savedColumn.getColumnName())) {
+                            dbColumn.setLabel(savedColumn.getLabel());
                             dbColumn.setBaseID(savedColumn.getColumnID());
                             dbColumn.setIndex(savedColumn.getIndex());
                             dbColumn.setType(savedColumn.getType());

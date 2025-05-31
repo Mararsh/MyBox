@@ -50,6 +50,7 @@ public class Data2DDefinitionTools {
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("ColumnName"), ColumnType.String));
         columns.add(new Data2DColumn(message("Type"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Label"), ColumnType.String));
         columns.add(new Data2DColumn(message("Length"), ColumnType.String));
         columns.add(new Data2DColumn(message("Width"), ColumnType.String));
         columns.add(new Data2DColumn(message("DisplayFormat"), ColumnType.String));
@@ -118,12 +119,14 @@ public class Data2DDefinitionTools {
             }
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("ColumnName"), message("Type"),
-                    message("Length"), message("NotNull"), message("PrimaryKey")));
+                    message("Label"), message("Length"),
+                    message("NotNull"), message("PrimaryKey")));
             StringTable columnsTable = new StringTable(names);
             for (ColumnDefinition column : columns) {
                 row = new ArrayList<>();
                 row.add(column.getColumnName());
                 row.add(message(column.getType().name()));
+                row.add(column.getLabel());
                 row.add(column.getLength() + "");
                 row.add(column.isNotNull() ? message("Yes") : "");
                 row.add(column.isIsPrimaryKey() ? message("Yes") : "");
@@ -142,6 +145,10 @@ public class Data2DDefinitionTools {
                 row = new ArrayList<>();
                 row.add(message("Type"));
                 row.add(message(column.getType().name()));
+                columnTable.add(row);
+                row = new ArrayList<>();
+                row.add(message("Label"));
+                row.add(column.getLabel());
                 columnTable.add(row);
                 row = new ArrayList<>();
                 row.add(message("Length"));
@@ -240,6 +247,9 @@ public class Data2DDefinitionTools {
                     if (col.getType() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("Type")).append(">").append(col.getType().name()).append("</").append(XmlTools.xmlTag("Type")).append(">\n");
                     }
+                    if (col.getLabel() != null) {
+                        s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("Label")).append(">").append("<![CDATA[").append(col.getLabel()).append("]]>").append("</").append(XmlTools.xmlTag("Label")).append(">\n");
+                    }
                     if (ColumnType.String == col.getType()) {
                         s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("Length")).append(">").append(col.getLength()).append("</").append(XmlTools.xmlTag("Length")).append(">\n");
                     }
@@ -323,6 +333,9 @@ public class Data2DDefinitionTools {
                     if (col.getType() != null) {
                         s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("Type")).append("\": \"").append(col.getType().name()).append("\"");
                     }
+                    if (col.getLabel() != null) {
+                        s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("Label")).append("\": ").append(JsonTools.encode(col.getLabel()));
+                    }
                     if (ColumnType.String == col.getType()) {
                         s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("Length")).append("\": ").append(col.getLength());
                     }
@@ -386,6 +399,7 @@ public class Data2DDefinitionTools {
                     row.add("");
                     row.add("");
                     row.add("");
+                    row.add("");
                     row.add(data2d.getScale() + "");
                     row.add("");
                     row.add("");
@@ -398,6 +412,7 @@ public class Data2DDefinitionTools {
                         row.clear();
                         row.add(col.getColumnName());
                         row.add(col.getType().name());
+                        row.add(col.getLabel());
                         row.add(ColumnType.String == col.getType() ? col.getLength() + "" : "");
                         row.add(col.getWidth() + "");
                         row.add(col.getFormat());
@@ -466,6 +481,7 @@ public class Data2DDefinitionTools {
                     attributesRow.createCell(cellIndex++).setCellValue("");
                     attributesRow.createCell(cellIndex++).setCellValue("");
                     attributesRow.createCell(cellIndex++).setCellValue("");
+                    attributesRow.createCell(cellIndex++).setCellValue("");
                     attributesRow.createCell(cellIndex++).setCellValue(data2d.getScale() + "");
                     attributesRow.createCell(cellIndex++).setCellValue("");
                     attributesRow.createCell(cellIndex++).setCellValue("");
@@ -478,6 +494,7 @@ public class Data2DDefinitionTools {
                         cellIndex = 0;
                         columnRow.createCell(cellIndex++).setCellValue(col.getColumnName());
                         columnRow.createCell(cellIndex++).setCellValue(col.getType().name());
+                        columnRow.createCell(cellIndex++).setCellValue(col.getLabel());
                         columnRow.createCell(cellIndex++).setCellValue(ColumnType.String == col.getType() ? col.getLength() + "" : "");
                         columnRow.createCell(cellIndex++).setCellValue(col.getWidth() + "");
                         columnRow.createCell(cellIndex++).setCellValue(col.getFormat());
@@ -599,6 +616,8 @@ public class Data2DDefinitionTools {
                             }
                             if (XmlTools.matchXmlTag("ColumnName", attrName)) {
                                 column.setColumnName(cdata(attrNode));
+                            } else if (XmlTools.matchXmlTag("Label", attrName)) {
+                                column.setLabel(cdata(attrNode));
                             } else if (XmlTools.matchXmlTag("DisplayFormat", attrName)) {
                                 column.setFormat(cdata(attrNode));
                             } else if (XmlTools.matchXmlTag("DefaultValue", attrName)) {

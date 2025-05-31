@@ -302,9 +302,8 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             TableColor tableColor = null;
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
-                String name = dataColumn.getColumnName();
                 ColumnType type = dataColumn.getType();
-                TableColumn tableColumn = new TableColumn<List<String>, String>(name);
+                TableColumn tableColumn = new TableColumn<List<String>, String>(dataColumn.getLabel());
                 tableColumn.setPrefWidth(dataColumn.getWidth());
                 tableColumn.setEditable(!readOnly && dataColumn.isEditable() && !dataColumn.isId());
                 tableColumn.setUserData(dataColumn.getIndex());

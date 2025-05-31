@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2025-5-7
  * @License Apache License Version 2.0
  */
-public class DataTreeQueryController extends ControlData2DRowFilter {
+public class DataTreeQueryByConditionsController extends ControlData2DRowFilter {
 
     protected BaseDataTreeController dataController;
     protected String dataName, chainName;
@@ -36,7 +36,7 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
 
-            baseTitle = nodeTable.getTreeName() + " - " + message("Query");
+            baseTitle = nodeTable.getTreeName() + " - " + message("QueryByConditions");
             setTitle(baseTitle);
 
             loadColumns();
@@ -98,7 +98,6 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
     @Override
     public boolean doTask(FxTask currentTask) {
         try {
-            treeTable.startTask(currentTask, filter);
             List<Integer> cols = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
                 cols.add(i);
@@ -108,13 +107,14 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
                     .setTargetName(dataName + "_" + message("QueryResults"))
                     .setSourcePickIndice(cols)
                     .setImportData(true);
-            results.setTask(currentTask);
+            treeTable.startTask(currentTask, filter);
             if (results.createTable()) {
                 showLogs("Done");
                 return true;
             }
+            showLogs(message("Failed"));
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            showLogs(e.toString());
         }
         results = null;
         return false;
@@ -139,10 +139,10 @@ public class DataTreeQueryController extends ControlData2DRowFilter {
     /*
         static
      */
-    public static DataTreeQueryController open(BaseDataTreeController parent) {
+    public static DataTreeQueryByConditionsController open(BaseDataTreeController parent) {
         try {
-            DataTreeQueryController controller = (DataTreeQueryController) WindowTools
-                    .referredStage(parent, Fxmls.DataTreeQueryFxml);
+            DataTreeQueryByConditionsController controller = (DataTreeQueryByConditionsController) WindowTools
+                    .referredStage(parent, Fxmls.DataTreeQueryByConditionsFxml);
             controller.setParameters(parent);
             controller.requestMouse();
             return controller;

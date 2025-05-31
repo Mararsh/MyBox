@@ -437,8 +437,12 @@ public class BaseDataTreeController extends BaseFileController {
         }
     }
 
-    public void query() {
-        DataTreeQueryController.open(this);
+    public void queryByConditions() {
+        DataTreeQueryByConditionsController.open(this);
+    }
+
+    public void queryByTags() {
+        DataTreeQueryByTagsController.open(this);
     }
 
     public void queryDescendants(DataNode node) {
@@ -523,9 +527,9 @@ public class BaseDataTreeController extends BaseFileController {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("Query") + " ...", StyleTools.getIconImageView("iconQuery.png"));
+        menu = new MenuItem(message("QueryByConditions"), StyleTools.getIconImageView("iconQuery.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            query();
+            queryByConditions();
         });
         items.add(menu);
 
@@ -540,6 +544,14 @@ public class BaseDataTreeController extends BaseFileController {
             queryDescendants(node);
         });
         items.add(menu);
+
+        menu = new MenuItem(message("QueryByTags"), StyleTools.getIconImageView("iconQuery.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            queryByTags();
+        });
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
 
         if (!isLeaf(node)) {
             if (treeRadio.isSelected()) {

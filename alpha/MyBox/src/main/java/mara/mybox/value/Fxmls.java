@@ -288,7 +288,8 @@ public class Fxmls {
     public static final String DataTreeCopyFxml = "/fxml/DataTreeCopy.fxml";
     public static final String DataTreeMoveFxml = "/fxml/DataTreeMove.fxml";
     public static final String DataTreeDeleteFxml = "/fxml/DataTreeDelete.fxml";
-    public static final String DataTreeQueryFxml = "/fxml/DataTreeQuery.fxml";
+    public static final String DataTreeQueryByConditionsFxml = "/fxml/DataTreeQueryByConditions.fxml";
+    public static final String DataTreeQueryByTagsFxml = "/fxml/DataTreeQueryByTags.fxml";
     public static final String DataTreeQueryDescendantsFxml = "/fxml/DataTreeQueryDescendants.fxml";
     public static final String DataTreeQueryResultsFxml = "/fxml/DataTreeQueryResults.fxml";
 

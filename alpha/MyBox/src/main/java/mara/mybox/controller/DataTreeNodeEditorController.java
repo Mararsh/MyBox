@@ -70,15 +70,6 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
                 dataController = (BaseDataTreeController) parentController;
             }
 
-            initEditor();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void initEditor() {
-        try {
             baseName = baseName + "_" + nodeTable.getTableName();
             baseTitle = nodeTable.getTreeName() + " - " + message("EditNode");
             setTitle(baseTitle);
@@ -99,7 +90,14 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
                 }
             });
 
-            tagsController.setParameters(this);
+            tagsController.setParameters(this, nodeTable, tagTable, nodeTagsTable);
+
+            tagsController.selectedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    updateStatus();
+                }
+            });
 
             valuesController = (BaseDataValuesController) WindowTools.loadFxml(nodeTable.getDataFxml());
             dataPane.setContent(valuesController.getMyScene().getRoot());
@@ -217,7 +215,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     protected void loadData() {
         try {
             loadAttributes();
-            tagsController.loadTags();
+            tagsController.loadTags(currentNode);
             valuesController.editValues();
             resetStatus();
         } catch (Exception e) {

@@ -43,7 +43,7 @@ public class Data2DPageTools {
                     names.add(message("DataRowNumber"));
                 }
                 for (int i = 0; i < cNumber; i++) {
-                    names.add(data2d.columnName(i));
+                    names.add(data2d.columnLabel(i));
                 }
             } else {
                 names = null;
@@ -117,7 +117,7 @@ public class Data2DPageTools {
                 for (int col = 0; col < cNumber; col++) {
                     List<String> htmlRow = new ArrayList<>();
                     if (showColumns) {
-                        htmlRow.add(data2d.columnName(col));
+                        htmlRow.add(data2d.columnLabel(col));
                     }
                     String value = dataRow.get(col + 1);
                     value = value == null ? ""

@@ -62,7 +62,8 @@ public abstract class BaseData2DColumnsController extends BaseTableViewControlle
     protected boolean changed;
 
     @FXML
-    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn, descColumn, formatColumn;
+    protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn,
+            labelColumn, descColumn, formatColumn;
     @FXML
     protected TableColumn<Data2DColumn, Boolean> editableColumn, notNullColumn, primaryColumn, autoColumn;
     @FXML
@@ -140,6 +141,30 @@ public abstract class BaseData2DColumnsController extends BaseTableViewControlle
             });
             nameColumn.setEditable(true);
             nameColumn.getStyleClass().add("editable-column");
+
+            if (labelColumn != null) {
+                labelColumn.setCellValueFactory(new PropertyValueFactory<>("label"));
+                labelColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
+                labelColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Data2DColumn, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Data2DColumn, String> t) {
+                        if (t == null) {
+                            return;
+                        }
+                        Data2DColumn column = t.getRowValue();
+                        String v = t.getNewValue();
+                        if (column == null || v == null) {
+                            return;
+                        }
+                        if (!v.equals(column.getLabel())) {
+                            column.setLabel(v);
+                            changed(true);
+                        }
+                    }
+                });
+                labelColumn.setEditable(true);
+                labelColumn.getStyleClass().add("editable-column");
+            }
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeString"));
             typeColumn.setCellFactory(TableDataColumnCell.create(this));

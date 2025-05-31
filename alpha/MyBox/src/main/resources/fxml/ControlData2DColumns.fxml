@@ -153,6 +153,7 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="indexColumn" editable="false" prefWidth="60.0" text="%Index" />
                 <TableColumn fx:id="nameColumn" prefWidth="160.0" text="%ColumnName" />
                 <TableColumn fx:id="typeColumn" prefWidth="120.0" text="%Type" />
+            <TableColumn fx:id="labelColumn" prefWidth="160.0" text="%Label" />
                 <TableColumn fx:id="notNullColumn" text="%NotNull" />
                 <TableColumn fx:id="editableColumn" text="%Editable" />
                 <TableColumn fx:id="formatColumn" prefWidth="120.0" text="%Format" />

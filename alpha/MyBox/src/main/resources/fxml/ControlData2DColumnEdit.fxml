@@ -65,6 +65,12 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="clobRadio" layoutX="260.0" layoutY="32.0" minWidth="-Infinity" mnemonicParsing="false" text="%Clob" toggleGroup="$typeGroup" />
             </children>
         </FlowPane>
+      <HBox fx:id="labelBox" alignment="CENTER_LEFT" layoutX="15.0" layoutY="333.0" spacing="2.0">
+         <children>
+            <Label text="%Label" />
+            <TextField fx:id="labelInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
         <VBox fx:id="optionsBox" spacing="2.0">
             <children>
                 <HBox fx:id="formatBox" alignment="CENTER_LEFT" spacing="2.0">
