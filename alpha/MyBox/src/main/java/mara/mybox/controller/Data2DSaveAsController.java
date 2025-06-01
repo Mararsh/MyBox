@@ -122,15 +122,19 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     @Override
     public void afterSuccess() {
-        Data2D results = writer.getTargetData();
-        if (results != null) {
-            if (saveTmp) {
+        if (saveTmp) {
+            Data2D results = writer.getTargetData();
+            if (results != null) {
                 targetController.tableController.loadDef(results, false);
             } else {
-                writer.showResult();
+                alertInformation(message("NoData"));
             }
         } else {
-            alertInformation(message("NoData"));
+            if (writer.showResult()) {
+                popDone();
+            } else {
+                alertInformation(message("ResultIsEmpty"));
+            }
         }
     }
 

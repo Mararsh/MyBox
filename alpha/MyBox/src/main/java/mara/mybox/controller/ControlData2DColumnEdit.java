@@ -43,7 +43,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DColumnEdit extends BaseChildController {
 
-    protected BaseData2DColumnsController columnsController;
+    protected ControlData2DColumns columnsController;
     protected int columnIndex;
     protected boolean isTableExistedColumn;
 
@@ -108,7 +108,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void init(BaseData2DColumnsController controller) {
+    protected void init(ControlData2DColumns controller) {
         try {
             this.columnsController = controller;
             columnIndex = -1;
@@ -120,12 +120,12 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void setParameters(BaseData2DColumnsController columnsController) {
+    protected void setParameters(ControlData2DColumns columnsController) {
         setParameters(columnsController, -1);
 
     }
 
-    public void setParameters(BaseData2DColumnsController columnsController, int index) {
+    public void setParameters(ControlData2DColumns columnsController, int index) {
         init(columnsController);
         loadColumn(index);
     }

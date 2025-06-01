@@ -15,7 +15,6 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
-import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
@@ -42,7 +41,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     @FXML
     protected TreeTableColumn<DataNode, Long> idColumn, childrenColumn;
     @FXML
-    protected TreeTableColumn<DataNode, String> hierarchyNumberColumn;
+    protected TreeTableColumn<DataNode, String> hierarchyNumberColumn, tagsColumn;
     @FXML
     protected TreeTableColumn<DataNode, Float> orderColumn;
     @FXML
@@ -68,6 +67,8 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
 
             timeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("updateTime"));
             timeColumn.setCellFactory(new TreeTableDateCell());
+
+            tagsColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("tagNames"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -114,11 +115,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                     if (rootNode == null) {
                         return false;
                     }
-                    size = nodeTable.childrenSize(conn, RootID);
-                    rootNode.setChildrenSize(size);
+                    readExtraInfo(conn, rootNode);
+                    size = rootNode.getChildrenSize();
                     rootItem = new TreeItem(rootNode);
                     if (size > 0) {
-                        rootItem.getChildren().add(new TreeItem(new DataNode()));
+                        rootItem.getChildren().add(dummyItem());
                         conn.setAutoCommit(true);
                         unfold(this, conn, rootItem, false);
                         if (node != null) {
@@ -215,6 +216,19 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         return selectedValue();
     }
 
+    public TreeItem<DataNode> dummyItem() {
+        return new TreeItem(new DataNode());
+    }
+
+    public void readExtraInfo(Connection conn, DataNode node) {
+        try {
+            node.setChildrenSize(nodeTable.childrenSize(conn, node.getNodeid()));
+            node.setNodeTags(nodeTagsTable.nodeTags(conn, node.getNodeid()));
+        } catch (Exception e) {
+            displayError(e.toString());
+        }
+    }
+
     /*
         operations
      */
@@ -274,7 +288,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
                     tempItem = new TreeItem(item.getValue());
-                    tempItem.getChildren().add(new TreeItem(new DataNode()));
+                    tempItem.getChildren().add(dummyItem());
                     conn.setAutoCommit(true);
                     unfold(this, conn, tempItem, descendants);
                 } catch (Exception e) {
@@ -343,7 +357,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                             DataNode childNode = nodeTable.readData(results);
                             childNode.setIndex(index);
                             childNode.setHierarchyNumber(prefix + (++index));
-                            childNode.setChildrenSize(nodeTable.childrenSize(conn, childNode.getNodeid()));
+                            readExtraInfo(conn, childNode);
                             TreeItem<DataNode> childItem = new TreeItem(childNode);
                             item.getChildren().add(childItem);
                             if (childNode.getChildrenSize() > 0) {
@@ -353,8 +367,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                                                 unfold(childItem, false);
                                             }
                                         });
-                                TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
-                                childItem.getChildren().add(dummyItem);
+                                childItem.getChildren().add(dummyItem());
                             }
                             if (descendants) {
                                 unfold(task, conn, childItem, true);
@@ -372,7 +385,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             }
             item.setExpanded(true);
         } catch (Exception e) {
-            error = e.toString();
+            displayError(e.toString());
         }
     }
 
@@ -447,7 +460,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 parentItem.setExpanded(true);
                 parentItem = chainItem;
             }
-            node.setChildrenSize(nodeTable.childrenSize(conn, node.getNodeid()));
+            readExtraInfo(conn, node);
             if (chainItem.isLeaf() && node.getChildrenSize() > 0) {
                 TreeItem<DataNode> unloadItem = chainItem;
                 unloadItem.expandedProperty().addListener(
@@ -456,12 +469,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                                 unfold(unloadItem, false);
                             }
                         });
-                TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
-                unloadItem.getChildren().add(dummyItem);
+                unloadItem.getChildren().add(dummyItem());
             }
             return chainItem;
         } catch (Exception e) {
-            error = e.toString();
+            displayError(e.toString());
             return null;
         }
     }
@@ -507,7 +519,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             return;
         }
         item.getChildren().clear();
-        item.getChildren().add(new TreeItem(new DataNode()));
+        item.getChildren().add(dummyItem());
         unfold(item, false);
     }
 

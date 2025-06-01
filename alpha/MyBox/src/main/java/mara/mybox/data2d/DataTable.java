@@ -395,6 +395,7 @@ public class DataTable extends Data2D {
         DataTableWriter writer = new DataTableWriter();
         writer.setTargetTable(this)
                 .setTargetData(this)
+                .setDataName(dataName)
                 .setRecordTargetFile(false)
                 .setRecordTargetData(true);
         return writer;

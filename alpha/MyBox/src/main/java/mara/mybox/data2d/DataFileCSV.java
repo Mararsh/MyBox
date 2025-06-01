@@ -52,6 +52,7 @@ public class DataFileCSV extends DataFileText {
                 .setDelimiter(delimiter)
                 .setWriteHeader(hasHeader)
                 .setTargetData(this)
+                .setDataName(dataName)
                 .setPrintFile(file)
                 .setColumns(columns)
                 .setHeaderNames(columnNames())

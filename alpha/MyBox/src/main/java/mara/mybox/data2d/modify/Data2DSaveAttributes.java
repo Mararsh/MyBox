@@ -46,8 +46,8 @@ public class Data2DSaveAttributes extends Data2DModify {
                 return;
             }
             targetRow = new ArrayList<>();
-            for (Data2DColumn column : attributes.columns) {
-                int colIndex = column.getIndex();
+            for (Data2DColumn col : attributes.columns) {
+                int colIndex = col.getIndex();
                 if (colIndex < 0 || colIndex >= sourceRow.size()) {
                     targetRow.add(null);
                 } else {

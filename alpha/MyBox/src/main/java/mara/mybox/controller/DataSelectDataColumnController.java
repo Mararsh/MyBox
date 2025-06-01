@@ -17,7 +17,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataSelectDataColumnController extends BaseDataSelectController {
 
-    protected BaseData2DColumnsController columnsController;
+    protected ControlData2DColumns columnsController;
     protected Data2DColumnEditController editController;
 
     @Override
@@ -32,7 +32,7 @@ public class DataSelectDataColumnController extends BaseDataSelectController {
         }
     }
 
-    public void setParameters(BaseData2DColumnsController controller) {
+    public void setParameters(ControlData2DColumns controller) {
         try {
             if (controller == null) {
                 close();
@@ -94,7 +94,7 @@ public class DataSelectDataColumnController extends BaseDataSelectController {
     /*
         static methods
      */
-    public static DataSelectDataColumnController open(BaseData2DColumnsController parent) {
+    public static DataSelectDataColumnController open(ControlData2DColumns parent) {
         DataSelectDataColumnController controller
                 = (DataSelectDataColumnController) WindowTools.childStage(parent, Fxmls.DataSelectDataColumnFxml);
         controller.setParameters(parent);

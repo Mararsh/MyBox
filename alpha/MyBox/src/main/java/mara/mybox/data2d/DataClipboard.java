@@ -44,6 +44,7 @@ public class DataClipboard extends DataFileCSV {
                 .setWriteHeader(hasHeader)
                 .setPrintFile(file)
                 .setTargetData(this)
+                .setDataName(dataName)
                 .setRecordTargetFile(false)
                 .setRecordTargetData(true);
         return writer;

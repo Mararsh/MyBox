@@ -165,6 +165,7 @@ public class DataMatrix extends DataFileText {
                 .setDelimiter(DataMatrix.MatrixDelimiter)
                 .setWriteHeader(false)
                 .setTargetData(this)
+                .setDataName(dataName)
                 .setPrintFile(file)
                 .setColumns(columns)
                 .setHeaderNames(columnNames())

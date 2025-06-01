@@ -65,6 +65,7 @@ public abstract class Data2DWriter {
         validateValue = false;
         writeHeader = recordTargetFile = recordTargetData = true;
         invalidAs = null;
+        targetData = null;
         status = Status.Unknown;
     }
 
@@ -79,7 +80,6 @@ public abstract class Data2DWriter {
     }
 
     public boolean resetWriter() {
-        targetData = null;
         targetRowIndex = 0;
         status = Status.Unknown;
         return true;

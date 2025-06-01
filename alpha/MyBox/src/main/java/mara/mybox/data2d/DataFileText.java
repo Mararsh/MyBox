@@ -178,6 +178,7 @@ public class DataFileText extends DataFile {
                 .setDelimiter(delimiter)
                 .setWriteHeader(hasHeader)
                 .setTargetData(this)
+                .setDataName(dataName)
                 .setPrintFile(file)
                 .setColumns(columns)
                 .setHeaderNames(columnNames())

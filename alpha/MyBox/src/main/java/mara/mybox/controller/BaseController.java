@@ -131,6 +131,12 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
                 }
                 break;
             }
+
+            case Child: {
+                setAlwaysTop(true, false);
+                break;
+            }
+
         }
     }
 

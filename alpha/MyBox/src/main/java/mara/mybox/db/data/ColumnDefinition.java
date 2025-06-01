@@ -1693,7 +1693,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public String getLabel() {
-        return label != null ? label : columnName;
+        return label != null && !label.isBlank() ? label : columnName;
     }
 
     public ColumnDefinition setLabel(String label) {
