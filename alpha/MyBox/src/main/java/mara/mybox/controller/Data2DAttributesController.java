@@ -332,7 +332,6 @@ public class Data2DAttributesController extends BaseChildController {
                     if (needBackup) {
                         backup = addBackup(this, sourceFile);
                     }
-                    sourceData.cloneData(attributes);
                     sourceData.startTask(this, null);
                     return sourceData.saveAttributes(this, attributes) >= 0;
                 } catch (Exception e) {
@@ -343,7 +342,7 @@ public class Data2DAttributesController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                dataController.data2D = sourceData;
+                dataController.data2D = attributes;
                 dataController.popInformation(message("Saved"));
                 dataController.notifySaved();
                 dataController.readData(false);

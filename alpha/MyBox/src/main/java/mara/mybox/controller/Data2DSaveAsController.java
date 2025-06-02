@@ -160,10 +160,21 @@ public class Data2DSaveAsController extends BaseTaskController {
     /*
         static
      */
-    public static Data2DSaveAsController open(BaseData2DLoadController tableController) {
+    public static Data2DSaveAsController open() {
         try {
             Data2DSaveAsController controller
                     = (Data2DSaveAsController) WindowTools.openStage(Fxmls.Data2DSaveAsFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Data2DSaveAsController open(BaseData2DLoadController tableController) {
+        try {
+            Data2DSaveAsController controller = open();
             controller.setParameters(tableController);
             return controller;
         } catch (Exception e) {
@@ -174,8 +185,7 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     public static Data2DSaveAsController open(BaseData2DLoadController tableController, TargetType targetType) {
         try {
-            Data2DSaveAsController controller
-                    = (Data2DSaveAsController) WindowTools.openStage(Fxmls.Data2DSaveAsFxml);
+            Data2DSaveAsController controller = open();
             controller.setParameters(tableController, targetType);
             return controller;
         } catch (Exception e) {
@@ -186,8 +196,7 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     public static Data2DSaveAsController save(BaseData2DLoadController tableController) {
         try {
-            Data2DSaveAsController controller
-                    = (Data2DSaveAsController) WindowTools.openStage(Fxmls.Data2DSaveAsFxml);
+            Data2DSaveAsController controller = open();
             controller.saveTmp(tableController);
             return controller;
         } catch (Exception e) {

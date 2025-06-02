@@ -663,13 +663,14 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         super.clearWithSure();
     }
 
-    @FXML
-    public void numberColumns() {
+    public void setNames(List<String> names) {
         try {
-            String prefix = message(colPrefix());
+            if (names == null || names.size() != tableData.size()) {
+                return;
+            }
             isSettingValues = true;
             for (int i = 0; i < tableData.size(); i++) {
-                tableData.get(i).setColumnName(prefix + (i + 1));
+                tableData.get(i).setColumnName(names.get(i));
             }
             tableView.refresh();
             isSettingValues = false;
@@ -680,14 +681,61 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
+    public void numberColumns() {
+        try {
+            String prefix = message(colPrefix());
+            List<String> names = new ArrayList<>();
+            List<Data2DColumn> selectedItems = selectedItems();
+            for (int i = 0; i < tableData.size(); i++) {
+                Data2DColumn col = tableData.get(i);
+                if (selectedItems == null
+                        || selectedItems.isEmpty()
+                        || selectedItems.contains(col)) {
+                    names.add(prefix + (i + 1));
+                } else {
+                    names.add(col.getColumnName());
+                }
+            }
+            setNames(names);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
     public void copyLabelsToNames() {
         try {
-            isSettingValues = true;
+            List<String> names = new ArrayList<>();
+            List<Data2DColumn> selectedItems = selectedItems();
             for (int i = 0; i < tableData.size(); i++) {
                 Data2DColumn col = tableData.get(i);
                 String label = col.getLabel();
-                if (label != null && !label.isBlank()) {
-                    col.setColumnName(label);
+                if (label != null && !label.isBlank()
+                        && (selectedItems == null
+                        || selectedItems.isEmpty()
+                        || selectedItems.contains(col))) {
+                    names.add(label);
+                } else {
+                    names.add(col.getColumnName());
+                }
+            }
+            setNames(names);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void copyNamesToLabels() {
+        try {
+            List<Data2DColumn> selectedItems = selectedItems();
+            isSettingValues = true;
+            for (int i = 0; i < tableData.size(); i++) {
+                Data2DColumn col = tableData.get(i);
+                if (selectedItems == null
+                        || selectedItems.isEmpty()
+                        || selectedItems.contains(col)) {
+                    col.setLabel(col.getColumnName());
                 }
             }
             tableView.refresh();
@@ -699,16 +747,35 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     }
 
     @FXML
-    public void copyNamesToLabels() {
+    public void headerNames() {
         try {
-            isSettingValues = true;
+            if (attributesController.data2D == null
+                    || attributesController.tableData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            List<String> row = attributesController.tableData.get(0);
+            if (row == null || row.size() < 2) {
+                popError(message("InvalidData"));
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            List<Data2DColumn> selectedItems = selectedItems();
             for (int i = 0; i < tableData.size(); i++) {
                 Data2DColumn col = tableData.get(i);
-                col.setLabel(col.getColumnName());
+                if (selectedItems == null
+                        || selectedItems.isEmpty()
+                        || selectedItems.contains(col)) {
+                    String value = row.get(i + 1);
+                    if (value == null || value.isBlank()) {
+                        value = message("Column") + i;
+                    }
+                    DerbyBase.checkIdentifier(names, value, true);
+                } else {
+                    names.add(col.getColumnName());
+                }
             }
-            tableView.refresh();
-            isSettingValues = false;
-            changed(true);
+            setNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -719,8 +786,14 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         try {
             isSettingValues = true;
             Random r = new Random();
+            List<Data2DColumn> selectedItems = selectedItems();
             for (int i = 0; i < tableData.size(); i++) {
-                tableData.get(i).setColor(FxColorTools.randomColor(r));
+                Data2DColumn col = tableData.get(i);
+                if (selectedItems == null
+                        || selectedItems.isEmpty()
+                        || selectedItems.contains(col)) {
+                    col.setColor(FxColorTools.randomColor(r));
+                }
             }
             tableView.refresh();
             isSettingValues = false;
@@ -740,23 +813,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         tableData.set(index, column);
         isSettingValues = false;
         changed(true);
-    }
-
-    public void setNames(List<String> names) {
-        try {
-            if (names == null || names.size() != tableData.size()) {
-                return;
-            }
-            isSettingValues = true;
-            for (int i = 0; i < tableData.size(); i++) {
-                tableData.get(i).setColumnName(names.get(i));
-            }
-            tableView.refresh();
-            isSettingValues = false;
-            changed(true);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @FXML
@@ -793,33 +849,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @Override
     public void recoverAction() {
         loadValues();
-    }
-
-    @FXML
-    public void headerNames() {
-        try {
-            if (attributesController.data2D == null
-                    || attributesController.tableData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            List<String> row = attributesController.tableData.get(0);
-            if (row == null || row.size() < 2) {
-                popError(message("InvalidData"));
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            for (int i = 1; i < row.size(); i++) {
-                String name = row.get(i);
-                if (name == null || name.isBlank()) {
-                    name = message("Column") + i;
-                }
-                DerbyBase.checkIdentifier(names, name, true);
-            }
-            setNames(names);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @Override

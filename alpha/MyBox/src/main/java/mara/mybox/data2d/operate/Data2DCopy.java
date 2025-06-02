@@ -1,6 +1,7 @@
 package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 
 /**
@@ -51,6 +52,11 @@ public class Data2DCopy extends Data2DOperate {
             showError(e.toString());
             return false;
         }
+    }
+
+    @Override
+    public void handleTargetData(Data2D targetData) {
+        copySourceAttriutes(targetData);
     }
 
 }

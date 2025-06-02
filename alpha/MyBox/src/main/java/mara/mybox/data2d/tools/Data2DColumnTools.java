@@ -5,13 +5,16 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.ControlData2DColumns;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -141,6 +144,18 @@ public class Data2DColumnTools {
 
             MenuItem menu;
 
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                columnsController.recoverAction();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(StringTools.menuPrefix(message("SelectRowsComments")));
+            menu.setStyle(attributeTextStyle());
+            items.add(menu);
+
             menu = new MenuItem(message("CopyNamesToLabels"), StyleTools.getIconImageView("iconEqual.png"));
             menu.setOnAction((ActionEvent event) -> {
                 columnsController.copyNamesToLabels();
@@ -160,7 +175,7 @@ public class Data2DColumnTools {
                 });
                 items.add(menu);
 
-                menu = new MenuItem(message("RenameAllColumns"), StyleTools.getIconImageView("iconNumber.png"));
+                menu = new MenuItem(message("RenameWithNumbers"), StyleTools.getIconImageView("iconNumber.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     columnsController.numberColumns();
                 });
@@ -170,12 +185,6 @@ public class Data2DColumnTools {
             menu = new MenuItem(message("RandomColors"), StyleTools.getIconImageView("iconRandom.png"));
             menu.setOnAction((ActionEvent event) -> {
                 columnsController.randomColors();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                columnsController.recoverAction();
             });
             items.add(menu);
 

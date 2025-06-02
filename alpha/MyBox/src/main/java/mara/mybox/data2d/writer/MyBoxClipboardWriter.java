@@ -111,6 +111,9 @@ public class MyBoxClipboardWriter extends Data2DWriter {
                     .setDataName(dataName)
                     .setColsNumber(columns.size())
                     .setRowsNumber(targetRowIndex);
+            if (operate != null) {
+                operate.handleTargetData(targetData);
+            }
             Data2D.saveAttributes(conn(), targetData, columns);
             DataInMyBoxClipboardController.update();
             showInfo(message("Generated") + ": " + printFile + "  "

@@ -1,5 +1,6 @@
 package mara.mybox.data2d.operate;
 
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.writer.Data2DWriter;
 
@@ -36,6 +37,11 @@ public class Data2DSaveAs extends Data2DOperate {
             showError(e.toString());
             return false;
         }
+    }
+
+    @Override
+    public void handleTargetData(Data2D targetData) {
+        copySourceAttriutes(targetData);
     }
 
 }

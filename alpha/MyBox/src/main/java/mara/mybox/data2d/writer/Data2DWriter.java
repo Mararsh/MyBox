@@ -173,8 +173,10 @@ public abstract class Data2DWriter {
         if (targetData == null) {
             return false;
         }
-        Data2DManufactureController c = Data2DManufactureController.openDef(targetData);
-        c.setAlwaysOnTop();
+        Data2DManufactureController.openDef(targetData);
+        if (operate != null && operate.getController() != null) {
+            operate.getController().setIconified(true);
+        }
         return true;
     }
 

@@ -31,7 +31,9 @@ public class Data2DSaveAttributes extends Data2DModify {
     @Override
     public void initWriter() {
         writer = sourceData.selfWriter();
-        writer.setColumns(attributes.getColumns())
+        writer.setDataName(attributes.getDataName())
+                .setTargetData(attributes)
+                .setColumns(attributes.getColumns())
                 .setHeaderNames(attributes.columnNames());
         addWriter(writer);
     }
