@@ -41,6 +41,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
                 .setOnDelete(Data2DColumn.OnDelete.Cascade));
         addColumn(new Data2DColumn("column_type", ColumnType.Short, true));
         addColumn(new Data2DColumn("column_name", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new Data2DColumn("label", ColumnType.String).setLength(StringMaxLength));
         addColumn(new Data2DColumn("index", ColumnType.Integer));
         addColumn(new Data2DColumn("length", ColumnType.Integer));
         addColumn(new Data2DColumn("width", ColumnType.Integer));

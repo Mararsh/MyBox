@@ -35,6 +35,7 @@ public class DataNode extends BaseData {
     protected final BooleanProperty selected = new SimpleBooleanProperty(false);
     protected List<DataNode> chainNodes;
     protected DataNode parentNode;
+    protected List<DataNodeTag> nodeTags;
 
     private void init() {
         nodeid = -1;
@@ -260,6 +261,23 @@ public class DataNode extends BaseData {
         return s;
     }
 
+    public String getTagNames() {
+        if (nodeTags == null || nodeTags.isEmpty()) {
+            return null;
+        }
+        String names = null, name;
+        for (DataNodeTag nodeTag : nodeTags) {
+            name = nodeTag.getTag().getTag();
+            if (names == null) {
+                names = name;
+            } else {
+                names += "," + name;
+            }
+        }
+        return names;
+    }
+
+
     /*
         Static methods
      */
@@ -391,6 +409,15 @@ public class DataNode extends BaseData {
 
     public DataNode setChildrenSize(long childrenSize) {
         this.childrenSize = childrenSize;
+        return this;
+    }
+
+    public List<DataNodeTag> getNodeTags() {
+        return nodeTags;
+    }
+
+    public DataNode setNodeTags(List<DataNodeTag> nodeTags) {
+        this.nodeTags = nodeTags;
         return this;
     }
 

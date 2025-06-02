@@ -135,7 +135,8 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         if (conn == null || nodeid < 0) {
             return tags;
         }
-        String sql = "SELECT * FROM " + tableName + ", " + nodeTable.tableName + "_Tag" + " WHERE tnodeid=? AND ttagid=tagid";
+        String sql = "SELECT * FROM " + tableName + ", " + nodeTable.tableName + "_Tag"
+                + " WHERE tnodeid=? AND ttagid=tagid";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             conn.setAutoCommit(true);

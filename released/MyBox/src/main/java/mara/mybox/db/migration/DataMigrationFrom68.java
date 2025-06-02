@@ -71,8 +71,22 @@ public class DataMigrationFrom68 {
             if (lastVersion < 6008006) {
                 updateIn686(controller, conn, lang);
             }
+            if (lastVersion < 6008008) {
+                updateIn688(controller, conn, lang);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static void updateIn688(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        MyBoxLog.info("Updating tables in 6.8.8...");
+        controller.info("Updating tables in 6.8.8...");
+        try (Statement statement = conn.createStatement()) {
+            statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN label VARCHAR(" + StringMaxLength + ")");
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 

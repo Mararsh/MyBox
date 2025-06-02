@@ -180,6 +180,12 @@ public class Data2DColumn extends ColumnDefinition {
     }
 
     @Override
+    public Data2DColumn setLabel(String label) {
+        this.label = label;
+        return this;
+    }
+
+    @Override
     public Data2DColumn setDescription(String description) {
         this.description = description;
         return this;

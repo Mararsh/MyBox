@@ -232,6 +232,7 @@ public class DataFileExcel extends DataFile {
         writer.setBaseFile(file)
                 .setSheetName(sheet)
                 .setTargetData(this)
+                .setDataName(dataName)
                 .setPrintFile(file)
                 .setWriteHeader(hasHeader)
                 .setColumns(columns)

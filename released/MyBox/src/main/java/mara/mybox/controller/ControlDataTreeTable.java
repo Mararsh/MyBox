@@ -48,7 +48,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
     protected BaseNodeTable nodeTable;
 
     @FXML
-    protected TableColumn<DataNode, String> hierarchyColumn, titleColumn;
+    protected TableColumn<DataNode, String> hierarchyColumn, titleColumn, tagsColumn;
     @FXML
     protected TableColumn<DataNode, Long> idColumn, childrenColumn;
     @FXML
@@ -163,6 +163,8 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
 
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
             timeColumn.setCellFactory(new TableDateCell());
+
+            tagsColumn.setCellValueFactory(new PropertyValueFactory<>("tagNames"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -280,6 +282,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
                     childNode.setIndex(index);
                     childNode.setHierarchyNumber(prefix + (++index));
                     childNode.setChildrenSize(nodeTable.childrenSize(conn, childNode.getNodeid()));
+                    childNode.setNodeTags(nodeTagsTable.nodeTags(conn, childNode.getNodeid()));
                     nodes.add(childNode);
                 }
             } catch (Exception e) {

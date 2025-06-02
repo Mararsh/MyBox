@@ -411,17 +411,6 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        try {
-            ColumnDefinition newColumn = (ColumnDefinition) super.clone();
-            return newColumn;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public ColumnDefinition cloneBase() {
         try {
             return (ColumnDefinition) clone();
@@ -1055,6 +1044,8 @@ public class ColumnDefinition extends BaseData {
                 return columnTypeValue(data.getType());
             case "column_name":
                 return data.getColumnName();
+            case "label":
+                return data.getLabel();
             case "index":
                 return data.getIndex();
             case "length":
@@ -1112,6 +1103,9 @@ public class ColumnDefinition extends BaseData {
                     return true;
                 case "column_name":
                     data.setColumnName(value == null ? null : (String) value);
+                    return true;
+                case "label":
+                    data.setLabel(value == null ? null : (String) value);
                     return true;
                 case "index":
                     data.setIndex(value == null ? -1 : (int) value);
@@ -1432,6 +1426,7 @@ public class ColumnDefinition extends BaseData {
             }
             StringBuilder s = new StringBuilder();
             s.append(message("Name")).append(": ").append(column.getColumnName()).append("\n");
+            s.append(message("Label")).append(": ").append(column.getLabel()).append("\n");
             s.append(message("Type")).append(": ").append(column.getType()).append("\n");
             s.append(message("Length")).append(": ").append(column.getLength()).append("\n");
             s.append(message("Width")).append(": ").append(column.getWidth()).append("\n");
@@ -1698,7 +1693,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public String getLabel() {
-        return label != null ? label : columnName;
+        return label != null && !label.isBlank() ? label : columnName;
     }
 
     public ColumnDefinition setLabel(String label) {

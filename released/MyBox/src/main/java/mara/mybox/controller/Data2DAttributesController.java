@@ -306,14 +306,16 @@ public class Data2DAttributesController extends BaseChildController {
         dataController.updateTable(pageData);
         dataController.tableChanged(true);
         dataController.popInformation(message("Changed"));
-        close();
+        if (closeAfterCheck.isSelected()) {
+            close();
+        }
     }
 
     public void handleMutiplePages(Data2D attributes) {
         if (!PopTools.askSure(getTitle(), message("SureChangeDataAttributes"))) {
             return;
         }
-        Data2D sourceData = dataController.data2D;
+        Data2D sourceData = dataController.data2D.cloneAll();
         sourceFile = sourceData.getFile();
         if (task != null) {
             task.cancel();
@@ -340,6 +342,7 @@ public class Data2DAttributesController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
+                dataController.data2D = attributes;
                 dataController.popInformation(message("Saved"));
                 dataController.notifySaved();
                 dataController.readData(false);
@@ -351,7 +354,9 @@ public class Data2DAttributesController extends BaseChildController {
                         dataController.popError(message("FailBackup"));
                     }
                 }
-                close();
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                }
             }
 
             @Override

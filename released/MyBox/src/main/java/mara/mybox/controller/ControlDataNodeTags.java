@@ -8,6 +8,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseNodeTable;
@@ -24,12 +25,13 @@ import mara.mybox.fxml.cell.TableColorCell;
  */
 public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
-    protected DataTreeNodeEditorController nodeEditor;
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
     protected boolean changed;
     protected List<Long> loadedTags = new ArrayList<>();
+    protected DataNode currentNode;
+    protected List<DataTag> selected;
 
     @FXML
     protected TableColumn<DataTag, String> tagColumn;
@@ -51,13 +53,13 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void setParameters(DataTreeNodeEditorController controller) {
+    public void setParameters(BaseController controller, BaseNodeTable ntable,
+            TableDataTag ttable, TableDataNodeTag nttable) {
         try {
-            this.nodeEditor = controller;
-            this.parentController = nodeEditor;
-            nodeTable = nodeEditor.nodeTable;
-            tagTable = nodeEditor.tagTable;
-            nodeTagsTable = nodeEditor.nodeTagsTable;
+            this.parentController = controller;
+            nodeTable = ntable;
+            tagTable = ttable;
+            nodeTagsTable = nttable;
 
             baseName = baseName + "_" + nodeTable.getTableName();
         } catch (Exception e) {
@@ -65,7 +67,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void loadTags() {
+    public void loadTags(DataNode node) {
         tableData.clear();
         loadedTags.clear();
         if (task != null) {
@@ -79,10 +81,8 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     tags = tagTable.readAll(conn);
-                    if (nodeEditor.currentNode != null
-                            && nodeEditor.currentNode.getNodeid() >= 0) {
-                        nodeTags = nodeTagsTable.nodeTags(conn,
-                                nodeEditor.currentNode.getNodeid());
+                    if (node != null && node.getNodeid() >= 0) {
+                        nodeTags = nodeTagsTable.nodeTags(conn, node.getNodeid());
                         if (nodeTags != null && !nodeTags.isEmpty()) {
                             for (DataNodeTag nodeTag : nodeTags) {
                                 loadedTags.add(nodeTag.getTtagid());
@@ -98,57 +98,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
             @Override
             protected void whenSucceeded() {
-                if (tags != null && !tags.isEmpty()) {
-                    tableData.setAll(tags);
-                    if (!loadedTags.isEmpty()) {
-                        isSettingValues = true;
-                        for (DataTag tag : tableData) {
-                            if (loadedTags.contains(tag.getTagid())) {
-                                tableView.getSelectionModel().select(tag);
-                            }
-                        }
-                        isSettingValues = false;
-                    }
-                }
-            }
-
-        };
-        start(task, thisPane);
-    }
-
-    public void copyTags() {
-        tableData.clear();
-        loadedTags.clear();
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxTask<Void>(this) {
-            private List<DataTag> tags;
-            private List<DataNodeTag> nodeTags;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    tags = tagTable.readAll(conn);
-                    if (nodeEditor.currentNode != null
-                            && nodeEditor.currentNode.getNodeid() >= 0) {
-                        nodeTags = nodeTagsTable.nodeTags(conn,
-                                nodeEditor.currentNode.getNodeid());
-                        if (nodeTags != null && !nodeTags.isEmpty()) {
-                            for (DataNodeTag nodeTag : nodeTags) {
-                                loadedTags.add(nodeTag.getTtagid());
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
+                currentNode = node;
                 if (tags != null && !tags.isEmpty()) {
                     tableData.setAll(tags);
                     if (!loadedTags.isEmpty()) {
@@ -170,7 +120,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
     @FXML
     @Override
     public void recoverAction() {
-        loadTags();
+        loadTags(currentNode);
     }
 
     @FXML
@@ -181,12 +131,12 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
     @Override
     public void notifySelected() {
-        if (isSettingValues || nodeEditor == null) {
+        if (isSettingValues) {
             return;
         }
         isSettingValues = true;
         changed = false;
-        List<DataTag> selected = tableView.getSelectionModel().getSelectedItems();
+        selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             changed = !loadedTags.isEmpty();
         } else {
@@ -214,7 +164,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
             }
         }
         isSettingValues = false;
-        nodeEditor.updateStatus();
+        selectedNotify.set(!selectedNotify.get());
     }
 
 }

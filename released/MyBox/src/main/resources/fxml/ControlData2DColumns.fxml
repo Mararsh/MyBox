@@ -76,29 +76,11 @@ License:    Apache License Version 2.0
                               </ImageView>
                           </graphic>
                       </Button>
-                      <Button fx:id="randomColorsButton" mnemonicParsing="false" onAction="#randomColors">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconRandom.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                      <Button fx:id="numberColumnsButton" mnemonicParsing="false" onAction="#numberColumns">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconNumber.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-                  <Button fx:id="headerButton" layoutX="884.0" layoutY="10.0" mnemonicParsing="false" onAction="#headerAction">
+                  <Button fx:id="operationsButton" mnemonicParsing="false" onAction="#showOperationsMenu" onMouseEntered="#popOperationsMenu">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconHeader.png" />
+                              <Image url="@../buttons/Red/iconOperation.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -153,6 +135,7 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="indexColumn" editable="false" prefWidth="60.0" text="%Index" />
                 <TableColumn fx:id="nameColumn" prefWidth="160.0" text="%ColumnName" />
                 <TableColumn fx:id="typeColumn" prefWidth="120.0" text="%Type" />
+            <TableColumn fx:id="labelColumn" prefWidth="160.0" text="%Label" />
                 <TableColumn fx:id="notNullColumn" text="%NotNull" />
                 <TableColumn fx:id="editableColumn" text="%Editable" />
                 <TableColumn fx:id="formatColumn" prefWidth="120.0" text="%Format" />

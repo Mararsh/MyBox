@@ -43,12 +43,13 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DColumnEdit extends BaseChildController {
 
-    protected BaseData2DColumnsController columnsController;
+    protected ControlData2DColumns columnsController;
     protected int columnIndex;
     protected boolean isTableExistedColumn;
 
     @FXML
-    protected TextField nameInput, defaultInput, lengthInput, widthInput, scaleInput, formatInput, centuryInput;
+    protected TextField nameInput, defaultInput, lengthInput, widthInput,
+            labelInput, scaleInput, formatInput, centuryInput;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
@@ -107,7 +108,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void init(BaseData2DColumnsController controller) {
+    protected void init(ControlData2DColumns controller) {
         try {
             this.columnsController = controller;
             columnIndex = -1;
@@ -119,12 +120,12 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void setParameters(BaseData2DColumnsController columnsController) {
+    protected void setParameters(ControlData2DColumns columnsController) {
         setParameters(columnsController, -1);
 
     }
 
-    public void setParameters(BaseData2DColumnsController columnsController, int index) {
+    public void setParameters(ControlData2DColumns columnsController, int index) {
         init(columnsController);
         loadColumn(index);
     }
@@ -137,6 +138,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             optionsBox.getChildren().clear();
             defaultInput.clear();
             formatInput.clear();
+            labelInput.clear();
             enumLabel.setText(null);
             fixYearCheck.setSelected(false);
 
@@ -302,6 +304,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             checkType();
 
             nameInput.setText(column.getColumnName());
+            labelInput.setText(column.getLabel());
             lengthInput.setText(column.getLength() + "");
             widthInput.setText(column.getWidth() + "");
             scaleInput.setText(column.getScale() + "");
@@ -368,7 +371,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (checkValue && columnsController != null) {
                 for (int i = 0; i < columnsController.tableData.size(); i++) {
                     Data2DColumn col = columnsController.tableData.get(i);
-                    if (i != columnIndex && name.equalsIgnoreCase(col.getColumnName())) {
+                    if (i != columnIndex && name != null
+                            && name.equalsIgnoreCase(col.getColumnName())) {
                         popError(message("AlreadyExisted"));
                         return null;
                     }
@@ -451,7 +455,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column = new Data2DColumn();
             }
             column.setColumnName(name)
-                    .setLength(length).setWidth(width).setScale(scale)
+                    .setLabel(labelInput.getText())
+                    .setLength(length)
+                    .setWidth(width)
+                    .setScale(scale)
                     .setNotNull(notNullCheck.isSelected())
                     .setEditable(editableCheck.isSelected())
                     .setColor((Color) colorController.rect.getFill())

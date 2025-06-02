@@ -515,6 +515,14 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public String columnLabel(int col) {
+        try {
+            return column(col).getLabel();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public String formatValue(int col, String value) {
         try {
             return column(col).formatString(value);

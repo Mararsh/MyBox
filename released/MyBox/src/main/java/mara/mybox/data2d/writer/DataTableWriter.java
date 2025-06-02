@@ -105,6 +105,9 @@ public class DataTableWriter extends Data2DWriter {
             conn.commit();
             insert.close();
             targetTable.setRowsNumber(targetRowIndex);
+            if (operate != null) {
+                operate.handleTargetData(targetData);
+            }
             Data2D.saveAttributes(conn, targetTable, targetTable.getColumns());
             targetData = targetTable;
             showInfo(message("Generated") + ": " + targetTable.getSheet() + "  "
