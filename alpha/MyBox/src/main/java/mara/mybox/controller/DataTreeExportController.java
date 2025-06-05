@@ -888,7 +888,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             String parentName, String hierarchyNumber, DataNode node,
             List<DataNodeTag> tags, String nodePageid) {
         try {
-            String html = DataNodeTools.treeHtml(currentTask, conn,
+            String html = DataNodeTools.toHtml(currentTask, conn,
                     myController, nodeTable, node, tags,
                     nodePageid, 4 * level, hierarchyNumber);
             treeHtmlWriter.write(html);

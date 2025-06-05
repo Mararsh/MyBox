@@ -17,6 +17,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNode.SelectionType;
@@ -53,13 +54,15 @@ public class BaseDataTreeController extends BaseFileController {
     @FXML
     protected ToggleGroup formatGroup;
     @FXML
-    protected RadioButton treeRadio, tableRadio;
+    protected RadioButton treeRadio, tableRadio, htmlRadio;
     @FXML
-    protected VBox dataBox, treeBox, tableBox;
+    protected VBox dataBox, treeBox, tableBox, htmlBox;
     @FXML
     protected ControlDataTreeView treeController;
     @FXML
     protected ControlDataTreeTable tableController;
+    @FXML
+    protected WebView htmlView;
     @FXML
     protected ControlDataTreeNodeView viewController;
 
@@ -197,12 +200,15 @@ public class BaseDataTreeController extends BaseFileController {
             dataBox.getChildren().clear();
             treeController.resetTree();
             tableController.resetTable();
-            if (treeRadio.isSelected()) {
-                dataBox.getChildren().add(treeBox);
-                treeController.loadTree(currentNode);
-            } else {
+            if (tableRadio.isSelected()) {
                 dataBox.getChildren().add(tableBox);
                 tableController.loadNode(currentNode);
+            } else if (htmlRadio.isSelected()) {
+                dataBox.getChildren().add(htmlBox);
+                // ?????
+            } else {
+                dataBox.getChildren().add(treeBox);
+                treeController.loadTree(currentNode);
             }
 
         } catch (Exception e) {
@@ -274,20 +280,24 @@ public class BaseDataTreeController extends BaseFileController {
 
     public DataNode selectedNode() {
         DataNode node;
-        if (treeRadio.isSelected()) {
-            node = treeController.selectedNode();
-        } else {
+        if (tableRadio.isSelected()) {
             node = tableController.selectedNode();
+        } else if (htmlRadio.isSelected()) {
+            node = currentNode; // ?????
+        } else {
+            node = treeController.selectedNode();
         }
         return node != null ? node
                 : (currentNode != null ? currentNode : rootNode);
     }
 
     public List<DataNode> selectedNodes() {
-        if (treeRadio.isSelected()) {
-            return treeController.selectedNodes();
-        } else {
+        if (tableRadio.isSelected()) {
             return tableController.selectedItems();
+        } else if (htmlRadio.isSelected()) {
+            return null;  // ?????
+        } else {
+            return treeController.selectedNodes();
         }
     }
 
@@ -340,6 +350,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (viewController == null || node == null) {
             return;
         }
+        showRightPane();
         viewController.loadNode(node.getNodeid());
     }
 
@@ -383,10 +394,12 @@ public class BaseDataTreeController extends BaseFileController {
         if (isLeaf(node)) {
             return;
         }
-        if (treeRadio.isSelected()) {
-            treeController.unfoldNode(node);
-        } else {
+        if (tableRadio.isSelected()) {
             tableController.loadNode(node);
+        } else if (htmlRadio.isSelected()) {
+            //  ?????
+        } else {
+            treeController.unfoldNode(node);
         }
     }
 
@@ -394,10 +407,12 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return;
         }
-        if (treeRadio.isSelected()) {
-            treeController.refreshNode(node);
-        } else {
+        if (tableRadio.isSelected()) {
             tableController.refreshNode(node);
+        } else if (htmlRadio.isSelected()) {
+            //  ?????
+        } else {
+            treeController.refreshNode(node);
         }
         reloadView(node);
     }
@@ -425,10 +440,12 @@ public class BaseDataTreeController extends BaseFileController {
 
     public void nodeSaved(DataNode parent, DataNode node) {
         try {
-            if (treeRadio.isSelected()) {
-                treeController.nodeSaved(parent, node);
-            } else {
+            if (tableRadio.isSelected()) {
                 tableController.nodeSaved(parent, node);
+            } else if (htmlRadio.isSelected()) {
+                //  ?????
+            } else {
+                treeController.nodeSaved(parent, node);
             }
             reloadView(node);
             popSaved();
@@ -554,15 +571,18 @@ public class BaseDataTreeController extends BaseFileController {
         items.add(new SeparatorMenuItem());
 
         if (!isLeaf(node)) {
-            if (treeRadio.isSelected()) {
-                items.addAll(treeController.foldMenuItems());
-
-            } else {
+            if (tableRadio.isSelected()) {
                 menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     tableController.loadNode(node);
                 });
                 items.add(menu);
+
+            } else if (htmlRadio.isSelected()) {
+                //  ?????
+            } else {
+                items.addAll(treeController.foldMenuItems());
+
             }
 
         }

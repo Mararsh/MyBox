@@ -22,6 +22,20 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataNodeTools {
 
+    public static String tagHtml(DataNodeTag nodeTag) {
+        if (nodeTag == null) {
+            return null;
+        }
+        Color color = nodeTag.getTag().getColor();
+        if (color == null) {
+            color = FxColorTools.randomColor();
+        }
+        return "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
+                + FxColorTools.color2rgb(color) + "; color: "
+                + FxColorTools.color2rgb(FxColorTools.foreColor(color))
+                + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n";
+    }
+
     public static String toHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
             String parentName, String hierarchyNumber,
@@ -63,15 +77,7 @@ public class DataNodeTools {
             if (tags != null && !tags.isEmpty()) {
                 s.append(indent3).append("<H4>");
                 for (DataNodeTag nodeTag : tags) {
-                    Color color = nodeTag.getTag().getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor();
-                    }
-                    s.append("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: ")
-                            .append(FxColorTools.color2rgb(color))
-                            .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.foreColor(color)))
-                            .append(";\">").append(nodeTag.getTag().getTag())
-                            .append("</SPAN>\n");
+                    s.append(tagHtml(nodeTag));
                 }
                 s.append("</H4>\n");
             }
@@ -99,7 +105,7 @@ public class DataNodeTools {
         }
     }
 
-    public static String treeHtml(FxTask fxTask, Connection conn,
+    public static String toHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable nodeTable,
             DataNode node, List<DataNodeTag> tags,
             String nodePageid, int indent, String serialNumber) {
@@ -120,15 +126,7 @@ public class DataNodeTools {
                 String spaceTag = "&nbsp;".repeat(2);
                 s.append(indentTag).append("<SPAN class=\"NodeTag\">\n");
                 for (DataNodeTag nodeTag : tags) {
-                    Color color = nodeTag.getTag().getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor();
-                    }
-                    s.append(indentTag).append(spaceTag)
-                            .append("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: ")
-                            .append(FxColorTools.color2rgb(color))
-                            .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.foreColor(color)))
-                            .append(";\">").append(nodeTag.getTag().getTag()).append("</SPAN>\n");
+                    s.append(indentTag).append(spaceTag).append(tagHtml(nodeTag));
                 }
                 s.append(indentTag).append("</SPAN>\n");
             }
