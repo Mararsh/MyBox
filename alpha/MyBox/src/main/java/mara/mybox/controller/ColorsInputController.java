@@ -16,11 +16,11 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-09-01
  * @License Apache License Version 2.0
  */
-public class ColorInputController extends BaseController {
+public class ColorsInputController extends BaseController {
 
     protected ColorsManageController colorsManager;
 
@@ -42,7 +42,7 @@ public class ColorInputController extends BaseController {
     @FXML
     protected ColorPicker colorPicker;
 
-    public ColorInputController() {
+    public ColorsInputController() {
         baseTitle = Languages.message("InputColors");
     }
 
@@ -77,14 +77,14 @@ public class ColorInputController extends BaseController {
 
     @FXML
     protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("ColorInputHistoriesPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("ColorHistoriesPopWhenMouseHovering", false)) {
             showHistories(event);
         }
     }
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popSavedValues(this, valuesArea, event, "ColorInputHistories");
+        PopTools.popSavedValues(this, valuesArea, event, "ColorHistories");
     }
 
     @FXML
@@ -122,7 +122,7 @@ public class ColorInputController extends BaseController {
                         }
                         colorData.calculate().setPaletteid(paletteid);
                         tableColorPalette.findAndCreate(conn, colorData, false, false);
-                        TableStringValues.add(conn, "ColorInputHistories", value);
+                        TableStringValues.add(conn, "ColorHistories", value);
                     }
                     conn.commit();
                 } catch (Exception e) {
@@ -178,16 +178,16 @@ public class ColorInputController extends BaseController {
     /*
         static methods
      */
-    public static ColorInputController oneOpen(ColorsManageController parent) {
+    public static ColorsInputController oneOpen(ColorsManageController parent) {
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof ColorInputController) {
-                ((ColorInputController) object).close();
+            if (object != null && object instanceof ColorsInputController) {
+                ((ColorsInputController) object).close();
             }
         }
-        ColorInputController controller = (ColorInputController) WindowTools.referredTopStage(parent, Fxmls.ColorInputFxml);
+        ColorsInputController controller = (ColorsInputController) WindowTools.referredTopStage(parent, Fxmls.ColorsInputFxml);
         controller.setParameters(parent);
         return controller;
     }

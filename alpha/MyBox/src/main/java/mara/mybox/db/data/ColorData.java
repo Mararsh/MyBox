@@ -135,6 +135,10 @@ public class ColorData extends BaseData {
         }
     }
 
+    public boolean isValid() {
+        return srgb != null;
+    }
+
     public boolean needCalculate() {
         return color == null || srgb == null;
     }

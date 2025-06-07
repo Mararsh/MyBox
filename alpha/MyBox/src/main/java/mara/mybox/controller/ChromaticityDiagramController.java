@@ -581,7 +581,7 @@ public class ChromaticityDiagramController extends BaseImageController {
     }
 
     private void afterInitCIEData() {
-        colorSetController.init(this, baseName + "Color", Color.THISTLE);
+        colorSetController.init(this, baseName + "Color");
     }
 
     @Override

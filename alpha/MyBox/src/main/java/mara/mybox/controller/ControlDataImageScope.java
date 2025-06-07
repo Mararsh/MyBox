@@ -162,12 +162,14 @@ public class ControlDataImageScope extends BaseDataValuesController {
         controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                sourceFile = null;
                 ImageItem item = controller.selectedItem();
-                if (item != null) {
-                    loadAddress(item.getAddress());
+                if (item == null) {
+                    popError(message("SelectToHandle"));
+                    return;
                 }
                 controller.close();
+                sourceFile = null;
+                loadAddress(item.getAddress());
             }
         });
     }

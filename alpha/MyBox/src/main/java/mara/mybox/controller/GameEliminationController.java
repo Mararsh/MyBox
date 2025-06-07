@@ -762,6 +762,7 @@ public class GameEliminationController extends BaseController {
                     controller.popError(message("SelectToHandle"));
                     return;
                 }
+                controller.close();
                 for (ImageItem item : items) {
                     String address = item.getAddress();
                     for (ImageItem litem : imagesListview.getItems()) {
@@ -775,7 +776,6 @@ public class GameEliminationController extends BaseController {
                     }
                 }
                 imagesListview.scrollTo(0);
-                controller.close();
             }
         });
     }

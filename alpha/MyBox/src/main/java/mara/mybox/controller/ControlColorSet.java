@@ -57,7 +57,7 @@ public class ControlColorSet extends BaseController {
     }
 
     public ControlColorSet init(BaseController parent, String name) {
-        return init(parent, name, Color.TRANSPARENT);
+        return init(parent, name, Color.GOLD);
     }
 
     public ControlColorSet init(BaseController parent, String name, Color defaultColor) {

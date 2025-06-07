@@ -690,13 +690,13 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         });
     }
 
-    public void create(Image canvas) {
-        if (canvas == null) {
+    public void create(Image inImage) {
+        if (inImage == null) {
             return;
         }
         sourceFile = null;
         imageInformation = null;
-        imageView.setImage(canvas);
+        imageView.setImage(inImage);
         saveAction();
     }
 
@@ -710,10 +710,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 ImageItem item = controller.selectedItem();
-                if (item != null) {
-                    create(item.readImage());
+                if (item == null) {
+                    popError(message("SelectToHandle"));
+                    return;
                 }
                 controller.close();
+                create(item.readImage());
             }
         });
     }

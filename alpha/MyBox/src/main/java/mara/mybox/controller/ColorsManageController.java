@@ -376,7 +376,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     @FXML
     @Override
     public void addAction() {
-        ColorInputController.oneOpen(this);
+        ColorsInputController.oneOpen(this);
     }
 
     @FXML
