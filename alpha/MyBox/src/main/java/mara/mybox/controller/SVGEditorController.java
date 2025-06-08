@@ -78,7 +78,7 @@ public class SvgEditorController extends XmlEditorController {
         try {
             super.initControls();
 
-            htmlController.setParameters(this);
+            htmlController.setParameters(optionsController);
 
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override

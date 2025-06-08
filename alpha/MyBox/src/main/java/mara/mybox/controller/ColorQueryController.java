@@ -55,6 +55,8 @@ public class ColorQueryController extends BaseController {
             );
             paletteButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty());
 
+            refreshAction();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

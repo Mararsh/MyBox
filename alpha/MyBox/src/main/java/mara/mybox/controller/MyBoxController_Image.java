@@ -57,6 +57,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ColorQueryFxml);
         });
 
+        MenuItem blendColors = new MenuItem(message("BlendColors"));
+        blendColors.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ColorsBlendFxml);
+        });
+
         MenuItem ImagesInMyBoxClipboard = new MenuItem(message("ImagesInMyBoxClipboard"));
         ImagesInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
             ImageInMyBoxClipboardController.oneOpen();
@@ -71,7 +76,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         items.addAll(Arrays.asList(
                 EditImage, imageManufactureMenu(), imageBatchMenu(), svgMenu(),
                 imageScope, imageOptions, new SeparatorMenuItem(),
-                ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
+                ManageColors, QueryColor, blendColors, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
 
         items.add(new SeparatorMenuItem());

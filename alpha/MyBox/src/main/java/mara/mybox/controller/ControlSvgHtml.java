@@ -25,7 +25,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlSvgHtml extends BaseController {
 
-    protected SvgEditorController editor;
     protected ControlSvgViewOptions optionsController;
     protected WebEngine webEngine;
     protected String currentSVG;
@@ -33,18 +32,22 @@ public class ControlSvgHtml extends BaseController {
     @FXML
     protected WebView webView;
 
-    public void setParameters(SvgEditorController editor) {
+    @Override
+    public void initControls() {
         try {
+            super.initControls();
+
             webEngine = webView.getEngine();
             webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
 
-            this.editor = editor;
-            optionsController = editor.optionsController;
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void setParameters(ControlSvgViewOptions options) {
+        optionsController = options;
     }
 
     public void drawSVG(String svg) {
@@ -149,9 +152,9 @@ public class ControlSvgHtml extends BaseController {
                 try {
                     tmpFile = SvgTools.textToPDF(this,
                             myController, currentSVG,
-                            optionsController.width,
-                            optionsController.height,
-                            optionsController.viewBox);
+                            optionsController != null ? optionsController.width : -1,
+                            optionsController != null ? optionsController.height : -1,
+                            optionsController != null ? optionsController.viewBox : null);
                     return tmpFile != null && tmpFile.exists();
                 } catch (Exception e) {
                     error = e.toString();
@@ -189,9 +192,9 @@ public class ControlSvgHtml extends BaseController {
                 try {
                     tmpFile = SvgTools.textToImage(this,
                             myController, currentSVG,
-                            optionsController.width,
-                            optionsController.height,
-                            optionsController.viewBox);
+                            optionsController != null ? optionsController.width : -1,
+                            optionsController != null ? optionsController.height : -1,
+                            optionsController != null ? optionsController.viewBox : null);
                     return tmpFile != null && tmpFile.exists();
                 } catch (Exception e) {
                     error = e.toString();

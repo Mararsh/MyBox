@@ -70,6 +70,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </RadioButton>
+                                        <RadioButton fx:id="htmlRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconHtml.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioButton>                                        
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -102,9 +111,9 @@ License:    Apache License Version 2.0
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
-                     <children>
-                        <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeNodeView.fxml" VBox.vgrow="ALWAYS" />
-                     </children>
+                            <children>
+                                <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeNodeView.fxml" VBox.vgrow="ALWAYS" />
+                            </children>
                         </VBox>
                     </content>
                 </ScrollPane>
