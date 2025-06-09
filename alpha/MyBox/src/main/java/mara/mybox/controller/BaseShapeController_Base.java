@@ -2056,8 +2056,8 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             double cy = maskArcData.getCenterY() * yRatio;
             double rx = maskArcData.getRadiusX() * xRatio;
             double ry = maskArcData.getRadiusY() * yRatio;
-            double sa = maskArcData.getStartAngle() * xRatio;
-            double ea = maskArcData.getExtentAngle() * yRatio;
+            double sa = maskArcData.getStartAngle();
+            double ea = maskArcData.getExtentAngle();
             maskArc.setLayoutX(layoutX);
             maskArc.setLayoutY(layoutY);
             maskArc.setCenterX(cx);

@@ -467,6 +467,10 @@ public class ColorData extends BaseData {
         }
     }
 
+    public String css() {
+        return color != null ? FxColorTools.color2css(color) : null;
+    }
+
     /*
        customzied get/set
      */

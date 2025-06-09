@@ -41,20 +41,9 @@ public class ControlColorInput extends BaseController {
     @FXML
     protected HtmlTableController htmlController;
 
-    @Override
-    public void initControls() {
+    public void setParameter(String name, Color initColor) {
         try {
-            colorController.init(this, baseName);
-            colorController.setNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    colorInput.setText(colorController.rgba());
-                    goAction();
-                }
-            });
+            baseName = name;
 
             colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
                 @Override
@@ -95,9 +84,21 @@ public class ControlColorInput extends BaseController {
                 }
             });
 
+            colorController.init(this, baseName, initColor);
+            colorController.setNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    colorInput.setText(colorController.rgba());
+                    goAction();
+                }
+            });
+
             goButton.disableProperty().bind(colorInput.textProperty().isEmpty());
 
-            colorInput.setText("#552288");
+            colorInput.setText(colorController.rgba());
             goAction();
 
         } catch (Exception e) {
@@ -143,6 +144,7 @@ public class ControlColorInput extends BaseController {
         try {
             if (!pickValue()) {
                 popError(message("InvalidParameters") + ": " + message("Color"));
+                return;
             }
 
             isSettingValues = true;

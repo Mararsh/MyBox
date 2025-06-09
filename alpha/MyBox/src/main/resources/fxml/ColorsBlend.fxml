@@ -49,20 +49,20 @@ License:    Apache License Version 2.0
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                            <children>
-                              <TitledPane text="1">
+                              <TitledPane text="%ColorA">
                                  <content>
                                     <VBox spacing="5.0">
                                        <children>
-                                                <fx:include fx:id="color1" source="ControlColorInput.fxml" />
+                                                <fx:include fx:id="colorA" source="ControlColorInput.fxml" />
                                        </children>
                                     </VBox>
                                  </content>
                               </TitledPane>
-                              <TitledPane layoutX="15.0" layoutY="134.0" text="2">
+                              <TitledPane layoutX="15.0" layoutY="134.0" text="%ColorB">
                                  <content>
                                     <VBox spacing="5.0">
                                              <children>
-                                                <fx:include fx:id="color2" source="ControlColorInput.fxml" />
+                                                <fx:include fx:id="colorB" source="ControlColorInput.fxml" />
                                              </children>
                                     </VBox>
                                  </content>

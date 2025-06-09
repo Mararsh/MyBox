@@ -5,25 +5,27 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2021-8-29
+ * @CreateDate 2025-6-7
  * @License Apache License Version 2.0
  */
 public class ColorsBlendController extends BaseController {
 
-    protected ColorData colorData;
+    protected ColorData colorA, colorB;
 
     @FXML
-    protected ControlColorInput color1Controller, color2Controller;
+    protected ControlColorInput colorAController, colorBController;
     @FXML
     protected ControlImagesBlend blendController;
     @FXML
@@ -36,14 +38,16 @@ public class ColorsBlendController extends BaseController {
     @Override
     public void initControls() {
         try {
-            color1Controller.updateNotify.addListener(new ChangeListener<Boolean>() {
+            colorAController.setParameter(baseName + "_A", Color.YELLOW);
+            colorAController.updateNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     goAction();
                 }
             });
 
-            color2Controller.updateNotify.addListener(new ChangeListener<Boolean>() {
+            colorBController.setParameter(baseName + "_B", Color.SKYBLUE);
+            colorBController.updateNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     goAction();
@@ -51,6 +55,7 @@ public class ColorsBlendController extends BaseController {
             });
 
             blendController.setParameters(this);
+            goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -60,14 +65,29 @@ public class ColorsBlendController extends BaseController {
     @Override
     public void goAction() {
         try {
-            colorData = color1Controller.colorData;
-            if (colorData == null || colorData.getRgba() == null) {
+            colorA = colorAController.colorData;
+            if (colorA == null || colorA.getRgba() == null) {
+                popError(message("SelectToHandle") + ": A");
+                return;
+            }
+            colorB = colorBController.colorData;
+            if (colorB == null || colorB.getRgba() == null) {
+                popError(message("SelectToHandle") + ": B");
                 return;
             }
 
-//            colorData = new ColorData(colorData.getRgba())
-//                    .setvSeparator(separator).convert();
-//            htmlController.displayHtml(colorData.html());
+            PixelsBlend blender = blendController.pickValues(-1f);
+            ColorData blended = new ColorData(blender.blend(colorA.getColorValue(), colorB.getColorValue()));
+
+            String svg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                    + "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"400\" width=\"600\">\n"
+                    + "    <circle cx=\"200\" cy=\"200\" fill=\"" + colorA.css() + "\" r=\"198\"/>\n"
+                    + "    <circle cx=\"400\" cy=\"200\" fill=\"" + colorB.css()
+                    + "\" r=\"198\"/>\n"
+                    + "    <path d=\"M 299.50,372.34 A 199.00 199.00 0 0 0 300 28 A 199.00 199.00 0 0 0 300 372\" "
+                    + "  fill=\"" + blended.css() + "\" />\n"
+                    + "</svg>";
+            viewController.drawSVG(svg);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -87,9 +107,26 @@ public class ColorsBlendController extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-//        if (colorController.keyEventsFilter(event)) {
-//            return true;
-//        }
+        if (colorAController.thisPane.isFocused() || colorAController.thisPane.isFocusWithin()) {
+            if (colorAController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (colorBController.thisPane.isFocused() || colorBController.thisPane.isFocusWithin()) {
+            if (colorBController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (blendController.thisPane.isFocused() || blendController.thisPane.isFocusWithin()) {
+            if (blendController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (viewController.thisPane.isFocused() || viewController.thisPane.isFocusWithin()) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
         return super.keyEventsFilter(event);
     }
 

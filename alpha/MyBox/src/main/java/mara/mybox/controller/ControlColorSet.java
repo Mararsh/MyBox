@@ -48,6 +48,7 @@ public class ControlColorSet extends BaseController {
     public void initValues() {
         try {
             super.initValues();
+            thisName = baseName;
             tableColor = new TableColor();
             setNotify = new SimpleBooleanProperty(false);
 
@@ -65,13 +66,9 @@ public class ControlColorSet extends BaseController {
             if (parent == null) {
                 return this;
             }
-            if (name == null) {
-                name = parent.baseName + "Color";
-            }
             parentController = parent;
-            thisName = name;
+            thisName = name != null ? name : (parent.baseName + "Color");
             this.defaultColor = defaultColor;
-
             asSaved();
 
             rect.setOnMouseClicked(new EventHandler<MouseEvent>() {

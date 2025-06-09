@@ -133,7 +133,7 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
             }
 
             case Child: {
-                setAlwaysTop(true, false);
+//                setAlwaysTop(true, false);
                 break;
             }
 

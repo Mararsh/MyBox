@@ -1005,7 +1005,7 @@ public class HelpTools {
 
             items.add(new SeparatorMenuItem());
 
-            menuItem = new MenuItem(message("ColorQuery"));
+            menuItem = new MenuItem(message("QueryColor"));
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1441,7 +1441,7 @@ public class HelpTools {
             values.put("S x2,y2 x,y ", message("SvgPathS"));
             values.put("s dx2,dy2 dx,dy ", message("SvgPaths"));
             values.put("A rx ry angle large-arc-flag sweep-flag x,y ", message("SvgPathA"));
-            values.put("s rx ry angle large-arc-flag sweep-flag x,y ", message("SvgPatha"));
+            values.put("a rx ry angle large-arc-flag sweep-flag x,y ", message("SvgPatha"));
             values.put("Z ", message("SvgPathZ"));
 
             return values;

@@ -52,7 +52,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             ColorsManageController.oneOpen();
         });
 
-        MenuItem QueryColor = new MenuItem(message("ColorQuery"));
+        MenuItem QueryColor = new MenuItem(message("QueryColor"));
         QueryColor.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ColorQueryFxml);
         });

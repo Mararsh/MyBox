@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -35,12 +36,14 @@ public class ColorQueryController extends BaseController {
     protected HtmlTableController htmlController;
 
     public ColorQueryController() {
-        baseTitle = message("ColorQuery");
+        baseTitle = message("QueryColor");
     }
 
     @Override
     public void initControls() {
         try {
+            colorController.setParameter(baseName, Color.GOLD);
+
             colorController.updateNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {

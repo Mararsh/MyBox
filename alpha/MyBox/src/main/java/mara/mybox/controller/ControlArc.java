@@ -65,40 +65,40 @@ public class ControlArc extends BaseController {
 
     public boolean pickValues() {
         try {
-            float cx, cy, rx, ry, sa, ea;
+            float centerX, centerY, radiusX, radiusY, startAngle, extentAngle;
             int type;
             try {
-                cx = Float.parseFloat(arcCenterXInput.getText());
+                centerX = Float.parseFloat(arcCenterXInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": " + message("Center") + " x");
                 return false;
             }
             try {
-                cy = Float.parseFloat(arcCenterYInput.getText());
+                centerY = Float.parseFloat(arcCenterYInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": " + message("Center") + " y");
                 return false;
             }
             try {
-                rx = Float.parseFloat(arcRadiusXInput.getText());
+                radiusX = Float.parseFloat(arcRadiusXInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": " + message("RadiusX"));
                 return false;
             }
             try {
-                ry = Float.parseFloat(arcRadiusYInput.getText());
+                radiusY = Float.parseFloat(arcRadiusYInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": " + message("RadiusY"));
                 return false;
             }
             try {
-                sa = Float.parseFloat(arcStartAngleInput.getText());
+                startAngle = Float.parseFloat(arcStartAngleInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": " + message("StartAngle"));
                 return false;
             }
             try {
-                ea = Float.parseFloat(arcExtentAngleInput.getText());
+                extentAngle = Float.parseFloat(arcExtentAngleInput.getText());
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": " + message("ExtentAngle"));
                 return false;
@@ -110,7 +110,8 @@ public class ControlArc extends BaseController {
             } else {
                 type = Arc2D.OPEN;
             }
-            shapeController.maskArcData = DoubleArc.arc(cx, cy, rx, ry, sa, ea, type);
+            shapeController.maskArcData = DoubleArc.arc(
+                    centerX, centerY, radiusX, radiusY, startAngle, extentAngle, type);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
