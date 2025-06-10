@@ -11,8 +11,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -51,61 +52,71 @@ License:    Apache License Version 2.0
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                            <children>
-                              <TitledPane text="%Conditions">
-                                 <content>
-                                    <VBox spacing="5.0">
-                                       <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                      <tabs>
+                                        <Tab text="%Color">
+                                             <content>
+                                          <VBox spacing="2.0">
                                              <children>
-                                                      <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Color" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconClaw.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                   <children>
+                                                            <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                      <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/iconClaw.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                                      <fx:include fx:id="color" source="ControlColorInput.fxml" />
                                              </children>
-                                          </HBox>
-                                                <fx:include fx:id="color" source="ControlColorInput.fxml" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane layoutX="15.0" layoutY="134.0" text="%Results">
-                                 <content>
-                                    <VBox spacing="5.0">
-                                       <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                          </VBox>
+                                             </content>
+                                          </Tab>
+                                        <Tab text="%Result">
+                                             <content>
+                                          <VBox spacing="2.0">
                                              <children>
-                                                <Label alignment="CENTER_RIGHT" text="%ValueSeparator" />
-                                                <TextField fx:id="separatorInput" prefWidth="80.0" text=", " />
-                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                   <children>
+                                                      <Label alignment="CENTER_RIGHT" text="%ValueSeparator" />
+                                                      <TextField fx:id="separatorInput" prefWidth="80.0" text=", " />
+                                                      <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconRefresh.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                                <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#addColor">
                                                    <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
-                                                            <Image url="@../buttons/Red/iconRefresh.png" />
+                                                            <Image url="@../buttons/iconPalette.png" />
                                                          </image>
                                                       </ImageView>
                                                    </graphic>
                                                 </Button>
                                              </children>
-                                          </HBox>
-                                          <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#addColor">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/iconPalette.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                          </VBox>
+                                             </content>
+                                          </Tab>
+                                      </tabs>
+                                    </TabPane>
                            </children>
                         </VBox>
                      </content>

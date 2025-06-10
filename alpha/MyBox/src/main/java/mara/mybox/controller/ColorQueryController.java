@@ -12,6 +12,7 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -42,6 +43,23 @@ public class ColorQueryController extends BaseController {
     @Override
     public void initControls() {
         try {
+            separatorInput.setText(UserConfig.getString(baseName + "Separator", ", "));
+
+            refreshButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty()
+                    .or(separatorInput.textProperty().isEmpty())
+            );
+            paletteButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty());
+            htmlController.initStyle(HtmlStyles.TableStyle);
+
+            initMore();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initMore() {
+        try {
             colorController.setParameter(baseName, Color.GOLD);
 
             colorController.updateNotify.addListener(new ChangeListener<Boolean>() {
@@ -50,13 +68,6 @@ public class ColorQueryController extends BaseController {
                     refreshAction();
                 }
             });
-
-            separatorInput.setText(UserConfig.getString(baseName + "Separator", ", "));
-
-            refreshButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty()
-                    .or(separatorInput.textProperty().isEmpty())
-            );
-            paletteButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty());
 
             refreshAction();
 

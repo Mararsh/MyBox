@@ -83,7 +83,7 @@ public class DoubleQuadratic implements DoubleShape {
 
     @Override
     public String pathRel() {
-        return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
+        return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "q " + imageScale(controlX - startX) + "," + imageScale(controlY - startY) + " "
                 + imageScale(endX - startX) + "," + imageScale(endY - startY);
     }

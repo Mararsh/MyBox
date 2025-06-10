@@ -1,15 +1,18 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -20,34 +23,32 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2025-6-7
  * @License Apache License Version 2.0
  */
-public class ColorsBlendController extends BaseController {
+public class ColorsBlendController extends ColorQueryController {
 
-    protected ColorData colorA, colorB;
+    protected ColorData colorOverlay, colorBlended;
 
     @FXML
-    protected ControlColorInput colorAController, colorBController;
+    protected ControlColorInput colorOverlayController;
     @FXML
     protected ControlImagesBlend blendController;
-    @FXML
-    protected ControlSvgHtml viewController;
 
     public ColorsBlendController() {
         baseTitle = message("BlendColors");
     }
 
     @Override
-    public void initControls() {
+    public void initMore() {
         try {
-            colorAController.setParameter(baseName + "_A", Color.YELLOW);
-            colorAController.updateNotify.addListener(new ChangeListener<Boolean>() {
+            colorController.setParameter(baseName + "Base", Color.YELLOW);
+            colorController.updateNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     goAction();
                 }
             });
 
-            colorBController.setParameter(baseName + "_B", Color.SKYBLUE);
-            colorBController.updateNotify.addListener(new ChangeListener<Boolean>() {
+            colorOverlayController.setParameter(baseName + "Overlay", Color.SKYBLUE);
+            colorOverlayController.updateNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     goAction();
@@ -55,6 +56,7 @@ public class ColorsBlendController extends BaseController {
             });
 
             blendController.setParameters(this);
+
             goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -65,55 +67,85 @@ public class ColorsBlendController extends BaseController {
     @Override
     public void goAction() {
         try {
-            colorA = colorAController.colorData;
-            if (colorA == null || colorA.getRgba() == null) {
-                popError(message("SelectToHandle") + ": A");
-                return;
-            }
-            colorB = colorBController.colorData;
-            if (colorB == null || colorB.getRgba() == null) {
-                popError(message("SelectToHandle") + ": B");
-                return;
-            }
-
             PixelsBlend blender = blendController.pickValues(-1f);
-            ColorData blended = new ColorData(blender.blend(colorA.getColorValue(), colorB.getColorValue()));
+            if (blender == null) {
+                popError(message("SelectToHandle") + ": " + message("BlendMode"));
+                return;
+            }
+            String separator = separatorInput.getText();
+            if (separator == null || separator.isEmpty()) {
+                separator = ", ";
+            }
+            UserConfig.setString(baseName + "Separator", separator);
 
-            String svg = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+            colorData = colorController.colorData;
+            if (colorData == null || colorData.getRgba() == null) {
+                popError(message("SelectToHandle") + ": " + message("Base"));
+                return;
+            }
+            colorData = new ColorData(colorData.getRgba()).setvSeparator(separator).convert();
+
+            colorOverlay = colorOverlayController.colorData;
+            if (colorOverlay == null || colorOverlay.getRgba() == null) {
+                popError(message("SelectToHandle") + ": " + message("Overlay"));
+                return;
+            }
+            colorOverlay = new ColorData(colorOverlay.getRgba()).setvSeparator(separator).convert();
+
+            colorBlended = new ColorData(blender.blend(colorData.getColorValue(), colorOverlay.getColorValue()))
+                    .setvSeparator(separator).convert();
+
+            String html = "<html><body contenteditable=\"false\">\n"
+                    + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                     + "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"400\" width=\"600\">\n"
-                    + "    <circle cx=\"200\" cy=\"200\" fill=\"" + colorA.css() + "\" r=\"198\"/>\n"
-                    + "    <circle cx=\"400\" cy=\"200\" fill=\"" + colorB.css()
+                    + "    <circle cx=\"200\" cy=\"200\" fill=\"" + colorData.css() + "\" r=\"198\"/>\n"
+                    + "    <circle cx=\"400\" cy=\"200\" fill=\"" + colorOverlay.css()
                     + "\" r=\"198\"/>\n"
                     + "    <path d=\"M 299.50,372.34 A 199.00 199.00 0 0 0 300 28 A 199.00 199.00 0 0 0 300 372\" "
-                    + "  fill=\"" + blended.css() + "\" />\n"
-                    + "</svg>";
-            viewController.drawSVG(svg);
+                    + "  fill=\"" + colorBlended.css() + "\" />\n"
+                    + "</svg>\n";
+
+            StringTable table = new StringTable();
+            List<String> row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("BlendMode"), blender.modeName()));
+            table.add(row);
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("Weight"), blender.getWeight() + ""));
+            table.add(row);
+            html += table.div();
+
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("Data"), message("Base"),
+                    message("Overlay"), message("BlendColors")));
+            table = new StringTable(names);
+            table = FxColorTools.colorsTable(table, colorData, colorOverlay, colorBlended);
+            html += table.div();
+
+            html += "</body></html>";
+            htmlController.displayHtml(html);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     @FXML
-    protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
+    @Override
+    public void addColor() {
+        if (colorBlended == null) {
+            return;
         }
-    }
-
-    @FXML
-    protected void showHelps(Event event) {
-        popEventMenu(event, HelpTools.colorHelps(true));
+        ColorsManageController.addOneColor(colorBlended.getColor());
     }
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (colorAController.thisPane.isFocused() || colorAController.thisPane.isFocusWithin()) {
-            if (colorAController.keyEventsFilter(event)) {
+        if (colorController.thisPane.isFocused() || colorController.thisPane.isFocusWithin()) {
+            if (colorController.keyEventsFilter(event)) {
                 return true;
             }
         }
-        if (colorBController.thisPane.isFocused() || colorBController.thisPane.isFocusWithin()) {
-            if (colorBController.keyEventsFilter(event)) {
+        if (colorOverlayController.thisPane.isFocused() || colorOverlayController.thisPane.isFocusWithin()) {
+            if (colorOverlayController.keyEventsFilter(event)) {
                 return true;
             }
         }
@@ -122,8 +154,8 @@ public class ColorsBlendController extends BaseController {
                 return true;
             }
         }
-        if (viewController.thisPane.isFocused() || viewController.thisPane.isFocusWithin()) {
-            if (viewController.keyEventsFilter(event)) {
+        if (htmlController.thisPane.isFocused() || htmlController.thisPane.isFocusWithin()) {
+            if (htmlController.keyEventsFilter(event)) {
                 return true;
             }
         }

@@ -73,7 +73,7 @@ public class DoubleLine implements DoubleShape {
 
     @Override
     public String pathRel() {
-        return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
+        return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "l " + imageScale(endX - startX) + "," + imageScale(endY - startY);
     }
 

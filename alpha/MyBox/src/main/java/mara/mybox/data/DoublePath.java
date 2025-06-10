@@ -333,6 +333,7 @@ public class DoublePath implements DoubleShape {
                                 angle,
                                 seg.isFlag1(), seg.isFlag2(),
                                 seg.getEndPoint().getX(), seg.getEndPoint().getY());
+                        // https://svn.apache.org/repos/asf/xmlgraphics/batik/branches/svg11/sources/org/apache/batik/ext/awt/geom/ExtendedGeneralPath.java
                         AffineTransform t = AffineTransform.getRotateInstance(
                                 Math.toRadians(angle), arc.getCenterX(), arc.getCenterY());
                         Shape s = t.createTransformedShape(arc);

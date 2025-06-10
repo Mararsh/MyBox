@@ -98,7 +98,7 @@ public class DoubleArc implements DoubleShape {
         return true;
     }
 
-    // the calculation is provided by deekseek. updated by mara
+    // Calculation is provided by deekseek. Fixed by mara
     @Override
     public String pathAbs() {
         double startRad = Math.toRadians(startAngle);
@@ -125,7 +125,8 @@ public class DoubleArc implements DoubleShape {
             case Arc2D.CHORD:
                 return String.format("M %.2f,%.2f %s Z", startX, startY, arcCmd);
             case Arc2D.PIE:
-                return String.format("M %.2f,%.2f L %.2f,%.2f %s Z", centerX, centerY, startX, startY, arcCmd);
+                return String.format("M %.2f,%.2f L %.2f,%.2f %s Z",
+                        centerX, centerY, startX, startY, arcCmd);
             default:
                 throw new IllegalArgumentException("Unsupported arc type");
         }
@@ -136,12 +137,13 @@ public class DoubleArc implements DoubleShape {
         double startRad = Math.toRadians(startAngle);
         double endRad = Math.toRadians(startAngle + extentAngle);
         double startX = imageScale(centerX + radiusX * Math.cos(startRad));
-        double startY = imageScale(centerY + radiusY * Math.sin(startRad));
+        double startY = imageScale(centerY - radiusY * Math.sin(startRad));
         double endX = imageScale(centerX + radiusX * Math.cos(endRad));
-        double endY = imageScale(centerY + radiusY * Math.sin(endRad));
+        double endY = imageScale(centerY - radiusY * Math.sin(endRad));
 
         if (Math.abs(radiusX) < 1e-3 || Math.abs(radiusY) < 1e-3) {
-            return String.format("m %.2f,%.2f l %.2f,%.2f", startX, startY, endX - startX, endY - startY);
+            return String.format("M %.2f,%.2f l %.2f,%.2f",
+                    startX, startY, endX - startX, endY - startY);
         }
 
         int largeArcFlag = computeLargeArcFlag(extentAngle);
@@ -153,11 +155,11 @@ public class DoubleArc implements DoubleShape {
         );
         switch (type) {
             case Arc2D.OPEN:
-                return String.format("m %.2f,%.2f %s", startX, startY, arcCmd);
+                return String.format("M %.2f,%.2f %s", startX, startY, arcCmd);
             case Arc2D.CHORD:
-                return String.format("m %.2f,%.2f %s Z", startX, startY, arcCmd);
+                return String.format("M %.2f,%.2f %s Z", startX, startY, arcCmd);
             case Arc2D.PIE:
-                return String.format("m %.2f,%.2f l %.2f,%.2f %s Z",
+                return String.format("M %.2f,%.2f l %.2f,%.2f %s Z",
                         centerX, centerY, startX - centerX, startY - centerY, arcCmd);
             default:
                 throw new IllegalArgumentException("Unsupported arc type");

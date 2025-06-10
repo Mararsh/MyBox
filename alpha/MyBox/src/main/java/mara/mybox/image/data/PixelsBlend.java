@@ -15,45 +15,15 @@ import mara.mybox.fxml.FxTask;
 public abstract class PixelsBlend {
 
     public enum ImagesBlendMode {
-        NORMAL,
-        DISSOLVE,
-        DARKEN,
-        MULTIPLY,
-        COLOR_BURN,
-        LINEAR_BURN,
-        SOFT_BURN,
-        LIGHTEN,
-        SCREEN,
-        COLOR_DODGE,
-        LINEAR_DODGE,
-        SOFT_DODGE,
-        DIVIDE,
-        VIVID_LIGHT,
-        LINEAR_LIGHT,
-        SUBTRACT,
-        AVERAGE,
-        OVERLAY,
-        HARD_LIGHT,
-        SOFT_LIGHT,
-        DIFFERENCE,
-        NEGATION,
-        EXCLUSION,
-        REFLECT,
-        GLOW,
-        FREEZE,
-        HEAT,
-        STAMP,
-        RED,
-        GREEN,
-        BLUE,
-        HUE,
-        SATURATION,
-        COLOR,
-        LUMINOSITY
+        KubelkaMunk, CMYK, CMYK_WEIGHTED, MULTIPLY, NORMAL, DISSOLVE,
+        DARKEN, COLOR_BURN, LINEAR_BURN, LIGHTEN, SCREEN,
+        COLOR_DODGE, LINEAR_DODGE, DIVIDE, VIVID_LIGHT, LINEAR_LIGHT,
+        SUBTRACT, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DIFFERENCE,
+        EXCLUSION, HUE, SATURATION, COLOR, LUMINOSITY
     }
 
     protected ImagesBlendMode blendMode;
-    protected float opacity;
+    protected float weight;
     protected boolean baseAbove = false;
 
     protected Color foreColor, backColor;
@@ -113,13 +83,13 @@ public abstract class PixelsBlend {
 
     // replace this in different blend mode. Refer to "PixelsBlendFactory"
     public void makeRGB() {
-        red = blendValues(foreColor.getRed(), backColor.getRed(), opacity);
-        green = blendValues(foreColor.getGreen(), backColor.getGreen(), opacity);
-        blue = blendValues(foreColor.getBlue(), backColor.getBlue(), opacity);
+        red = blendValues(foreColor.getRed(), backColor.getRed(), weight);
+        green = blendValues(foreColor.getGreen(), backColor.getGreen(), weight);
+        blue = blendValues(foreColor.getBlue(), backColor.getBlue(), weight);
     }
 
     protected void makeAlpha() {
-        float w = fixedOpacity(opacity);
+        float w = fixWeight(weight);
         alpha = (int) (foreColor.getAlpha() * w + backColor.getAlpha() * (1.0f - w));
     }
 
@@ -157,21 +127,25 @@ public abstract class PixelsBlend {
         }
     }
 
+    public String modeName() {
+        return blendMode != null ? PixelsBlendFactory.modeName(blendMode) : null;
+    }
+
     /*
         static
      */
-    public static Color blend2(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
+    public static Color blend2(Color foreColor, Color backColor, float weight, boolean ignoreTransparency) {
         if (backColor.getRGB() == 0 && ignoreTransparency) {
             return backColor;
         }
-        return blend(foreColor, backColor, opacity);
+        return blend(foreColor, backColor, weight);
     }
 
-    public static Color blend(Color foreColor, Color backColor, float opacity) {
-        int red = blendValues(foreColor.getRed(), backColor.getRed(), opacity);
-        int green = blendValues(foreColor.getGreen(), backColor.getRed(), opacity);
-        int blue = blendValues(foreColor.getBlue(), backColor.getRed(), opacity);
-        int alpha = blendValues(foreColor.getAlpha(), backColor.getRed(), opacity);
+    public static Color blend(Color foreColor, Color backColor, float weight) {
+        int red = blendValues(foreColor.getRed(), backColor.getRed(), weight);
+        int green = blendValues(foreColor.getGreen(), backColor.getRed(), weight);
+        int blue = blendValues(foreColor.getBlue(), backColor.getRed(), weight);
+        int alpha = blendValues(foreColor.getAlpha(), backColor.getRed(), weight);
         Color newColor = new Color(
                 Math.min(Math.max(red, 0), 255),
                 Math.min(Math.max(green, 0), 255),
@@ -180,7 +154,7 @@ public abstract class PixelsBlend {
         return newColor;
     }
 
-    public static float fixedOpacity(float v) {
+    public static float fixWeight(float v) {
         if (v > 1f) {
             return 1f;
         } else if (v < 0) {
@@ -191,7 +165,7 @@ public abstract class PixelsBlend {
     }
 
     public static int blendValues(int A, int B, float weight) {
-        float w = fixedOpacity(weight);
+        float w = fixWeight(weight);
         return (int) (A * w + B * (1.0f - w));
     }
 
@@ -240,12 +214,12 @@ public abstract class PixelsBlend {
         return this;
     }
 
-    public float getOpacity() {
-        return opacity;
+    public float getWeight() {
+        return weight;
     }
 
-    public PixelsBlend setOpacity(float opacity) {
-        this.opacity = fixedOpacity(opacity);
+    public PixelsBlend setWeight(float weight) {
+        this.weight = fixWeight(weight);
         return this;
     }
 

@@ -92,7 +92,7 @@ public class DoubleCubic implements DoubleShape {
 
     @Override
     public String pathRel() {
-        return "m " + imageScale(startX) + "," + imageScale(startY) + " \n"
+        return "M " + imageScale(startX) + "," + imageScale(startY) + " \n"
                 + "c " + imageScale(controlX1 - startX) + "," + imageScale(controlY1 - startY) + " "
                 + imageScale(controlX2 - startX) + "," + imageScale(controlY2 - startY) + " "
                 + imageScale(endX - startX) + "," + imageScale(endY - startY);

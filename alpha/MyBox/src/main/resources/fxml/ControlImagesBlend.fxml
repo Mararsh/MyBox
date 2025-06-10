@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesBlend">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesBlend">
     <children>
         <FlowPane fx:id="modePane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
             <children>
@@ -20,12 +20,12 @@
       <ListView fx:id="modeList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
         <FlowPane fx:id="opacityPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
             <children>
-                <Label text="%Opacity">
+                <Label text="%Weight2">
                     <FlowPane.margin>
                         <Insets />
                     </FlowPane.margin>
                 </Label>
-                <ComboBox fx:id="opacitySelector" editable="true" prefWidth="100.0" />
+                <ComboBox fx:id="weightSelector" editable="true" prefWidth="100.0" />
             </children>
         </FlowPane>
         <CheckBox fx:id="baseAboveCheck" minHeight="-Infinity" mnemonicParsing="false" text="%BaseImageAboveOverlay" wrapText="true" />

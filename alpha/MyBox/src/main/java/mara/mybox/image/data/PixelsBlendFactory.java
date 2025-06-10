@@ -1,11 +1,12 @@
 package mara.mybox.image.data;
 
 import java.awt.Color;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.image.data.PixelsBlend.ImagesBlendMode;
 import mara.mybox.image.tools.ColorConvertTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,96 +21,97 @@ import static mara.mybox.value.Languages.message;
 public class PixelsBlendFactory {
 
     public static List<String> blendModes() {
-        return Arrays.asList(message("NormalMode"),
-                message("DissolveMode"), message("MultiplyMode"), message("ScreenMode"),
-                message("OverlayMode"), message("HardLightMode"), message("SoftLightMode"),
-                message("ColorDodgeMode"), message("LinearDodgeMode"), message("DivideMode"),
-                message("ColorBurnMode"), message("LinearBurnMode"), message("VividLightMode"),
-                message("LinearLightMode"), message("SubtractMode"), message("DifferenceMode"),
-                message("ExclusionMode"), message("DarkenMode"), message("LightenMode"),
-                message("HueMode"), message("SaturationMode"), message("ColorMode"),
-                message("LuminosityMode"));
+        List<String> names = new ArrayList<>();
+        for (ImagesBlendMode mode : ImagesBlendMode.values()) {
+            names.add(modeName(mode));
+        }
+        return names;
     }
 
-    public static ImagesBlendMode blendMode(String mode) {
-
-        if (message("NormalMode").equals(mode)) {
-            return ImagesBlendMode.NORMAL;
-
-        } else if (message("DissolveMode").equals(mode)) {
-            return ImagesBlendMode.DISSOLVE;
-
-        } else if (message("MultiplyMode").equals(mode)) {
-            return ImagesBlendMode.MULTIPLY;
-
-        } else if (message("ScreenMode").equals(mode)) {
-            return ImagesBlendMode.SCREEN;
-
-        } else if (message("OverlayMode").equals(mode)) {
-            return ImagesBlendMode.OVERLAY;
-
-        } else if (message("HardLightMode").equals(mode)) {
-            return ImagesBlendMode.HARD_LIGHT;
-
-        } else if (message("SoftLightMode").equals(mode)) {
-            return ImagesBlendMode.SOFT_LIGHT;
-
-        } else if (message("ColorDodgeMode").equals(mode)) {
-            return ImagesBlendMode.COLOR_DODGE;
-
-        } else if (message("LinearDodgeMode").equals(mode)) {
-            return ImagesBlendMode.LINEAR_DODGE;
-
-        } else if (message("DivideMode").equals(mode)) {
-            return ImagesBlendMode.DIVIDE;
-
-        } else if (message("ColorBurnMode").equals(mode)) {
-            return ImagesBlendMode.COLOR_BURN;
-
-        } else if (message("LinearBurnMode").equals(mode)) {
-            return ImagesBlendMode.LINEAR_BURN;
-
-        } else if (message("VividLightMode").equals(mode)) {
-            return ImagesBlendMode.VIVID_LIGHT;
-
-        } else if (message("LinearLightMode").equals(mode)) {
-            return ImagesBlendMode.LINEAR_LIGHT;
-
-        } else if (message("SubtractMode").equals(mode)) {
-            return ImagesBlendMode.SUBTRACT;
-
-        } else if (message("DifferenceMode").equals(mode)) {
-            return ImagesBlendMode.DIFFERENCE;
-
-        } else if (message("ExclusionMode").equals(mode)) {
-            return ImagesBlendMode.EXCLUSION;
-
-        } else if (message("DarkenMode").equals(mode)) {
-            return ImagesBlendMode.DARKEN;
-
-        } else if (message("LightenMode").equals(mode)) {
-            return ImagesBlendMode.LIGHTEN;
-
-        } else if (message("HueMode").equals(mode)) {
-            return ImagesBlendMode.HUE;
-
-        } else if (message("SaturationMode").equals(mode)) {
-            return ImagesBlendMode.SATURATION;
-
-        } else if (message("ColorMode").equals(mode)) {
-            return ImagesBlendMode.COLOR;
-
-        } else if (message("LuminosityMode").equals(mode)) {
-            return ImagesBlendMode.LUMINOSITY;
-
-        } else {
-            return ImagesBlendMode.NORMAL;
+    public static ImagesBlendMode blendMode(String name) {
+        if (name == null) {
+            return null;
         }
+        for (ImagesBlendMode mode : ImagesBlendMode.values()) {
+            if (Languages.matchIgnoreCase(modeName(mode), name)) {
+                return mode;
+            }
+        }
+        return null;
+    }
 
+    public static String modeName(ImagesBlendMode mode) {
+        if (mode == null) {
+            return null;
+        }
+        switch (mode) {
+            case KubelkaMunk:
+                return message("KubelkaMunkMode");
+            case CMYK:
+                return message("CMYKMode");
+            case CMYK_WEIGHTED:
+                return message("CMYKWeightedMode");
+            case MULTIPLY:
+                return message("MultiplyMode");
+            case NORMAL:
+                return message("NormalMode");
+            case DISSOLVE:
+                return message("DissolveMode");
+            case DARKEN:
+                return message("DarkenMode");
+            case COLOR_BURN:
+                return message("ColorBurnMode");
+            case LINEAR_BURN:
+                return message("LinearBurnMode");
+            case LIGHTEN:
+                return message("LightenMode");
+            case SCREEN:
+                return message("ScreenMode");
+            case COLOR_DODGE:
+                return message("ColorDodgeMode");
+            case LINEAR_DODGE:
+                return message("LinearDodgeMode");
+            case DIVIDE:
+                return message("DivideMode");
+            case VIVID_LIGHT:
+                return message("VividLightMode");
+            case LINEAR_LIGHT:
+                return message("LinearLightMode");
+            case SUBTRACT:
+                return message("SubtractMode");
+            case OVERLAY:
+                return message("OverlayMode");
+            case HARD_LIGHT:
+                return message("HardLightMode");
+            case SOFT_LIGHT:
+                return message("SoftLightMode");
+            case DIFFERENCE:
+                return message("DifferenceMode");
+            case EXCLUSION:
+                return message("ExclusionMode");
+            case HUE:
+                return message("HueMode");
+            case SATURATION:
+                return message("SaturationMode");
+            case COLOR:
+                return message("ColorMode");
+            case LUMINOSITY:
+                return message("LuminosityMode");
+        }
+        return null;
     }
 
     public static PixelsBlend create(ImagesBlendMode blendMode) {
+        if (blendMode == null) {
+            return null;
+        }
         switch (blendMode) {
+            case KubelkaMunk:
+                return new KubelkaMunkBlend();
+            case CMYK:
+                return new CMYKBlend(false);
+            case CMYK_WEIGHTED:
+                return new CMYKBlend(true);
             case NORMAL:
                 return new NormalBlend();
             case DISSOLVE:
@@ -184,6 +186,260 @@ public class PixelsBlendFactory {
             green = (int) (foreColor.getGreen() * random + backColor.getGreen() * (1.0f - random));
             blue = (int) (foreColor.getBlue() * random + backColor.getBlue() * (1.0f - random));
         }
+    }
+
+    public static class KubelkaMunkBlend extends PixelsBlend {
+
+        public KubelkaMunkBlend() {
+            this.blendMode = ImagesBlendMode.KubelkaMunk;
+        }
+
+        @Override
+        public void makeRGB() {
+            Color blended = mixPigments(foreColor, backColor, weight);
+            red = blended.getRed();
+            green = blended.getGreen();
+            blue = blended.getBlue();
+        }
+
+        // Provided by deepseek.
+        public static Color mixPigments(Color color1, Color color2, double ratio) {
+            // 1. 将RGB转换为反射率（0-255 -> 0.0-1.0）
+            double[] reflectance1 = toReflectance(color1);
+            double[] reflectance2 = toReflectance(color2);
+
+            // 2. 使用Kubelka-Munk公式计算混合后的吸收/散射
+            double[] mixed = new double[3];
+            for (int i = 0; i < 3; i++) {
+                double k1 = kmTransform(reflectance1[i]);
+                double k2 = kmTransform(reflectance2[i]);
+
+                // 3. 按比例混合K值
+                double kmMixed = ratio * k1 + (1 - ratio) * k2;
+
+                // 4. 反向转换回反射率
+                mixed[i] = inverseKmTransform(kmMixed);
+            }
+
+            // 5. 将反射率转回RGB
+            return toColor(mixed);
+        }
+
+        // RGB转反射率（简单线性转换）
+        private static double[] toReflectance(Color color) {
+            return new double[]{
+                color.getRed() / 255.0,
+                color.getGreen() / 255.0,
+                color.getBlue() / 255.0
+            };
+        }
+
+        // Kubelka-Munk变换：反射率 -> K/S值
+        private static double kmTransform(double reflectance) {
+            return (1 - reflectance) * (1 - reflectance) / (2 * reflectance);
+        }
+
+        // 反向Kubelka-Munk变换
+        private static double inverseKmTransform(double km) {
+            double r = 1 + km - Math.sqrt(km * km + 2 * km);
+            // 限制在有效范围内
+            return Math.max(0, Math.min(1, r));
+        }
+
+        // 反射率转RGB
+        private static Color toColor(double[] reflectance) {
+            int r = (int) Math.round(reflectance[0] * 255);
+            int g = (int) Math.round(reflectance[1] * 255);
+            int b = (int) Math.round(reflectance[2] * 255);
+            return new Color(
+                    Math.max(0, Math.min(255, r)),
+                    Math.max(0, Math.min(255, g)),
+                    Math.max(0, Math.min(255, b))
+            );
+        }
+
+        public static void main(String[] args) {
+            // 测试颜料混合
+            Color cyan = new Color(0, 183, 235);   // 青色颜料
+            Color magenta = new Color(213, 0, 143); // 品红颜料
+            Color yellow = new Color(252, 220, 0);  // 黄色颜料
+
+            // 青 + 品红 = 蓝色
+            Color blue = mixPigments(cyan, magenta, 0.5);
+            System.out.println("Cyan + Magenta = " + formatColor(blue));
+
+            // 品红 + 黄 = 红色
+            Color red = mixPigments(magenta, yellow, 0.5);
+            System.out.println("Magenta + Yellow = " + formatColor(red));
+
+            // 青 + 黄 = 绿色
+            Color green = mixPigments(cyan, yellow, 0.5);
+            System.out.println("Cyan + Yellow = " + formatColor(green));
+
+            // 三原色混合 = 黑色
+            Color black = mixPigments(blue, yellow, 0.5);
+            System.out.println("Blue + Yellow = " + formatColor(black));
+        }
+
+        private static String formatColor(Color color) {
+            return String.format("[R=%d, G=%d, B=%d]",
+                    color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+    }
+
+    public static class CMYKBlend extends PixelsBlend {
+
+        private final boolean isWeighted;
+
+        public CMYKBlend(boolean weighted) {
+            isWeighted = weighted;
+            this.blendMode = isWeighted
+                    ? ImagesBlendMode.CMYK_WEIGHTED : ImagesBlendMode.CMYK;
+        }
+
+        @Override
+        public void makeRGB() {
+            Color blended = isWeighted
+                    ? mix(foreColor, backColor, weight) : mix(foreColor, backColor);
+            red = blended.getRed();
+            green = blended.getGreen();
+            blue = blended.getBlue();
+        }
+
+        // Provided by deepseek.
+        public static Color mix(Color color1, Color color2) {
+            return cmyToRgb(mixColors(rgbToCmy(color1), rgbToCmy(color2)));
+        }
+
+        public static Color mix(Color color1, Color color2, double w) {
+            return cmyToRgb(mixColors(rgbToCmy(color1), rgbToCmy(color2), w));
+        }
+
+        // CMY颜色类（0.0-1.0范围）
+        public static class CMYColor {
+
+            public double c; // 青
+            public double m; // 品红
+            public double y; // 黄
+
+            public CMYColor(double c, double m, double y) {
+                this.c = clamp(c);
+                this.m = clamp(m);
+                this.y = clamp(y);
+            }
+
+            private double clamp(double value) {
+                return Math.max(0.0, Math.min(1.0, value));
+            }
+        }
+
+        // RGB转CMY（基于减色原理）
+        public static CMYColor rgbToCmy(Color rgb) {
+            double r = rgb.getRed() / 255.0;
+            double g = rgb.getGreen() / 255.0;
+            double b = rgb.getBlue() / 255.0;
+
+            double c = 1.0 - r;
+            double m = 1.0 - g;
+            double y = 1.0 - b;
+
+            return new CMYColor(c, m, y);
+        }
+
+        // CMY转RGB
+        public static Color cmyToRgb(CMYColor cmy) {
+            double r = (1.0 - cmy.c) * 255;
+            double g = (1.0 - cmy.m) * 255;
+            double b = (1.0 - cmy.y) * 255;
+
+            return new Color((int) Math.round(r), (int) Math.round(g), (int) Math.round(b));
+        }
+
+        // 减色混合核心算法（CMY混合）
+        public static CMYColor mixColors(CMYColor color1, CMYColor color2) {
+            // 减色混合公式：混合后吸收率 = 1 - (1 - c1) * (1 - c2)
+            double c = 1 - (1 - color1.c) * (1 - color2.c);
+            double m = 1 - (1 - color1.m) * (1 - color2.m);
+            double y = 1 - (1 - color1.y) * (1 - color2.y);
+
+            return new CMYColor(c, m, y);
+        }
+
+        public static CMYColor mixColors(CMYColor color1, CMYColor color2, double w) {
+            // 减色混合公式：混合后吸收率 = 1 - (1 - c1) * (1 - c2)
+            double w2 = 1 - w;
+            double c = 1 - (1 - color1.c * w) * (1 - color2.c * w2);
+            double m = 1 - (1 - color1.m * w) * (1 - color2.m * w2);
+            double y = 1 - (1 - color1.y * w) * (1 - color2.y * w2);
+
+            return new CMYColor(c, m, y);
+        }
+
+        // 调整颜色饱和度（添加补色）
+        public static CMYColor adjustSaturation(CMYColor color, double percent) {
+            // 计算补色（取反）
+            double gray = (color.c + color.m + color.y) / 3.0;
+            CMYColor complementary = new CMYColor(
+                    gray + (gray - color.c) * percent,
+                    gray + (gray - color.m) * percent,
+                    gray + (gray - color.y) * percent
+            );
+            return mixColors(color, complementary);
+        }
+
+        // 调整明度（添加黑/白）
+        public static CMYColor adjustBrightness(CMYColor color, double whiteAmount, double blackAmount) {
+            // 添加白色 = 减少CMY值
+            double c = color.c * (1 - whiteAmount);
+            double m = color.m * (1 - whiteAmount);
+            double y = color.y * (1 - whiteAmount);
+
+            // 添加黑色 = 增加CMY值
+            c = c + (1 - c) * blackAmount;
+            m = m + (1 - m) * blackAmount;
+            y = y + (1 - y) * blackAmount;
+
+            return new CMYColor(c, m, y);
+        }
+
+        // 示例使用
+        public static void main(String[] args) {
+            // 创建基础颜色（青、品红、黄）
+            Color cyanRgb = new Color(0, 255, 255);
+            Color magentaRgb = new Color(255, 0, 255);
+            Color yellowRgb = new Color(255, 255, 0);
+
+            // 转换为CMY
+            CMYColor cyan = rgbToCmy(cyanRgb);
+            CMYColor magenta = rgbToCmy(magentaRgb);
+            CMYColor yellow = rgbToCmy(yellowRgb);
+
+            // 示例1: 青 + 黄 = 绿
+            CMYColor green = mixColors(cyan, yellow);
+            Color greenRgb = cmyToRgb(green);
+            System.out.println("青 + 黄 = 绿: RGB("
+                    + greenRgb.getRed() + ", " + greenRgb.getGreen() + ", " + greenRgb.getBlue() + ")");
+
+            // 示例2: 品红 + 青 = 蓝
+            CMYColor blue = mixColors(magenta, cyan);
+            Color blueRgb = cmyToRgb(blue);
+            System.out.println("品红 + 青 = 蓝: RGB("
+                    + blueRgb.getRed() + ", " + blueRgb.getGreen() + ", " + blueRgb.getBlue() + ")");
+
+            // 示例3: 调整饱和度
+            CMYColor desaturated = adjustSaturation(green, -0.5); // 降低50%饱和度
+            Color desaturatedRgb = cmyToRgb(desaturated);
+            System.out.println("降低饱和度: RGB("
+                    + desaturatedRgb.getRed() + ", " + desaturatedRgb.getGreen() + ", " + desaturatedRgb.getBlue() + ")");
+
+            // 示例4: 调整明度
+            CMYColor darkened = adjustBrightness(green, 0.0, 0.3); // 添加30%黑色
+            Color darkenedRgb = cmyToRgb(darkened);
+            System.out.println("变暗效果: RGB("
+                    + darkenedRgb.getRed() + ", " + darkenedRgb.getGreen() + ", " + darkenedRgb.getBlue() + ")");
+        }
+
     }
 
     public static class MultiplyBlend extends PixelsBlend {

@@ -1,18 +1,21 @@
 package mara.mybox.fxml.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
-import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.color.SRGB;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableColor;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -326,6 +329,94 @@ public class FxColorTools {
             return false;
         }
         return calculateColorDistanceSquare(color1, color2) <= distance2;
+    }
+
+    public static StringTable colorsTable(StringTable table, ColorData color1, ColorData color2, ColorData color3) {
+        List<String> row = new ArrayList<>();
+        row.add(message("Color"));
+        row.add("<DIV style=\"width: 50px;  background-color:"
+                + color2css(color1.getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        row.add("<DIV style=\"width: 50px;  background-color:"
+                + color2css(color2.getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        row.add("<DIV style=\"width: 50px;  background-color:"
+                + color2css(color3.getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Name"), color1.getColorName() + "", color2.getColorName() + "", color3.getColorName() + ""));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Hue"), color1.getHue(), color2.getHue(), color3.getHue()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Saturation"), color1.getSaturation(), color2.getSaturation(), color3.getSaturation()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Brightness"), color1.getBrightness(), color2.getBrightness(), color3.getBrightness()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("RYBAngle"), color1.getRybAngle(), color2.getRybAngle(), color3.getRybAngle()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Opacity"), color1.getOpacity(), color2.getOpacity(), color3.getOpacity()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("RGBA", color1.getRgba(), color2.getRgba(), color3.getRgba()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("RGB", color1.getRgb(), color2.getRgb(), color3.getRgb()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("sRGB", color1.getSrgb(), color2.getSrgb(), color3.getSrgb()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("HSBA", color1.getHsb(), color2.getHsb(), color3.getHsb()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("CalculatedCMYK"), color1.getCalculatedCMYK(), color2.getCalculatedCMYK(), color3.getCalculatedCMYK()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Adobe RGB", color1.getAdobeRGB(), color2.getAdobeRGB(), color3.getAdobeRGB()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Apple RGB", color1.getAppleRGB(), color2.getAppleRGB(), color3.getAppleRGB()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("ECI RGB", color1.getEciRGB(), color2.getEciRGB(), color3.getEciRGB()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("sRGB Linear", color1.getSRGBLinear(), color2.getSRGBLinear(), color3.getSRGBLinear()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Adobe RGB Linear", color1.getAdobeRGBLinear(), color2.getAdobeRGBLinear(), color3.getAdobeRGBLinear()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Apple RGB Linear", color1.getAppleRGBLinear(), color2.getAppleRGBLinear(), color3.getAppleRGBLinear()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("ECI CMYK", color1.getEciCMYK(), color2.getEciCMYK(), color3.getEciCMYK()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Adobe CMYK Uncoated FOGRA29", color1.getAdobeCMYK(), color2.getAdobeCMYK(), color3.getAdobeCMYK()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("XYZ", color1.getXyz(), color2.getXyz(), color3.getXyz()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("CIE-L*ab", color1.getCieLab(), color2.getCieLab(), color3.getCieLab()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("LCH(ab)", color1.getLchab(), color2.getLchab(), color3.getLchab()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("CIE-L*uv", color1.getCieLuv(), color2.getCieLuv(), color3.getCieLuv()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("LCH(uv)", color1.getLchuv(), color2.getLchuv(), color3.getLchuv()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Value"), color1.getColorValue() + "", color2.getColorValue() + "", color3.getColorValue() + ""));
+        table.add(row);
+        return table;
     }
 
 }
