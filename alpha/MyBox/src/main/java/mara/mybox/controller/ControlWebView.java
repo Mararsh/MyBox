@@ -1358,9 +1358,6 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
-                Menu codesMenu = new Menu(message("Analyse"), StyleTools.getIconImageView("iconAnalyse.png"));
-                items.add(codesMenu);
-
                 menu = new MenuItem(message("WebElements"), StyleTools.getIconImageView("iconQuery.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlElementsController controller = (HtmlElementsController) WindowTools.openStage(Fxmls.HtmlElementsFxml);
@@ -1371,13 +1368,13 @@ public class ControlWebView extends BaseController {
                     }
                     controller.requestMouse();
                 });
-                codesMenu.getItems().add(menu);
+                items.add(menu);
 
                 menu = new MenuItem(message("Script"), StyleTools.getIconImageView("iconScript.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlJavaScriptController.open(parentController, this);
                 });
-                codesMenu.getItems().add(menu);
+                items.add(menu);
 
                 Menu extractMenu = new Menu(message("Extract"), StyleTools.getIconImageView("iconExport.png"));
                 items.add(extractMenu);

@@ -92,7 +92,7 @@ public class ColorsBlendController extends ColorQueryController {
             }
             colorOverlay = new ColorData(colorOverlay.getRgba()).setvSeparator(separator).convert();
 
-            colorBlended = new ColorData(blender.blend(colorData.getColorValue(), colorOverlay.getColorValue()))
+            colorBlended = new ColorData(blender.blend(colorOverlay.getColorValue(), colorData.getColorValue()))
                     .setvSeparator(separator).convert();
 
             String html = "<html><body contenteditable=\"false\">\n"
@@ -110,7 +110,7 @@ public class ColorsBlendController extends ColorQueryController {
             row.addAll(Arrays.asList(message("BlendMode"), blender.modeName()));
             table.add(row);
             row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("Weight"), blender.getWeight() + ""));
+            row.addAll(Arrays.asList(message("Weight2"), blender.getWeight() + ""));
             table.add(row);
             html += table.div();
 
