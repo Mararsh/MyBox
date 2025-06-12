@@ -21,6 +21,20 @@ License:    Apache License Version 2.0
     <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
         <children>
             <fx:include fx:id="color" source="ControlColorSet.fxml" />
+      <ColorPicker fx:id="colorPicker" />
+            <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#addColor">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconPalette.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+        </children>
+    </HBox>
+<HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+   <children>
             <Button fx:id="examplePopButton" mnemonicParsing="false" onAction="#showExamples" onMouseEntered="#popExamples">
                 <graphic>
                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -39,11 +53,6 @@ License:    Apache License Version 2.0
             </ImageView>
          </graphic>
       </Button>
-      <ColorPicker fx:id="colorPicker" />
-        </children>
-    </HBox>
-<HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-   <children>
       <TextField fx:id="colorInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                 <graphic>

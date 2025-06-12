@@ -5,7 +5,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
@@ -28,11 +32,17 @@ public class ColorQueryController extends BaseController {
     protected ColorData colorData;
 
     @FXML
+    protected Tab colorTab, resultTab;
+    @FXML
     protected ControlColorInput colorController;
     @FXML
     protected Button refreshButton, paletteButton;
     @FXML
     protected TextField separatorInput;
+    @FXML
+    protected ToggleGroup separatorGroup;
+    @FXML
+    protected RadioButton commaRadio, hyphenRadio, colonRadio, blankRadio, inputRadio;
     @FXML
     protected HtmlTableController htmlController;
 
@@ -43,12 +53,20 @@ public class ColorQueryController extends BaseController {
     @Override
     public void initControls() {
         try {
-            separatorInput.setText(UserConfig.getString(baseName + "Separator", ", "));
+            separatorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    if (!inputRadio.isSelected()) {
+                        goAction();
+                    }
+                }
+            });
 
-            refreshButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty()
+            separatorInput.setText(UserConfig.getString(baseName + "Separator", null));
+
+            goButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty()
                     .or(separatorInput.textProperty().isEmpty())
             );
-            paletteButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty());
             htmlController.initStyle(HtmlStyles.TableStyle);
 
             initMore();
@@ -65,11 +83,11 @@ public class ColorQueryController extends BaseController {
             colorController.updateNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    refreshAction();
+                    goAction();
                 }
             });
 
-            refreshAction();
+            goAction();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -87,33 +105,50 @@ public class ColorQueryController extends BaseController {
         }
     }
 
+    public String pickSeparator() {
+        try {
+            String separator = ", ";
+            if (commaRadio.isSelected()) {
+                separator = ", ";
+            } else if (hyphenRadio.isSelected()) {
+                separator = "-";
+            } else if (colonRadio.isSelected()) {
+                separator = ":";
+            } else if (blankRadio.isSelected()) {
+                separator = " ";
+            } else if (inputRadio.isSelected()) {
+                separator = separatorInput.getText();
+                if (separator == null || separator.isEmpty()) {
+                    return null;
+                }
+                UserConfig.setString(baseName + "Separator", separator);
+            }
+            return separator;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     @FXML
     @Override
-    public void refreshAction() {
+    public void goAction() {
         try {
             colorData = colorController.colorData;
             if (colorData == null || colorData.getRgba() == null) {
                 return;
             }
-            String separator = separatorInput.getText();
+            String separator = pickSeparator();
             if (separator == null || separator.isEmpty()) {
-                separator = ", ";
+                popError(message("InvalidParamter") + ": " + message("ValueSeparator"));
+                return;
             }
-            UserConfig.setString(baseName + "Separator", separator);
             colorData = new ColorData(colorData.getRgba())
                     .setvSeparator(separator).convert();
             htmlController.displayHtml(colorData.html());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    public void addColor() {
-        if (colorData == null) {
-            return;
-        }
-        ColorsManageController.addOneColor(colorData.getColor());
     }
 
     @FXML
@@ -130,8 +165,10 @@ public class ColorQueryController extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (colorController.keyEventsFilter(event)) {
-            return true;
+        if (colorTab.isSelected()) {
+            if (colorController.keyEventsFilter(event)) {
+                return true;
+            }
         }
         return super.keyEventsFilter(event);
     }

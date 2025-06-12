@@ -15,6 +15,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -57,8 +58,13 @@ public class ControlImagesBlend extends BaseController {
             overlayAsBaseRadio, overlayAsTransparentRadio, overlayBlendRadio;
     @FXML
     protected Button demoButton;
+    @FXML
+    protected VBox transBox;
 
     public void setParameters(BaseController parent) {
+        if (parent instanceof ColorsBlendController) {
+            thisPane.getChildren().remove(transBox);
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             setParameters(conn, parent);
         } catch (Exception e) {

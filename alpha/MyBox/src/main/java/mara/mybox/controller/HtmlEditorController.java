@@ -12,9 +12,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -118,6 +120,14 @@ public class HtmlEditorController extends WebAddressController {
         addressChanged();
     }
 
+    @FXML
+    protected void exampleAction() {
+        File example = HelpTools.htmlExample(Languages.embedFileLang());
+        if (example != null && example.exists()) {
+            sourceFileChanged(example);
+        }
+    }
+
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
@@ -141,6 +151,12 @@ public class HtmlEditorController extends WebAddressController {
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                exampleAction();
+            });
+            items.add(menu);
 
             menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
                     StyleTools.getIconImageView("iconSave.png"));

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +20,12 @@ import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -214,6 +217,14 @@ public abstract class BaseTextController extends BaseTextController_Actions {
         TextFilterController.open(this);
     }
 
+    @FXML
+    protected void exampleAction() {
+        File example = HelpTools.txtExample(Languages.embedFileLang());
+        if (example != null && example.exists()) {
+            sourceFileChanged(example);
+        }
+    }
+
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
@@ -268,6 +279,12 @@ public abstract class BaseTextController extends BaseTextController_Actions {
                     StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent event) -> {
                 createAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                exampleAction();
             });
             items.add(menu);
 

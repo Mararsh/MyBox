@@ -18,10 +18,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -288,6 +290,15 @@ public class MarkdownEditorController extends TextEditorController {
     @FXML
     public void popCodesAction() {
         TextPopController.openInput(this, codesArea);
+    }
+
+    @FXML
+    @Override
+    protected void exampleAction() {
+        File example = HelpTools.mdExample(Languages.embedFileLang());
+        if (example != null && example.exists()) {
+            sourceFileChanged(example);
+        }
     }
 
     @FXML

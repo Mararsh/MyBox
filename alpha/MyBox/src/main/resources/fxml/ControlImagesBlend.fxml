@@ -29,36 +29,40 @@
             </children>
         </FlowPane>
         <CheckBox fx:id="baseAboveCheck" minHeight="-Infinity" mnemonicParsing="false" text="%BaseImageAboveOverlay" wrapText="true" />
-      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+      <VBox fx:id="transBox" spacing="5.0">
          <children>
-            <Label text="%SetValueWhenBaseImageTransparent" />
-            <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+            <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                <children>
-                  <RadioButton fx:id="baseAsOverlayRadio" mnemonicParsing="false" selected="true" text="%PixelOfOverlay">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="baseGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="baseAsTransparentRadio" mnemonicParsing="false" text="%Transparent" toggleGroup="$baseGroup" />
-                  <RadioButton fx:id="baseBlendRadio" mnemonicParsing="false" text="%Blend" toggleGroup="$baseGroup" />
+                  <Label text="%SetValueWhenBaseImageTransparent" />
+                  <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                     <children>
+                        <RadioButton fx:id="baseAsOverlayRadio" mnemonicParsing="false" selected="true" text="%PixelOfOverlay">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="baseGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="baseAsTransparentRadio" mnemonicParsing="false" text="%Transparent" toggleGroup="$baseGroup" />
+                        <RadioButton fx:id="baseBlendRadio" mnemonicParsing="false" text="%Blend" toggleGroup="$baseGroup" />
+                     </children>
+                  </FlowPane>
                </children>
-            </FlowPane>
-         </children>
-      </VBox>
-      <VBox layoutX="10.0" layoutY="497.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <Label text="%SetValueWhenOverlayTransparent" />
-            <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+            </VBox>
+            <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                <children>
-                  <RadioButton fx:id="overlayAsBaseRadio" mnemonicParsing="false" selected="true" text="%PixelOfBaseImage">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="overlayGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="overlayAsTransparentRadio" mnemonicParsing="false" text="%Transparent" toggleGroup="$overlayGroup" />
-                  <RadioButton fx:id="overlayBlendRadio" mnemonicParsing="false" text="%Blend" toggleGroup="$overlayGroup" />
+                  <Label text="%SetValueWhenOverlayTransparent" />
+                  <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                     <children>
+                        <RadioButton fx:id="overlayAsBaseRadio" mnemonicParsing="false" selected="true" text="%PixelOfBaseImage">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="overlayGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="overlayAsTransparentRadio" mnemonicParsing="false" text="%Transparent" toggleGroup="$overlayGroup" />
+                        <RadioButton fx:id="overlayBlendRadio" mnemonicParsing="false" text="%Blend" toggleGroup="$overlayGroup" />
+                     </children>
+                  </FlowPane>
                </children>
-            </FlowPane>
+            </VBox>
          </children>
       </VBox>
     </children>

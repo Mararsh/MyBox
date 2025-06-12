@@ -165,6 +165,14 @@ public class ControlColorInput extends BaseController {
     }
 
     @FXML
+    public void addColor() {
+        if (colorData == null) {
+            return;
+        }
+        ColorsManageController.addOneColor(colorData.getColor());
+    }
+
+    @FXML
     protected void showExamples(Event event) {
         PopTools.popColorExamples(this, colorInput, event);
     }

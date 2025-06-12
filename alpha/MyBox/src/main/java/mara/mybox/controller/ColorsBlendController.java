@@ -5,8 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColorData;
@@ -16,7 +19,6 @@ import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -27,6 +29,8 @@ public class ColorsBlendController extends ColorQueryController {
 
     protected ColorData colorOverlay, colorBlended;
 
+    @FXML
+    protected Tab overlayTab, blendTab;
     @FXML
     protected ControlColorInput colorOverlayController;
     @FXML
@@ -56,11 +60,25 @@ public class ColorsBlendController extends ColorQueryController {
             });
 
             blendController.setParameters(this);
+            blendController.modeList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (event.getClickCount() > 1) {
+                        goAction();
+                    }
+                }
+            });
 
             goAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    @Override
+    public void okAction() {
+        goAction();
     }
 
     @FXML
@@ -72,22 +90,22 @@ public class ColorsBlendController extends ColorQueryController {
                 popError(message("SelectToHandle") + ": " + message("BlendMode"));
                 return;
             }
-            String separator = separatorInput.getText();
+            String separator = pickSeparator();
             if (separator == null || separator.isEmpty()) {
-                separator = ", ";
+                popError(message("InvalidParamter") + ": " + message("ValueSeparator"));
+                return;
             }
-            UserConfig.setString(baseName + "Separator", separator);
 
             colorData = colorController.colorData;
             if (colorData == null || colorData.getRgba() == null) {
-                popError(message("SelectToHandle") + ": " + message("Base"));
+                popError(message("SelectToHandle") + ": " + message("BaseColor"));
                 return;
             }
             colorData = new ColorData(colorData.getRgba()).setvSeparator(separator).convert();
 
             colorOverlay = colorOverlayController.colorData;
             if (colorOverlay == null || colorOverlay.getRgba() == null) {
-                popError(message("SelectToHandle") + ": " + message("Overlay"));
+                popError(message("SelectToHandle") + ": " + message("OverlayColor"));
                 return;
             }
             colorOverlay = new ColorData(colorOverlay.getRgba()).setvSeparator(separator).convert();
@@ -129,7 +147,6 @@ public class ColorsBlendController extends ColorQueryController {
     }
 
     @FXML
-    @Override
     public void addColor() {
         if (colorBlended == null) {
             return;
@@ -139,23 +156,12 @@ public class ColorsBlendController extends ColorQueryController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (colorController.thisPane.isFocused() || colorController.thisPane.isFocusWithin()) {
-            if (colorController.keyEventsFilter(event)) {
-                return true;
-            }
-        }
-        if (colorOverlayController.thisPane.isFocused() || colorOverlayController.thisPane.isFocusWithin()) {
+        if (overlayTab.isSelected()) {
             if (colorOverlayController.keyEventsFilter(event)) {
                 return true;
             }
-        }
-        if (blendController.thisPane.isFocused() || blendController.thisPane.isFocusWithin()) {
+        } else if (blendTab.isSelected()) {
             if (blendController.keyEventsFilter(event)) {
-                return true;
-            }
-        }
-        if (htmlController.thisPane.isFocused() || htmlController.thisPane.isFocusWithin()) {
-            if (htmlController.keyEventsFilter(event)) {
                 return true;
             }
         }
