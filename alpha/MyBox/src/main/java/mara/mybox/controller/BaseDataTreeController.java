@@ -17,7 +17,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNode.SelectionType;
@@ -62,7 +61,7 @@ public class BaseDataTreeController extends BaseFileController {
     @FXML
     protected ControlDataTreeTable tableController;
     @FXML
-    protected WebView htmlView;
+    protected ControlDataTreeHtml htmlController;
     @FXML
     protected ControlDataTreeNodeView viewController;
 
@@ -102,6 +101,7 @@ public class BaseDataTreeController extends BaseFileController {
 
             treeController.setParameters(this);
             tableController.setParameters(this);
+            htmlController.setParameters(this);
 
             if (selectionType == SelectionType.Multiple) {
                 treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -153,7 +153,7 @@ public class BaseDataTreeController extends BaseFileController {
     public void setFormat(DataNode node) {
         task = new FxSingletonTask<Void>(this) {
 
-            private long size = -1;
+            private long rootChildrenSize = -1;
 
             @Override
             protected boolean handle() {
@@ -161,18 +161,18 @@ public class BaseDataTreeController extends BaseFileController {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    size = nodeTable.childrenSize(conn, RootID);
+                    rootChildrenSize = nodeTable.childrenSize(conn, RootID);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return size >= 0;
+                return rootChildrenSize >= 0;
             }
 
             @Override
             protected void whenSucceeded() {
                 isSettingValues = true;
-                if (size > 100) {
+                if (rootChildrenSize > 100) {
                     tableRadio.setSelected(true);
                 }
                 isSettingValues = false;
@@ -200,12 +200,13 @@ public class BaseDataTreeController extends BaseFileController {
             dataBox.getChildren().clear();
             treeController.resetTree();
             tableController.resetTable();
+            htmlController.clear();
             if (tableRadio.isSelected()) {
                 dataBox.getChildren().add(tableBox);
                 tableController.loadNode(currentNode);
             } else if (htmlRadio.isSelected()) {
                 dataBox.getChildren().add(htmlBox);
-                // ?????
+                htmlController.loadTree(currentNode);
             } else {
                 dataBox.getChildren().add(treeBox);
                 treeController.loadTree(currentNode);
@@ -283,7 +284,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (tableRadio.isSelected()) {
             node = tableController.selectedNode();
         } else if (htmlRadio.isSelected()) {
-            node = currentNode; // ?????
+            node = currentNode;
         } else {
             node = treeController.selectedNode();
         }

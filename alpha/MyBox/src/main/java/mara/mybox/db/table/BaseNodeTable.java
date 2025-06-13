@@ -263,6 +263,32 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
+    public DataNode find(long id) {
+        if (id < 0) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return find(conn, id);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public DataNode find(Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return null;
+        }
+        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            return query(conn, statement);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     public List<DataNode> children(long parent) {
         if (parent < 0) {
             return null;

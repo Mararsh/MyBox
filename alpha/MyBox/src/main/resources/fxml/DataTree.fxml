@@ -18,7 +18,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.web.WebView?>
 
 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeController">
     <content>
@@ -119,7 +118,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                         <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                             <children>
-                                                                <WebView fx:id="htmlView" minHeight="100.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                                <fx:include fx:id="html" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeHtml.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>
                                                     </children>

@@ -261,12 +261,11 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
         attributes
      */
     protected void loadAttributes() {
+        if (parentNode == null) {
+            parentNode = nodeTable.getRoot();
+        }
         if (currentNode == null) {
-            if (parentNode != null) {
-                currentNode = DataNode.createChild(parentNode, message("NewData"));
-            } else {
-                currentNode = DataNode.create().setTitle(message("NewData"));
-            }
+            currentNode = DataNode.createChild(parentNode, message("NewData"));
         }
         isSettingValues = true;
         titleInput.setText(currentNode.getTitle());
@@ -331,16 +330,15 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     }
 
     protected void refreshParentNode() {
-        if (parentNode == null) {
-            parentLabel.setText(null);
-            return;
-        }
         FxTask ptask = new FxTask<Void>(this) {
             private String chainName;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
+                    if (parentNode == null) {
+                        parentNode = nodeTable.getRoot(conn);
+                    }
                     chainName = nodeTable.chainName(this, conn, parentNode);
                 } catch (Exception e) {
                     error = e.toString();

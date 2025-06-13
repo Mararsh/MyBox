@@ -37,6 +37,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Fxmls;
@@ -455,39 +456,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                     treeHtmlWriter = new FileWriter(treeHtmlFile, charset);
                     writeHtmlHead(treeHtmlWriter, chainName);
                     treeHtmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
-                    treeHtmlWriter.write(" <script>\n"
-                            + "    function nodeClicked(id) {\n"
-                            + "      var obj = document.getElementById(id);\n"
-                            + "      var objv = obj.style.display;\n"
-                            + "      if (objv == 'none') {\n"
-                            + "        obj.style.display = 'block';\n"
-                            + "      } else {\n"
-                            + "        obj.style.display = 'none';\n"
-                            + "      }\n"
-                            + "    }\n"
-                            + "    function showClass(className, show) {\n"
-                            + "      var nodes = document.getElementsByClassName(className);  　\n"
-                            + "      if ( show) {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = '';\n"
-                            + "           }\n"
-                            + "       } else {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = 'none';\n"
-                            + "           }\n"
-                            + "       }\n"
-                            + "    }\n"
-                            + "  </script>\n\n");
-                    treeHtmlWriter.write("<DIV>\n<DIV>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">"
-                            + message("Unfold") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">"
-                            + message("HierarchyNumber") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">"
-                            + message("Tags") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">"
-                            + message("Values") + "</INPUT>\n"
-                            + "</DIV>\n<HR>\n");
+                    treeHtmlWriter.write(DataNodeTools.htmlControls());
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
@@ -837,20 +806,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
 
     protected void writeHtmlHead(FileWriter writer, String title) {
         try {
-            StringBuilder s = new StringBuilder();
-            s.append("<HTML>\n").append(Indent).append("<HEAD>\n")
-                    .append(Indent).append(Indent).append("<title>").append(title).append("</title>\n")
-                    .append(Indent).append(Indent)
-                    .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")
-                    .append(charset.name()).append("\" />\n");
-            String style = styleInput.getText();
-            if (style != null && !style.isBlank()) {
-                s.append(Indent).append(Indent).append("<style type=\"text/css\">\n");
-                s.append(Indent).append(Indent).append(Indent).append(style).append("\n");
-                s.append(Indent).append(Indent).append("</style>\n");
-            }
-            s.append(Indent).append("</HEAD>\n");
-            writer.write(s.toString());
+            writer.write(HtmlWriteTools.htmlPrefix(title, charset.name(), styleInput.getText()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -888,9 +844,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             String parentName, String hierarchyNumber, DataNode node,
             List<DataNodeTag> tags, String nodePageid) {
         try {
-            String html = DataNodeTools.toHtml(currentTask, conn,
+            String html = DataNodeTools.treeNodeHtml(currentTask, conn,
                     myController, nodeTable, node, tags,
-                    nodePageid, 4 * level, hierarchyNumber);
+                    nodePageid, 4 * level, hierarchyNumber, false);
             treeHtmlWriter.write(html);
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -900,7 +856,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     protected void writeListHtml(FxTask currentTask, Connection conn,
             String parentName, String hierarchyNumber, DataNode node, FileWriter writer, List<DataNodeTag> tags) {
         try {
-            String html = DataNodeTools.toHtml(currentTask, conn,
+            String html = DataNodeTools.listNodeHtml(currentTask, conn,
                     myController, nodeTable, parentName, hierarchyNumber, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
                     orderCheck.isSelected(), dataCheck.isSelected());

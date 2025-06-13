@@ -62,6 +62,10 @@ public class HtmlWriteTools {
         editHtml(html(title, body));
     }
 
+
+    /*
+        build html
+     */
     public static String emptyHmtl(String title) {
         String body = title == null ? "<BODY>\n\n\n</BODY>\n" : "<BODY>\n<h2>" + title + "</h2>\n</BODY>\n";
         return html(title, "utf-8", null, body);
@@ -88,9 +92,6 @@ public class HtmlWriteTools {
         return s.toString();
     }
 
-    /*
-        build html
-     */
     public static String htmlPrefix() {
         return htmlPrefix(null, "utf-8", HtmlStyles.DefaultStyle);
     }

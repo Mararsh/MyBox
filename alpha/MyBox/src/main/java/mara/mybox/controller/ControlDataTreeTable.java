@@ -203,7 +203,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private DataNode currentNode;
+            private DataNode rootNode, currentNode;
 
             @Override
             protected boolean handle() {
@@ -212,6 +212,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
+                    rootNode = nodeTable.getRoot(conn);
                     long id;
                     if (node == null) {
                         id = RootID;
@@ -231,15 +232,12 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
 
             @Override
             protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
                 if (currentNode != null) {
                     dataController.currentNode = currentNode;
                     if (currentNode.isRoot()) {
                         dataController.rootNode = currentNode.cloneAll();
+                    } else {
+                        dataController.rootNode = rootNode;
                     }
                     if (refreshChildren) {
                         loadTableData();

@@ -148,8 +148,8 @@ public class ControlWebView extends BaseController {
         try {
             webEngine = webView.getEngine();
 
-            webView.setCache(false);
-            webEngine.setJavaScriptEnabled(true);
+            webView.setCache(UserConfig.getBoolean(interfaceName + "Cache", false));
+            webEngine.setJavaScriptEnabled(UserConfig.getBoolean(interfaceName + "JavaScriptEnabled", true));
 
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
@@ -439,6 +439,8 @@ public class ControlWebView extends BaseController {
         if (timer != null) {
             timer.cancel();
         }
+        content = null;
+        webEngine.getLoadWorker().cancel();
 //        clearListener(webEngine.getDocument());
     }
 
@@ -529,6 +531,19 @@ public class ControlWebView extends BaseController {
             if (timer != null) {
                 timer.cancel();
             }
+            Document doc = webEngine.getDocument();
+            if (doc != null) {
+                initDoc(doc);
+                NodeList frameList = doc.getElementsByTagName("frame");
+                for (int i = 0; i < frameList.getLength(); i++) {
+                    executeScript("if ( window.frames[" + i + "].document.readyState==\"complete\") control.frameIndexReady(" + i + ");");
+                    executeScript("window.frames[" + i + "].document.onreadystatechange = "
+                            + "function(){ if ( window.frames[" + i + "].document.readyState==\"complete\") control.frameIndexReady(" + i + "); }");
+                }
+
+                executeScript("window.onscroll=function(){ control.scrolled();}");
+            }
+
             if (initStyle != null) {
                 writeStyle(initStyle);
             } else {
@@ -540,6 +555,7 @@ public class ControlWebView extends BaseController {
                 executeScript("document.body.contentEditable=" + UserConfig.getBoolean(baseName + "Editable", false));
             } catch (Exception e) {
             }
+
             if (null == scrollType) {
                 executeScript("setTimeout(window.scrollTo(" + scrollLeft + "," + scrollTop + "), 1000);");
             } else {
@@ -556,19 +572,6 @@ public class ControlWebView extends BaseController {
                 }
             }
             setWebViewLabel(message("Loaded"));
-
-            Document doc = webEngine.getDocument();
-            if (doc != null) {
-                initDoc(doc);
-                NodeList frameList = doc.getElementsByTagName("frame");
-                for (int i = 0; i < frameList.getLength(); i++) {
-                    executeScript("if ( window.frames[" + i + "].document.readyState==\"complete\") control.frameIndexReady(" + i + ");");
-                    executeScript("window.frames[" + i + "].document.onreadystatechange = "
-                            + "function(){ if ( window.frames[" + i + "].document.readyState==\"complete\") control.frameIndexReady(" + i + "); }");
-                }
-
-                executeScript("window.onscroll=function(){ control.scrolled();}");
-            }
 
             pageLoadedNotify.set(!pageLoadedNotify.get());
 
@@ -725,7 +728,6 @@ public class ControlWebView extends BaseController {
     public void writeContent(String content) {
         reset();
         this.content = content;
-        webEngine.getLoadWorker().cancel();
         webEngine.loadContent(content == null ? "" : content);
     }
 
@@ -761,9 +763,7 @@ public class ControlWebView extends BaseController {
                 return;
             }
             reset();
-            content = null;
             setWebViewLabel(message("Loading..."));
-            webEngine.getLoadWorker().cancel();
             webEngine.load(address);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1453,6 +1453,26 @@ public class ControlWebView extends BaseController {
             });
             items.add(editableMenu);
 
+            CheckMenuItem cacheMenu = new CheckMenuItem(message("Cache"), StyleTools.getIconImageView("iconBackup.png"));
+            cacheMenu.setSelected(UserConfig.getBoolean(interfaceName + "Cache", false));
+            cacheMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    setCache(cacheMenu.isSelected());
+                }
+            });
+            items.add(cacheMenu);
+
+            CheckMenuItem jsMenu = new CheckMenuItem(message("JavaScriptEnabled"), StyleTools.getIconImageView("iconBackup.png"));
+            jsMenu.setSelected(UserConfig.getBoolean(interfaceName + "JavaScriptEnabled", true));
+            jsMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    setCache(jsMenu.isSelected());
+                }
+            });
+            items.add(jsMenu);
+
             CheckMenuItem interceptMenu = new CheckMenuItem(message("InterceptPopWindow"), StyleTools.getIconImageView("iconArc.png"));
             interceptMenu.setSelected(UserConfig.getBoolean("WebViewInterceptPopWindow", false));
             interceptMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -1554,6 +1574,18 @@ public class ControlWebView extends BaseController {
         if (e) {
             alertInformation(message("HtmlEditableComments"));
         }
+    }
+
+    public void setCache(boolean e) {
+        UserConfig.setBoolean(interfaceName + "Cache", e);
+        webView.setCache(e);
+        popInformation(message("OK"));
+    }
+
+    public void setJavaScriptEnabled(boolean e) {
+        UserConfig.setBoolean(interfaceName + "JavaScriptEnabled", e);
+        webEngine.setJavaScriptEnabled(e);
+        popInformation(message("OK"));
     }
 
     @FXML

@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
         <children>
             <fx:include fx:id="color" source="ControlColorSet.fxml" />
       <ColorPicker fx:id="colorPicker" />
-            <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#addColor">
+            <Button fx:id="paletteAddInButton" mnemonicParsing="false" onAction="#addColor">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>

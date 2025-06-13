@@ -92,7 +92,7 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
-                                                                                <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#addColor">
+                                                                                <Button fx:id="paletteAddInButton" mnemonicParsing="false" onAction="#addColor">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
@@ -133,7 +133,7 @@ License:    Apache License Version 2.0
                                                                         </HBox>
                                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                             <children>
-                                                                                <RadioButton fx:id="inputRadio" mnemonicParsing="false"  toggleGroup="$separatorGroup" />
+                                                                                <RadioButton fx:id="inputRadio" mnemonicParsing="false" toggleGroup="$separatorGroup" />
                                                                                 <TextField fx:id="separatorInput" prefWidth="80.0" />
                                                                                 <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                                                                                     <graphic>

@@ -159,6 +159,8 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     public void focusItem(TreeItem<DataNode> nodeitem) {
         super.focusItem(nodeitem);
         try {
+            dataController.currentNode = nodeitem.getValue();
+            dataController.viewNode(nodeitem.getValue());
             nodeitem.getValue().getSelected().set(true);
         } catch (Exception e) {
         }

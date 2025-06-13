@@ -22,6 +22,49 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataNodeTools {
 
+    /*
+        static
+     */
+    public static String htmlControls() {
+        String codes = " <script>\n"
+                + "    function showNode(id) {\n"
+                + "      var obj = document.getElementById(id);\n"
+                + "      var objv = obj.style.display;\n"
+                + "      if (objv == 'none') {\n"
+                + "        obj.style.display = 'block';\n"
+                + "      } else {\n"
+                + "        obj.style.display = 'none';\n"
+                + "      }\n"
+                + "    }\n"
+                + "    function nodeClicked(id) {\n"
+                + "       alert('nodeClicked:' +id);\n"
+                + "    }\n"
+                + "    function showClass(className, show) {\n"
+                + "      var nodes = document.getElementsByClassName(className);  　\n"
+                + "      if ( show) {\n"
+                + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                + "              nodes[i].style.display = '';\n"
+                + "           }\n"
+                + "       } else {\n"
+                + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                + "              nodes[i].style.display = 'none';\n"
+                + "           }\n"
+                + "       }\n"
+                + "    }\n"
+                + "  </script>\n\n";
+        codes += "<DIV>\n<DIV>\n"
+                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">"
+                + message("Unfold") + "</INPUT>\n"
+                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('HierarchyNumber', this.checked);\">"
+                + message("HierarchyNumber") + "</INPUT>\n"
+                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">"
+                + message("Tags") + "</INPUT>\n"
+                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">"
+                + message("Values") + "</INPUT>\n"
+                + "</DIV>\n<HR>\n";
+        return codes;
+    }
+
     public static String tagHtml(DataNodeTag nodeTag) {
         if (nodeTag == null) {
             return null;
@@ -36,7 +79,7 @@ public class DataNodeTools {
                 + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n";
     }
 
-    public static String toHtml(FxTask fxTask, Connection conn,
+    public static String listNodeHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
             String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
@@ -105,25 +148,31 @@ public class DataNodeTools {
         }
     }
 
-    public static String toHtml(FxTask fxTask, Connection conn,
+    public static String treeNodeHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable nodeTable,
             DataNode node, List<DataNodeTag> tags,
-            String nodePageid, int indent, String serialNumber) {
+            String nodePageid, int indent,
+            String hierarchyNumber, boolean withShow) {
         try {
             StringBuilder s = new StringBuilder();
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
-            String nodeName = node.getTitle();
-            String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
+            String hieName = hierarchyNumber != null && !hierarchyNumber.isBlank() ? hierarchyNumber : "0";
+            hieName = "<SPAN class=\"HierarchyNumber\">" + hieName + "</SPAN>";
             boolean hasChildren = nodeTable.hasChildren(conn, node);
             if (hasChildren) {
-                displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
+                hieName = "<a href=\"javascript:showNode('" + nodePageid + "')\">" + hieName + "</a>";
             }
             s.append(indentNode).append("<DIV style=\"padding: 2px;\">")
-                    .append(spaceNode).append(displayName).append("\n");
+                    .append(spaceNode).append(hieName);
+            String spaceTag = "&nbsp;".repeat(2);
+            String displayName = node.getTitle();
+            if (withShow) {
+                displayName = "<a href=\"javascript:nodeClicked(" + node.getNodeid() + ")\">" + displayName + "</a>";
+            }
+            s.append(spaceTag).append(displayName);
             if (tags != null && !tags.isEmpty()) {
                 String indentTag = " ".repeat(indent + 8);
-                String spaceTag = "&nbsp;".repeat(2);
                 s.append(indentTag).append("<SPAN class=\"NodeTag\">\n");
                 for (DataNodeTag nodeTag : tags) {
                     s.append(indentTag).append(spaceTag).append(tagHtml(nodeTag));
