@@ -167,7 +167,7 @@ public class ControlDataTreeHtml extends ControlWebView {
                 return;
             }
             dataController.currentNode = node;
-            dataController.leftClicked(null, node);
+            dataController.showNode(node);
         } catch (Exception e) {
         }
     }

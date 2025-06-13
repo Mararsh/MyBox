@@ -100,6 +100,11 @@ License:    Apache License Version 2.0
                                                 <fx:include fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeView.fxml" VBox.vgrow="ALWAYS" />
                                             </children>
                                         </VBox>
+                                        <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <children> 
+                                                <fx:include fx:id="html" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeHtml.fxml" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
                                     </children>
                                 </VBox>
                             </children>
