@@ -846,7 +846,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         try {
             String html = DataNodeTools.treeNodeHtml(currentTask, conn,
                     myController, nodeTable, node, tags,
-                    nodePageid, 4 * level, hierarchyNumber, false);
+                    nodePageid, 4 * level, hierarchyNumber);
             treeHtmlWriter.write(html);
         } catch (Exception e) {
             updateLogs(e.toString());

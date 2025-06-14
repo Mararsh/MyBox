@@ -381,11 +381,18 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (node.getChildrenSize() > 0) {
             return true;
         }
+        return hasChildren(conn, node.getNodeid());
+    }
+
+    public boolean hasChildren(Connection conn, long nodeid) {
+        if (conn == null || nodeid < 0) {
+            return false;
+        }
         boolean hasChildren = false;
         String sql = "SELECT nodeid FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, node.getNodeid());
+            statement.setLong(1, nodeid);
             try (ResultSet results = statement.executeQuery()) {
                 hasChildren = results != null && results.next();
             }
@@ -678,6 +685,23 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
         node.setHierarchyNumber(h);
         return node;
+    }
+
+    public String title(Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return null;
+        }
+        String sql = "SELECT title FROM " + tableName + " WHERE nodeid=?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            try (ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    return results.getString("title");
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     /*

@@ -146,7 +146,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             }
 
         };
-        start(task, thisPane);
+        start(task);
     }
 
     @Override

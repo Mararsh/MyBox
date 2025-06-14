@@ -36,9 +36,6 @@ public class DataNodeTools {
                 + "        obj.style.display = 'none';\n"
                 + "      }\n"
                 + "    }\n"
-                + "    function nodeClicked(id) {\n"
-                + "       alert('nodeClicked:' +id);\n"
-                + "    }\n"
                 + "    function showClass(className, show) {\n"
                 + "      var nodes = document.getElementsByClassName(className);  　\n"
                 + "      if ( show) {\n"
@@ -152,25 +149,20 @@ public class DataNodeTools {
             BaseController controller, BaseNodeTable nodeTable,
             DataNode node, List<DataNodeTag> tags,
             String nodePageid, int indent,
-            String hierarchyNumber, boolean withShow) {
+            String hierarchyNumber) {
         try {
             StringBuilder s = new StringBuilder();
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
-            String hieName = hierarchyNumber != null && !hierarchyNumber.isBlank() ? hierarchyNumber : "0";
-            hieName = "<SPAN class=\"HierarchyNumber\">" + hieName + "</SPAN>";
+            String spaceTag = "&nbsp;".repeat(2);
+            String displayName = hierarchyNumber != null && !hierarchyNumber.isBlank() ? hierarchyNumber : "0";
+            displayName = "<SPAN class=\"HierarchyNumber\">" + displayName + "</SPAN>" + spaceTag + node.getTitle();
             boolean hasChildren = nodeTable.hasChildren(conn, node);
             if (hasChildren) {
-                hieName = "<a href=\"javascript:showNode('" + nodePageid + "')\">" + hieName + "</a>";
+                displayName = "<a href=\"javascript:showNode('" + nodePageid + "')\">" + displayName + "</a>";
             }
             s.append(indentNode).append("<DIV style=\"padding: 2px;\">")
-                    .append(spaceNode).append(hieName);
-            String spaceTag = "&nbsp;".repeat(2);
-            String displayName = node.getTitle();
-            if (withShow) {
-                displayName = "<a href=\"javascript:nodeClicked(" + node.getNodeid() + ")\">" + displayName + "</a>";
-            }
-            s.append(spaceTag).append(displayName);
+                    .append(spaceNode).append(displayName);
             if (tags != null && !tags.isEmpty()) {
                 String indentTag = " ".repeat(indent + 8);
                 s.append(indentTag).append("<SPAN class=\"NodeTag\">\n");

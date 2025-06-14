@@ -435,7 +435,7 @@ public class ControlWebView extends BaseController {
         loadContent("");
     }
 
-    private void reset() {
+    protected void reset() {
         if (timer != null) {
             timer.cancel();
         }
@@ -444,7 +444,7 @@ public class ControlWebView extends BaseController {
 //        clearListener(webEngine.getDocument());
     }
 
-    private void ready() {
+    protected void ready() {
         try {
             if (timer != null) {
                 timer.cancel();
@@ -456,7 +456,7 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    private void running() {
+    protected void running() {
         try {
             pageLoadingNotify.set(!pageLoadingNotify.get());
             timer = new Timer();
@@ -474,7 +474,7 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    private boolean initDoc(Document doc) {
+    protected boolean initDoc(Document doc) {
         try {
             if (doc == null) {
                 return false;
@@ -512,7 +512,7 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    public void setListeners(Document doc) {
+    protected void setListeners(Document doc) {
         try {
             if (doc == null) {
                 return;
@@ -526,7 +526,7 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    private void succeeded() {
+    protected void succeeded() {
         try {
             if (timer != null) {
                 timer.cancel();
@@ -1463,7 +1463,7 @@ public class ControlWebView extends BaseController {
             });
             items.add(cacheMenu);
 
-            CheckMenuItem jsMenu = new CheckMenuItem(message("JavaScriptEnabled"), StyleTools.getIconImageView("iconBackup.png"));
+            CheckMenuItem jsMenu = new CheckMenuItem(message("JavaScriptEnabled"), StyleTools.getIconImageView("iconScript.png"));
             jsMenu.setSelected(UserConfig.getBoolean(interfaceName + "JavaScriptEnabled", true));
             jsMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
