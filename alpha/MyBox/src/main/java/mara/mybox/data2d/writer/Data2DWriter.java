@@ -146,7 +146,19 @@ public abstract class Data2DWriter {
     }
 
     public void closeWriter() {
+        try {
+            finishWork();
+            if (operate == null && conn != null) {
+                conn.commit();
+                conn.close();
+                conn = null;
+            }
+        } catch (Exception e) {
+            showError(e.toString());
+        }
+    }
 
+    public void finishWork() {
     }
 
     /*

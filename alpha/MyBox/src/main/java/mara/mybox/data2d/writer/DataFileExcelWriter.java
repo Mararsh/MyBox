@@ -117,7 +117,7 @@ public class DataFileExcelWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         try {
             if (xssfBook == null || xssfSheet == null || tmpFile == null) {
                 showInfo(message("Failed") + ": " + printFile);

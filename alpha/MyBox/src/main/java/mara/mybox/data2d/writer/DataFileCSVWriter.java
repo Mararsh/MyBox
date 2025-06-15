@@ -71,7 +71,7 @@ public class DataFileCSVWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         try {
             if (printer == null || printFile == null) {
                 showInfo(message("Failed") + ": " + printFile);

@@ -302,10 +302,6 @@ public class BaseDataTreeController extends BaseFileController {
         }
     }
 
-    public DataNode parentNode(DataNode node) {
-        return node.getParentNode();
-    }
-
     public boolean isSourceNode(DataNode node) {
         return equalNode(node, sourceNode);
     }
@@ -398,7 +394,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (tableRadio.isSelected()) {
             tableController.loadNode(node);
         } else if (htmlRadio.isSelected()) {
-            //  ?????
+            htmlController.unfoldNode(node);
         } else {
             treeController.unfoldNode(node);
         }
@@ -411,7 +407,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (tableRadio.isSelected()) {
             tableController.refreshNode(node);
         } else if (htmlRadio.isSelected()) {
-            //  ?????
+            htmlController.loadTree(node);
         } else {
             treeController.refreshNode(node);
         }
@@ -444,7 +440,7 @@ public class BaseDataTreeController extends BaseFileController {
             if (tableRadio.isSelected()) {
                 tableController.nodeSaved(parent, node);
             } else if (htmlRadio.isSelected()) {
-                //  ?????
+                htmlController.loadTree(node);
             } else {
                 treeController.nodeSaved(parent, node);
             }
@@ -580,7 +576,8 @@ public class BaseDataTreeController extends BaseFileController {
                 items.add(menu);
 
             } else if (htmlRadio.isSelected()) {
-                //  ?????
+                items.addAll(htmlController.foldMenuItems(node));
+
             } else {
                 items.addAll(treeController.foldMenuItems());
 

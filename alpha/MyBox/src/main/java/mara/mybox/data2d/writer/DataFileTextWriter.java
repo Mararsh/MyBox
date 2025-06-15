@@ -70,7 +70,7 @@ public class DataFileTextWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         try {
             if (fileWriter == null || printFile == null) {
                 showInfo(message("Failed") + ": " + printFile);

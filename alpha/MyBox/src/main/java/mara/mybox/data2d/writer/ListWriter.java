@@ -41,7 +41,7 @@ public class ListWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         if (isFailed() || rows == null) {
             showInfo(message("Failed"));
             status = Status.Failed;

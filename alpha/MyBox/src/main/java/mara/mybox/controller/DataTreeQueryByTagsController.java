@@ -129,8 +129,8 @@ public class DataTreeQueryByTagsController extends BaseTaskController {
             }
             if (count > 0) {
                 insert.executeBatch();
-                conn.commit();
             }
+            conn.commit();
             insert.close();
             results.setRowsNumber(count);
             if (count > 0) {

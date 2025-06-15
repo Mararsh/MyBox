@@ -487,9 +487,21 @@ public class ControlWebView extends BaseController {
             if (timer != null) {
                 timer.cancel();
             }
+            ((JSObject) winObject).setMember("control", this);
             setListeners(doc);
 
-            ((JSObject) winObject).setMember("control", this);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return false;
+        }
+    }
+
+    protected void setListeners(Document doc) {
+        try {
+            if (doc == null) {
+                return;
+            }
             String js = "if ( document.addEventListener ) "
                     + "{  document.addEventListener('mouseover', (event) => {\n"
                     + "      const link = event.target.closest('a');\n"
@@ -505,18 +517,6 @@ public class ControlWebView extends BaseController {
                     + "} ";
             executeScript(js);
 
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            return false;
-        }
-    }
-
-    protected void setListeners(Document doc) {
-        try {
-            if (doc == null) {
-                return;
-            }
             EventTarget t = (EventTarget) doc.getDocumentElement();
             t.addEventListener("contextmenu", docListener, true);
             t.addEventListener("click", docListener, true);
@@ -793,7 +793,7 @@ public class ControlWebView extends BaseController {
             }
             return webEngine.executeScript(js);
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            MyBoxLog.console(e + "\n" + js);
             return null;
         }
     }

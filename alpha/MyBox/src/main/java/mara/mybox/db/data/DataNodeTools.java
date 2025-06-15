@@ -62,6 +62,20 @@ public class DataNodeTools {
         return codes;
     }
 
+    public static String tagsHtml(List<DataNodeTag> tags, int indent) {
+        if (tags == null || tags.isEmpty()) {
+            return "";
+        }
+        String indentTag = " ".repeat(indent + 8);
+        String spaceTag = "&nbsp;".repeat(2);
+        String s = indentTag + "<SPAN class=\"NodeTag\">\n";
+        for (DataNodeTag nodeTag : tags) {
+            s += indentTag + spaceTag + tagHtml(nodeTag);
+        }
+        s += indentTag + "</SPAN>\n";
+        return s;
+    }
+
     public static String tagHtml(DataNodeTag nodeTag) {
         if (nodeTag == null) {
             return null;
@@ -74,6 +88,16 @@ public class DataNodeTools {
                 + FxColorTools.color2rgb(color) + "; color: "
                 + FxColorTools.color2rgb(FxColorTools.foreColor(color))
                 + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n";
+    }
+
+    public static String valuesBox(String dataHtml, String prefix, int indent) {
+        if (dataHtml == null || dataHtml.isBlank()) {
+            return "";
+        }
+        return prefix + "<DIV class=\"nodeValue\"><DIV style=\"padding: 0 0 0 "
+                + (indent + 4) * 6 + "px;\"><DIV class=\"valueBox\">\n"
+                + prefix + dataHtml + "\n"
+                + prefix + "</DIV></DIV></DIV>\n";
     }
 
     public static String listNodeHtml(FxTask fxTask, Connection conn,
@@ -163,24 +187,12 @@ public class DataNodeTools {
             }
             s.append(indentNode).append("<DIV style=\"padding: 2px;\">")
                     .append(spaceNode).append(displayName);
-            if (tags != null && !tags.isEmpty()) {
-                String indentTag = " ".repeat(indent + 8);
-                s.append(indentTag).append("<SPAN class=\"NodeTag\">\n");
-                for (DataNodeTag nodeTag : tags) {
-                    s.append(indentTag).append(spaceTag).append(tagHtml(nodeTag));
-                }
-                s.append(indentTag).append("</SPAN>\n");
-            }
+
+            s.append(tagsHtml(tags, indent));
             s.append(indentNode).append("</DIV>\n");
 
-            String dataHtml = nodeTable.valuesHtml(fxTask, conn, controller, node);
-            if (dataHtml != null && !dataHtml.isBlank()) {
-                s.append(indentNode).append("<DIV class=\"nodeValue\"><DIV style=\"padding: 0 0 0 ")
-                        .append((indent + 4) * 6).append("px;\"><DIV class=\"valueBox\">\n");
-                s.append(indentNode).append(dataHtml).append("\n");
-                s.append(indentNode).append("</DIV></DIV></DIV>\n");
-            }
-
+            s.append(valuesBox(nodeTable.valuesHtml(fxTask, conn, controller, node),
+                    indentNode, indent));
             return s.toString();
         } catch (Exception e) {
             if (fxTask != null) {

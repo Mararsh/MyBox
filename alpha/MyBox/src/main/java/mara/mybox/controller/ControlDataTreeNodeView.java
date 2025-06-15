@@ -63,7 +63,7 @@ public class ControlDataTreeNodeView extends ControlWebView {
                     if (node == null) {
                         return false;
                     }
-                    html = nodeTable.valuesHtml(this, conn, controller, node,
+                    html = nodeTable.nodeHtml(this, conn, controller, node,
                             node.getHierarchyNumber(), 4);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {

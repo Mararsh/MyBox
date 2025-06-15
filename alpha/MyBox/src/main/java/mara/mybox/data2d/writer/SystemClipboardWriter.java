@@ -55,7 +55,7 @@ public class SystemClipboardWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         if (isFailed() || builder == null) {
             showInfo(message("Failed"));
             status = Status.Failed;
