@@ -846,7 +846,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         try {
             String html = DataNodeTools.treeNodeHtml(currentTask, conn,
                     myController, nodeTable, node, tags,
-                    nodePageid, 4 * level, hierarchyNumber);
+                    nodePageid, 4 * level, hierarchyNumber,
+                    idCheck.isSelected(), timeCheck.isSelected(),
+                    orderCheck.isSelected(), dataCheck.isSelected());
             treeHtmlWriter.write(html);
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -854,7 +856,8 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected void writeListHtml(FxTask currentTask, Connection conn,
-            String parentName, String hierarchyNumber, DataNode node, FileWriter writer, List<DataNodeTag> tags) {
+            String parentName, String hierarchyNumber, DataNode node,
+            FileWriter writer, List<DataNodeTag> tags) {
         try {
             String html = DataNodeTools.listNodeHtml(currentTask, conn,
                     myController, nodeTable, parentName, hierarchyNumber, node, tags,

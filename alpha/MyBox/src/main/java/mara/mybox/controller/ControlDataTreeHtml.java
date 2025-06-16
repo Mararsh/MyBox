@@ -98,7 +98,7 @@ public class ControlDataTreeHtml extends ControlWebView {
             html = HtmlWriteTools.htmlPrefix(nodeTable.getTreeName(), "utf-8", null);
             html += Indent + "<BODY>\n"
                     + " <script>\n"
-                    + "    function changeChildrenDisplay(nodeid) {\n"
+                    + "    function setChildren(nodeid) {\n"
                     + "      var obj = document.getElementById('children' + nodeid);\n"
                     + "      var objv = obj.style.display;\n"
                     + "      if (objv == 'none') {\n"
@@ -159,7 +159,7 @@ public class ControlDataTreeHtml extends ControlWebView {
             String hieName = hierarchyNumber != null && !hierarchyNumber.isBlank() ? hierarchyNumber : "0";
             boolean hasChildren = nodeTable.hasChildren(conn, nodeid);
             if (hasChildren) {
-                hieName = "<a href=\"javascript:changeChildrenDisplay('" + nodeid + "')\">" + hieName + "</a>";
+                hieName = "<a href=\"javascript:setChildren('" + nodeid + "')\">" + hieName + "</a>";
             }
             s.append(indentNode).append("<DIV id='node").append(nodeid)
                     .append("' oncontextmenu=\"contextMenu(").append(nodeid)
@@ -220,7 +220,11 @@ public class ControlDataTreeHtml extends ControlWebView {
     @Override
     protected void succeeded() {
         super.succeeded();
+        if (content == null || content.isBlank()) {
+            return;
+        }
         selectNode(dataController.currentNode);
+        setWebViewLabel(message("Count") + ": " + count);
     }
 
     @Override

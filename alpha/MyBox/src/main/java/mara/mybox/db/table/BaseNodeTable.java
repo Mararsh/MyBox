@@ -19,7 +19,6 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
@@ -739,47 +738,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return names;
     }
 
-    public String nodeHtml(DataNode node) {
-        if (node == null) {
-            return null;
-        }
-        String title = "<P align=\"center\">" + node.getTitle() + "</p>";
-        String html = nodeHtml(null, null, null, node, node.getHierarchyNumber(), 0);
-        if (html == null) {
-            return title;
-        } else {
-            return title + "<BR>" + html;
-        }
-    }
-
     // Node should be queried with all fields
     public String nodeHtml(FxTask task, Connection conn,
-            BaseController controller, DataNode node,
-            String hierarchyNumber, int indent) {
-        try {
-            if (conn == null || node == null) {
-                return null;
-            }
-            long nodeid = node.getNodeid();
-            String indentNode = " ".repeat(indent);
-            String spaceNode = "&nbsp;".repeat(indent);
-            String nodeName = node.getTitle();
-            String displayName = "<SPAN class=\"SerialNumber\">"
-                    + (hierarchyNumber != null ? hierarchyNumber : "")
-                    + "&nbsp;&nbsp;</SPAN>" + nodeName;
-
-            String html = indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode + displayName + "\n";
-            List<DataNodeTag> tags = new TableDataNodeTag(this).nodeTags(conn, nodeid);
-            html += DataNodeTools.tagsHtml(tags, indent);
-            html += indentNode + "</DIV>\n";
-
-            String dataHtml = valuesHtml(task, conn, controller, node);
-            html += DataNodeTools.valuesBox(dataHtml, indentNode, indent);
-            return html;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+            BaseController controller, DataNode node) {
+        return DataNodeTools.nodeHtml(task, conn, controller, this, node);
     }
 
     public String valuesHtml(FxTask task, Connection conn,
@@ -914,12 +876,11 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = query(conn, node.getNodeid());
+                    savedNode = readChain(this, conn, node.getNodeid());
                     if (savedNode == null) {
                         return false;
                     }
-                    html = BaseNodeTable.this.nodeHtml(this, conn, controller, savedNode,
-                            node.getHierarchyNumber(), 4);
+                    html = nodeHtml(this, conn, controller, savedNode);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();

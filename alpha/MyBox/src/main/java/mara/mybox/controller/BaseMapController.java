@@ -982,12 +982,20 @@ public class BaseMapController extends BaseController {
                     }
 
                     if (geoCodes != null && !geoCodes.isEmpty()) {
-                        for (GeographyCode code : geoCodes) {
-                            if (task == null || isCancelled()) {
-                                return false;
+                        try (Connection conn = DerbyBase.getConnection()) {
+                            for (GeographyCode code : geoCodes) {
+                                if (task == null || isCancelled()) {
+                                    return false;
+                                }
+                                s.append(nodeTable.nodeHtml(this, conn, myController,
+                                        GeographyCodeTools.toNode(code)));
+                                s.append("<BR>");
                             }
-                            s.append(nodeTable.html(code)).append("<br>");
+                        } catch (Exception e) {
+                            error = e.toString();
+                            return false;
                         }
+
                     }
 
                     html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), s.toString());
