@@ -109,9 +109,9 @@ public class DataNodeTools {
             return "";
         }
         String title = node.getHierarchyNumber();
-        title = "<SPAN class=\"SerialNumber\">"
-                + (title != null ? (title + "&nbsp;&nbsp;") : "")
-                + "</SPAN>";
+        if (title != null && !title.isBlank()) {
+            title = "<SPAN class=\"HierarchyNumber\">" + title + "&nbsp;&nbsp;</SPAN>";
+        }
         if (nodePageid != null) {
             title += "<a href=\"javascript:setChildren('" + nodePageid + "')\">" + node.getTitle() + "</a>";
         } else {
@@ -124,7 +124,7 @@ public class DataNodeTools {
     }
 
     public static String attributesHtml(DataNode node,
-            String parentName, boolean withId, boolean withTime, boolean withOrder,
+            boolean withId, boolean withTime, boolean withOrder,
             String spaceIndent) {
         if (node == null) {
             return "";
@@ -144,11 +144,20 @@ public class DataNodeTools {
         if (withTime && node.getUpdateTime() != null) {
             attributes += message("UpdateTime") + ":" + DateTools.datetimeToString(node.getUpdateTime()) + " ";
         }
-        if (parentName != null) {
-            attributes += "<BR>" + message("Parent") + ":" + parentName;
+        if (!attributes.isBlank()) {
+            attributes = "<SPAN>" + spaceIndent + "</SPAN>"
+                    + "<SPAN style=\"font-size: 0.8em;\">" + attributes.trim() + "</SPAN>\n";
+        }
+        String cname = node.getChainName();
+        if (cname != null && !cname.isBlank()) {
+            if (!attributes.isBlank()) {
+                attributes += "<BR>";
+            }
+            attributes += "<SPAN>" + spaceIndent + "</SPAN>"
+                    + "<SPAN style=\"font-size: 0.8em;\">" + message("Parent") + ":" + cname + "</SPAN>\n";
         }
         if (!attributes.isBlank()) {
-            attributes = "<H5 class=\"NodeAttributes\">" + spaceIndent + attributes.trim() + "</H5>\n";
+            attributes = "<DIV class=\"NodeAttributes\">" + attributes + "</DIV>\n";
         }
         return attributes;
     }
@@ -166,7 +175,7 @@ public class DataNodeTools {
             String html = titleHtml(node, tags, null, Indent, "");
             html += DataNodeTools.valuesBox(dataTable.valuesHtml(task, conn, controller, node),
                     indentNode, 4);
-            html += attributesHtml(node, null, true, true, true, "");
+            html += attributesHtml(node, true, true, true, "");
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -176,9 +185,9 @@ public class DataNodeTools {
 
     public static String listNodeHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable nodeTable,
-            String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
+            boolean withId,
+            boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
             String indent2 = Indent + Indent;
@@ -192,7 +201,7 @@ public class DataNodeTools {
                     s.append(values);
                 }
             }
-            String attrs = attributesHtml(node, parentName, withId, withTime, withOrder, spaceNode);
+            String attrs = attributesHtml(node, withId, withTime, withOrder, spaceNode);
             if (!attrs.isBlank()) {
                 s.append(attrs);
             }
@@ -211,14 +220,15 @@ public class DataNodeTools {
     public static String treeNodeHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable nodeTable,
             DataNode node, List<DataNodeTag> tags,
-            String nodePageid, int indent, String hierarchyNumber,
-            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
+            int indent,
+            boolean withId,
+            boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             s.append(titleHtml(node, tags,
-                    nodeTable.hasChildren(conn, node) ? nodePageid : null,
+                    nodeTable.hasChildren(conn, node) ? "node" + node.getNodeid() : null,
                     indentNode, spaceNode));
             if (withData) {
                 String values = valuesBox(nodeTable.valuesHtml(fxTask, conn, controller, node),
@@ -227,7 +237,8 @@ public class DataNodeTools {
                     s.append(values);
                 }
             }
-            String attrs = attributesHtml(node, null, withId, withTime, withOrder, spaceNode);
+            String attrs = attributesHtml(node, withId, withTime, withOrder,
+                    spaceNode + "&nbsp;".repeat(4));
             if (!attrs.isBlank()) {
                 s.append(indentNode).append(Indent).append(attrs);
             }
@@ -244,9 +255,10 @@ public class DataNodeTools {
 
     public static String toXML(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String prefix, String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder,
+            String prefix,
+            boolean withId,
+            boolean withTime, boolean withOrder,
             boolean withData, boolean formatData) {
         try {
             StringBuilder s = new StringBuilder();
@@ -261,12 +273,14 @@ public class DataNodeTools {
                     s.append(prefix2).append("<parentid>").append(node.getParentid()).append("</parentid>\n");
                 }
             }
-            if (parentName != null) {
+            String cname = node.getChainName();
+            if (cname != null && !cname.isBlank()) {
                 s.append(prefix2).append("<parent_name>\n");
-                s.append(prefix3).append("<![CDATA[").append(parentName).append("]]>\n");
+                s.append(prefix3).append("<![CDATA[").append(cname).append("]]>\n");
                 s.append(prefix2).append("</parent_name>\n");
             }
-            if (hierarchyNumber != null) {
+            String hierarchyNumber = node.getHierarchyNumber();
+            if (hierarchyNumber != null && !hierarchyNumber.isBlank()) {
                 s.append(prefix2).append("<hierarchy_number>").append(hierarchyNumber).append("</hierarchy_number>\n");
             }
             if (node.getTitle() != null) {
@@ -309,9 +323,10 @@ public class DataNodeTools {
 
     public static String toJson(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String prefix, String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder,
+            String prefix,
+            boolean withId,
+            boolean withTime, boolean withOrder,
             boolean withData, boolean formatData) {
         try {
             StringBuilder s = new StringBuilder();
@@ -330,15 +345,17 @@ public class DataNodeTools {
                             .append(node.getParentid());
                 }
             }
-            if (parentName != null) {
+            String cname = node.getChainName();
+            if (cname != null && !cname.isBlank()) {
                 if (!s.isEmpty()) {
                     s.append(",\n");
                 }
                 s.append(prefix)
                         .append("\"").append(message("Parent")).append("\": ")
-                        .append(JsonTools.encode(parentName));
+                        .append(JsonTools.encode(cname));
             }
-            if (hierarchyNumber != null) {
+            String hierarchyNumber = node.getHierarchyNumber();
+            if (hierarchyNumber != null && !hierarchyNumber.isBlank()) {
                 if (!s.isEmpty()) {
                     s.append(",\n");
                 }
@@ -399,9 +416,9 @@ public class DataNodeTools {
 
     public static List<String> toCsv(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder,
+            boolean withId,
+            boolean withTime, boolean withOrder,
             boolean withData, boolean formatData) {
         try {
             List<String> row = new ArrayList<>();
@@ -409,11 +426,13 @@ public class DataNodeTools {
                 row.add(node.getNodeid() + "");
                 row.add(node.getParentid() + "");
             }
-            if (parentName != null) {
-                row.add(parentName);
+            String cname = node.getChainName();
+            if (cname != null) {
+                row.add(cname);
             }
-            if (hierarchyNumber != null) {
-                row.add(hierarchyNumber);
+            String hie = node.getHierarchyNumber();
+            if (hie != null) {
+                row.add(hie);
             }
             row.add(node.getTitle());
 
