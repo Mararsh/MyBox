@@ -582,8 +582,18 @@ public class BaseDataTreeController extends BaseFileController {
                 items.addAll(treeController.foldMenuItems());
 
             }
-
         }
+
+        items.add(new SeparatorMenuItem());
+
+        if (htmlRadio.isSelected()) {
+            menu = new MenuItem(message("HtmlCodes"), StyleTools.getIconImageView("iconMeta.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                htmlController.htmlCodes();
+            });
+            items.add(menu);
+        }
+
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             refreshAction();

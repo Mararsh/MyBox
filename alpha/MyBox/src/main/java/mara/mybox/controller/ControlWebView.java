@@ -1354,7 +1354,7 @@ public class ControlWebView extends BaseController {
 
                 menu = new MenuItem(message("HtmlCodes"), StyleTools.getIconImageView("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    HtmlCodesPopController.openWebView(myController, webView);
+                    htmlCodes();
                 });
                 items.add(menu);
 
@@ -1613,6 +1613,10 @@ public class ControlWebView extends BaseController {
             controller.loadContents(address, html);
         }
         return controller;
+    }
+
+    public void htmlCodes() {
+        HtmlCodesPopController.openWebView(myController, webView);
     }
 
     protected void links() {

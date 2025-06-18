@@ -11,8 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.web.WebEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.data.DataNodeTag;
-import static mara.mybox.db.data.DataNodeTools.tagHtml;
+import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
@@ -36,9 +35,8 @@ public class ControlDataTreeHtml extends ControlWebView {
     protected ControlWebView viewController;
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
-    protected String dataName;
+    protected String dataName, html, sql, script;
     protected BaseNodeTable nodeTable;
-    protected String html, hierarchyNumber;
     protected int count, level, childrenNumber;
     protected Stack<Integer> childrenNumberStack;
 
@@ -98,14 +96,23 @@ public class ControlDataTreeHtml extends ControlWebView {
             html = HtmlWriteTools.htmlPrefix(nodeTable.getTreeName(), "utf-8", null);
             html += Indent + "<BODY>\n"
                     + " <script>\n"
-                    + "    function setChildren(nodeid) {\n"
+                    + "    function changeChildrenVisible(nodeid) {\n"
                     + "      var obj = document.getElementById('children' + nodeid);\n"
                     + "      var objv = obj.style.display;\n"
                     + "      if (objv == 'none') {\n"
-                    + "        obj.style.display = 'block';\n"
+                    + "           obj.style.display = 'block';\n"
+                    + "           alert('showChildren:' +nodeid);\n"
                     + "      } else {\n"
-                    + "        obj.style.display = 'none';\n"
+                    + "           obj.style.display = 'none';\n"
                     + "      }\n"
+                    + "    }\n"
+                    + "    function showNode(nodeid) {\n"
+                    + "      var obj = document.getElementById('node' +nodeid);\n"
+                    + "      obj.style.display = 'block';\n"
+                    + "    }\n"
+                    + "    function hideNode(nodeid) {\n"
+                    + "      var obj = document.getElementById('node' +nodeid);\n"
+                    + "      obj.style.display = 'none';\n"
                     + "    }\n"
                     + "    function showChildren(nodeid) {\n"
                     + "      var obj = document.getElementById('children' +nodeid);\n"
@@ -124,7 +131,7 @@ public class ControlDataTreeHtml extends ControlWebView {
                     + "      window.getSelection().removeAllRanges();     \n"
                     + "      var selection = window.getSelection();        \n"
                     + "      var range = document.createRange();        \n"
-                    + "      range.selectNode(document.getElementById('node' +nodeid));        \n"
+                    + "      range.selectNode(document.getElementById('title' +nodeid));        \n"
                     + "      selection.addRange(range);\n"
                     + "    }\n"
                     + "    function nodeClicked(nodeid) {\n"
@@ -135,7 +142,7 @@ public class ControlDataTreeHtml extends ControlWebView {
                     + "      alert('contextMenu:' +nodeid);\n"
                     + "    }\n"
                     + "  </script>\n\n";
-            writeHtml(currentTask, conn, rootNode.getNodeid(), "");
+            writeHtml(currentTask, conn, rootNode.getNodeid(), null, 0);
             html += Indent + "</BODY>\n</HTML>\n";
             return rootNode;
         } catch (Exception e) {
@@ -145,7 +152,7 @@ public class ControlDataTreeHtml extends ControlWebView {
     }
 
     public void writeHtml(FxTask currentTask, Connection conn,
-            long nodeid, String hierarchyNumber) {
+            long nodeid, String parentHierarchyNumber, int nodeIndex) {
         level++;
         if (conn == null || nodeid < 0) {
             return;
@@ -155,49 +162,48 @@ public class ControlDataTreeHtml extends ControlWebView {
             int indent = 4 * level;
             StringBuilder s = new StringBuilder();
             String indentNode = " ".repeat(indent);
+            String indentAttr = " ".repeat(indent + 4);
             String spaceTag = "&nbsp;".repeat(2);
-            String hieName = hierarchyNumber != null && !hierarchyNumber.isBlank() ? hierarchyNumber : "0";
-            boolean hasChildren = nodeTable.hasChildren(conn, nodeid);
-            if (hasChildren) {
-                hieName = "<a href=\"javascript:setChildren('" + nodeid + "')\">" + hieName + "</a>";
+            String hierarchyNumber = parentHierarchyNumber != null
+                    ? parentHierarchyNumber + "." + nodeIndex
+                    : (nodeIndex + "");
+
+            s.append(indentNode).append("<DIV id='node").append(nodeid).append("'>\n");
+            s.append(indentAttr).append("<DIV id='title").append(nodeid).append("' ");
+            s.append("class=\"").append(hierarchyNumber).append("\" ");
+            s.append("oncontextmenu=\"contextMenu(").append(nodeid)
+                    .append("); return false;\" style=\"padding: 2px;\">");
+            String hieName = hierarchyNumber;
+            if (nodeTable.hasChildren(conn, nodeid)) {
+                hieName = "<a href=\"javascript:changeChildrenVisible('" + nodeid + "')\">" + hieName + "</a>";
             }
-            s.append(indentNode).append("<DIV id='node").append(nodeid)
-                    .append("' oncontextmenu=\"contextMenu(").append(nodeid)
-                    .append("); return false;\" style=\"padding: 2px;\">")
-                    .append("&nbsp;".repeat(indent)).append(hieName);
+            s.append("&nbsp;".repeat(indent)).append(hieName);
             String displayName = "<a href=\"javascript:nodeClicked(" + nodeid + ")\">"
                     + nodeTable.title(conn, nodeid) + "</a>";
-            s.append(spaceTag).append(displayName);
-            List<DataNodeTag> tags = nodeTagsTable.nodeTags(conn, nodeid);
-            if (tags != null && !tags.isEmpty()) {
-                String indentTag = " ".repeat(indent + 8);
-                s.append(indentTag);
-                for (DataNodeTag nodeTag : tags) {
-                    s.append(indentTag).append(spaceTag).append(tagHtml(nodeTag));
-                }
-                s.append(indentTag).append("\n");
-            }
-            s.append(indentNode).append("</DIV>\n");
+            s.append(spaceTag).append(displayName).append("\n");
+            s.append(indentAttr).append(
+                    DataNodeTools.tagsHtml(nodeTagsTable.nodeTags(conn, nodeid), indent));
+            s.append(indentAttr).append("</DIV>\n");
             html += s.toString();
             if (currentTask == null || !currentTask.isWorking()) {
                 return;
             }
             childrenNumberStack.push(childrenNumber);
             childrenNumber = 0;
-            html += Indent + "<DIV id='children" + nodeid + "'>\n";
+            html += indentAttr + "<DIV id='children" + nodeid + "' class=\"Children\" >\n";
             String sql = "SELECT nodeid FROM " + nodeTable.getTableName()
                     + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setLong(1, nodeid);
                 try (ResultSet results = statement.executeQuery()) {
-                    String ps = hierarchyNumber == null || hierarchyNumber.isBlank() ? "" : hierarchyNumber + ".";
+                    String pn = hierarchyNumber.equals("0") ? null : hierarchyNumber;
                     while (results != null && results.next()) {
                         if (currentTask == null || !currentTask.isWorking()) {
                             return;
                         }
                         childrenNumber++;
                         writeHtml(currentTask, conn, results.getLong("nodeid"),
-                                ps + childrenNumber);
+                                pn, childrenNumber);
                     }
                 } catch (Exception e) {
                     displayError(e.toString());
@@ -205,7 +211,8 @@ public class ControlDataTreeHtml extends ControlWebView {
             } catch (Exception e) {
                 displayError(e.toString());
             }
-            html += Indent + "</DIV>\n";
+            html += indentAttr + "</DIV>\n";
+            html += indentNode + "</DIV>\n";
             childrenNumber = childrenNumberStack.pop();
         } catch (Exception e) {
             displayError(e.toString());
@@ -239,6 +246,9 @@ public class ControlDataTreeHtml extends ControlWebView {
                 return;
             } else if (info.startsWith("contextMenu:")) {
                 contextMenu(Long.parseLong(info.substring("contextMenu:".length())));
+                return;
+            } else if (info.startsWith("showChildren:")) {
+                unfold(Long.parseLong(info.substring("showChildren:".length())), false, true);
                 return;
             }
             super.alert(ev);
@@ -279,19 +289,72 @@ public class ControlDataTreeHtml extends ControlWebView {
     }
 
     public void unfoldNode(DataNode node) {
-        if (node == null) {
-            return;
-        }
-        executeScript("scrollToNode(" + node.getNodeid() + ")");
-        executeScript("showChildren(" + node.getNodeid() + ")");
+        unfold(node.getNodeid(), true, true);
+    }
+
+    public void unfoldNodeAndDescendants(DataNode node) {
+        unfold(node.getNodeid(), false, true);
     }
 
     public void foldNode(DataNode node) {
-        if (node == null) {
+        unfold(node.getNodeid(), true, false);
+    }
+
+    public void unfold(long nodeid, boolean onlyChildren, boolean unfold) {
+        if (nodeTable == null) {
             return;
         }
-        executeScript("scrollToNode(" + node.getNodeid() + ")");
-        executeScript("hideChildren(" + node.getNodeid() + ")");
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                script = "";
+                sql = "SELECT nodeid FROM " + nodeTable.getTableName()
+                        + " WHERE parentid=? AND parentid<>nodeid";
+                try (Connection conn = DerbyBase.getConnection()) {
+                    unfold(this, conn, nodeid, onlyChildren, unfold);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return !script.isBlank();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                executeScript("scrollToNode(" + nodeid + ")");
+                executeScript(script);
+            }
+
+        };
+        start(task, false);
+    }
+
+    protected void unfold(FxTask task, Connection conn,
+            long nodeid, boolean onlyChildren, boolean unfold) {
+        try {
+            try (PreparedStatement query = conn.prepareStatement(sql)) {
+                query.setLong(1, nodeid);
+                ResultSet results = query.executeQuery();
+                while (results != null && results.next()) {
+                    if (task != null && !task.isWorking()) {
+                        return;
+                    }
+                    long childid = results.getLong("nodeid");
+                    unfold(task, conn, childid, false, !onlyChildren && unfold);
+                    if (unfold) {
+                        script += "showNode(" + childid + ");\n";
+                    } else {
+                        script += "hideNode(" + childid + ");\n";
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
     public List<MenuItem> foldMenuItems(DataNode node) {
@@ -300,6 +363,12 @@ public class ControlDataTreeHtml extends ControlWebView {
         MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             unfoldNode(node);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            unfoldNodeAndDescendants(node);
         });
         items.add(menu);
 

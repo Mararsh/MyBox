@@ -456,7 +456,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                     treeHtmlWriter = new FileWriter(treeHtmlFile, charset);
                     writeHtmlHead(treeHtmlWriter, chainName);
                     treeHtmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
-                    treeHtmlWriter.write(DataNodeTools.htmlControls());
+                    treeHtmlWriter.write(DataNodeTools.htmlControls(true));
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
@@ -469,7 +469,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                     listHtmlWriter = new FileWriter(listHtmlFile, charset);
                     writeHtmlHead(listHtmlWriter, chainName);
                     listHtmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
-                    listHtmlWriter.write(DataNodeTools.htmlControls());
+                    listHtmlWriter.write(DataNodeTools.htmlControls(false));
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
@@ -644,12 +644,12 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                 node.setHierarchyNumber(hierarchyNumber);
             }
             String nodeChainName = null;
+            if (parentChainName != null && !parentChainName.isBlank()) {
+                nodeChainName = parentChainName + DataNode.TitleSeparater + node.getTitle();
+            } else {
+                nodeChainName = node.getTitle();
+            }
             if (parentCheck.isSelected()) {
-                if (parentChainName != null && !parentChainName.isBlank()) {
-                    nodeChainName = parentChainName + DataNode.TitleSeparater + node.getTitle();
-                } else {
-                    nodeChainName = node.getTitle();
-                }
                 node.setChainName(nodeChainName);
             }
             if (isLogsVerbose()) {
@@ -762,7 +762,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             childrenNumber = 0;
 
             if (treeHtmlWriter != null) {
-                treeHtmlWriter.write(Indent + "<DIV class=\"TreeNode\" id='node" + nodeid + "'>\n");
+                treeHtmlWriter.write(Indent + "<DIV class=\"Children\" id='children" + nodeid + "'>\n");
             }
             String sql = "SELECT nodeid FROM " + nodeTable.getTableName()
                     + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();

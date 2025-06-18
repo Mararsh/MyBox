@@ -26,9 +26,9 @@ public class DataNodeTools {
     /*
         static
      */
-    public static String htmlControls() {
+    public static String htmlControls(boolean isTree) {
         String codes = " <script>\n"
-                + "    function setChildren(id) {\n"
+                + "    function changeVisible(id) {\n"
                 + "      var obj = document.getElementById(id);\n"
                 + "      var objv = obj.style.display;\n"
                 + "      if (objv == 'none') {\n"
@@ -37,7 +37,7 @@ public class DataNodeTools {
                 + "        obj.style.display = 'none';\n"
                 + "      }\n"
                 + "    }\n"
-                + "    function showClass(className, show) {\n"
+                + "    function setVisible(className, show) {\n"
                 + "      var nodes = document.getElementsByClassName(className);  　\n"
                 + "      if ( show) {\n"
                 + "           for (var i = 0 ; i < nodes.length; i++) {\n"
@@ -50,16 +50,18 @@ public class DataNodeTools {
                 + "       }\n"
                 + "    }\n"
                 + "  </script>\n\n";
-        codes += "<DIV>\n<DIV>\n"
-                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">"
-                + message("Unfold") + "</INPUT>\n"
-                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('HierarchyNumber', this.checked);\">"
+        codes += "<DIV>\n<DIV>\n";
+        if (isTree) {
+            codes += "    <INPUT type=\"checkbox\" checked onclick=\"setVisible('Children', this.checked);\">"
+                    + message("Unfold") + "</INPUT>\n";
+        }
+        codes += "    <INPUT type=\"checkbox\" checked onclick=\"setVisible('HierarchyNumber', this.checked);\">"
                 + message("HierarchyNumber") + "</INPUT>\n"
-                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">"
+                + "    <INPUT type=\"checkbox\" checked onclick=\"setVisible('NodeTag', this.checked);\">"
                 + message("Tags") + "</INPUT>\n"
-                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">"
+                + "    <INPUT type=\"checkbox\" checked onclick=\"setVisible('NodeValues', this.checked);\">"
                 + message("Values") + "</INPUT>\n"
-                + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeAttributes', this.checked);\">"
+                + "    <INPUT type=\"checkbox\" checked onclick=\"setVisible('NodeAttributes', this.checked);\">"
                 + message("Attributes") + "</INPUT>\n"
                 + "</DIV>\n<HR>\n";
         return codes;
@@ -97,14 +99,14 @@ public class DataNodeTools {
         if (dataHtml == null || dataHtml.isBlank()) {
             return "";
         }
-        return prefix + "<DIV class=\"nodeValue\"><DIV style=\"padding: 0 0 0 "
+        return prefix + "<DIV class=\"NodeValues\"><DIV style=\"padding: 0 0 0 "
                 + indent * 6 + "px;\"><DIV class=\"valueBox\">\n"
                 + prefix + dataHtml + "\n"
                 + prefix + "</DIV></DIV></DIV>\n";
     }
 
     public static String titleHtml(DataNode node, List<DataNodeTag> tags,
-            String nodePageid, String prefixIndent, String spaceIndent) {
+            String childrenid, String prefixIndent, String spaceIndent) {
         if (node == null) {
             return "";
         }
@@ -112,8 +114,8 @@ public class DataNodeTools {
         if (title != null && !title.isBlank()) {
             title = "<SPAN class=\"HierarchyNumber\">" + title + "&nbsp;&nbsp;</SPAN>";
         }
-        if (nodePageid != null) {
-            title += "<a href=\"javascript:setChildren('" + nodePageid + "')\">" + node.getTitle() + "</a>";
+        if (childrenid != null) {
+            title += "<a href=\"javascript:changeVisible('" + childrenid + "')\">" + node.getTitle() + "</a>";
         } else {
             title += node.getTitle();
         }
@@ -228,7 +230,7 @@ public class DataNodeTools {
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             s.append(titleHtml(node, tags,
-                    nodeTable.hasChildren(conn, node) ? "node" + node.getNodeid() : null,
+                    nodeTable.hasChildren(conn, node) ? "children" + node.getNodeid() : null,
                     indentNode, spaceNode));
             if (withData) {
                 String values = valuesBox(nodeTable.valuesHtml(fxTask, conn, controller, node),
