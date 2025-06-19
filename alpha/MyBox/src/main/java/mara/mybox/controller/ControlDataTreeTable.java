@@ -373,6 +373,18 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
         return node != null ? node : dataController.currentNode;
     }
 
+    public List<Long> selectedIDs() {
+        List<Long> selectedIDs = new ArrayList<>();
+        List<DataNode> selectedNodes = selectedItems();
+        if (selectedNodes == null) {
+            return selectedIDs;
+        }
+        for (DataNode node : selectedNodes) {
+            selectedIDs.add(node.getNodeid());
+        }
+        return selectedIDs;
+    }
+
     @Override
     public void clicked(Event event) {
         dataController.leftClicked(event, selectedNode());

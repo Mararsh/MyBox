@@ -292,13 +292,13 @@ public class BaseDataTreeController extends BaseFileController {
                 : (currentNode != null ? currentNode : rootNode);
     }
 
-    public List<DataNode> selectedNodes() {
+    public List<Long> selectedIDs() {
         if (tableRadio.isSelected()) {
-            return tableController.selectedItems();
+            return tableController.selectedIDs();
         } else if (htmlRadio.isSelected()) {
-            return null;  // ?????
+            return htmlController.selectedIDs();
         } else {
-            return treeController.selectedNodes();
+            return treeController.selectedIDs();
         }
     }
 
@@ -307,7 +307,7 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     public boolean equalOrDescendant(FxTask<Void> currentTask, Connection conn,
-            DataNode targetNode, List<DataNode> sourceNodes) {
+            DataNode targetNode, List<Long> sourceNodes) {
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             displayError(message("SelectSourceNodes"));
             return false;
@@ -316,7 +316,7 @@ public class BaseDataTreeController extends BaseFileController {
             displayError(message("SelectTargetNode"));
             return false;
         }
-        for (DataNode source : sourceNodes) {
+        for (Long source : sourceNodes) {
             if (nodeTable.equalOrDescendant(currentTask, conn, targetNode, source)) {
                 displayError(message("TreeTargetComments"));
                 return false;

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
@@ -216,6 +217,18 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
 
     public DataNode selectedNode() {
         return selectedValue();
+    }
+
+    public List<Long> selectedIDs() {
+        List<Long> selectedIDs = new ArrayList<>();
+        List<DataNode> selectedNodes = selectedNodes();
+        if (selectedNodes == null) {
+            return selectedIDs;
+        }
+        for (DataNode node : selectedNodes) {
+            selectedIDs.add(node.getNodeid());
+        }
+        return selectedIDs;
     }
 
     public TreeItem<DataNode> dummyItem() {

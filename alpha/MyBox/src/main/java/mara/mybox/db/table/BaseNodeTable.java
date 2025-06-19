@@ -512,12 +512,19 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
     public boolean equalOrDescendant(FxTask<Void> task, Connection conn,
             DataNode targetNode, DataNode sourceNode) {
-        if (conn == null || targetNode == null || sourceNode == null
+        if (sourceNode == null) {
+            return false;
+        }
+        return equalOrDescendant(task, conn, targetNode, sourceNode.getNodeid());
+    }
+
+    public boolean equalOrDescendant(FxTask<Void> task, Connection conn,
+            DataNode targetNode, Long sourceID) {
+        if (conn == null || targetNode == null
                 || (task != null && !task.isWorking())) {
             return false;
         }
         long targetID = targetNode.getNodeid();
-        long sourceID = sourceNode.getNodeid();
         if (targetID == sourceID) {
             return true;
         }
@@ -525,7 +532,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (parent == null || targetID == parent.getNodeid()) {
             return false;
         }
-        return equalOrDescendant(task, conn, parent, sourceNode);
+        return equalOrDescendant(task, conn, parent, sourceID);
     }
 
     public String chainName(FxTask<Void> task, Connection conn, DataNode node) {

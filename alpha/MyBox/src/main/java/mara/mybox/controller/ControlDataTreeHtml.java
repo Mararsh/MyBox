@@ -35,7 +35,7 @@ public class ControlDataTreeHtml extends ControlWebView {
     protected ControlWebView viewController;
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
-    protected String dataName, html, sql, script;
+    protected String dataName, html, sql;
     protected BaseNodeTable nodeTable;
     protected int count, level, childrenNumber;
     protected Stack<Integer> childrenNumberStack;
@@ -101,18 +101,9 @@ public class ControlDataTreeHtml extends ControlWebView {
                     + "      var objv = obj.style.display;\n"
                     + "      if (objv == 'none') {\n"
                     + "           obj.style.display = 'block';\n"
-                    + "           alert('showChildren:' +nodeid);\n"
                     + "      } else {\n"
                     + "           obj.style.display = 'none';\n"
                     + "      }\n"
-                    + "    }\n"
-                    + "    function showNode(nodeid) {\n"
-                    + "      var obj = document.getElementById('node' +nodeid);\n"
-                    + "      obj.style.display = 'block';\n"
-                    + "    }\n"
-                    + "    function hideNode(nodeid) {\n"
-                    + "      var obj = document.getElementById('node' +nodeid);\n"
-                    + "      obj.style.display = 'none';\n"
                     + "    }\n"
                     + "    function showChildren(nodeid) {\n"
                     + "      var obj = document.getElementById('children' +nodeid);\n"
@@ -138,11 +129,34 @@ public class ControlDataTreeHtml extends ControlWebView {
                     + "      selectNode(nodeid);"
                     + "      alert('nodeClicked:' +nodeid);\n"
                     + "    }\n"
+                    + "    function singleChecked(nodeid, checked) {\n"
+                    + "      if (!checked) return;"
+                    + "      var checks = document.getElementsByClassName(\"NodeCheck\"); \n"
+                    + "      var checkid = 'check' + nodeid;"
+                    + "      for (var i = 0 ; i < checks.length; i++) {\n"
+                    + "         if (checks[i].id !=  checkid ) {\n"
+                    + "              checks[i].checked = false;\n"
+                    + "         }\n"
+                    + "      }\n"
+                    + "    }\n"
+                    + "    function pickChecked() {\n"
+                    + "      var checks = document.getElementsByClassName(\"NodeCheck\"); \n"
+                    + "      var ids = '';"
+                    + "      for (var i = 0 ; i < checks.length; i++) {\n"
+                    + "         if (checks[i].checked ) {\n"
+                    + "              ids += checks[i].id.substring(5) + ',';\n"
+                    + "         }\n"
+                    + "      }\n"
+                    + "      return ids;\n"
+                    + "    }\n"
                     + "    function contextMenu(nodeid) {\n"
                     + "      alert('contextMenu:' +nodeid);\n"
                     + "    }\n"
                     + "  </script>\n\n";
-            writeHtml(currentTask, conn, rootNode.getNodeid(), null, 0);
+            sql = "SELECT nodeid FROM " + nodeTable.getTableName()
+                    + " WHERE parentid=? AND parentid<>nodeid "
+                    + " ORDER BY " + nodeTable.getOrderColumns();
+            writeNode(currentTask, conn, rootNode.getNodeid(), null, 0);
             html += Indent + "</BODY>\n</HTML>\n";
             return rootNode;
         } catch (Exception e) {
@@ -151,7 +165,7 @@ public class ControlDataTreeHtml extends ControlWebView {
         }
     }
 
-    public void writeHtml(FxTask currentTask, Connection conn,
+    public void writeNode(FxTask currentTask, Connection conn,
             long nodeid, String parentHierarchyNumber, int nodeIndex) {
         level++;
         if (conn == null || nodeid < 0) {
@@ -163,24 +177,31 @@ public class ControlDataTreeHtml extends ControlWebView {
             StringBuilder s = new StringBuilder();
             String indentNode = " ".repeat(indent);
             String indentAttr = " ".repeat(indent + 4);
-            String spaceTag = "&nbsp;".repeat(2);
             String hierarchyNumber = parentHierarchyNumber != null
                     ? parentHierarchyNumber + "." + nodeIndex
                     : (nodeIndex + "");
-
             s.append(indentNode).append("<DIV id='node").append(nodeid).append("'>\n");
             s.append(indentAttr).append("<DIV id='title").append(nodeid).append("' ");
-            s.append("class=\"").append(hierarchyNumber).append("\" ");
             s.append("oncontextmenu=\"contextMenu(").append(nodeid)
                     .append("); return false;\" style=\"padding: 2px;\">");
-            String hieName = hierarchyNumber;
-            if (nodeTable.hasChildren(conn, nodeid)) {
-                hieName = "<a href=\"javascript:changeChildrenVisible('" + nodeid + "')\">" + hieName + "</a>";
+            s.append("&nbsp;".repeat(indent));
+
+            if (dataController.selectionType != DataNode.SelectionType.None) {
+                s.append("<INPUT type=\"checkbox\" class=\"NodeCheck\" id='check").append(nodeid).append("'");
+                if (dataController.selectionType == DataNode.SelectionType.Single) {
+                    s.append(" onclick=\"singleChecked(").append(nodeid).append(",this.checked);\"");
+                }
+                s.append("/>\n");
             }
-            s.append("&nbsp;".repeat(indent)).append(hieName);
-            String displayName = "<a href=\"javascript:nodeClicked(" + nodeid + ")\">"
+
+            String v = hierarchyNumber;
+            if (nodeTable.hasChildren(conn, nodeid)) {
+                v = "<a href=\"javascript:changeChildrenVisible('" + nodeid + "')\">" + v + "</a>";
+            }
+            s.append(v);
+            v = "<a href=\"javascript:nodeClicked(" + nodeid + ")\">"
                     + nodeTable.title(conn, nodeid) + "</a>";
-            s.append(spaceTag).append(displayName).append("\n");
+            s.append("&nbsp;".repeat(2)).append(v).append("\n");
             s.append(indentAttr).append(
                     DataNodeTools.tagsHtml(nodeTagsTable.nodeTags(conn, nodeid), indent));
             s.append(indentAttr).append("</DIV>\n");
@@ -191,19 +212,17 @@ public class ControlDataTreeHtml extends ControlWebView {
             childrenNumberStack.push(childrenNumber);
             childrenNumber = 0;
             html += indentAttr + "<DIV id='children" + nodeid + "' class=\"Children\" >\n";
-            String sql = "SELECT nodeid FROM " + nodeTable.getTableName()
-                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setLong(1, nodeid);
                 try (ResultSet results = statement.executeQuery()) {
-                    String pn = hierarchyNumber.equals("0") ? null : hierarchyNumber;
+                    String p = hierarchyNumber.equals("0") ? null : hierarchyNumber;
                     while (results != null && results.next()) {
                         if (currentTask == null || !currentTask.isWorking()) {
                             return;
                         }
                         childrenNumber++;
-                        writeHtml(currentTask, conn, results.getLong("nodeid"),
-                                pn, childrenNumber);
+                        writeNode(currentTask, conn, results.getLong("nodeid"),
+                                p, childrenNumber);
                     }
                 } catch (Exception e) {
                     displayError(e.toString());
@@ -242,13 +261,10 @@ public class ControlDataTreeHtml extends ControlWebView {
                 return;
             }
             if (info.startsWith("nodeClicked:")) {
-                nodeClicked(Long.parseLong(info.substring("nodeClicked:".length())));
+                nodeClicked(Long.parseLong(info.substring(12)));
                 return;
             } else if (info.startsWith("contextMenu:")) {
-                contextMenu(Long.parseLong(info.substring("contextMenu:".length())));
-                return;
-            } else if (info.startsWith("showChildren:")) {
-                unfold(Long.parseLong(info.substring("showChildren:".length())), false, true);
+                contextMenu(Long.parseLong(info.substring(12)));
                 return;
             }
             super.alert(ev);
@@ -285,22 +301,42 @@ public class ControlDataTreeHtml extends ControlWebView {
             return;
         }
         executeScript("scrollToNode(" + node.getNodeid() + ")");
-        executeScript("nodeClicked(" + node.getNodeid() + ")");
+        executeScript("selectNode(" + node.getNodeid() + ")");
+    }
+
+    public List<Long> selectedIDs() {
+        List<Long> selectedIDs = new ArrayList<>();
+        try {
+            String[] ids = ((String) executeScript("pickChecked()")).split(",");
+            for (String id : ids) {
+                try {
+                    long nodeid = Long.parseLong(id);
+                    selectedIDs.add(nodeid);
+                } catch (Exception e) {
+                }
+            }
+        } catch (Exception e) {
+//            MyBoxLog.console(e.toString());
+        }
+        return selectedIDs;
     }
 
     public void unfoldNode(DataNode node) {
-        unfold(node.getNodeid(), true, true);
+        unfold(node.getNodeid(), true);
     }
 
     public void unfoldNodeAndDescendants(DataNode node) {
-        unfold(node.getNodeid(), false, true);
+        unfold(node.getNodeid(), false);
     }
 
     public void foldNode(DataNode node) {
-        unfold(node.getNodeid(), true, false);
+        if (node == null) {
+            return;
+        }
+        executeScript("hideChildren(" + node.getNodeid() + ")");
     }
 
-    public void unfold(long nodeid, boolean onlyChildren, boolean unfold) {
+    public void unfold(long nodeid, boolean onlyChildren) {
         if (nodeTable == null) {
             return;
         }
@@ -309,18 +345,42 @@ public class ControlDataTreeHtml extends ControlWebView {
         }
         task = new FxSingletonTask<Void>(this) {
 
+            private String script;
+
             @Override
             protected boolean handle() {
                 script = "";
                 sql = "SELECT nodeid FROM " + nodeTable.getTableName()
                         + " WHERE parentid=? AND parentid<>nodeid";
                 try (Connection conn = DerbyBase.getConnection()) {
-                    unfold(this, conn, nodeid, onlyChildren, unfold);
+                    unfold(conn, nodeid, onlyChildren);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
                 return !script.isBlank();
+            }
+
+            protected void unfold(Connection conn,
+                    long nodeid, boolean onlyChildren) {
+                script += "showChildren(" + nodeid + ");\n";
+                try (PreparedStatement query = conn.prepareStatement(sql)) {
+                    query.setLong(1, nodeid);
+                    ResultSet results = query.executeQuery();
+                    while (results != null && results.next()) {
+                        if (!isWorking()) {
+                            return;
+                        }
+                        long childid = results.getLong("nodeid");
+                        if (onlyChildren) {
+                            script += "hideChildren(" + childid + ");\n";
+                        } else {
+                            unfold(conn, childid, false);
+                        }
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                }
             }
 
             @Override
@@ -331,30 +391,6 @@ public class ControlDataTreeHtml extends ControlWebView {
 
         };
         start(task, false);
-    }
-
-    protected void unfold(FxTask task, Connection conn,
-            long nodeid, boolean onlyChildren, boolean unfold) {
-        try {
-            try (PreparedStatement query = conn.prepareStatement(sql)) {
-                query.setLong(1, nodeid);
-                ResultSet results = query.executeQuery();
-                while (results != null && results.next()) {
-                    if (task != null && !task.isWorking()) {
-                        return;
-                    }
-                    long childid = results.getLong("nodeid");
-                    unfold(task, conn, childid, false, !onlyChildren && unfold);
-                    if (unfold) {
-                        script += "showNode(" + childid + ");\n";
-                    } else {
-                        script += "hideNode(" + childid + ");\n";
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
     }
 
     public List<MenuItem> foldMenuItems(DataNode node) {

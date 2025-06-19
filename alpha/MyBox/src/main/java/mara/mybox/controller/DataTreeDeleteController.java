@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.List;
 import javafx.fxml.FXML;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
@@ -44,8 +46,8 @@ public class DataTreeDeleteController extends BaseDataTreeController {
     @FXML
     @Override
     public void okAction() {
-        List<DataNode> nodes = selectedNodes();
-        if (nodes == null || nodes.isEmpty()) {
+        List<Long> selectedIDs = selectedIDs();
+        if (selectedIDs == null || selectedIDs.isEmpty()) {
             popError(message("SelectNodes"));
             return;
         }
@@ -57,8 +59,18 @@ public class DataTreeDeleteController extends BaseDataTreeController {
 
             @Override
             protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    count = nodeTable.deleteData(conn, nodes);
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement delete = conn.prepareStatement(
+                                "DELETE FROM " + nodeTable.getTableName() + " WHERE nodeid=?")) {
+                    conn.setAutoCommit(false);
+                    for (long nodeid : selectedIDs) {
+                        delete.setLong(1, nodeid);
+                        delete.addBatch();
+                        if (count > 0 && (count % Database.BatchSize == 0)) {
+                            count += nodeTable.executeBatch(conn, delete);
+                        }
+                    }
+                    count += nodeTable.executeBatch(conn, delete);
                     return count > 0;
                 } catch (Exception e) {
                     error = e.toString();
