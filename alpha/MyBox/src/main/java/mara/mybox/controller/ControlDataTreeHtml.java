@@ -97,41 +97,82 @@ public class ControlDataTreeHtml extends ControlWebView {
             html += Indent + "<BODY>\n"
                     + " <script>\n"
                     + "    function changeChildrenVisible(nodeid) {\n"
-                    + "      var obj = document.getElementById('children' + nodeid);\n"
-                    + "      var objv = obj.style.display;\n"
-                    + "      if (objv == 'none') {\n"
-                    + "           obj.style.display = 'block';\n"
+                    + "      var childrenDiv = document.getElementById('children' + nodeid);\n"
+                    + "      if (!childrenDiv) return;\n"
+                    + "      if (childrenDiv.style.display == 'none') {\n"
+                    + "           childrenDiv.style.display = 'block';\n"
                     + "      } else {\n"
-                    + "           obj.style.display = 'none';\n"
+                    + "           childrenDiv.style.display = 'none';\n"
+                    + "      }\n"
+                    + "    }\n"
+                    + "    function unfoldNode(nodeid) {\n"
+                    + "      var childrenDiv = document.getElementById('children' +nodeid);\n"
+                    + "      if (!childrenDiv) return;\n"
+                    + "      childrenDiv.style.display = 'block';\n"
+                    + "      var children = childrenDiv.children; \n"
+                    + "      if (!children) return;"
+                    + "      for (var i = 0 ; i < children.length; i++) {\n"
+                    + "         var childrenid = children[i].id;\n"
+                    + "         if (childrenid)"
+                    + "            foldDescendants(childrenid.substring(4));\n"
+                    + "      }\n"
+                    + "    }\n"
+                    + "    function unfoldDescendants(nodeid) {\n"
+                    + "      var childrenDiv = document.getElementById('children' +nodeid);\n"
+                    + "      if (!childrenDiv) return;\n"
+                    + "      childrenDiv.style.display = 'block';\n"
+                    + "      var children = childrenDiv.children; \n"
+                    + "      for (var i = 0 ; i < children.length; i++) {\n"
+                    + "         var childrenid = children[i].id;\n"
+                    + "         if (childrenid)"
+                    + "            unfoldDescendants(childrenid.substring(4));\n"
+                    + "      }\n"
+                    + "    }\n"
+                    + "    function foldDescendants(nodeid) {\n"
+                    + "      var childrenDiv = document.getElementById('children' +nodeid);\n"
+                    + "      if (!childrenDiv) return;\n"
+                    + "      childrenDiv.style.display = 'none';\n"
+                    + "      var children = childrenDiv.children; \n"
+                    + "      for (var i = 0 ; i < children.length; i++) {\n"
+                    + "         var childrenid = children[i].id;\n"
+                    + "         if (childrenid)"
+                    + "            foldDescendants(childrenid.substring(4));\n"
                     + "      }\n"
                     + "    }\n"
                     + "    function showChildren(nodeid) {\n"
-                    + "      var obj = document.getElementById('children' +nodeid);\n"
-                    + "      obj.style.display = 'block';\n"
+                    + "      var childrenDiv = document.getElementById('children' +nodeid);\n"
+                    + "      if (!childrenDiv) return;\n"
+                    + "      childrenDiv.style.display = 'block';\n"
                     + "    }\n"
                     + "    function hideChildren(nodeid) {\n"
-                    + "      var obj = document.getElementById('children' +nodeid);\n"
-                    + "      obj.style.display = 'none';\n"
+                    + "      var childrenDiv = document.getElementById('children' +nodeid);\n"
+                    + "      if (!childrenDiv) return;\n"
+                    + "      childrenDiv.style.display = 'none';\n"
                     + "    }\n"
                     + "    function scrollToNode(nodeid) {\n"
-                    + "      var obj = document.getElementById('node' +nodeid);\n"
-                    //                    + "      obj.scrollIntoView();\n"
-                    + "      window.scrollTo(0, obj.offsetTop - 200);\n"
+                    + "      var nodeDiv = document.getElementById('node' +nodeid);\n"
+                    + "      if (!nodeDiv) return;\n"
+                    //                    + "      childrenDiv.scrollIntoView();\n"
+                    + "      window.scrollTo(0, nodeDiv.offsetTop - 200);\n"
                     + "    }\n"
                     + "    function selectNode(nodeid) {\n"
+                    + "      var titleDiv = document.getElementById('title' +nodeid);\n"
+                    + "      if (!titleDiv) return;\n"
                     + "      window.getSelection().removeAllRanges();     \n"
                     + "      var selection = window.getSelection();        \n"
                     + "      var range = document.createRange();        \n"
-                    + "      range.selectNode(document.getElementById('title' +nodeid));        \n"
+                    + "      range.selectNode(titleDiv);        \n"
                     + "      selection.addRange(range);\n"
                     + "    }\n"
                     + "    function nodeClicked(nodeid) {\n"
-                    + "      selectNode(nodeid);"
+                    + "      if (!nodeid) return;\n"
+                    + "      selectNode(nodeid);\n"
                     + "      alert('nodeClicked:' +nodeid);\n"
                     + "    }\n"
                     + "    function singleChecked(nodeid, checked) {\n"
-                    + "      if (!checked) return;"
+                    + "      if (!nodeid || !checked) return;\n"
                     + "      var checks = document.getElementsByClassName(\"NodeCheck\"); \n"
+                    + "      if (!checks) return;\n"
                     + "      var checkid = 'check' + nodeid;"
                     + "      for (var i = 0 ; i < checks.length; i++) {\n"
                     + "         if (checks[i].id !=  checkid ) {\n"
@@ -141,7 +182,8 @@ public class ControlDataTreeHtml extends ControlWebView {
                     + "    }\n"
                     + "    function pickChecked() {\n"
                     + "      var checks = document.getElementsByClassName(\"NodeCheck\"); \n"
-                    + "      var ids = '';"
+                    + "      if (!checks) return;\n"
+                    + "      var ids = '';\n"
                     + "      for (var i = 0 ; i < checks.length; i++) {\n"
                     + "         if (checks[i].checked ) {\n"
                     + "              ids += checks[i].id.substring(5) + ',';\n"
@@ -156,7 +198,7 @@ public class ControlDataTreeHtml extends ControlWebView {
             sql = "SELECT nodeid FROM " + nodeTable.getTableName()
                     + " WHERE parentid=? AND parentid<>nodeid "
                     + " ORDER BY " + nodeTable.getOrderColumns();
-            writeNode(currentTask, conn, rootNode.getNodeid(), null, 0);
+            writeNode(currentTask, conn, rootNode.getNodeid(), null, 0, 4);
             html += Indent + "</BODY>\n</HTML>\n";
             return rootNode;
         } catch (Exception e) {
@@ -166,28 +208,30 @@ public class ControlDataTreeHtml extends ControlWebView {
     }
 
     public void writeNode(FxTask currentTask, Connection conn,
-            long nodeid, String parentHierarchyNumber, int nodeIndex) {
+            long nodeid, String parentHierarchyNumber, int nodeIndex,
+            int indent) {
         level++;
         if (conn == null || nodeid < 0) {
             return;
         }
         try {
             count++;
-            int indent = 4 * level;
             StringBuilder s = new StringBuilder();
             String indentNode = " ".repeat(indent);
             String indentAttr = " ".repeat(indent + 4);
+            String indentAttr2 = " ".repeat(indent + 8);
             String hierarchyNumber = parentHierarchyNumber != null
                     ? parentHierarchyNumber + "." + nodeIndex
                     : (nodeIndex + "");
             s.append(indentNode).append("<DIV id='node").append(nodeid).append("'>\n");
             s.append(indentAttr).append("<DIV id='title").append(nodeid).append("' ");
             s.append("oncontextmenu=\"contextMenu(").append(nodeid)
-                    .append("); return false;\" style=\"padding: 2px;\">");
-            s.append("&nbsp;".repeat(indent));
+                    .append("); return false;\" style=\"padding: 2px;\">\n");
 
+            s.append(indentAttr2).append("&nbsp;".repeat(indent)).append("\n");
             if (dataController.selectionType != DataNode.SelectionType.None) {
-                s.append("<INPUT type=\"checkbox\" class=\"NodeCheck\" id='check").append(nodeid).append("'");
+                s.append(indentAttr2).append("<INPUT type=\"checkbox\" class=\"NodeCheck\" id='check")
+                        .append(nodeid).append("'");
                 if (dataController.selectionType == DataNode.SelectionType.Single) {
                     s.append(" onclick=\"singleChecked(").append(nodeid).append(",this.checked);\"");
                 }
@@ -198,12 +242,11 @@ public class ControlDataTreeHtml extends ControlWebView {
             if (nodeTable.hasChildren(conn, nodeid)) {
                 v = "<a href=\"javascript:changeChildrenVisible('" + nodeid + "')\">" + v + "</a>";
             }
-            s.append(v);
+            s.append(indentAttr2).append(v).append("\n");
             v = "<a href=\"javascript:nodeClicked(" + nodeid + ")\">"
                     + nodeTable.title(conn, nodeid) + "</a>";
-            s.append("&nbsp;".repeat(2)).append(v).append("\n");
-            s.append(indentAttr).append(
-                    DataNodeTools.tagsHtml(nodeTagsTable.nodeTags(conn, nodeid), indent));
+            s.append(indentAttr2).append("&nbsp;".repeat(2)).append(v).append("\n");
+            s.append(DataNodeTools.tagsHtml(nodeTagsTable.nodeTags(conn, nodeid), indent + 4));
             s.append(indentAttr).append("</DIV>\n");
             html += s.toString();
             if (currentTask == null || !currentTask.isWorking()) {
@@ -211,7 +254,7 @@ public class ControlDataTreeHtml extends ControlWebView {
             }
             childrenNumberStack.push(childrenNumber);
             childrenNumber = 0;
-            html += indentAttr + "<DIV id='children" + nodeid + "' class=\"Children\" >\n";
+            html += indentAttr + "<DIV id='children" + nodeid + "'>\n";
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setLong(1, nodeid);
                 try (ResultSet results = statement.executeQuery()) {
@@ -222,7 +265,7 @@ public class ControlDataTreeHtml extends ControlWebView {
                         }
                         childrenNumber++;
                         writeNode(currentTask, conn, results.getLong("nodeid"),
-                                p, childrenNumber);
+                                p, childrenNumber, indent + 8);
                     }
                 } catch (Exception e) {
                     displayError(e.toString());
@@ -322,11 +365,17 @@ public class ControlDataTreeHtml extends ControlWebView {
     }
 
     public void unfoldNode(DataNode node) {
-        unfold(node.getNodeid(), true);
+        if (node == null) {
+            return;
+        }
+        executeScript("unfoldNode(" + node.getNodeid() + ")");
     }
 
-    public void unfoldNodeAndDescendants(DataNode node) {
-        unfold(node.getNodeid(), false);
+    public void unfoldDescendants(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        executeScript("unfoldDescendants(" + node.getNodeid() + ")");
     }
 
     public void foldNode(DataNode node) {
@@ -336,61 +385,11 @@ public class ControlDataTreeHtml extends ControlWebView {
         executeScript("hideChildren(" + node.getNodeid() + ")");
     }
 
-    public void unfold(long nodeid, boolean onlyChildren) {
-        if (nodeTable == null) {
+    public void foldDescendants(DataNode node) {
+        if (node == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            private String script;
-
-            @Override
-            protected boolean handle() {
-                script = "";
-                sql = "SELECT nodeid FROM " + nodeTable.getTableName()
-                        + " WHERE parentid=? AND parentid<>nodeid";
-                try (Connection conn = DerbyBase.getConnection()) {
-                    unfold(conn, nodeid, onlyChildren);
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-                return !script.isBlank();
-            }
-
-            protected void unfold(Connection conn,
-                    long nodeid, boolean onlyChildren) {
-                script += "showChildren(" + nodeid + ");\n";
-                try (PreparedStatement query = conn.prepareStatement(sql)) {
-                    query.setLong(1, nodeid);
-                    ResultSet results = query.executeQuery();
-                    while (results != null && results.next()) {
-                        if (!isWorking()) {
-                            return;
-                        }
-                        long childid = results.getLong("nodeid");
-                        if (onlyChildren) {
-                            script += "hideChildren(" + childid + ");\n";
-                        } else {
-                            unfold(conn, childid, false);
-                        }
-                    }
-                } catch (Exception e) {
-                    error = e.toString();
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                executeScript("scrollToNode(" + nodeid + ")");
-                executeScript(script);
-            }
-
-        };
-        start(task, false);
+        executeScript("foldDescendants(" + node.getNodeid() + ")");
     }
 
     public List<MenuItem> foldMenuItems(DataNode node) {
@@ -404,13 +403,19 @@ public class ControlDataTreeHtml extends ControlWebView {
 
         menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodeAndDescendants(node);
+            unfoldDescendants(node);
         });
         items.add(menu);
 
         menu = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             foldNode(node);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldDescendants(node);
         });
         items.add(menu);
 
