@@ -149,7 +149,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImageOCR"), Fxmls.ImageOCRFxml));
             cases.add(new TestCase(index++, message("ImageOCRBatch"), Fxmls.ImageOCRBatchFxml));
             cases.add(new TestCase(index++, message("ManageColors"), Fxmls.ColorsManageFxml));
-            cases.add(new TestCase(index++, message("ColorQuery"), Fxmls.ColorQueryFxml));
+            cases.add(new TestCase(index++, message("QueryColor"), Fxmls.ColorQueryFxml));
             cases.add(new TestCase(index++, message("ImageScope"), Fxmls.DataTreeFxml).setType(Type.Data));
             cases.add(new TestCase(index++, message("DrawChromaticityDiagram"), Fxmls.ChromaticityDiagramFxml));
             cases.add(new TestCase(index++, message("IccProfileEditor"), Fxmls.IccProfileEditorFxml));

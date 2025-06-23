@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.DataTreeNodeEditorController;
 import mara.mybox.controller.HtmlTableController;
@@ -20,12 +19,11 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.data.DataNodeTag;
+import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.JsonTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
@@ -263,6 +261,32 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
+    public DataNode find(long id) {
+        if (id < 0) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return find(conn, id);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public DataNode find(Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return null;
+        }
+        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            return query(conn, statement);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     public List<DataNode> children(long parent) {
         if (parent < 0) {
             return null;
@@ -355,11 +379,18 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (node.getChildrenSize() > 0) {
             return true;
         }
+        return hasChildren(conn, node.getNodeid());
+    }
+
+    public boolean hasChildren(Connection conn, long nodeid) {
+        if (conn == null || nodeid < 0) {
+            return false;
+        }
         boolean hasChildren = false;
         String sql = "SELECT nodeid FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, node.getNodeid());
+            statement.setLong(1, nodeid);
             try (ResultSet results = statement.executeQuery()) {
                 hasChildren = results != null && results.next();
             }
@@ -481,12 +512,19 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
     public boolean equalOrDescendant(FxTask<Void> task, Connection conn,
             DataNode targetNode, DataNode sourceNode) {
-        if (conn == null || targetNode == null || sourceNode == null
+        if (sourceNode == null) {
+            return false;
+        }
+        return equalOrDescendant(task, conn, targetNode, sourceNode.getNodeid());
+    }
+
+    public boolean equalOrDescendant(FxTask<Void> task, Connection conn,
+            DataNode targetNode, Long sourceID) {
+        if (conn == null || targetNode == null
                 || (task != null && !task.isWorking())) {
             return false;
         }
         long targetID = targetNode.getNodeid();
-        long sourceID = sourceNode.getNodeid();
         if (targetID == sourceID) {
             return true;
         }
@@ -494,7 +532,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (parent == null || targetID == parent.getNodeid()) {
             return false;
         }
-        return equalOrDescendant(task, conn, parent, sourceNode);
+        return equalOrDescendant(task, conn, parent, sourceID);
     }
 
     public String chainName(FxTask<Void> task, Connection conn, DataNode node) {
@@ -617,6 +655,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             }
             chainName = parent.getTitle() + TitleSeparater + chainName;
             chainNodes.add(0, parent);
+            child.setParentNode(parent);
             String sql = "SELECT nodeid FROM " + tableName
                     + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
             int index = -1;
@@ -654,6 +693,23 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return node;
     }
 
+    public String title(Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return null;
+        }
+        String sql = "SELECT title FROM " + tableName + " WHERE nodeid=?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            try (ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    return results.getString("title");
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
     /*
         values
      */
@@ -689,17 +745,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return names;
     }
 
-    public String valuesHtml(DataNode node) {
-        if (node == null) {
-            return null;
-        }
-        String title = "<P align=\"center\">" + node.getTitle() + "</p>";
-        String html = valuesHtml(null, null, null, node);
-        if (html == null) {
-            return title;
-        } else {
-            return title + "<BR>" + html;
-        }
+    // Node should be queried with all fields
+    public String nodeHtml(FxTask task, Connection conn,
+            BaseController controller, DataNode node) {
+        return DataNodeTools.nodeHtml(task, conn, controller, this, node);
     }
 
     public String valuesHtml(FxTask task, Connection conn,
@@ -795,60 +844,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     // Node should be queried with all fields
-    public String valuesHtml(FxTask task, Connection conn, BaseController controller,
-            DataNode node, String hierarchyNumber, int indent) {
-        try {
-            if (conn == null || node == null) {
-                return null;
-            }
-            long nodeid = node.getNodeid();
-            String indentNode = " ".repeat(indent);
-            String spaceNode = "&nbsp;".repeat(indent);
-            String nodeName = node.getTitle();
-            String displayName = "<SPAN class=\"SerialNumber\">"
-                    + (hierarchyNumber != null ? hierarchyNumber : "")
-                    + "&nbsp;&nbsp;</SPAN>" + nodeName;
-
-            String html = indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode + displayName + "\n";
-            List<DataNodeTag> tags = new TableDataNodeTag(this).nodeTags(conn, nodeid);
-            if (tags != null && !tags.isEmpty()) {
-                String indentTag = " ".repeat(indent + 8);
-                String spaceTag = "&nbsp;".repeat(2);
-                html += indentTag + "<SPAN class=\"NodeTag\">\n";
-                for (DataNodeTag nodeTag : tags) {
-                    if (task != null && !task.isWorking()) {
-                        return null;
-                    }
-                    Color color = nodeTag.getTag().getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor();
-                    }
-                    html += indentTag + spaceTag
-                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
-                            + FxColorTools.color2rgb(color)
-                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
-                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n";
-                }
-                html += indentTag + "</SPAN>\n";
-            }
-            html += indentNode + "</DIV>\n";
-
-            String dataHtml = valuesHtml(task, conn, controller, node);
-            if (dataHtml != null && !dataHtml.isBlank()) {
-                html += indentNode + "<DIV class=\"nodeValue\">"
-                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
-                        + "<DIV class=\"valueBox\">\n";
-                html += indentNode + dataHtml + "\n";
-                html += indentNode + "</DIV></DIV></DIV>\n";
-            }
-            return html;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    // Node should be queried with all fields
     public String valuesText(DataNode node) {
         if (node == null) {
             return null;
@@ -888,12 +883,11 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = query(conn, node.getNodeid());
+                    savedNode = readChain(this, conn, node.getNodeid());
                     if (savedNode == null) {
                         return false;
                     }
-                    html = valuesHtml(this, conn, controller, savedNode,
-                            node.getHierarchyNumber(), 4);
+                    html = nodeHtml(this, conn, controller, savedNode);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();

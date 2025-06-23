@@ -299,6 +299,8 @@ public class StyleButton {
             switch (id) {
                 case "paletteManageButton":
                     return new StyleData(id, message("ColorPaletteManage"), "", "iconPalette.png");
+                case "paletteAddInButton":
+                    return new StyleData(id, message("AddInColorPalette"), "", "iconPalette.png");
                 default:
                     return new StyleData(id, message("ColorPalette"), "", "iconPalette.png");
             }

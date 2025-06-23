@@ -47,7 +47,7 @@ public class ShapeDemos {
                 }
                 mode = PixelsBlendFactory.blendMode(name);
                 blender = PixelsBlendFactory.create(mode).setBlendMode(mode);
-                blender.setOpacity(1.0F).setBaseAbove(false).setBaseTransparentAs(
+                blender.setWeight(1.0F).setBaseAbove(false).setBaseTransparentAs(
                         PixelsBlend.TransparentAs.Another).setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -62,7 +62,7 @@ public class ShapeDemos {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                blender.setOpacity(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
+                blender.setWeight(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
                         .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -77,7 +77,7 @@ public class ShapeDemos {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                blender.setOpacity(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
+                blender.setWeight(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
                         .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -92,7 +92,7 @@ public class ShapeDemos {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                blender.setOpacity(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
+                blender.setWeight(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
                         .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -140,7 +140,7 @@ public class ShapeDemos {
                 }
                 mode = PixelsBlendFactory.blendMode(name);
                 blend = PixelsBlendFactory.create(mode).setBlendMode(mode);
-                blend.setOpacity(1.0F).setBaseAbove(false).setBaseTransparentAs(
+                blend.setWeight(1.0F).setBaseAbove(false).setBaseTransparentAs(
                         PixelsBlend.TransparentAs.Another).setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = ImageTextTools.addText(currentTask, baseImage, optionsController.setBlend(blend));
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -155,7 +155,7 @@ public class ShapeDemos {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                blend.setOpacity(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
+                blend.setWeight(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
                         .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = ImageTextTools.addText(currentTask, baseImage, optionsController.setBlend(blend));
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -170,7 +170,7 @@ public class ShapeDemos {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                blend.setOpacity(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
+                blend.setWeight(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
                         .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = ImageTextTools.addText(currentTask, baseImage, optionsController.setBlend(blend));
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -185,7 +185,7 @@ public class ShapeDemos {
                 if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
-                blend.setOpacity(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
+                blend.setWeight(0.5F).setBaseAbove(false).setBaseTransparentAs(PixelsBlend.TransparentAs.Transparent)
                         .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = ImageTextTools.addText(currentTask, baseImage, optionsController.setBlend(blend));
                 if (currentTask == null || !currentTask.isWorking()) {

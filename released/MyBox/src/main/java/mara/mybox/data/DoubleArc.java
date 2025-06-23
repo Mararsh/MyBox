@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import java.awt.geom.Arc2D;
+import static mara.mybox.tools.DoubleTools.imageScale;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -97,22 +98,81 @@ public class DoubleArc implements DoubleShape {
         return true;
     }
 
+    // Calculation is provided by deekseek. Fixed by mara
     @Override
     public String pathAbs() {
-        DoublePath pathData = DoubleShape.pathData(this);
-        if (pathData == null) {
-            return null;
+        double startRad = Math.toRadians(startAngle);
+        double endRad = Math.toRadians(startAngle + extentAngle);
+        double startX = imageScale(centerX + radiusX * Math.cos(startRad));
+        double startY = imageScale(centerY - radiusY * Math.sin(startRad));
+        double endX = imageScale(centerX + radiusX * Math.cos(endRad));
+        double endY = imageScale(centerY - radiusY * Math.sin(endRad));
+
+        if (Math.abs(radiusX) < 1e-3 || Math.abs(radiusY) < 1e-3) {
+            return String.format("M %.2f,%.2f L %.2f,%.2f", startX, startY, endX, endY);
         }
-        return pathData.pathAbs();
+
+        int largeArcFlag = computeLargeArcFlag(extentAngle);
+        int sweepFlag = (extentAngle >= 0) ? 0 : 1;
+
+        String arcCmd = String.format(
+                "A %.2f %.2f 0 %d %d %.2f %.2f",
+                radiusX, radiusY, largeArcFlag, sweepFlag, endX, endY
+        );
+        switch (type) {
+            case Arc2D.OPEN:
+                return String.format("M %.2f,%.2f %s", startX, startY, arcCmd);
+            case Arc2D.CHORD:
+                return String.format("M %.2f,%.2f %s Z", startX, startY, arcCmd);
+            case Arc2D.PIE:
+                return String.format("M %.2f,%.2f L %.2f,%.2f %s Z",
+                        centerX, centerY, startX, startY, arcCmd);
+            default:
+                throw new IllegalArgumentException("Unsupported arc type");
+        }
     }
 
     @Override
     public String pathRel() {
-        DoublePath pathData = DoublePath.shapeToPathData(getShape());
-        if (pathData == null) {
-            return null;
+        double startRad = Math.toRadians(startAngle);
+        double endRad = Math.toRadians(startAngle + extentAngle);
+        double startX = imageScale(centerX + radiusX * Math.cos(startRad));
+        double startY = imageScale(centerY - radiusY * Math.sin(startRad));
+        double endX = imageScale(centerX + radiusX * Math.cos(endRad));
+        double endY = imageScale(centerY - radiusY * Math.sin(endRad));
+
+        if (Math.abs(radiusX) < 1e-3 || Math.abs(radiusY) < 1e-3) {
+            return String.format("M %.2f,%.2f l %.2f,%.2f",
+                    startX, startY, endX - startX, endY - startY);
         }
-        return pathData.pathRel();
+
+        int largeArcFlag = computeLargeArcFlag(extentAngle);
+        int sweepFlag = (extentAngle >= 0) ? 0 : 1;
+
+        String arcCmd = String.format(
+                "a %.2f %.2f 0 %d %d %.2f %.2f",
+                radiusX, radiusY, largeArcFlag, sweepFlag, endX - centerX, endY - centerY
+        );
+        switch (type) {
+            case Arc2D.OPEN:
+                return String.format("M %.2f,%.2f %s", startX, startY, arcCmd);
+            case Arc2D.CHORD:
+                return String.format("M %.2f,%.2f %s Z", startX, startY, arcCmd);
+            case Arc2D.PIE:
+                return String.format("M %.2f,%.2f l %.2f,%.2f %s Z",
+                        centerX, centerY, startX - centerX, startY - centerY, arcCmd);
+            default:
+                throw new IllegalArgumentException("Unsupported arc type");
+        }
+    }
+
+    private static int computeLargeArcFlag(double extent) {
+        double absExtent = Math.abs(extent);
+        double extentMod = absExtent % 360;
+        if (extentMod == 0) {
+            return 1;
+        }
+        return (extentMod > 180) ? 1 : 0;
     }
 
     @Override

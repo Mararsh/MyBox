@@ -268,7 +268,12 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void queryColor(ActionEvent event) {
-        ColorQueryController.open();
+        openScene(Fxmls.ColorQueryFxml);
+    }
+
+    @FXML
+    protected void blendColors(ActionEvent event) {
+        openScene(Fxmls.ColorsBlendFxml);
     }
 
     @FXML

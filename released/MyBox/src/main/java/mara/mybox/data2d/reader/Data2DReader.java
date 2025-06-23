@@ -150,6 +150,11 @@ public abstract class Data2DReader {
     public void afterScanned() {
         try {
             sourceData.stopFilter();
+            if (operate == null && conn != null) {
+                conn.commit();
+                conn.close();
+                conn = null;
+            }
         } catch (Exception e) {
             showError(e.toString());
         }

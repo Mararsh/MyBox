@@ -1714,6 +1714,23 @@ public abstract class BaseTable<D> {
         return null;
     }
 
+    public int executeBatch(Connection conn, PreparedStatement statement) {
+        int count = 0;
+        try {
+            int[] res = statement.executeBatch();
+            for (int r : res) {
+                if (r > 0) {
+                    count += r;
+                }
+            }
+            conn.commit();
+            statement.clearBatch();
+        } catch (Exception e) {
+            MyBoxLog.debug(e, tableName);
+        }
+        return count;
+    }
+
     public int insertList(List<D> dataList) {
         if (dataList == null) {
             return -1;
@@ -1744,24 +1761,10 @@ public abstract class BaseTable<D> {
                 }
                 statement.addBatch();
                 if (i > 0 && (i % Database.BatchSize == 0)) {
-                    int[] res = statement.executeBatch();
-                    for (int r : res) {
-                        if (r > 0) {
-                            count += r;
-                        }
-                    }
-                    conn.commit();
-                    statement.clearBatch();
+                    count += executeBatch(conn, statement);
                 }
             }
-            int[] res = statement.executeBatch();
-            for (int r : res) {
-                if (r > 0) {
-                    count += r;
-                }
-            }
-            conn.commit();
-            statement.clearBatch();
+            count += executeBatch(conn, statement);
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
         }
@@ -1840,24 +1843,10 @@ public abstract class BaseTable<D> {
                 }
                 statement.addBatch();
                 if (i > 0 && (i % Database.BatchSize == 0)) {
-                    int[] res = statement.executeBatch();
-                    for (int r : res) {
-                        if (r > 0) {
-                            count += r;
-                        }
-                    }
-                    conn.commit();
-                    statement.clearBatch();
+                    count += executeBatch(conn, statement);
                 }
             }
-            int[] res = statement.executeBatch();
-            for (int r : res) {
-                if (r > 0) {
-                    count += r;
-                }
-            }
-            conn.commit();
-            statement.clearBatch();
+            count += executeBatch(conn, statement);
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
         }
@@ -2020,24 +2009,10 @@ public abstract class BaseTable<D> {
                 }
                 statement.addBatch();
                 if (i > 0 && (i % Database.BatchSize == 0)) {
-                    int[] res = statement.executeBatch();
-                    for (int r : res) {
-                        if (r > 0) {
-                            count += r;
-                        }
-                    }
-                    conn.commit();
-                    statement.clearBatch();
+                    count += executeBatch(conn, statement);
                 }
             }
-            int[] res = statement.executeBatch();
-            for (int r : res) {
-                if (r > 0) {
-                    count += r;
-                }
-            }
-            conn.commit();
-            statement.clearBatch();
+            count += executeBatch(conn, statement);
         } catch (Exception e) {
             MyBoxLog.debug(e, tableName);
         }

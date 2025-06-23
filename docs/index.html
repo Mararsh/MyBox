@@ -9,27 +9,32 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是图形化计算机应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2025-6-2 版本6.8.8</p>
+  <p>2025-6-23 版本6.8.9</p>
   <ul>
+   <li>新增： 
+    <ul>
+     <li>功能：混合颜色。</li>
+     <li>颜色混合模式：Kubelka Munk方程（颜料的散射）、CMYK混合、加权CMYK混合。</li>
+    </ul></li>
    <li>改进： 
     <ul>
-     <li>数据处理：对于数据列，保存和应用“标签”。</li>
-     <li>数据树： 
-      <ul>
-       <li>按标签查询。</li>
-       <li>在树和表上显示标签。</li>
-      </ul></li>
+     <li>数据树的第三种编辑模式：html树。</li>
+     <li>在Java弧与SVG弧之间转换。</li>
+     <li>给所有编辑器提供示例。</li>
     </ul></li>
    <li>解决问题： 
     <ul>
-     <li>数据处理： 
-      <ul>
-       <li>保存为json/xml/pdf/html时失败。</li>
-       <li>对于多页，不能正确保存数据的属性。</li>
-      </ul></li>
+     <li>数据处理：CSV编辑模式下的修改在切换时丢失了。</li>
+     <li>形状“弧”显示得不正确。</li>
+     <li>SVG形状在转换为相对路径时起始点应该是绝对值。</li>
+     <li>编辑收藏的网址时网址未保存。</li>
+     <li>编辑地理编码时未保存“描述”。</li>
+     <li>查询颜色：拖动滑条时其它值不应改变。</li>
+     <li>数据树的结点被修改后未在树上刷新此结点。</li>
+     <li>数据树的查询结果为空时弹出错误。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.8">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.9">此版本关闭的需求/问题列表</a></p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -435,8 +440,8 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.8.8</td>
-     <td>2025-6-2</td>
+     <td>6.8.9</td>
+     <td>2025-6-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -470,8 +475,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.8.8</td>
-     <td>2025-6-2</td>
+     <td>6.8.9</td>
+     <td>2025-6-23</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>

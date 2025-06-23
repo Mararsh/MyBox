@@ -149,7 +149,7 @@ public class DoubleRectangle implements DoubleShape {
         double sy = imageScale(y);
         double sw = imageScale(width);
         double sh = imageScale(height);
-        return "m " + sx + "," + sy + " \n"
+        return "M " + sx + "," + sy + " \n"
                 + "h " + sw + " \n"
                 + "v " + sh + " \n"
                 + "h " + (-sw) + " \n"

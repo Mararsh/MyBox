@@ -137,8 +137,12 @@ public class ControlImage extends BaseController {
         controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                loadImageItem(controller.selectedItem(), true);
+                ImageItem item = controller.selectedItem();
+                if (item == null) {
+                    return;
+                }
                 controller.close();
+                loadImageItem(item, true);
             }
         });
     }

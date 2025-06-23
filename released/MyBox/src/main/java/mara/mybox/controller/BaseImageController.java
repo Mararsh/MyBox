@@ -493,7 +493,7 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("ColorQuery"), StyleTools.getIconImageView("iconColor.png"));
+            menu = new MenuItem(message("QueryColor"), StyleTools.getIconImageView("iconColor.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ColorQueryController.open();
             });

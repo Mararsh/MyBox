@@ -643,7 +643,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
         menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodeAndDecendants();
+            unfoldNodeAndDescendants();
         });
         items.add(menu);
 
@@ -655,7 +655,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
         menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodeAndDecendants();
+            foldNodeAndDescendants();
         });
         items.add(menu);
 
@@ -684,7 +684,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     @FXML
-    public void foldNodeAndDecendants() {
+    public void foldNodeAndDescendants() {
         fold(selectedItem(), true);
     }
 
@@ -710,7 +710,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     @FXML
-    public void unfoldNodeAndDecendants() {
+    public void unfoldNodeAndDescendants() {
         unfold(selectedItem(), true);
     }
 

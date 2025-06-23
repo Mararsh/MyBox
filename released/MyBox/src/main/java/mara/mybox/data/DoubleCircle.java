@@ -83,7 +83,7 @@ public class DoubleCircle implements DoubleShape {
         double cy = imageScale(centerY);
         double r = imageScale(radius);
         double r2 = imageScale(2 * radius);
-        return "m " + (cx - r) + "," + cy + " \n"
+        return "M " + (cx - r) + "," + cy + " \n"
                 + "a " + r + "," + r + " 0,0,1 " + r2 + "," + 0 + " \n"
                 + "a " + r + "," + r + " 0,0,1 " + (-r2) + "," + 0 + " \n"
                 + "z";

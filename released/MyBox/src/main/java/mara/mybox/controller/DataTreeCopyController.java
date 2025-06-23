@@ -45,8 +45,8 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     @FXML
     @Override
     public void okAction() {
-        List<DataNode> sourceNodes = sourceController.selectedNodes();
-        if (sourceNodes == null || sourceNodes.isEmpty()) {
+        List<Long> sourceIDs = sourceController.selectedIDs();
+        if (sourceIDs == null || sourceIDs.isEmpty()) {
             popError(message("SelectSourceNodes"));
             return;
         }
@@ -65,12 +65,12 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
             protected boolean handle() {
                 count = 0;
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (!targetController.equalOrDescendant(this, conn, targetNode, sourceNodes)) {
+                    if (!targetController.equalOrDescendant(this, conn, targetNode, sourceIDs)) {
                         error = message("TreeTargetComments");
                         return false;
                     }
-                    for (DataNode sourceNode : sourceNodes) {
-                        DataNode nodeValues = nodeTable.query(conn, sourceNode.getNodeid());
+                    for (long sourceID : sourceIDs) {
+                        DataNode nodeValues = nodeTable.query(conn, sourceID);
                         int ret;
                         if (nodeAndDescendantsRadio.isSelected()) {
                             ret = nodeTable.copyNodeAndDescendants(this, conn, nodeValues, targetNode, true);

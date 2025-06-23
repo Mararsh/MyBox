@@ -223,7 +223,7 @@ public class DoublePolygon implements DoubleShape {
     public String pathRel() {
         String path = "";
         DoublePoint p = points.get(0);
-        path += "m " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
+        path += "M " + imageScale(p.getX()) + "," + imageScale(p.getY()) + "\n";
         double lastx = p.getX();
         double lasty = p.getY();
         for (int i = 1; i < points.size(); i++) {

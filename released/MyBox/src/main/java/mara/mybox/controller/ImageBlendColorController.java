@@ -4,7 +4,6 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -41,7 +40,7 @@ public class ImageBlendColorController extends BasePixelsController {
 
             operation = message("BlendColor");
 
-            colorController.init(this, baseName + "Color", Color.PINK);
+            colorController.init(this, baseName + "Color");
 
             blendController.setParameters(this);
         } catch (Exception e) {

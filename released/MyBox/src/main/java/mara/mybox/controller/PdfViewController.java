@@ -23,15 +23,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.Loader;
@@ -529,29 +531,47 @@ public class PdfViewController extends PdfViewController_Html {
         PdfAttributesController.open(sourceFile, password);
     }
 
+    @FXML
+    protected void exampleAction() {
+        File example = HelpTools.pdfExample(Languages.embedFileLang());
+        if (example != null && example.exists()) {
+            sourceFileChanged(example);
+        }
+    }
+
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
-            if (sourceFile == null) {
-                return null;
-            }
+
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("Permissions"), StyleTools.getIconImageView("iconPermission.png"));
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Permissions"), StyleTools.getIconImageView("iconPermission.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    permissionAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                        StyleTools.getIconImageView("iconInfo.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                items.add(menu);
+
+                items.add(new SeparatorMenuItem());
+            }
+
+            menu = new MenuItem(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                permissionAction();
+                exampleAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
-                    StyleTools.getIconImageView("iconInfo.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                infoAction();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
+            if (sourceFile == null) {
+                return items;
+            }
 
             menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
             menu.setOnAction((ActionEvent event) -> {

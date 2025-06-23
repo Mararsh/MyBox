@@ -368,6 +368,8 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
             s = poiInput.getText();
             node.setValue("poi", s != null ? s.trim() : null);
 
+            s = descArea.getText();
+            node.setValue("description", s != null ? s.trim() : null);
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);

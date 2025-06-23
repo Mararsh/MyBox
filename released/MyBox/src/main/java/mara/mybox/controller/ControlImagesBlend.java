@@ -15,6 +15,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -24,7 +25,7 @@ import mara.mybox.fxml.image.ShapeDemos;
 import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.image.data.PixelsBlend.ImagesBlendMode;
 import mara.mybox.image.data.PixelsBlend.TransparentAs;
-import static mara.mybox.image.data.PixelsBlend.fixedOpacity;
+import static mara.mybox.image.data.PixelsBlend.fixWeight;
 import mara.mybox.image.data.PixelsBlendFactory;
 import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.value.InternalImages;
@@ -39,7 +40,7 @@ import mara.mybox.value.UserConfig;
 public class ControlImagesBlend extends BaseController {
 
     protected ImagesBlendMode blendMode;
-    protected float opacity;
+    protected float weight;
     protected int keepRatioType;
     protected TransparentAs baseTransparentAs = TransparentAs.Transparent,
             overlayTransparentAs = TransparentAs.Another;
@@ -47,7 +48,7 @@ public class ControlImagesBlend extends BaseController {
     @FXML
     protected ListView<String> modeList;
     @FXML
-    protected ComboBox<String> opacitySelector;
+    protected ComboBox<String> weightSelector;
     @FXML
     protected CheckBox baseAboveCheck;
     @FXML
@@ -57,8 +58,13 @@ public class ControlImagesBlend extends BaseController {
             overlayAsBaseRadio, overlayAsTransparentRadio, overlayBlendRadio;
     @FXML
     protected Button demoButton;
+    @FXML
+    protected VBox transBox;
 
     public void setParameters(BaseController parent) {
+        if (parent instanceof ColorsBlendController) {
+            thisPane.getChildren().remove(transBox);
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             setParameters(conn, parent);
         } catch (Exception e) {
@@ -97,17 +103,17 @@ public class ControlImagesBlend extends BaseController {
                 overlayTransparentAs = TransparentAs.Another;
             }
 
-            String mode = UserConfig.getString(conn, baseName + "BlendMode", message("NormalMode"));
+            String mode = UserConfig.getString(conn, baseName + "BlendMode", message("MultiplyMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
             modeList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             modeList.getItems().setAll(PixelsBlendFactory.blendModes());
             modeList.scrollTo(mode);
             modeList.getSelectionModel().select(mode);
 
-            opacity = UserConfig.getInt(conn, baseName + "BlendOpacity", 100) / 100f;
-            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
-            opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacitySelector.setValue(opacity + "");
+            weight = UserConfig.getInt(conn, baseName + "BlendWeight", 100) / 100f;
+            weight = (weight >= 0.0f && weight <= 1.0f) ? weight : 1.0f;
+            weightSelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            weightSelector.setValue(weight + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -136,22 +142,22 @@ public class ControlImagesBlend extends BaseController {
         return overlayTransparentAs;
     }
 
-    public float checkOpacity() {
+    public float checkWeight() {
         float f = -1;
         try {
-            f = Float.parseFloat(opacitySelector.getValue());
+            f = Float.parseFloat(weightSelector.getValue());
         } catch (Exception e) {
         }
         if (f >= 0.0f && f <= 1.0f) {
-            opacity = f;
+            weight = f;
         } else {
-            popError(message("InvalidParameter") + ": " + message("Opacity"));
+            popError(message("InvalidParameter") + ": " + message("Weight2"));
         }
         return f;
     }
 
     public boolean checkValues() {
-        return checkOpacity() >= 0;
+        return checkWeight() >= 0;
     }
 
     public PixelsBlend pickValues(float t) {
@@ -160,7 +166,7 @@ public class ControlImagesBlend extends BaseController {
                 return null;
             }
         } else {
-            opacity = t;
+            weight = t;
         }
         PixelsBlend blend = null;
         try (Connection conn = DerbyBase.getConnection()) {
@@ -177,7 +183,7 @@ public class ControlImagesBlend extends BaseController {
             blendMode = PixelsBlendFactory.blendMode(mode);
             UserConfig.setString(conn, baseName + "BlendMode", mode);
 
-            UserConfig.setInt(conn, baseName + "BlendOpacity", (int) (opacity * 100));
+            UserConfig.setInt(conn, baseName + "BlendWeight", (int) (weight * 100));
 
             baseTransparentAs();
             UserConfig.setString(conn, baseName + "BaseTransparentAs", baseTransparentAs.name());
@@ -192,7 +198,7 @@ public class ControlImagesBlend extends BaseController {
         }
         return PixelsBlendFactory.create(blendMode)
                 .setBlendMode(blendMode)
-                .setOpacity(fixedOpacity(opacity))
+                .setWeight(fixWeight(weight))
                 .setBaseAbove(baseAboveCheck.isSelected())
                 .setBaseTransparentAs(baseTransparentAs)
                 .setOverlayTransparentAs(overlayTransparentAs);

@@ -37,6 +37,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Fxmls;
@@ -455,39 +456,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                     treeHtmlWriter = new FileWriter(treeHtmlFile, charset);
                     writeHtmlHead(treeHtmlWriter, chainName);
                     treeHtmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
-                    treeHtmlWriter.write(" <script>\n"
-                            + "    function nodeClicked(id) {\n"
-                            + "      var obj = document.getElementById(id);\n"
-                            + "      var objv = obj.style.display;\n"
-                            + "      if (objv == 'none') {\n"
-                            + "        obj.style.display = 'block';\n"
-                            + "      } else {\n"
-                            + "        obj.style.display = 'none';\n"
-                            + "      }\n"
-                            + "    }\n"
-                            + "    function showClass(className, show) {\n"
-                            + "      var nodes = document.getElementsByClassName(className);  　\n"
-                            + "      if ( show) {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = '';\n"
-                            + "           }\n"
-                            + "       } else {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = 'none';\n"
-                            + "           }\n"
-                            + "       }\n"
-                            + "    }\n"
-                            + "  </script>\n\n");
-                    treeHtmlWriter.write("<DIV>\n<DIV>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">"
-                            + message("Unfold") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">"
-                            + message("HierarchyNumber") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">"
-                            + message("Tags") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">"
-                            + message("Values") + "</INPUT>\n"
-                            + "</DIV>\n<HR>\n");
+                    treeHtmlWriter.write(DataNodeTools.htmlControls(true));
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
@@ -500,6 +469,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                     listHtmlWriter = new FileWriter(listHtmlFile, charset);
                     writeHtmlHead(listHtmlWriter, chainName);
                     listHtmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
+                    listHtmlWriter.write(DataNodeTools.htmlControls(false));
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
@@ -670,50 +640,53 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             count++;
 
             DataNode node = nodeTable.query(conn, nodeid);
-            String nodeChainName;
+            if (hierarchyCheck.isSelected()) {
+                node.setHierarchyNumber(hierarchyNumber);
+            }
+            String nodeChainName = null;
             if (parentChainName != null && !parentChainName.isBlank()) {
                 nodeChainName = parentChainName + DataNode.TitleSeparater + node.getTitle();
             } else {
                 nodeChainName = node.getTitle();
             }
+            if (parentCheck.isSelected()) {
+                node.setChainName(nodeChainName);
+            }
             if (isLogsVerbose()) {
-                showLogs("Handling node: " + nodeid + " - " + nodeChainName);
+                showLogs("Handling node: " + nodeid + " - " + node.getTitle());
             }
             List<DataNodeTag> tags = null;
             if (tagsCheck.isSelected()) {
                 tags = nodeTagsTable.nodeTags(conn, nodeid);
             }
             String nodePrefix = "";
-
             for (int i = 0; i < level; i++) {
                 nodePrefix += Indent;
             }
-            String pname = parentCheck.isSelected() ? parentChainName : null;
-            String nodePageid = "item" + node.getNodeid();
-            String hieNumber = hierarchyCheck.isSelected() ? hierarchyNumber : null;
+
             if (treeXmlWriter != null) {
                 if (nodeid != RootID) {
                     treeXmlWriter.write(nodePrefix + "<TreeNode>\n");
                 }
-                writeTreeXML(currentTask, conn, nodePrefix, pname, hieNumber, node, tags);
+                writeTreeXML(currentTask, conn, node, tags, nodePrefix);
             }
             if (listXmlWriter != null) {
-                writeListXML(currentTask, conn, pname, hieNumber, node, tags);
+                writeListXML(currentTask, conn, node, tags);
             }
             if (treeJsonWriter != null) {
-                writeTreeJson(currentTask, conn, nodePrefix, pname, hieNumber, node, tags);
+                writeTreeJson(currentTask, conn, node, tags, nodePrefix);
             }
             if (listJsonWriter != null) {
-                writeListJson(currentTask, conn, pname, hieNumber, node, tags);
+                writeListJson(currentTask, conn, node, tags);
             }
             if (csvPrinter != null) {
-                writeListCsv(currentTask, conn, pname, hieNumber, node, tags);
+                writeListCsv(currentTask, conn, node, tags);
             }
             if (treeHtmlWriter != null) {
-                writeTreeHtml(currentTask, conn, pname, hierarchyNumber, node, tags, nodePageid);
+                writeTreeHtml(currentTask, conn, node, tags);
             }
             if (listHtmlWriter != null) {
-                writeListHtml(currentTask, conn, pname, hieNumber, node, listHtmlWriter, tags);
+                writeListHtml(currentTask, conn, node, tags, listHtmlWriter);
             }
 
             if (currentTask == null || !currentTask.isWorking()) {
@@ -737,7 +710,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                 }
                 framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
 
-                writeListHtml(currentTask, conn, nodeChainName, hieNumber, node, bookWriter, tags);
+                writeListHtml(currentTask, conn, node, tags, bookWriter);
                 try {
                     bookWriter.write(Indent + "\n</BODY>\n</HTML>");
                     bookWriter.flush();
@@ -789,7 +762,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             childrenNumber = 0;
 
             if (treeHtmlWriter != null) {
-                treeHtmlWriter.write(Indent + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
+                treeHtmlWriter.write(Indent + "<DIV class=\"Children\" id='children" + nodeid + "'>\n");
             }
             String sql = "SELECT nodeid FROM " + nodeTable.getTableName()
                     + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
@@ -837,30 +810,18 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
 
     protected void writeHtmlHead(FileWriter writer, String title) {
         try {
-            StringBuilder s = new StringBuilder();
-            s.append("<HTML>\n").append(Indent).append("<HEAD>\n")
-                    .append(Indent).append(Indent).append("<title>").append(title).append("</title>\n")
-                    .append(Indent).append(Indent)
-                    .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")
-                    .append(charset.name()).append("\" />\n");
-            String style = styleInput.getText();
-            if (style != null && !style.isBlank()) {
-                s.append(Indent).append(Indent).append("<style type=\"text/css\">\n");
-                s.append(Indent).append(Indent).append(Indent).append(style).append("\n");
-                s.append(Indent).append(Indent).append("</style>\n");
-            }
-            s.append(Indent).append("</HEAD>\n");
-            writer.write(s.toString());
+            writer.write(HtmlWriteTools.htmlPrefix(title, charset.name(), styleInput.getText()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
     }
 
-    protected void writeTreeXML(FxTask currentTask, Connection conn, String prefix,
-            String parentName, String hierarchyNumber, DataNode node, List<DataNodeTag> tags) {
+    protected void writeTreeXML(FxTask currentTask, Connection conn,
+            DataNode node, List<DataNodeTag> tags, String prefix) {
         try {
             String xml = DataNodeTools.toXML(currentTask, conn,
-                    myController, nodeTable, prefix, parentName, hierarchyNumber, node, tags,
+                    myController, nodeTable, node, tags,
+                    prefix,
                     idCheck.isSelected(), timeCheck.isSelected(),
                     orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             treeXmlWriter.write(xml);
@@ -870,11 +831,12 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected void writeListXML(FxTask currentTask, Connection conn,
-            String parentName, String hierarchyNumber, DataNode node, List<DataNodeTag> tags) {
+            DataNode node, List<DataNodeTag> tags) {
         try {
             listXmlWriter.write(Indent + "<TreeNode>\n");
             String xml = DataNodeTools.toXML(currentTask, conn,
-                    myController, nodeTable, Indent + Indent, parentName, hierarchyNumber, node, tags,
+                    myController, nodeTable, node, tags,
+                    Indent + Indent,
                     idCheck.isSelected(), timeCheck.isSelected(),
                     orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             listXmlWriter.write(xml);
@@ -885,12 +847,13 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected void writeTreeHtml(FxTask currentTask, Connection conn,
-            String parentName, String hierarchyNumber, DataNode node,
-            List<DataNodeTag> tags, String nodePageid) {
+            DataNode node, List<DataNodeTag> tags) {
         try {
-            String html = DataNodeTools.treeHtml(currentTask, conn,
+            String html = DataNodeTools.treeNodeHtml(currentTask, conn,
                     myController, nodeTable, node, tags,
-                    nodePageid, 4 * level, hierarchyNumber);
+                    4 * level,
+                    idCheck.isSelected(), timeCheck.isSelected(),
+                    orderCheck.isSelected(), dataCheck.isSelected());
             treeHtmlWriter.write(html);
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -898,10 +861,10 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected void writeListHtml(FxTask currentTask, Connection conn,
-            String parentName, String hierarchyNumber, DataNode node, FileWriter writer, List<DataNodeTag> tags) {
+            DataNode node, List<DataNodeTag> tags, FileWriter writer) {
         try {
-            String html = DataNodeTools.toHtml(currentTask, conn,
-                    myController, nodeTable, parentName, hierarchyNumber, node, tags,
+            String html = DataNodeTools.listNodeHtml(currentTask, conn,
+                    myController, nodeTable, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
                     orderCheck.isSelected(), dataCheck.isSelected());
             writer.write(html);
@@ -910,8 +873,8 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         }
     }
 
-    protected void writeTreeJson(FxTask currentTask, Connection conn, String prefix,
-            String parentName, String hierarchyNumber, DataNode node, List<DataNodeTag> tags) {
+    protected void writeTreeJson(FxTask currentTask, Connection conn,
+            DataNode node, List<DataNodeTag> tags, String prefix) {
         try {
             if (childrenNumber == 1) {
                 if (node.getNodeid() != RootID && sourceid != node.getNodeid()) {
@@ -923,7 +886,8 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             }
             treeJsonWriter.write(prefix + Indent + "{\n");
             String json = DataNodeTools.toJson(currentTask, conn,
-                    myController, nodeTable, prefix + Indent, parentName, hierarchyNumber, node, tags,
+                    myController, nodeTable, node, tags,
+                    prefix + Indent,
                     idCheck.isSelected(), timeCheck.isSelected(),
                     orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             treeJsonWriter.write(json);
@@ -933,14 +897,15 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected void writeListJson(FxTask currentTask, Connection conn,
-            String parentName, String hierarchyNumber, DataNode node, List<DataNodeTag> tags) {
+            DataNode node, List<DataNodeTag> tags) {
         try {
             if (node.getNodeid() != RootID && sourceid != node.getNodeid()) {
                 listJsonWriter.write(Indent + ",\n");
             }
             listJsonWriter.write(Indent + "{\n");
             String json = DataNodeTools.toJson(currentTask, conn,
-                    myController, nodeTable, Indent, parentName, hierarchyNumber, node, tags,
+                    myController, nodeTable, node, tags,
+                    Indent,
                     idCheck.isSelected(), timeCheck.isSelected(),
                     orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             listJsonWriter.write(json);
@@ -952,10 +917,10 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     }
 
     protected void writeListCsv(FxTask currentTask, Connection conn,
-            String parentName, String hierarchyNumber, DataNode node, List<DataNodeTag> tags) {
+            DataNode node, List<DataNodeTag> tags) {
         try {
             List<String> row = DataNodeTools.toCsv(currentTask, conn,
-                    myController, nodeTable, parentName, hierarchyNumber, node, tags,
+                    myController, nodeTable, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(),
                     orderCheck.isSelected(), dataCheck.isSelected(), dataFormatCheck.isSelected());
             if (row != null) {

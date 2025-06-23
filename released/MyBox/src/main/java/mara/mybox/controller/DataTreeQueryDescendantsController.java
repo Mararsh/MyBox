@@ -108,7 +108,6 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
                 showLogs("Failed");
                 return false;
             }
-
             tableData2D = results.getTableData2D();
             querySQL = "SELECT " + NodeFields + " FROM "
                     + nodeTable.getTableName()
@@ -119,8 +118,8 @@ public class DataTreeQueryDescendantsController extends BaseTaskController {
             long count = writeDescedents(currentTask, conn, savedNode.getNodeid(), 0, all);
             if (count > 0) {
                 insert.executeBatch();
-                conn.commit();
             }
+            conn.commit();
             insert.close();
             if (count < 0) {
                 results = null;

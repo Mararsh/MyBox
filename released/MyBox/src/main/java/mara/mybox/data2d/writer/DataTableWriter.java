@@ -88,7 +88,7 @@ public class DataTableWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         try {
             if (conn == null || targetTable == null || insert == null) {
                 showInfo(message("Failed"));

@@ -68,7 +68,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         try {
             if (printer == null) {
                 showInfo(message("Failed") + ": " + printFile);

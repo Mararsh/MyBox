@@ -112,6 +112,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (isSettingValues) {
             return;
         }
+        MyBoxLog.console((csvRadio != ov) + "   " + isCSVModified + "   " + isCSVpicked);
         if (invalidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
             switchFormat();
             return;
@@ -265,9 +266,13 @@ public class Data2DManufactureController extends BaseData2DViewController {
         start(loadTask, false);
     }
 
+    public boolean checkCSV(FxTask task) {
+        return !csvRadio.isSelected() || pickCSV(task);
+    }
+
     public boolean pickCSV(FxTask task) {
         try {
-            if (!csvRadio.isSelected() || !isCSVModified || isCSVpicked) {
+            if (!isCSVModified || isCSVpicked) {
                 return true;
             }
             if (delimiterName == null) {
@@ -303,7 +308,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             data2D.setPageData(tableData);
             isSettingValues = false;
             isCSVModified = false;
-            isCSVpicked = false;
+            isCSVpicked = true;
             return true;
         } catch (Exception e) {
             displayError(e.toString());
@@ -349,14 +354,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean isValidPageData() {
-        if (!super.isValidPageData()) {
-            return false;
-        }
-        if (!pickCSV(null)) {
-            return false;
-        }
-        isCSVpicked = true;
-        return true;
+        return super.isValidPageData() && checkCSV(null);
     }
 
     public boolean isTableMode() {
@@ -738,7 +736,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected boolean handle() {
                 try {
-                    if (!pickCSV(this)) {
+                    if (!checkCSV(this)) {
                         return false;
                     }
                     needBackup = data2D.needBackup();
@@ -780,7 +778,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     }
 
     public void saveTmp() {
-        if (!pickCSV(null)) {
+        if (!checkCSV(null)) {
             return;
         }
         if (data2D.isTable()) {

@@ -209,7 +209,7 @@ public class DoublePolylines implements DoubleShape {
         double lastx = 0, lasty = 0;
         for (List<DoublePoint> line : lines) {
             DoublePoint p = line.get(0);
-            path += "m " + imageScale(p.getX() - lastx) + "," + imageScale(p.getY() - lasty) + "\n";
+            path += "M " + imageScale(p.getX() - lastx) + "," + imageScale(p.getY() - lasty) + "\n";
             lastx = p.getX();
             lasty = p.getY();
             for (int i = 1; i < line.size(); i++) {

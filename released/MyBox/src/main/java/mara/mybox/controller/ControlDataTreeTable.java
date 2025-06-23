@@ -191,19 +191,13 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
     }
 
     public void loadNode(DataNode node) {
-        loadNode(node, true);
-    }
-
-    public void loadNode(DataNode node, boolean refreshChildren) {
         if (task != null) {
             task.cancel();
         }
-        if (refreshChildren) {
-            resetTable();
-        }
+        resetTable();
         task = new FxSingletonTask<Void>(this) {
 
-            private DataNode currentNode;
+            private DataNode rootNode, currentNode;
 
             @Override
             protected boolean handle() {
@@ -212,6 +206,7 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
+                    rootNode = nodeTable.getRoot(conn);
                     long id;
                     if (node == null) {
                         id = RootID;
@@ -231,22 +226,13 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
 
             @Override
             protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                if (currentNode != null) {
-                    dataController.currentNode = currentNode;
-                    if (currentNode.isRoot()) {
-                        dataController.rootNode = currentNode.cloneAll();
-                    }
-                    if (refreshChildren) {
-                        loadTableData();
-                    } else {
-                        writeNamesPane();
-                    }
+                dataController.currentNode = currentNode;
+                if (currentNode.isRoot()) {
+                    dataController.rootNode = currentNode.cloneAll();
+                } else {
+                    dataController.rootNode = rootNode;
                 }
+                loadTableData();
             }
 
         };
@@ -387,6 +373,18 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
         return node != null ? node : dataController.currentNode;
     }
 
+    public List<Long> selectedIDs() {
+        List<Long> selectedIDs = new ArrayList<>();
+        List<DataNode> selectedNodes = selectedItems();
+        if (selectedNodes == null) {
+            return selectedIDs;
+        }
+        for (DataNode node : selectedNodes) {
+            selectedIDs.add(node.getNodeid());
+        }
+        return selectedIDs;
+    }
+
     @Override
     public void clicked(Event event) {
         dataController.leftClicked(event, selectedNode());
@@ -403,38 +401,27 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
     }
 
     public boolean refreshNode(DataNode node) {
-        if (nodeTable == null
-                || dataController.currentNode == null
-                || !dataController.currentNode.equals(node)) {
+        if (nodeTable == null || dataController.currentNode == null) {
             return false;
         }
-        loadNode(dataController.currentNode);
+        for (DataNode anode : dataController.currentNode.getChainNodes()) {
+            if (anode.equals(node)) {
+                loadNode(dataController.currentNode);
+                return true;
+            }
+        }
+        for (int i = 0; i < tableData.size(); i++) {
+            DataNode tnode = tableData.get(i);
+            if (tnode.equals(node)) {
+                loadTableData();
+                return true;
+            }
+        }
         return true;
     }
 
     public void nodeSaved(DataNode parent, DataNode node) {
-        try {
-            if (nodeTable == null || dataController.currentNode == null) {
-                return;
-            }
-
-            for (DataNode anode : dataController.currentNode.getChainNodes()) {
-                if (anode.equals(node)) {
-                    loadNode(dataController.currentNode, false);
-                    return;
-                }
-            }
-
-            for (int i = 0; i < tableData.size(); i++) {
-                DataNode tnode = tableData.get(i);
-                if (tnode.equals(node)) {
-                    loadTableData();
-                    return;
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        refreshNode(node);
     }
 
 }

@@ -53,13 +53,15 @@ public class BaseDataTreeController extends BaseFileController {
     @FXML
     protected ToggleGroup formatGroup;
     @FXML
-    protected RadioButton treeRadio, tableRadio;
+    protected RadioButton treeRadio, tableRadio, htmlRadio;
     @FXML
-    protected VBox dataBox, treeBox, tableBox;
+    protected VBox dataBox, treeBox, tableBox, htmlBox;
     @FXML
     protected ControlDataTreeView treeController;
     @FXML
     protected ControlDataTreeTable tableController;
+    @FXML
+    protected ControlDataTreeHtml htmlController;
     @FXML
     protected ControlDataTreeNodeView viewController;
 
@@ -99,6 +101,7 @@ public class BaseDataTreeController extends BaseFileController {
 
             treeController.setParameters(this);
             tableController.setParameters(this);
+            htmlController.setParameters(this);
 
             if (selectionType == SelectionType.Multiple) {
                 treeController.treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -150,7 +153,7 @@ public class BaseDataTreeController extends BaseFileController {
     public void setFormat(DataNode node) {
         task = new FxSingletonTask<Void>(this) {
 
-            private long size = -1;
+            private long rootChildrenSize = -1;
 
             @Override
             protected boolean handle() {
@@ -158,18 +161,18 @@ public class BaseDataTreeController extends BaseFileController {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    size = nodeTable.childrenSize(conn, RootID);
+                    rootChildrenSize = nodeTable.childrenSize(conn, RootID);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return size >= 0;
+                return rootChildrenSize >= 0;
             }
 
             @Override
             protected void whenSucceeded() {
                 isSettingValues = true;
-                if (size > 100) {
+                if (rootChildrenSize > 100) {
                     tableRadio.setSelected(true);
                 }
                 isSettingValues = false;
@@ -197,12 +200,16 @@ public class BaseDataTreeController extends BaseFileController {
             dataBox.getChildren().clear();
             treeController.resetTree();
             tableController.resetTable();
-            if (treeRadio.isSelected()) {
-                dataBox.getChildren().add(treeBox);
-                treeController.loadTree(currentNode);
-            } else {
+            htmlController.clear();
+            if (tableRadio.isSelected()) {
                 dataBox.getChildren().add(tableBox);
                 tableController.loadNode(currentNode);
+            } else if (htmlRadio.isSelected()) {
+                dataBox.getChildren().add(htmlBox);
+                htmlController.loadTree(currentNode);
+            } else {
+                dataBox.getChildren().add(treeBox);
+                treeController.loadTree(currentNode);
             }
 
         } catch (Exception e) {
@@ -274,25 +281,25 @@ public class BaseDataTreeController extends BaseFileController {
 
     public DataNode selectedNode() {
         DataNode node;
-        if (treeRadio.isSelected()) {
-            node = treeController.selectedNode();
-        } else {
+        if (tableRadio.isSelected()) {
             node = tableController.selectedNode();
+        } else if (htmlRadio.isSelected()) {
+            node = currentNode;
+        } else {
+            node = treeController.selectedNode();
         }
         return node != null ? node
                 : (currentNode != null ? currentNode : rootNode);
     }
 
-    public List<DataNode> selectedNodes() {
-        if (treeRadio.isSelected()) {
-            return treeController.selectedNodes();
+    public List<Long> selectedIDs() {
+        if (tableRadio.isSelected()) {
+            return tableController.selectedIDs();
+        } else if (htmlRadio.isSelected()) {
+            return htmlController.selectedIDs();
         } else {
-            return tableController.selectedItems();
+            return treeController.selectedIDs();
         }
-    }
-
-    public DataNode parentNode(DataNode node) {
-        return node.getParentNode();
     }
 
     public boolean isSourceNode(DataNode node) {
@@ -300,7 +307,7 @@ public class BaseDataTreeController extends BaseFileController {
     }
 
     public boolean equalOrDescendant(FxTask<Void> currentTask, Connection conn,
-            DataNode targetNode, List<DataNode> sourceNodes) {
+            DataNode targetNode, List<Long> sourceNodes) {
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             displayError(message("SelectSourceNodes"));
             return false;
@@ -309,7 +316,7 @@ public class BaseDataTreeController extends BaseFileController {
             displayError(message("SelectTargetNode"));
             return false;
         }
-        for (DataNode source : sourceNodes) {
+        for (Long source : sourceNodes) {
             if (nodeTable.equalOrDescendant(currentTask, conn, targetNode, source)) {
                 displayError(message("TreeTargetComments"));
                 return false;
@@ -340,6 +347,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (viewController == null || node == null) {
             return;
         }
+        showRightPane();
         viewController.loadNode(node.getNodeid());
     }
 
@@ -383,10 +391,12 @@ public class BaseDataTreeController extends BaseFileController {
         if (isLeaf(node)) {
             return;
         }
-        if (treeRadio.isSelected()) {
-            treeController.unfoldNode(node);
-        } else {
+        if (tableRadio.isSelected()) {
             tableController.loadNode(node);
+        } else if (htmlRadio.isSelected()) {
+            htmlController.unfoldNode(node);
+        } else {
+            treeController.unfoldNode(node);
         }
     }
 
@@ -394,10 +404,12 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return;
         }
-        if (treeRadio.isSelected()) {
-            treeController.refreshNode(node);
-        } else {
+        if (tableRadio.isSelected()) {
             tableController.refreshNode(node);
+        } else if (htmlRadio.isSelected()) {
+            htmlController.loadTree(node);
+        } else {
+            treeController.refreshNode(node);
         }
         reloadView(node);
     }
@@ -425,10 +437,12 @@ public class BaseDataTreeController extends BaseFileController {
 
     public void nodeSaved(DataNode parent, DataNode node) {
         try {
-            if (treeRadio.isSelected()) {
-                treeController.nodeSaved(parent, node);
-            } else {
+            if (tableRadio.isSelected()) {
                 tableController.nodeSaved(parent, node);
+            } else if (htmlRadio.isSelected()) {
+                htmlController.loadTree(node);
+            } else {
+                treeController.nodeSaved(parent, node);
             }
             reloadView(node);
             popSaved();
@@ -554,18 +568,32 @@ public class BaseDataTreeController extends BaseFileController {
         items.add(new SeparatorMenuItem());
 
         if (!isLeaf(node)) {
-            if (treeRadio.isSelected()) {
-                items.addAll(treeController.foldMenuItems());
-
-            } else {
+            if (tableRadio.isSelected()) {
                 menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     tableController.loadNode(node);
                 });
                 items.add(menu);
-            }
 
+            } else if (htmlRadio.isSelected()) {
+                items.addAll(htmlController.foldMenuItems(node));
+
+            } else {
+                items.addAll(treeController.foldMenuItems());
+
+            }
         }
+
+        items.add(new SeparatorMenuItem());
+
+        if (htmlRadio.isSelected()) {
+            menu = new MenuItem(message("HtmlCodes"), StyleTools.getIconImageView("iconMeta.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                htmlController.htmlCodes();
+            });
+            items.add(menu);
+        }
+
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             refreshAction();

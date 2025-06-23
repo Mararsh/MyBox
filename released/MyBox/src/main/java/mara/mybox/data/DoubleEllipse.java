@@ -74,7 +74,7 @@ public class DoubleEllipse implements DoubleShape {
         return height * 0.5;
     }
 
-    // exclude maxX and maxY       
+    // exclude maxX and maxY
     public double getMaxX() {
         return x + width;
     }
@@ -153,7 +153,7 @@ public class DoubleEllipse implements DoubleShape {
         double rx = imageScale(width / 2);
         double ry = imageScale(height / 2);
         double r2 = imageScale(width);
-        return "m " + sx + "," + sy + " \n"
+        return "M " + sx + "," + sy + " \n"
                 + "a " + rx + "," + ry + " 0,0,1 " + r2 + "," + 0 + " \n"
                 + "a " + rx + "," + ry + " 0,0,1 " + (-r2) + "," + 0;
     }

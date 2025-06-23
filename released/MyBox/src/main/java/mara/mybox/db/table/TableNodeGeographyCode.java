@@ -208,8 +208,4 @@ public class TableNodeGeographyCode extends BaseNodeTable {
         return valuesText(GeographyCodeTools.toNode(code));
     }
 
-    public String html(GeographyCode code) {
-        return valuesHtml(GeographyCodeTools.toNode(code));
-    }
-
 }

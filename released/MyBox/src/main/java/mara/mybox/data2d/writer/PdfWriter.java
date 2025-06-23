@@ -68,7 +68,7 @@ public class PdfWriter extends Data2DWriter {
     }
 
     @Override
-    public void closeWriter() {
+    public void finishWork() {
         try {
             if (pdfTable == null || printFile == null) {
                 showInfo(message("Failed") + ": " + printFile);

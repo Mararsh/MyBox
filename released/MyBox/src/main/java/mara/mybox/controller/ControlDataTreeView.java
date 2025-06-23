@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
@@ -146,7 +147,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             }
 
         };
-        start(task, thisPane);
+        start(task);
     }
 
     @Override
@@ -159,6 +160,8 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     public void focusItem(TreeItem<DataNode> nodeitem) {
         super.focusItem(nodeitem);
         try {
+            dataController.currentNode = nodeitem.getValue();
+            dataController.viewNode(nodeitem.getValue());
             nodeitem.getValue().getSelected().set(true);
         } catch (Exception e) {
         }
@@ -216,6 +219,18 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         return selectedValue();
     }
 
+    public List<Long> selectedIDs() {
+        List<Long> selectedIDs = new ArrayList<>();
+        List<DataNode> selectedNodes = selectedNodes();
+        if (selectedNodes == null) {
+            return selectedIDs;
+        }
+        for (DataNode node : selectedNodes) {
+            selectedIDs.add(node.getNodeid());
+        }
+        return selectedIDs;
+    }
+
     public TreeItem<DataNode> dummyItem() {
         return new TreeItem(new DataNode());
     }
@@ -262,7 +277,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     }
 
     @Override
-    public void unfold(TreeItem<DataNode> item, boolean descendants) {
+    public void unfold(TreeItem<DataNode> item, boolean unfoldDescendants) {
         if (item == null) {
             return;
         }
@@ -290,7 +305,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                     tempItem = new TreeItem(item.getValue());
                     tempItem.getChildren().add(dummyItem());
                     conn.setAutoCommit(true);
-                    unfold(this, conn, tempItem, descendants);
+                    unfold(this, conn, tempItem, unfoldDescendants);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -315,7 +330,8 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     }
 
     // item should be invisible in the treeView while doing this
-    public void unfold(FxTask task, Connection conn, TreeItem<DataNode> item, boolean descendants) {
+    public void unfold(FxTask task, Connection conn,
+            TreeItem<DataNode> item, boolean unfoldDescendants) {
         try {
             if (item == null || item.isLeaf()) {
                 return;
@@ -325,7 +341,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                     if (task == null || task.isCancelled()) {
                         return;
                     }
-                    if (descendants) {
+                    if (unfoldDescendants) {
                         unfold(task, conn, childItem, true);
                     } else {
                         childItem.setExpanded(false);
@@ -337,7 +353,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 if (node == null) {
                     return;
                 }
-
                 String sql = "SELECT " + BaseNodeTable.NodeFields + " FROM " + nodeTable.getTableName()
                         + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
                 try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -357,6 +372,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                             DataNode childNode = nodeTable.readData(results);
                             childNode.setIndex(index);
                             childNode.setHierarchyNumber(prefix + (++index));
+                            childNode.setParentNode(node);
                             readExtraInfo(conn, childNode);
                             TreeItem<DataNode> childItem = new TreeItem(childNode);
                             item.getChildren().add(childItem);
@@ -369,7 +385,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                                         });
                                 childItem.getChildren().add(dummyItem());
                             }
-                            if (descendants) {
+                            if (unfoldDescendants) {
                                 unfold(task, conn, childItem, true);
                             } else {
                                 childItem.setExpanded(false);
@@ -518,6 +534,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         if (item == null) {
             return;
         }
+        item.setValue(node);
         item.getChildren().clear();
         item.getChildren().add(dummyItem());
         unfold(item, false);

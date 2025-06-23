@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
@@ -73,6 +74,14 @@ public class GeographyCodeController extends DataTreeController {
         viewNode(node);
     }
 
+    @Override
+    protected void reloadView(DataNode node) {
+        if (mapController.viewNode != null
+                && mapController.viewNode.equals(node)) {
+            viewNode(node);
+        }
+    }
+
     @FXML
     @Override
     public boolean infoAction() {
@@ -112,6 +121,14 @@ public class GeographyCodeController extends DataTreeController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return mapController.keyEventsFilter(event);
     }
 
     /*

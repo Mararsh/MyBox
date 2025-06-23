@@ -61,12 +61,12 @@ public class ColorPaletteInputController extends BaseChildController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popSavedValues(this, colorInput, event, "ColorQueryColorHistories");
+        PopTools.popSavedValues(this, colorInput, event, "ColorHistories");
     }
 
     @FXML
     protected void popColorHistories(Event event) {
-        if (UserConfig.getBoolean("ColorQueryColorHistoriesPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("ColorHistoriesPopWhenMouseHovering", false)) {
             showHistories(event);
         }
     }
@@ -95,7 +95,7 @@ public class ColorPaletteInputController extends BaseChildController {
                 popError(message("InvalidParameters") + ": " + message("Color"));
                 return null;
             }
-            TableStringValues.add("ColorQueryColorHistories", value);
+            TableStringValues.add("ColorHistories", value);
             return colorData;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -5,19 +5,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Slider;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
-import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -32,105 +31,87 @@ public class ColorQueryController extends BaseController {
     protected ColorData colorData;
 
     @FXML
-    protected TextField colorInput;
+    protected Tab colorTab, resultTab;
     @FXML
-    protected ColorPicker colorPicker;
+    protected ControlColorInput colorController;
     @FXML
-    protected Button queryButton, refreshButton, paletteButton;
-    @FXML
-    protected Slider hueSlider, saturationSlider, brightnessSlider, opacitySlider;
+    protected Button refreshButton, paletteButton;
     @FXML
     protected TextField separatorInput;
+    @FXML
+    protected ToggleGroup separatorGroup;
+    @FXML
+    protected RadioButton commaRadio, hyphenRadio, colonRadio, blankRadio, inputRadio;
     @FXML
     protected HtmlTableController htmlController;
 
     public ColorQueryController() {
-        baseTitle = message("ColorQuery");
+        baseTitle = message("QueryColor");
     }
 
     @Override
     public void initControls() {
         try {
-            colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+            separatorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Color> v, Color ov, Color nv) {
-                    if (isSettingValues || nv == null) {
-                        return;
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    if (!inputRadio.isSelected()) {
+                        goAction();
                     }
-                    colorInput.setText(FxColorTools.color2rgba(nv));
-                    queryAction();
                 }
             });
 
-            hueSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> v, Number ov, Number nv) {
-                    pickSliders();
-                }
-            });
+            separatorInput.setText(UserConfig.getString(baseName + "Separator", null));
 
-            saturationSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> v, Number ov, Number nv) {
-                    pickSliders();
-                }
-            });
-
-            brightnessSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> v, Number ov, Number nv) {
-                    pickSliders();
-                }
-            });
-
-            opacitySlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> v, Number ov, Number nv) {
-                    pickSliders();
-                }
-            });
-            separatorInput.setText(UserConfig.getString(baseName + "Separator", ", "));
-
-            queryButton.disableProperty().bind(colorInput.textProperty().isEmpty());
-            refreshButton.disableProperty().bind(colorInput.textProperty().isEmpty()
+            goButton.disableProperty().bind(colorController.colorInput.textProperty().isEmpty()
                     .or(separatorInput.textProperty().isEmpty())
             );
-            paletteButton.disableProperty().bind(queryButton.disableProperty());
+            htmlController.initStyle(HtmlStyles.TableStyle);
 
-            colorInput.setText("#552288");
-            queryAction();
+            initMore();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void setControlsStyle() {
+    public void initMore() {
         try {
-            super.setControlsStyle();
+            colorController.setParameter(baseName, Color.GOLD);
 
-            NodeStyleTools.setTooltip(queryButton, message("Query") + "\nF1 / ENTER");
-            NodeStyleTools.setTooltip(paletteButton, message("AddInColorPalette"));
+            colorController.updateNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    goAction();
+                }
+            });
+
+            goAction();
+
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
-    public ColorData pickValue() {
+    public String pickSeparator() {
         try {
-            String value = colorInput.getText();
-            if (value == null || value.isBlank()) {
-                return null;
-            }
-            TableStringValues.add("ColorQueryColorHistories", value);
-            String separator = separatorInput.getText();
-            if (separator == null || separator.isEmpty()) {
+            String separator = ", ";
+            if (commaRadio.isSelected()) {
                 separator = ", ";
+            } else if (hyphenRadio.isSelected()) {
+                separator = "-";
+            } else if (colonRadio.isSelected()) {
+                separator = ":";
+            } else if (blankRadio.isSelected()) {
+                separator = " ";
+            } else if (inputRadio.isSelected()) {
+                separator = separatorInput.getText();
+                if (separator == null || separator.isEmpty()) {
+                    return null;
+                }
+                UserConfig.setString(baseName + "Separator", separator);
             }
-            UserConfig.setString(baseName + "Separator", separator);
-            ColorData c = new ColorData(value).setvSeparator(separator).convert();
-            return c;
+            return separator;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -138,89 +119,24 @@ public class ColorQueryController extends BaseController {
     }
 
     @FXML
-    public void queryAction() {
-        try {
-            if (!showValue()) {
-                popError(message("InvalidParameters") + ": " + message("Color"));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public boolean showValue() {
-        try {
-            ColorData c = pickValue();
-            if (c == null || c.getSrgb() == null) {
-                return false;
-            }
-            colorData = c;
-            htmlController.displayHtml(colorData.html());
-
-            isSettingValues = true;
-            Color color = colorData.getColor();
-            colorPicker.setValue(color);
-            hueSlider.setValue((int) color.getHue());
-            saturationSlider.setValue((int) (color.getSaturation() * 100));
-            brightnessSlider.setValue((int) (color.getBrightness() * 100));
-            opacitySlider.setValue((int) (color.getOpacity() * 100));
-            isSettingValues = false;
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public void pickSliders() {
-        if (isSettingValues) {
-            return;
-        }
-        int h = (int) hueSlider.getValue();
-        int s = (int) saturationSlider.getValue();
-        int b = (int) brightnessSlider.getValue();
-        double a = DoubleTools.scale2(opacitySlider.getValue() / 100);
-        colorInput.setText("hsla(" + h + "," + s + "%," + b + "%," + a + ")");
-        showValue();
-    }
-
-    @FXML
-    protected void showExamples(Event event) {
-        PopTools.popColorExamples(this, colorInput, event);
-    }
-
-    @FXML
-    public void popExamples(Event event) {
-        if (UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false)) {
-            showExamples(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popSavedValues(this, colorInput, event, "ColorQueryColorHistories");
-    }
-
-    @FXML
-    protected void popColorHistories(Event event) {
-        if (UserConfig.getBoolean("ColorQueryColorHistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
     @Override
-    public void refreshAction() {
-        queryAction();
-    }
-
-    @FXML
-    public void addColor() {
-        if (colorData == null) {
-            return;
+    public void goAction() {
+        try {
+            colorData = colorController.colorData;
+            if (colorData == null || colorData.getRgba() == null) {
+                return;
+            }
+            String separator = pickSeparator();
+            if (separator == null || separator.isEmpty()) {
+                popError(message("InvalidParamter") + ": " + message("ValueSeparator"));
+                return;
+            }
+            colorData = new ColorData(colorData.getRgba())
+                    .setvSeparator(separator).convert();
+            htmlController.displayHtml(colorData.html());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        ColorsManageController.addOneColor(colorData.getColor());
     }
 
     @FXML
@@ -236,17 +152,13 @@ public class ColorQueryController extends BaseController {
     }
 
     @Override
-    public boolean keyEnter() {
-        return keyF1();
-    }
-
-    @Override
-    public boolean keyF1() {
-        if (queryButton.isDisable()) {
-            return false;
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (colorTab.isSelected()) {
+            if (colorController.keyEventsFilter(event)) {
+                return true;
+            }
         }
-        queryAction();
-        return true;
+        return super.keyEventsFilter(event);
     }
 
     /*

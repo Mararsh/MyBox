@@ -376,7 +376,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     @FXML
     @Override
     public void addAction() {
-        ColorInputController.oneOpen(this);
+        ColorsInputController.oneOpen(this);
     }
 
     @FXML
@@ -899,7 +899,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (manageController == null) {
             return null;
         }
-        ColorCopyController addController = (ColorCopyController) WindowTools.openStage(Fxmls.ColorCopyFxml);
+        ColorCopyController addController = (ColorCopyController) WindowTools.childStage(manageController, Fxmls.ColorCopyFxml);
         addController.setParameters(manageController, colors);
         addController.requestMouse();
         return manageController;

@@ -87,7 +87,7 @@ public class ControlDataWebFavorite extends BaseDataValuesController {
         try {
             String address = addressInput.getText();
             String icon = iconController.fileInput.getText();
-            node.setValue("address", icon == null ? null : address.trim());
+            node.setValue("address", address == null ? null : address.trim());
             node.setValue("icon", icon == null ? null : icon.trim());
             return node;
         } catch (Exception e) {

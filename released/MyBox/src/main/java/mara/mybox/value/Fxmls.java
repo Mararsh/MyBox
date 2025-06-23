@@ -232,9 +232,10 @@ public class Fxmls {
 
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
-    public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
+    public static final String ColorsInputFxml = "/fxml/ColorsInput.fxml";
     public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";
     public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
+    public static final String ColorsBlendFxml = "/fxml/ColorsBlend.fxml";
     public static final String ColorPaletteInputFxml = "/fxml/ColorPaletteInput.fxml";
     public static final String ColorPaletteSelectorFxml = "/fxml/ColorPaletteSelector.fxml";
     public static final String ColorsCustomizeFxml = "/fxml/ColorsCustomize.fxml";

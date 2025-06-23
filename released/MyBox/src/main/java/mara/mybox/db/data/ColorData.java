@@ -12,7 +12,6 @@ import mara.mybox.color.SRGB;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.image.FxColorTools;
-import static mara.mybox.fxml.image.FxColorTools.color2css;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.image.data.ImageColorSpace;
 import mara.mybox.image.tools.ColorConvertTools;
@@ -133,6 +132,10 @@ public class ColorData extends BaseData {
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
+    }
+
+    public boolean isValid() {
+        return srgb != null;
     }
 
     public boolean needCalculate() {
@@ -368,90 +371,7 @@ public class ColorData extends BaseData {
         names.addAll(Arrays.asList(message("Data"), message("Color"),
                 message("RGBInvertColor"), message("RYBComplementaryColor")));
         StringTable table = new StringTable(names, message("Color"));
-        List<String> row = new ArrayList<>();
-        row.add(message("Color"));
-        row.add("<DIV style=\"width: 50px;  background-color:"
-                + color2css(getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
-        row.add("<DIV style=\"width: 50px;  background-color:"
-                + color2css(invertData.getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
-        row.add("<DIV style=\"width: 50px;  background-color:"
-                + color2css(complementaryData.getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Name"), getColorName() + "", invertData.getColorName() + "", complementaryData.getColorName() + ""));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("RGBA", getRgba(), invertData.getRgba(), complementaryData.getRgba()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("RGB", getRgb(), invertData.getRgb(), complementaryData.getRgb()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("sRGB", getSrgb(), invertData.getSrgb(), complementaryData.getSrgb()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("HSBA", getHsb(), invertData.getHsb(), complementaryData.getHsb()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Hue"), getHue(), invertData.getHue(), complementaryData.getHue()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Saturation"), getSaturation(), invertData.getSaturation(), complementaryData.getSaturation()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Brightness"), getBrightness(), invertData.getBrightness(), complementaryData.getBrightness()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("RYBAngle"), getRybAngle(), invertData.getRybAngle(), complementaryData.getRybAngle()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Opacity"), getOpacity(), invertData.getOpacity(), complementaryData.getOpacity()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("CalculatedCMYK"), getCalculatedCMYK(), invertData.getCalculatedCMYK(), complementaryData.getCalculatedCMYK()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("Adobe RGB", getAdobeRGB(), invertData.getAdobeRGB(), complementaryData.getAdobeRGB()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("Apple RGB", getAppleRGB(), invertData.getAppleRGB(), complementaryData.getAppleRGB()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("ECI RGB", getEciRGB(), invertData.getEciRGB(), complementaryData.getEciRGB()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("sRGB Linear", getSRGBLinear(), invertData.getSRGBLinear(), complementaryData.getSRGBLinear()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("Adobe RGB Linear", getAdobeRGBLinear(), invertData.getAdobeRGBLinear(), complementaryData.getAdobeRGBLinear()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("Apple RGB Linear", getAppleRGBLinear(), invertData.getAppleRGBLinear(), complementaryData.getAppleRGBLinear()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("ECI CMYK", getEciCMYK(), invertData.getEciCMYK(), complementaryData.getEciCMYK()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("Adobe CMYK Uncoated FOGRA29", getAdobeCMYK(), invertData.getAdobeCMYK(), complementaryData.getAdobeCMYK()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("XYZ", getXyz(), invertData.getXyz(), complementaryData.getXyz()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("CIE-L*ab", getCieLab(), invertData.getCieLab(), complementaryData.getCieLab()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("LCH(ab)", getLchab(), invertData.getLchab(), complementaryData.getLchab()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("CIE-L*uv", getCieLuv(), invertData.getCieLuv(), complementaryData.getCieLuv()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList("LCH(uv)", getLchuv(), invertData.getLchuv(), complementaryData.getLchuv()));
-        table.add(row);
-        row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Value"), getColorValue() + "", invertData.getColorValue() + "", complementaryData.getColorValue() + ""));
-        table.add(row);
+        table = FxColorTools.colorsTable(table, this, invertData, complementaryData);
         return HtmlWriteTools.html(message("Color"), HtmlStyles.styleValue("Table"), table.body());
     }
 
@@ -461,6 +381,10 @@ public class ColorData extends BaseData {
         } else {
             return rgba;
         }
+    }
+
+    public String css() {
+        return color != null ? FxColorTools.color2css(color) : null;
     }
 
     /*

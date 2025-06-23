@@ -121,11 +121,8 @@ public class DataTreeController extends BaseDataTreeController {
                     stonedNode.setUpdateTime(new Date());
                     stonedNode.setTitle(name);
                     stonedNode = nodeTable.updateData(conn, stonedNode);
-                    if (stonedNode == null) {
-                        return false;
-                    }
-                    conn.commit();
-                    return true;
+                    stonedNode.setHierarchyNumber(node.getHierarchyNumber());
+                    return stonedNode != null;
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.error(e);
@@ -135,8 +132,7 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                stonedNode.setHierarchyNumber(node.getHierarchyNumber());
-                viewNode(stonedNode);
+                refreshNode(stonedNode);
                 popSuccessful();
             }
         };
@@ -171,7 +167,7 @@ public class DataTreeController extends BaseDataTreeController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private DataNode stonedNode;
+            private DataNode stonedNode, parentNode;
 
             @Override
             protected boolean handle() {
@@ -183,6 +179,8 @@ public class DataTreeController extends BaseDataTreeController {
                     stonedNode.setUpdateTime(new Date());
                     stonedNode.setOrderNumber(fvalue);
                     stonedNode = nodeTable.updateData(conn, stonedNode);
+                    parentNode = nodeTable.query(conn, node.getParentid());
+                    stonedNode.setParentNode(parentNode);
                     return stonedNode != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -194,7 +192,7 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                refreshNode(parentNode(stonedNode));
+                refreshNode(parentNode);
                 reloadView(stonedNode);
                 popSuccessful();
             }
