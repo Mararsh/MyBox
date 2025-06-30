@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -22,6 +23,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
@@ -58,13 +60,15 @@ public class PdfViewController extends PdfViewController_Html {
 
     @FXML
     protected CheckBox transparentBackgroundCheck, viewBookmarkCheck,
-            wrapTextsCheck, refreshSwitchTextsCheck, refreshChangeTextsCheck,
-            wrapOCRCheck, refreshChangeOCRCheck, refreshSwitchOCRCheck,
-            refreshChangeHtmlCheck, refreshSwitchHtmlCheck;
+            wrapTextsCheck, wrapOCRCheck;
     @FXML
     protected ScrollPane bookmarksScrollPane;
     @FXML
     protected TreeView bookmarksTree;
+    @FXML
+    protected VBox viewBox, imageVox, textsBox, htmlBox, ocrBox;
+    @FXML
+    protected RadioButton imageRadio, textsRadio, htmlRadio, ocrRadio;
 
     public PdfViewController() {
         baseTitle = message("PdfView");

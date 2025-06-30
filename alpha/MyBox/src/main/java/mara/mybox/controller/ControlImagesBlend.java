@@ -104,6 +104,9 @@ public class ControlImagesBlend extends BaseController {
             }
 
             String mode = UserConfig.getString(conn, baseName + "BlendMode", message("MultiplyMode"));
+            if (mode == null) {
+                mode = message("MultiplyMode");
+            }
             blendMode = PixelsBlendFactory.blendMode(mode);
             modeList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             modeList.getItems().setAll(PixelsBlendFactory.blendModes());
@@ -180,6 +183,9 @@ public class ControlImagesBlend extends BaseController {
     public PixelsBlend pickValues(Connection conn) {
         try {
             String mode = modeList.getSelectionModel().getSelectedItem();
+            if (mode == null) {
+                mode = message("MultiplyMode");
+            }
             blendMode = PixelsBlendFactory.blendMode(mode);
             UserConfig.setString(conn, baseName + "BlendMode", mode);
 

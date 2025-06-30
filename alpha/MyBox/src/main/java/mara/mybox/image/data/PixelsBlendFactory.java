@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.image.data.PixelsBlend.ImagesBlendMode;
+import static mara.mybox.image.data.PixelsBlend.ImagesBlendMode.MULTIPLY;
 import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -30,19 +31,19 @@ public class PixelsBlendFactory {
 
     public static ImagesBlendMode blendMode(String name) {
         if (name == null) {
-            return null;
+            return ImagesBlendMode.MULTIPLY;
         }
         for (ImagesBlendMode mode : ImagesBlendMode.values()) {
-            if (Languages.matchIgnoreCase(modeName(mode), name)) {
+            if (Languages.matchIgnoreCase(name, modeName(mode))) {
                 return mode;
             }
         }
-        return null;
+        return ImagesBlendMode.MULTIPLY;
     }
 
     public static String modeName(ImagesBlendMode mode) {
         if (mode == null) {
-            return null;
+            return message("MultiplyMode");
         }
         switch (mode) {
             case KubelkaMunk:
@@ -98,12 +99,12 @@ public class PixelsBlendFactory {
             case LUMINOSITY:
                 return message("LuminosityMode");
         }
-        return null;
+        return message("MultiplyMode");
     }
 
     public static PixelsBlend create(ImagesBlendMode blendMode) {
         if (blendMode == null) {
-            return null;
+            return new MultiplyBlend();
         }
         switch (blendMode) {
             case KubelkaMunk:
@@ -159,7 +160,7 @@ public class PixelsBlendFactory {
             case COLOR:
                 return new ColorBlend();
             default:
-                return new NormalBlend();
+                return new MultiplyBlend();
 
         }
     }

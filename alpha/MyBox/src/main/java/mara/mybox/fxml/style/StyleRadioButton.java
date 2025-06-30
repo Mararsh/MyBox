@@ -134,6 +134,8 @@ public class StyleRadioButton {
                 return new StyleData(id, message("Matting8"), "", "iconColorFill.png");
             case "outlineRadio":
                 return new StyleData(id, message("Outline"), "", "iconButterfly.png");
+            case "imageRadio":
+                return new StyleData(id, message("Image"), "", "iconImage.png");
         }
         return null;
     }

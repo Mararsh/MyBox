@@ -519,6 +519,7 @@ public class Fxmls {
     public static final String FileBackupFxml = "/fxml/FileBackup.fxml";
     public static final String FileBrowseFxml = "/fxml/FileBrowse.fxml";
     public static final String ImageExampleSelectFxml = "/fxml/ImageExampleSelect.fxml";
+    public static final String TesseractOptionsFxml = "/fxml/TesseractOptions.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

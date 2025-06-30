@@ -136,7 +136,9 @@ public class ColorsBlendController extends ColorQueryController {
             names.addAll(Arrays.asList(message("Data"), message("Base"),
                     message("Overlay"), message("BlendColors")));
             table = new StringTable(names);
-            table = FxColorTools.colorsTable(table, colorData, colorOverlay, colorBlended);
+            table = blendController.baseAboveCheck.isSelected()
+                    ? FxColorTools.colorsTable(table, colorOverlay, colorData, colorBlended)
+                    : FxColorTools.colorsTable(table, colorData, colorOverlay, colorBlended);
             html += table.div();
 
             html += "</body></html>";

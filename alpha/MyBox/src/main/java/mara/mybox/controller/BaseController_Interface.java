@@ -973,7 +973,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-
     }
 
     public void cleanWindow() {

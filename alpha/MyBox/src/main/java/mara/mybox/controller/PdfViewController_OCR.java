@@ -12,16 +12,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import mara.mybox.image.tools.AlphaTools;
+import mara.mybox.data.TesseractOptions;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.AlphaTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -30,6 +30,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class PdfViewController_OCR extends BaseFileImagesController {
 
+    protected TesseractOptions tesseractOptions;
     protected int orcPage;
     protected FxTask ocrTask;
     protected Thread ocrThread;
@@ -40,22 +41,28 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
     protected TextArea ocrArea;
     @FXML
     protected Label ocrLabel;
-    @FXML
-    protected ControlOCROptions ocrOptionsController;
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            tesseractOptions = new TesseractOptions();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     @FXML
     public void startOCR() {
         if (imageView.getImage() == null) {
             return;
         }
-        ocrOptionsController.setLanguages();
-        File dataPath = ocrOptionsController.dataPathController.pickFile();
+        File dataPath = tesseractOptions.getDataPath();
         if (!dataPath.exists()) {
             popError(message("InvalidParameters"));
-            ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
             return;
         }
-        if (ocrOptionsController.embedRadio.isSelected()) {
+        if (tesseractOptions.isEmbed()) {
             embedded();
         } else {
             command();
@@ -196,6 +203,11 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
 
         };
         start(ocrTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
+    }
+
+    @FXML
+    public void ocrOptions() {
+        TesseractOptionsController.open(this, tesseractOptions);
     }
 
     @FXML

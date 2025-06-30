@@ -11,11 +11,13 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -24,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane  prefHeight="700.0" prefWidth="800.0"  fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfViewController">
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfViewController">
    <content>
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
     <top>
@@ -33,14 +35,62 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                             <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                 <content> 
-                                    <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <VBox fx:id="leftBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                         <children>
                               <HBox alignment="CENTER_LEFT" spacing="2.0">
                                  <children>
+                                          <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconView.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <RadioButton fx:id="imageRadio" mnemonicParsing="false" selected="true">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconImage.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="formatGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="textsRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconTxt.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </RadioButton>
+                                          <RadioButton fx:id="htmlRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconHtml.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </RadioButton>
+                                          <RadioButton fx:id="ocrRadio" layoutX="125.0" layoutY="14.0" mnemonicParsing="false" toggleGroup="$formatGroup">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconOCR.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </RadioButton>
                                     <FlowPane fx:id="playPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                        <children>
                                                       <Label text="%Page" />
@@ -109,11 +159,12 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </children>
                               </HBox>
+                                    <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                             <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                 <tabs>
                                                     <Tab fx:id="imageTab" closable="false" text="%Image">
                                                         <content>
-                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <VBox fx:id="imageVox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                 <padding>
                                                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                                 </padding>
@@ -125,7 +176,7 @@ License:    Apache License Version 2.0
                                                     </Tab>
                                                     <Tab fx:id="textsTab" closable="false" text="%Texts">
                                                         <content>
-                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <VBox fx:id="textsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                 <children>
                                                                     <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                                                                         <children> 
@@ -139,33 +190,6 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </CheckBox>
-                                                                            <CheckBox fx:id="refreshSwitchTextsCheck" mnemonicParsing="false" selected="true">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/iconRefreshSwitch.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <CheckBox fx:id="refreshChangeTextsCheck" mnemonicParsing="false">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <Button fx:id="refreshTextsButton" mnemonicParsing="false" onAction="#extractTexts">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
                                                                             <Button fx:id="editTextsButton" mnemonicParsing="false" onAction="#editTexts">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -188,38 +212,11 @@ License:    Apache License Version 2.0
                                                     </Tab>
                                                     <Tab fx:id="htmlTab" closable="false" text="%Html">
                                                         <content>
-                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                 <children>
                                                                     <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                                                                         <children>
                                                                             <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                                                                            <CheckBox fx:id="refreshSwitchHtmlCheck" mnemonicParsing="false" selected="true">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/iconRefreshSwitch.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <CheckBox fx:id="refreshChangeHtmlCheck" mnemonicParsing="false">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <Button fx:id="refreshHtmlButton" mnemonicParsing="false" onAction="#convertHtml">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
                                                                             <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editHtml">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -241,7 +238,7 @@ License:    Apache License Version 2.0
                                                     </Tab>
                                                     <Tab fx:id="ocrTab" closable="false" text="OCR">
                                                         <content>
-                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <VBox fx:id="ocrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                 <children>
                                                                     <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
                                                                         <children>
@@ -255,33 +252,6 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </CheckBox>
-                                                                            <CheckBox fx:id="refreshSwitchOCRCheck" mnemonicParsing="false" selected="true">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/iconRefreshSwitch.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <CheckBox fx:id="refreshChangeOCRCheck" layoutX="368.0" layoutY="14.0" mnemonicParsing="false">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <Button fx:id="refreshOCRButton" mnemonicParsing="false" onAction="#startOCR">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
                                                                             <Button fx:id="editOcrButton" mnemonicParsing="false" onAction="#editOCR">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -291,26 +261,19 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </Button>
+                                                            <Button fx:id="optionsOCRButton" mnemonicParsing="false" onAction="#ocrOptions">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconOptions.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
                                                                         </children>
                                                                     </HBox>
                                                                     <TextArea fx:id="ocrArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                                                                     <Label fx:id="ocrLabel" />
-                                                                </children>
-                                                                <padding>
-                                                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                </padding>
-                                                            </VBox>
-                                                        </content>
-                                                    </Tab>
-                                                    <Tab fx:id="ocrOptionsTab" closable="false" text="%OCROptions">
-                                                        <content>
-                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                <children>
-                                                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                                        <content>
-                                                                            <fx:include fx:id="ocrOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlOCROptions.fxml" />
-                                                                        </content>
-                                                                    </ScrollPane>
                                                                 </children>
                                                                 <padding>
                                                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -364,6 +327,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                    </children>
                                                 </FlowPane>
+                                                      <HBox alignment="CENTER_LEFT" spacing="2.0" />
                                                 <CheckBox fx:id="transparentBackgroundCheck" mnemonicParsing="false">
                                                    <graphic>
                                                       <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
