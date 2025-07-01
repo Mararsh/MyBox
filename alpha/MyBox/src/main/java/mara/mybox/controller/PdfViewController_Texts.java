@@ -1,14 +1,17 @@
 package mara.mybox.controller;
 
 import java.text.MessageFormat;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -26,11 +29,31 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
     protected Task textsTask;
 
     @FXML
-    protected Tab textsTab;
-    @FXML
     protected TextArea textsArea;
     @FXML
     protected Label textsLabel;
+    @FXML
+    protected CheckBox wrapTextsCheck;
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapTexts", true));
+            wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapTexts", newValue);
+                    textsArea.setWrapText(newValue);
+                }
+            });
+            textsArea.setWrapText(wrapTextsCheck.isSelected());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     @FXML
     public void extractTexts() {

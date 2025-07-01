@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,11 +13,13 @@ import java.util.List;
 import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.image.tools.AlphaTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
@@ -40,40 +43,57 @@ public class TesseractOptions {
     public static final String TessDataPath = "TessDataPath";
 
     protected File tesseract, dataPath;
-    protected String os, selectedLanguages, regionLevel, wordLevel, texts, html;
+    protected String os, selectedLanguages, regionLevel, wordLevel, more,
+            texts, html;
     protected List<Rectangle> rectangles;
     protected List<Word> words;
     protected int psm, tesseractVersion;
     protected boolean embed, setFormats, setLevels, isVersion3, outHtml, outPdf;
     protected File configFile;
-    protected Map<String, String> more;
 
     public TesseractOptions() {
         initValues();
     }
 
     final public void initValues() {
-        try {
-            os = SystemTools.os();
+        os = SystemTools.os();
+        readValues();
+        configFile = null;
+        clearResults();
+    }
 
-            embed = UserConfig.getBoolean("TesseracEmbed", true);
-
-            tesseract = new File(UserConfig.getString("TesseractPath",
+    public void readValues() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            tesseract = new File(UserConfig.getString(conn, "TesseractPath",
                     "win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tesseract.exe" : "/bin/tesseract"));
-            dataPath = new File(UserConfig.getString(TessDataPath,
+            dataPath = new File(UserConfig.getString(conn, TessDataPath,
                     "win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tessdata" : "/usr/local/share/tessdata/"));
 
-            selectedLanguages = UserConfig.getString("ImageOCRLanguages", null);
+            embed = UserConfig.getBoolean(conn, "TesseracEmbed", true);
+            selectedLanguages = UserConfig.getString(conn, "ImageOCRLanguages", null);
+            psm = UserConfig.getInt(conn, "TesseractPSM", 6);
+            regionLevel = UserConfig.getString(conn, "TesseractRegionLevel", message("Symbol"));
+            wordLevel = UserConfig.getString(conn, "TesseractWordLevel", message("Symbol"));
+            outHtml = UserConfig.getBoolean(conn, "TesseractOutHtml", false);
+            outPdf = UserConfig.getBoolean(conn, "TesseractOutPdf", false);
+            more = UserConfig.getString(conn, "TesseractMore", null);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
-            psm = UserConfig.getInt("TesseractPSM", 6);
-
-            regionLevel = UserConfig.getString("TesseractRegionLevel", message("Symbol"));
-            wordLevel = UserConfig.getString("TesseractWordLevel", message("Symbol"));
-
-            outHtml = UserConfig.getBoolean("TesseractOutHtml", false);
-            outPdf = UserConfig.getBoolean("TesseractOutPdf", false);
-
-            clearResults();
+    public void writeValues() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            UserConfig.setString(conn, "TesseractPath", tesseract.getAbsolutePath());
+            UserConfig.setString(conn, TessDataPath, dataPath.getAbsolutePath());
+            UserConfig.setBoolean(conn, "ImageOCREmbed", embed);
+            UserConfig.setString(conn, "ImageOCRLanguages", selectedLanguages);
+            UserConfig.setInt(conn, "TesseractPSM", psm);
+            UserConfig.setString(conn, "TesseractRegionLevel", regionLevel);
+            UserConfig.setString(conn, "TesseractWordLevel", wordLevel);
+            UserConfig.setBoolean(conn, "TesseractOutHtml", outHtml);
+            UserConfig.setBoolean(conn, "TesseractOutPdf", outPdf);
+            UserConfig.setString(conn, "TesseractMore", more);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -113,8 +133,101 @@ public class TesseractOptions {
         }
     }
 
+    public Map<String, String> moreOptions() {
+        if (more == null || more.isBlank()) {
+            return null;
+        }
+        Map<String, String> p = new HashMap<>();
+        String[] lines = more.split("\n");
+        for (String line : lines) {
+            String[] fields = line.split("\t");
+            if (fields.length < 2) {
+                continue;
+            }
+            p.put(fields[0].trim(), fields[1].trim());
+        }
+        return p;
+    }
+
+    // Make sure supported language files are under defined data path
+    public boolean initDataFiles() {
+        try {
+            if (dataPath == null || !dataPath.exists() || !dataPath.isDirectory()) {
+                dataPath = new File(MyboxDataPath + File.separator + "tessdata");
+            }
+            dataPath.mkdirs();
+            File chi_sim = new File(dataPath.getAbsolutePath() + File.separator + "chi_sim.traineddata");
+            if (!chi_sim.exists()) {
+                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_sim.traineddata");
+                FileCopyTools.copyFile(tmp, chi_sim);
+            }
+            File chi_sim_vert = new File(dataPath.getAbsolutePath() + File.separator + "chi_sim_vert.traineddata");
+            if (!chi_sim_vert.exists()) {
+                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_sim_vert.traineddata");
+                FileCopyTools.copyFile(tmp, chi_sim_vert);
+            }
+            File chi_tra = new File(dataPath.getAbsolutePath() + File.separator + "chi_tra.traineddata");
+            if (!chi_tra.exists()) {
+                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_tra.traineddata");
+                FileCopyTools.copyFile(tmp, chi_tra);
+            }
+            File chi_tra_vert = new File(dataPath.getAbsolutePath() + File.separator + "chi_tra_vert.traineddata");
+            if (!chi_tra_vert.exists()) {
+                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_tra_vert.traineddata");
+                FileCopyTools.copyFile(tmp, chi_tra_vert);
+            }
+            File equ = new File(dataPath.getAbsolutePath() + File.separator + "equ.traineddata");
+            if (!equ.exists()) {
+                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/equ.traineddata");
+                FileCopyTools.copyFile(tmp, equ);
+            }
+            File eng = new File(dataPath.getAbsolutePath() + File.separator + "eng.traineddata");
+            if (!eng.exists()) {
+                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/eng.traineddata");
+                FileCopyTools.copyFile(tmp, eng);
+            }
+            File osd = new File(dataPath.getAbsolutePath() + File.separator + "osd.traineddata");
+            if (!osd.exists()) {
+                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/tessdata/osd.traineddata");
+                FileCopyTools.copyFile(tmp, osd);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
     public List<String> namesList() {
         return namesList(tesseractVersion > 3);
+    }
+
+    public List<String> namesList(boolean copyFiles) {
+        List<String> data = new ArrayList<>();
+        try {
+            if (copyFiles) {
+                initDataFiles();
+            }
+            data.addAll(names());
+            List<String> codes = codes();
+            File[] files = dataPath.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    String name = f.getName();
+                    if (!f.isFile() || !name.endsWith(".traineddata")) {
+                        continue;
+                    }
+                    String code = name.substring(0, name.length() - ".traineddata".length());
+                    if (codes.contains(code)) {
+                        continue;
+                    }
+                    data.add(code);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return data;
     }
 
     public Tesseract tesseract() {
@@ -124,9 +237,11 @@ public class TesseractOptions {
             instance.setVariable("user_defined_dpi", "96");
             instance.setVariable("debug_file", "/dev/null");
             instance.setPageSegMode(psm);
-            if (more != null && !more.isEmpty()) {
-                for (String key : more.keySet()) {
-                    instance.setVariable(key, more.get(key));
+
+            Map<String, String> moreOptions = moreOptions();
+            if (moreOptions != null && !moreOptions.isEmpty()) {
+                for (String key : moreOptions.keySet()) {
+                    instance.setVariable(key, moreOptions.get(key));
                 }
             }
             instance.setDatapath(dataPath.getAbsolutePath());
@@ -173,6 +288,29 @@ public class TesseractOptions {
             MyBoxLog.debug(e);
         }
         return -1;
+    }
+
+    public void makeConfigFile() {
+        try {
+            configFile = FileTmpTools.getTempFile();
+            String s = "tessedit_create_txt 1\n";
+            if (outHtml) {
+                s += "tessedit_create_hocr 1\n";
+            }
+            if (outPdf) {
+                s += "tessedit_create_pdf 1\n";
+            }
+            Map<String, String> moreOptions = moreOptions();
+            if (moreOptions != null) {
+                for (String key : moreOptions.keySet()) {
+                    s += key + "\t" + moreOptions.get(key) + "\n";
+                }
+            }
+            TextFileTools.writeFile(configFile, s, Charset.forName("utf-8"));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            configFile = null;
+        }
     }
 
     public boolean imageOCR(FxTask currentTask, Image image, boolean allData) {
@@ -315,93 +453,6 @@ public class TesseractOptions {
         return Names;
     }
 
-    // Make sure supported language files are under defined data path
-    public static boolean initDataFiles() {
-        try {
-            String pathname = UserConfig.getString(TessDataPath, null);
-            if (pathname == null) {
-                pathname = MyboxDataPath + File.separator + "tessdata";
-            }
-            File path = new File(pathname);
-            if (!path.exists() || !path.isDirectory()) {
-                path = new File(MyboxDataPath + File.separator + "tessdata");
-                path.mkdirs();
-            }
-            File chi_sim = new File(path.getAbsolutePath() + File.separator + "chi_sim.traineddata");
-            if (!chi_sim.exists()) {
-                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_sim.traineddata");
-                FileCopyTools.copyFile(tmp, chi_sim);
-            }
-            File chi_sim_vert = new File(path.getAbsolutePath() + File.separator + "chi_sim_vert.traineddata");
-            if (!chi_sim_vert.exists()) {
-                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_sim_vert.traineddata");
-                FileCopyTools.copyFile(tmp, chi_sim_vert);
-            }
-            File chi_tra = new File(path.getAbsolutePath() + File.separator + "chi_tra.traineddata");
-            if (!chi_tra.exists()) {
-                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_tra.traineddata");
-                FileCopyTools.copyFile(tmp, chi_tra);
-            }
-            File chi_tra_vert = new File(path.getAbsolutePath() + File.separator + "chi_tra_vert.traineddata");
-            if (!chi_tra_vert.exists()) {
-                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/chi_tra_vert.traineddata");
-                FileCopyTools.copyFile(tmp, chi_tra_vert);
-            }
-            File equ = new File(path.getAbsolutePath() + File.separator + "equ.traineddata");
-            if (!equ.exists()) {
-                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/equ.traineddata");
-                FileCopyTools.copyFile(tmp, equ);
-            }
-            File eng = new File(path.getAbsolutePath() + File.separator + "eng.traineddata");
-            if (!eng.exists()) {
-                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/data/tessdata/eng.traineddata");
-                FileCopyTools.copyFile(tmp, eng);
-            }
-            File osd = new File(path.getAbsolutePath() + File.separator + "osd.traineddata");
-            if (!osd.exists()) {
-                File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/tessdata/osd.traineddata");
-                FileCopyTools.copyFile(tmp, osd);
-            }
-            UserConfig.setString(TessDataPath, path.getAbsolutePath());
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public static List<String> namesList(boolean copyFiles) {
-        List<String> data = new ArrayList<>();
-        try {
-            if (copyFiles) {
-                initDataFiles();
-            }
-            String dataPath = UserConfig.getString(TessDataPath, null);
-            if (dataPath == null) {
-                return data;
-            }
-            data.addAll(names());
-            List<String> codes = codes();
-            File[] files = new File(dataPath).listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    String name = f.getName();
-                    if (!f.isFile() || !name.endsWith(".traineddata")) {
-                        continue;
-                    }
-                    String code = name.substring(0, name.length() - ".traineddata".length());
-                    if (codes.contains(code)) {
-                        continue;
-                    }
-                    data.add(code);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return data;
-    }
-
     public static String name(String code) {
         Map<String, String> codes = codeName();
         return codes.get(code);
@@ -446,140 +497,150 @@ public class TesseractOptions {
 
     public void setSelectedLanguages(String selectedLanguages) {
         this.selectedLanguages = selectedLanguages;
-        UserConfig.setString("ImageOCRLanguages", selectedLanguages);
     }
 
     public String getTexts() {
         return texts;
     }
 
-    public void setTexts(String texts) {
+    public TesseractOptions setTexts(String texts) {
         this.texts = texts;
+        return this;
     }
 
     public String getHtml() {
         return html;
     }
 
-    public void setHtml(String html) {
+    public TesseractOptions setHtml(String html) {
         this.html = html;
+        return this;
     }
 
     public List<Rectangle> getRectangles() {
         return rectangles;
     }
 
-    public void setRectangles(List<Rectangle> rectangles) {
+    public TesseractOptions setRectangles(List<Rectangle> rectangles) {
         this.rectangles = rectangles;
+        return this;
     }
 
     public List<Word> getWords() {
         return words;
     }
 
-    public void setWords(List<Word> words) {
+    public TesseractOptions setWords(List<Word> words) {
         this.words = words;
+        return this;
     }
 
     public int getPsm() {
         return psm;
     }
 
-    public void setPsm(int psm) {
+    public TesseractOptions setPsm(int psm) {
         this.psm = psm;
-        UserConfig.setInt("TesseractPSM", psm);
+        return this;
     }
 
     public String getRegionLevel() {
         return regionLevel;
     }
 
-    public void setRegionLevel(String regionLevel) {
+    public TesseractOptions setRegionLevel(String regionLevel) {
         this.regionLevel = regionLevel;
-        UserConfig.setString("TesseractRegionLevel", regionLevel);
+        return this;
     }
 
     public String getWordLevel() {
         return wordLevel;
     }
 
-    public void setWordLevel(String wordLevel) {
+    public TesseractOptions setWordLevel(String wordLevel) {
         this.wordLevel = wordLevel;
-        UserConfig.setString("TesseractWordLevel", wordLevel);
+        return this;
     }
 
     public int getTesseractVersion() {
         return tesseractVersion;
     }
 
-    public void setTesseractVersion(int tesseractVersion) {
+    public TesseractOptions setTesseractVersion(int tesseractVersion) {
         this.tesseractVersion = tesseractVersion;
+        return this;
     }
 
     public boolean isSetFormats() {
         return setFormats;
     }
 
-    public void setSetFormats(boolean setFormats) {
+    public TesseractOptions setSetFormats(boolean setFormats) {
         this.setFormats = setFormats;
+        return this;
     }
 
     public boolean isSetLevels() {
         return setLevels;
     }
 
-    public void setSetLevels(boolean setLevels) {
+    public TesseractOptions setSetLevels(boolean setLevels) {
         this.setLevels = setLevels;
+        return this;
     }
 
     public boolean isIsVersion3() {
         return isVersion3;
     }
 
-    public void setIsVersion3(boolean isVersion3) {
+    public TesseractOptions setIsVersion3(boolean isVersion3) {
         this.isVersion3 = isVersion3;
+        return this;
     }
 
     public File getConfigFile() {
         return configFile;
     }
 
-    public void setConfigFile(File configFile) {
+    public TesseractOptions setConfigFile(File configFile) {
         this.configFile = configFile;
+        return this;
     }
 
     public String getOs() {
         return os;
     }
 
-    public void setOs(String os) {
+    public TesseractOptions setOs(String os) {
         this.os = os;
+        return this;
     }
 
     public boolean isOutHtml() {
         return outHtml;
     }
 
-    public void setOutHtml(boolean outHtml) {
+    public TesseractOptions setOutHtml(boolean outHtml) {
         this.outHtml = outHtml;
-        UserConfig.setBoolean("TesseractOutHtml", outHtml);
+        return this;
     }
 
     public boolean isOutPdf() {
         return outPdf;
     }
 
-    public void setOutPdf(boolean outPdf) {
+    public TesseractOptions setOutPdf(boolean outPdf) {
         this.outPdf = outPdf;
-        UserConfig.setBoolean("TesseractOutPdf", outPdf);
+        return this;
     }
 
-    public Map<String, String> getMore() {
+    public String getMore() {
         return more;
     }
 
-    public void setMore(Map<String, String> more) {
+    public TesseractOptions setMore(String more) {
         this.more = more;
+        return this;
     }
 
 }

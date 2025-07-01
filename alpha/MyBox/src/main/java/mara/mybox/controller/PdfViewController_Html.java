@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
@@ -40,8 +39,6 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     protected Task htmlTask;
     protected int htmlPage;
 
-    @FXML
-    protected Tab htmlTab;
     @FXML
     protected ControlWebView webViewController;
 

@@ -6,10 +6,12 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Date;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import mara.mybox.data.TesseractOptions;
@@ -22,6 +24,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -36,17 +39,31 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
     protected Thread ocrThread;
 
     @FXML
-    protected Tab imageTab, ocrTab, ocrOptionsTab;
-    @FXML
     protected TextArea ocrArea;
     @FXML
     protected Label ocrLabel;
+    @FXML
+    protected CheckBox wrapOCRCheck;
 
     @Override
-    public void initValues() {
+    public void initControls() {
         try {
-            super.initValues();
-            tesseractOptions = new TesseractOptions();
+            super.initControls();
+
+            tesseractOptions = new TesseractOptions()
+                    .setOutHtml(false)
+                    .setOutPdf(false);
+
+            wrapOCRCheck.setSelected(UserConfig.getBoolean(baseName + "WrapOCR", true));
+            wrapOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapOCR", newValue);
+                    ocrArea.setWrapText(newValue);
+                }
+            });
+            ocrArea.setWrapText(wrapOCRCheck.isSelected());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -73,9 +90,6 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
         if (imageView.getImage() == null || timer != null || process != null) {
             return;
         }
-        if (!ocrOptionsController.checkCommandPamameters(false, false)) {
-            return;
-        }
         if (ocrTask != null) {
             ocrTask.cancel();
         }
@@ -96,7 +110,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
                         return false;
                     }
                     String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
-                    process = process = ocrOptionsController.process(imageFile, fileBase);
+                    process = process = tesseractOptions.process(imageFile, fileBase);
                     if (process == null) {
                         return false;
                     }
@@ -138,7 +152,6 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
                     ocrLabel.setText(MessageFormat.format(message("OCRresults"),
                             texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
                     orcPage = frameIndex;
-                    tabPane.getSelectionModel().select(ocrTab);
                 } else {
                     if (outputs != null && !outputs.isBlank()) {
                         alertError(outputs);
@@ -156,7 +169,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
                     process = null;
                 }
                 ocrTask = null;
-                ocrOptionsController.clearResults();
+                tesseractOptions.clearResults();
             }
 
         };
@@ -176,7 +189,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
             protected boolean handle() {
                 try {
                     Image selected = imageView.getImage();
-                    return ocrOptionsController.imageOCR(this, selected, false);
+                    return tesseractOptions.imageOCR(this, selected, false);
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.debug(e);
@@ -186,19 +199,18 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
 
             @Override
             protected void whenSucceeded() {
-                ocrArea.setText(ocrOptionsController.texts);
+                ocrArea.setText(tesseractOptions.getTexts());
                 ocrLabel.setText(MessageFormat.format(message("OCRresults"),
-                        ocrOptionsController.texts.length(),
+                        tesseractOptions.getTexts().length(),
                         DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
                 orcPage = frameIndex;
-                tabPane.getSelectionModel().select(ocrTab);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 ocrTask = null;
-                ocrOptionsController.clearResults();
+                tesseractOptions.clearResults();
             }
 
         };

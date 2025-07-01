@@ -159,130 +159,132 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </children>
                               </HBox>
-                                    <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                            <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                                <tabs>
-                                                    <Tab fx:id="imageTab" closable="false" text="%Image">
-                                                        <content>
-                                                            <VBox fx:id="imageVox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                <padding>
-                                                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                </padding>
-                                             <children>
-                                                <fx:include fx:id="image" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
-                                             </children>
-                                                            </VBox>
-                                                        </content>
-                                                    </Tab>
-                                                    <Tab fx:id="textsTab" closable="false" text="%Texts">
-                                                        <content>
-                                                            <VBox fx:id="textsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                <children>
-                                                                    <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
-                                                                        <children> 
-                                                                            <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                                                                            <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconWrap.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <Button fx:id="editTextsButton" mnemonicParsing="false" onAction="#editTexts">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconEdit.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
-                                                                        </children>
-                                                                    </HBox>
-                                                                    <TextArea fx:id="textsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                                    <Label fx:id="textsLabel" />
-                                                                </children>
-                                                                <padding>
-                                                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                </padding>
-                                                            </VBox>
-                                                        </content>
-                                                    </Tab>
-                                                    <Tab fx:id="htmlTab" closable="false" text="%Html">
-                                                        <content>
-                                                            <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                <children>
-                                                                    <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
-                                                                        <children>
-                                                                            <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                                                                            <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editHtml">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconEdit.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
-                                                                        </children>
-                                                                    </HBox>
-                                                                    <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
-                                                                </children>
-                                                                <padding>
-                                                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                </padding>
-                                                            </VBox>
-                                                        </content>
-                                                    </Tab>
-                                                    <Tab fx:id="ocrTab" closable="false" text="OCR">
-                                                        <content>
-                                                            <VBox fx:id="ocrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                <children>
-                                                                    <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
-                                                                        <children>
-                                                                            <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                                                                            <CheckBox fx:id="wrapOCRCheck" layoutX="330.0" layoutY="14.0" mnemonicParsing="false">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconWrap.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </CheckBox>
-                                                                            <Button fx:id="editOcrButton" mnemonicParsing="false" onAction="#editOCR">
-                                                                                <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                        <image>
-                                                                                            <Image url="@../buttons/Red/iconEdit.png" />
-                                                                                        </image>
-                                                                                    </ImageView>
-                                                                                </graphic>
-                                                                            </Button>
-                                                            <Button fx:id="optionsOCRButton" mnemonicParsing="false" onAction="#ocrOptions">
-                                                               <graphic>
-                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@../buttons/Red/iconOptions.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                               </graphic>
-                                                            </Button>
-                                                                        </children>
-                                                                    </HBox>
-                                                                    <TextArea fx:id="ocrArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                                    <Label fx:id="ocrLabel" />
-                                                                </children>
-                                                                <padding>
-                                                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                </padding>
-                                                            </VBox>
-                                                        </content>
-                                                    </Tab>
-                                                </tabs>
-                                            </TabPane>
+                                    <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                       <children>
+                                                  <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                      <tabs>
+                                                          <Tab fx:id="imageTab" closable="false" text="%Image">
+                                                              <content>
+                                                                  <VBox fx:id="imageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                      <padding>
+                                                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                      </padding>
+                                                   <children>
+                                                      <fx:include fx:id="image" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
+                                                   </children>
+                                                                  </VBox>
+                                                              </content>
+                                                          </Tab>
+                                                          <Tab fx:id="textsTab" closable="false" text="%Texts">
+                                                              <content>
+                                                                  <VBox fx:id="textsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                      <children>
+                                                                          <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                                                                              <children> 
+                                                                                  <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                                                                                  <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false">
+                                                                                      <graphic>
+                                                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                              <image>
+                                                                                                  <Image url="@../buttons/Red/iconWrap.png" />
+                                                                                              </image>
+                                                                                          </ImageView>
+                                                                                      </graphic>
+                                                                                  </CheckBox>
+                                                                                  <Button fx:id="editTextsButton" mnemonicParsing="false" onAction="#editTexts">
+                                                                                      <graphic>
+                                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                              <image>
+                                                                                                  <Image url="@../buttons/Red/iconEdit.png" />
+                                                                                              </image>
+                                                                                          </ImageView>
+                                                                                      </graphic>
+                                                                                  </Button>
+                                                                              </children>
+                                                                          </HBox>
+                                                                          <TextArea fx:id="textsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                                          <Label fx:id="textsLabel" />
+                                                                      </children>
+                                                                      <padding>
+                                                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                      </padding>
+                                                                  </VBox>
+                                                              </content>
+                                                          </Tab>
+                                                          <Tab fx:id="htmlTab" closable="false" text="%Html">
+                                                              <content>
+                                                                  <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                      <children>
+                                                                          <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                                                                              <children>
+                                                                                  <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                                                                                  <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editHtml">
+                                                                                      <graphic>
+                                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                              <image>
+                                                                                                  <Image url="@../buttons/Red/iconEdit.png" />
+                                                                                              </image>
+                                                                                          </ImageView>
+                                                                                      </graphic>
+                                                                                  </Button>
+                                                                              </children>
+                                                                          </HBox>
+                                                                          <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                                                                      </children>
+                                                                      <padding>
+                                                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                      </padding>
+                                                                  </VBox>
+                                                              </content>
+                                                          </Tab>
+                                                          <Tab fx:id="ocrTab" closable="false" text="OCR">
+                                                              <content>
+                                                                  <VBox fx:id="ocrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                      <children>
+                                                                          <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                                                                              <children>
+                                                                                  <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                                                                                  <CheckBox fx:id="wrapOCRCheck" layoutX="330.0" layoutY="14.0" mnemonicParsing="false">
+                                                                                      <graphic>
+                                                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                              <image>
+                                                                                                  <Image url="@../buttons/Red/iconWrap.png" />
+                                                                                              </image>
+                                                                                          </ImageView>
+                                                                                      </graphic>
+                                                                                  </CheckBox>
+                                                                                  <Button fx:id="editOcrButton" mnemonicParsing="false" onAction="#editOCR">
+                                                                                      <graphic>
+                                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                              <image>
+                                                                                                  <Image url="@../buttons/Red/iconEdit.png" />
+                                                                                              </image>
+                                                                                          </ImageView>
+                                                                                      </graphic>
+                                                                                  </Button>
+                                                                  <Button fx:id="optionsOCRButton" mnemonicParsing="false" onAction="#ocrOptions">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../buttons/Red/iconOptions.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
+                                                                              </children>
+                                                                          </HBox>
+                                                                          <TextArea fx:id="ocrArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                                          <Label fx:id="ocrLabel" />
+                                                                      </children>
+                                                                      <padding>
+                                                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                      </padding>
+                                                                  </VBox>
+                                                              </content>
+                                                          </Tab>
+                                                      </tabs>
+                                                  </TabPane>
+                                       </children></VBox>
                                         </children>
                                     </VBox>
                                 </content>
@@ -448,9 +450,6 @@ License:    Apache License Version 2.0
          </padding>
         </VBox>
     </center>
-    <bottom>
-        <Label fx:id="bottomLabel" />
-    </bottom>
     <padding>
         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
     </padding>

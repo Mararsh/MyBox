@@ -81,7 +81,7 @@ public class ControlImageView extends BaseImageController {
                 fitSize();
                 sizeFixed = true;
             }
-            if (controller != null) {
+            if (controller != null && getMyStage() != null) {
                 String t = controller.getBaseTitle() + " ";
                 if (controller.sourceFile != null) {
                     t += controller.sourceFile.getAbsolutePath();

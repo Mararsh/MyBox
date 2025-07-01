@@ -17,12 +17,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tab;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import mara.mybox.data.PdfInformation;
@@ -59,30 +61,21 @@ public class PdfViewController extends PdfViewController_Html {
     protected FxTask bookmarksTask;
 
     @FXML
-    protected CheckBox transparentBackgroundCheck, viewBookmarkCheck,
-            wrapTextsCheck, wrapOCRCheck;
+    protected ToggleGroup formatGroup;
+    @FXML
+    protected RadioButton imageRadio, textsRadio, htmlRadio, ocrRadio;
+    @FXML
+    protected CheckBox transparentBackgroundCheck, viewBookmarkCheck;
     @FXML
     protected ScrollPane bookmarksScrollPane;
     @FXML
     protected TreeView bookmarksTree;
     @FXML
-    protected VBox viewBox, imageVox, textsBox, htmlBox, ocrBox;
-    @FXML
-    protected RadioButton imageRadio, textsRadio, htmlRadio, ocrRadio;
+    protected VBox leftBox, viewBox, imageBox, textsBox, htmlBox, ocrBox;
 
     public PdfViewController() {
         baseTitle = message("PdfView");
         TipsLabelKey = "PdfViewTips";
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            infoLoaded = new SimpleBooleanProperty(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @Override
@@ -94,11 +87,16 @@ public class PdfViewController extends PdfViewController_Html {
     public void initControls() {
         try {
             super.initControls();
+            infoLoaded = new SimpleBooleanProperty(false);
+            viewBox.getChildren().clear();
+            VBox.setVgrow(viewBox, Priority.ALWAYS);
 
-            if (ocrOptionsController != null) {
-                ocrOptionsController.setParameters(this, false, false);
-            }
-            initTabPane();
+            formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    showPage();
+                }
+            });
 
             viewBookmarkCheck.setSelected(UserConfig.getBoolean(baseName + "Bookmarks", true));
             viewBookmarkCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -119,103 +117,6 @@ public class PdfViewController extends PdfViewController_Html {
             });
 
             leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initTabPane() {
-        try {
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                    if (imageView.getImage() == null) {
-                        return;
-                    }
-                    if (newValue == ocrTab) {
-                        if (orcPage != frameIndex && refreshSwitchOCRCheck.isSelected()) {
-                            startOCR();
-                        }
-                    } else if (newValue == textsTab) {
-                        if (textsPage != frameIndex && refreshSwitchTextsCheck.isSelected()) {
-                            extractTexts();
-                        }
-                    } else if (newValue == htmlTab) {
-                        if (htmlPage != frameIndex && refreshSwitchHtmlCheck.isSelected()) {
-                            convertHtml();
-                        }
-                    }
-                }
-            });
-
-            wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapTexts", true));
-            wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WrapTexts", newValue);
-                    textsArea.setWrapText(newValue);
-                }
-            });
-            textsArea.setWrapText(wrapTextsCheck.isSelected());
-
-            refreshSwitchTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchTexts", true));
-            refreshSwitchTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchTexts", newValue);
-                }
-            });
-
-            refreshChangeTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeTexts", false));
-            refreshChangeTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshChangeTexts", newValue);
-                }
-            });
-
-            wrapOCRCheck.setSelected(UserConfig.getBoolean(baseName + "WrapOCR", true));
-            wrapOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WrapOCR", newValue);
-                    ocrArea.setWrapText(newValue);
-                }
-            });
-            ocrArea.setWrapText(wrapTextsCheck.isSelected());
-
-            refreshSwitchOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchOCR", true));
-            refreshSwitchOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchOCR", newValue);
-                }
-            });
-
-            refreshChangeOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeOCR", false));
-            refreshChangeOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshChangeOCR", newValue);
-                }
-            });
-
-            refreshSwitchHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchHtml", true));
-            refreshSwitchHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchHtml", newValue);
-                }
-            });
-
-            refreshChangeHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeHtml", false));
-            refreshChangeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshChangeHtml", newValue);
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -349,13 +250,34 @@ public class PdfViewController extends PdfViewController_Html {
             return;
         }
         super.setImage(image, percent);
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (refreshChangeOCRCheck.isSelected() || tab == ocrTab) {
-            startOCR();
-        } else if (refreshChangeTextsCheck.isSelected() || tab == textsTab) {
-            extractTexts();
-        } else if (refreshChangeHtmlCheck.isSelected() || tab == htmlTab) {
-            convertHtml();
+        showPage();
+    }
+
+    public void showPage() {
+        try {
+            viewBox.getChildren().clear();
+            if (ocrRadio.isSelected()) {
+                viewBox.getChildren().add(ocrBox);
+                VBox.setVgrow(ocrBox, Priority.ALWAYS);
+                startOCR();
+
+            } else if (textsRadio.isSelected()) {
+                viewBox.getChildren().add(textsBox);
+                VBox.setVgrow(textsBox, Priority.ALWAYS);
+                extractTexts();
+
+            } else if (htmlRadio.isSelected()) {
+                viewBox.getChildren().add(htmlBox);
+                VBox.setVgrow(htmlBox, Priority.ALWAYS);
+                convertHtml();
+
+            } else {
+                viewBox.getChildren().add(imageBox);
+                VBox.setVgrow(imageBox, Priority.ALWAYS);
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
