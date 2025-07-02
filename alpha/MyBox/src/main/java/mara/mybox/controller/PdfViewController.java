@@ -24,6 +24,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -72,6 +73,8 @@ public class PdfViewController extends PdfViewController_Html {
     protected TreeView bookmarksTree;
     @FXML
     protected VBox leftBox, viewBox, imageBox, textsBox, htmlBox, ocrBox;
+    @FXML
+    protected FlowPane formatPane;
 
     public PdfViewController() {
         baseTitle = message("PdfView");
@@ -116,7 +119,9 @@ public class PdfViewController extends PdfViewController_Html {
                 }
             });
 
-            leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+            formatPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+            playPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+            viewButton.disableProperty().bind(imageController.imageView.imageProperty().isNull());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -259,17 +264,17 @@ public class PdfViewController extends PdfViewController_Html {
             if (ocrRadio.isSelected()) {
                 viewBox.getChildren().add(ocrBox);
                 VBox.setVgrow(ocrBox, Priority.ALWAYS);
-                startOCR();
+                startOCR(false);
 
             } else if (textsRadio.isSelected()) {
                 viewBox.getChildren().add(textsBox);
                 VBox.setVgrow(textsBox, Priority.ALWAYS);
-                extractTexts();
+                extractTexts(false);
 
             } else if (htmlRadio.isSelected()) {
                 viewBox.getChildren().add(htmlBox);
                 VBox.setVgrow(htmlBox, Priority.ALWAYS);
-                convertHtml();
+                convertHtml(false);
 
             } else {
                 viewBox.getChildren().add(imageBox);
@@ -514,6 +519,54 @@ public class PdfViewController extends PdfViewController_Html {
             menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
             menu.setOnAction((ActionEvent event) -> {
                 systemMethod();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<MenuItem> viewMenuItems(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("Image") + " - " + message("Pop"), StyleTools.getIconImageView("iconImage.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagePopController.openImage(myController, imageView.getImage());
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"), StyleTools.getIconImageView("iconHtml.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (htmlRadio.isSelected()) {
+                    HtmlPopController.showHtml(myController, webViewController.currentHtml());
+                } else {
+                    convertHtml(true);
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("PageDataInText") + " - " + message("Pop"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (textsRadio.isSelected()) {
+                    TextPopController.loadText(textsArea.getText());
+                } else {
+                    extractTexts(true);
+                }
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("OCR") + " - " + message("Pop"), StyleTools.getIconImageView("iconOCR.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (ocrRadio.isSelected()) {
+                    TextPopController.loadText(ocrArea.getText());
+                } else {
+                    startOCR(true);
+                }
             });
             items.add(menu);
 

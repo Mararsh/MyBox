@@ -56,7 +56,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
     }
 
     @FXML
-    public void extractTexts() {
+    public void extractTexts(boolean pop) {
         if (imageView.getImage() == null) {
             return;
         }
@@ -86,9 +86,13 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
 
             @Override
             protected void whenSucceeded() {
-                textsArea.setText(texts);
-                textsLabel.setText(message("CharactersNumber") + ": " + textsArea.getLength());
-                textsPage = frameIndex;
+                if (pop) {
+                    TextPopController.loadText(texts);
+                } else {
+                    textsArea.setText(texts);
+                    textsLabel.setText(message("CharactersNumber") + ": " + textsArea.getLength());
+                    textsPage = frameIndex;
+                }
             }
         };
         start(textsTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));

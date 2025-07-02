@@ -123,9 +123,11 @@ public class StyleRadioButton {
             case "mdRadio":
                 return new StyleData(id, "Markdown", "", "iconMarkdown.png");
             case "textsRadio":
-                return new StyleData(id, message("HtmlTextsFormatComment"), "", "iconTxt.png");
+                return new StyleData(id, message("Texts"), "", "iconTxt.png");
             case "htmlRadio":
                 return new StyleData(id, message("Html"), "", "iconHtml.png");
+            case "ocrRadio":
+                return new StyleData(id, message("OCR"), "", "iconOCR.png");
             case "wholeRadio":
                 return new StyleData(id, message("WholeImage"), "", "iconSelectAll.png");
             case "matting4Radio":

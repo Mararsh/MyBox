@@ -18,9 +18,9 @@ import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.fit.pdfdom.PDFDomTree;
-import org.fit.pdfdom.PDFDomTreeConfig;
-import thridparty.PDFResourceToDirHandler;
+import thridparty.pdfdom.PDFDomTree;
+import thridparty.pdfdom.PDFDomTreeConfig;
+import thridparty.pdfdom.SaveResourceToDirHandler;
 
 /**
  * @Author Mara
@@ -144,7 +144,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     }
 
     @FXML
-    public void convertHtml() {
+    public void convertHtml(boolean pop) {
         if (imageView.getImage() == null) {
             return;
         }
@@ -159,41 +159,54 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
             protected boolean handle() {
                 title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
                 htmlFile = FileTmpTools.getTempFile(".html");
+                MyBoxLog.console(title);
+                MyBoxLog.console(htmlFile);
                 subPath = new File(htmlFile.getParent() + File.separator
                         + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
                 subPath.mkdirs();
-                domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
-                domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
+                MyBoxLog.console(subPath);
+                domConfig.setFontHandler(new SaveResourceToDirHandler(subPath));
+                domConfig.setImageHandler(new SaveResourceToDirHandler(subPath));
+                MyBoxLog.console(domConfig != null);
                 try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
+                    MyBoxLog.console(doc != null);
                     PDFDomTree parser = new PDFDomTree(domConfig);
+                    MyBoxLog.console(parser != null);
                     parser.setStartPage(frameIndex + 1);
+                    MyBoxLog.console(parser != null);
                     parser.setEndPage(frameIndex + 1);
                     parser.setPageStart(title);
-//                    MyBoxLog.debug(parser.getSpacingTolerance());
-//                    parser.setSpacingTolerance(0f);
+                    MyBoxLog.console(parser.getSpacingTolerance());
+                    parser.setSpacingTolerance(0f);
                     try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
                         try {
                             parser.writeText(doc, output);
                         } catch (Exception e) {
-//                                MyBoxLog.debug(error);
+                            MyBoxLog.console(e.toString());
                         }
                     } catch (Exception e) {
                         error = e.toString();
-//                            MyBoxLog.debug(error);
+                        MyBoxLog.console(error);
                     }
                 } catch (Exception e) {
                     error = e.toString();
-//                        MyBoxLog.debug(error);
+                    MyBoxLog.console(error);
                 }
+                MyBoxLog.console(htmlFile.exists());
                 return htmlFile.exists();
             }
 
             @Override
             protected void whenSucceeded() {
-                webViewController.loadFile(htmlFile);
-                webView.requestFocus();
-                atBottom = false;
-                htmlPage = frameIndex;
+                if (pop) {
+                    HtmlPopController.openFile(myController, htmlFile);
+                } else {
+                    webViewController.loadFile(htmlFile);
+                    webView.requestFocus();
+                    atBottom = false;
+                    htmlPage = frameIndex;
+                }
+
             }
         };
         start(htmlTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));

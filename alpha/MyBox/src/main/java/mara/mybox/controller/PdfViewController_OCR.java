@@ -70,7 +70,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
     }
 
     @FXML
-    public void startOCR() {
+    public void startOCR(boolean pop) {
         if (imageView.getImage() == null) {
             return;
         }
@@ -80,15 +80,21 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
             return;
         }
         if (tesseractOptions.isEmbed()) {
-            embedded();
+            embedded(pop);
         } else {
-            command();
+            command(pop);
         }
     }
 
-    protected void command() {
-        if (imageView.getImage() == null || timer != null || process != null) {
+    protected void command(boolean pop) {
+        if (imageView.getImage() == null) {
             return;
+        }
+        if (timer != null) {
+            timer.cancel();
+        }
+        if (process != null) {
+            process.destroyForcibly();
         }
         if (ocrTask != null) {
             ocrTask.cancel();
@@ -110,7 +116,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
                         return false;
                     }
                     String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
-                    process = process = tesseractOptions.process(imageFile, fileBase);
+                    process = tesseractOptions.process(imageFile, fileBase);
                     if (process == null) {
                         return false;
                     }
@@ -148,10 +154,14 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
             @Override
             protected void whenSucceeded() {
                 if (texts != null) {
-                    ocrArea.setText(texts);
-                    ocrLabel.setText(MessageFormat.format(message("OCRresults"),
-                            texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
-                    orcPage = frameIndex;
+                    if (pop) {
+                        TextPopController.loadText(texts);
+                    } else {
+                        ocrArea.setText(texts);
+                        ocrLabel.setText(MessageFormat.format(message("OCRresults"),
+                                texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
+                        orcPage = frameIndex;
+                    }
                 } else {
                     if (outputs != null && !outputs.isBlank()) {
                         alertError(outputs);
@@ -176,7 +186,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
         start(ocrTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
     }
 
-    protected void embedded() {
+    protected void embedded(boolean pop) {
         if (imageView.getImage() == null) {
             return;
         }
@@ -199,11 +209,16 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
 
             @Override
             protected void whenSucceeded() {
-                ocrArea.setText(tesseractOptions.getTexts());
-                ocrLabel.setText(MessageFormat.format(message("OCRresults"),
-                        tesseractOptions.getTexts().length(),
-                        DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
-                orcPage = frameIndex;
+                if (pop) {
+                    TextPopController.loadText(tesseractOptions.getTexts());
+                } else {
+                    ocrArea.setText(tesseractOptions.getTexts());
+                    ocrLabel.setText(MessageFormat.format(message("OCRresults"),
+                            tesseractOptions.getTexts().length(),
+                            DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
+                    orcPage = frameIndex;
+                }
+
             }
 
             @Override
