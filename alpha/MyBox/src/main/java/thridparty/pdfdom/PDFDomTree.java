@@ -25,12 +25,9 @@ import java.io.Writer;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import mara.mybox.dev.MyBoxLog;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
@@ -44,10 +41,10 @@ import org.w3c.dom.ls.LSSerializer;
  * A DOM representation of a PDF file.
  *
  * @author burgetr
+ *
+ * Updated by Mara
  */
 public class PDFDomTree extends PDFBoxTree {
-
-    private static Logger log = LoggerFactory.getLogger(PDFDomTree.class);
 
     /**
      * Default style placed in the begining of the resulting document
@@ -110,6 +107,7 @@ public class PDFDomTree extends PDFBoxTree {
     /**
      * Creates a new PDF DOM parser.
      *
+     * @param config
      * @throws IOException
      */
     public PDFDomTree(PDFDomTreeConfig config) throws IOException {
@@ -131,30 +129,34 @@ public class PDFDomTree extends PDFBoxTree {
     /**
      * Creates a new empty HTML document tree.
      */
-    protected void createDocument() throws ParserConfigurationException {
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = builderFactory.newDocumentBuilder();
-        DocumentType doctype = builder.getDOMImplementation().createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN", "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
-        doc = builder.getDOMImplementation().createDocument("http://www.w3.org/1999/xhtml", "html", doctype);
+    protected void createDocument() {
+        try {
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            DocumentType doctype = builder.getDOMImplementation().createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN", "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
+            doc = builder.getDOMImplementation().createDocument("http://www.w3.org/1999/xhtml", "html", doctype);
 
-        head = doc.createElement("head");
-        Element meta = doc.createElement("meta");
-        meta.setAttribute("http-equiv", "content-type");
-        meta.setAttribute("content", "text/html;charset=utf-8");
-        head.appendChild(meta);
-        title = doc.createElement("title");
-        title.setTextContent("PDF Document");
-        head.appendChild(title);
-        globalStyle = doc.createElement("style");
-        globalStyle.setAttribute("type", "text/css");
-        //globalStyle.setTextContent(createGlobalStyle());
-        head.appendChild(globalStyle);
+            head = doc.createElement("head");
+            Element meta = doc.createElement("meta");
+            meta.setAttribute("http-equiv", "content-type");
+            meta.setAttribute("content", "text/html;charset=utf-8");
+            head.appendChild(meta);
+            title = doc.createElement("title");
+            title.setTextContent("PDF Document");
+            head.appendChild(title);
+            globalStyle = doc.createElement("style");
+            globalStyle.setAttribute("type", "text/css");
+            //globalStyle.setTextContent(createGlobalStyle());
+            head.appendChild(globalStyle);
 
-        body = doc.createElement("body");
+            body = doc.createElement("body");
 
-        Element root = doc.getDocumentElement();
-        root.appendChild(head);
-        root.appendChild(body);
+            Element root = doc.getDocumentElement();
+            root.appendChild(head);
+            root.appendChild(body);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
     /**
@@ -167,24 +169,23 @@ public class PDFDomTree extends PDFBoxTree {
     }
 
     @Override
-    public void startDocument(PDDocument document)
-            throws IOException {
-        try {
-            createDocument();
-        } catch (ParserConfigurationException e) {
-            throw new IOException("Error: parser configuration error", e);
-        }
+    public void startDocument(PDDocument document) {
+        createDocument();
     }
 
     @Override
-    protected void endDocument(PDDocument document) throws IOException {
-        //use the PDF title
-        String doctitle = document.getDocumentInformation().getTitle();
-        if (doctitle != null && doctitle.trim().length() > 0) {
-            title.setTextContent(doctitle);
+    protected void endDocument(PDDocument document) {
+        try {
+            //use the PDF title
+            String doctitle = document.getDocumentInformation().getTitle();
+            if (doctitle != null && doctitle.trim().length() > 0) {
+                title.setTextContent(doctitle);
+            }
+            //set the main style
+            globalStyle.setTextContent(createGlobalStyle());
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
-        //set the main style
-        globalStyle.setTextContent(createGlobalStyle());
     }
 
     /**
@@ -197,11 +198,11 @@ public class PDFDomTree extends PDFBoxTree {
             DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
             DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
             LSSerializer writer = impl.createLSSerializer();
-            LSOutput output = impl.createLSOutput();
             writer.getDomConfig().setParameter("format-pretty-print", true);
-            output.setCharacterStream(outputStream);
+            LSOutput lsOutput = impl.createLSOutput();
+            lsOutput.setCharacterStream(outputStream);
             createDOM(doc);
-            writer.write(getDocument(), output);
+            writer.write(getDocument(), lsOutput);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -212,26 +213,38 @@ public class PDFDomTree extends PDFBoxTree {
      *
      * @param doc the source document
      * @return a DOM Document representing the DOM tree
-     * @throws IOException
      */
-    public Document createDOM(PDDocument doc) throws IOException {
-        /* We call the original PDFTextStripper.writeText but nothing should
+    public Document createDOM(PDDocument doc) {
+        try {
+            /* We call the original PDFTextStripper.writeText but nothing should
            be printed actually because our processing methods produce no output.
            They create the DOM structures instead */
-        super.writeText(doc, new OutputStreamWriter(System.out));
-        return this.doc;
+            super.writeText(doc, new OutputStreamWriter(System.out));
+            return this.doc;
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return null;
+        }
     }
 
     //===========================================================================================
     @Override
     protected void startNewPage() {
-        curpage = createPageElement();
-        body.appendChild(curpage);
+        try {
+            curpage = createPageElement();
+            body.appendChild(curpage);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
     @Override
     protected void renderText(String data, TextMetrics metrics) {
-        curpage.appendChild(createTextElement(data, metrics.getWidth()));
+        try {
+            curpage.appendChild(createTextElement(data, metrics.getWidth()));
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
     @Override
@@ -284,7 +297,7 @@ public class PDFDomTree extends PDFBoxTree {
             pstyle = "width:" + w + UNIT + ";" + "height:" + h + UNIT + ";";
             pstyle += "overflow:hidden;";
         } else {
-            log.warn("No media box found");
+            MyBoxLog.console("No media box found");
         }
 
         Element el = doc.createElement("div");
@@ -484,8 +497,9 @@ public class PDFDomTree extends PDFBoxTree {
                 ret.append("}\n");
             }
         } catch (IOException e) {
-            log.error("Error writing font face data for font: " + font.getName()
-                    + "Exception: {} {}", e.getMessage(), e.getClass());
+            MyBoxLog.console("Error writing font face data for font: " + font.getName()
+                    + "Exception: " + e.getMessage() + "\n" + e.getClass()
+            );
         }
     }
 }

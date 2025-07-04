@@ -27,7 +27,7 @@ public class SaveResourceToDirHandler implements HtmlResourceHandler {
     public static final String DEFAULT_RESOURCE_DIR = "resources/";
 
     private final File directory;
-    private List<String> writtenFileNames = new LinkedList<String>();
+    private List<String> writtenFileNames = new LinkedList<>();
 
     public SaveResourceToDirHandler() {
         directory = null;

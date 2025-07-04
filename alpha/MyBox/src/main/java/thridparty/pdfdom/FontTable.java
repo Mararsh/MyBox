@@ -3,61 +3,66 @@
  */
 package thridparty.pdfdom;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import mara.mybox.dev.MyBoxLog;
 import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1CFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.mabb.fontverter.FVFont;
 import org.mabb.fontverter.FontVerter;
 import org.mabb.fontverter.pdf.PdfFontExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A table for storing entries about the embedded fonts and their usage.
  *
  * @author burgetr
+ *
+ * Updated by Mara
  */
 public class FontTable {
 
-    private static Logger log = LoggerFactory.getLogger(FontTable.class);
-    private static Pattern fontFamilyRegex = Pattern.compile("([^+^-]*)[+-]([^+]*)");
+    private static final Pattern fontFamilyRegex = Pattern.compile("([^+^-]*)[+-]([^+]*)");
 
-    private List<Entry> entries = new ArrayList<Entry>();
+    private final List<Entry> entries = new ArrayList<>();
 
     public void addEntry(PDFont font) {
-        FontTable.Entry entry = get(font);
-
-        if (entry == null) {
-            String fontName = font.getName();
-            String family = findFontFamily(fontName);
-
-            String usedName = nextUsedName(family);
-            FontTable.Entry newEntry = new FontTable.Entry(font.getName(), usedName, font);
-
-            if (newEntry.isEntryValid()) {
-                add(newEntry);
+        try {
+            FontTable.Entry entry = get(font);
+            if (entry == null) {
+                String fontName = font.getName();
+                String family = findFontFamily(fontName);
+                String usedName = nextUsedName(family);
+                FontTable.Entry newEntry = new FontTable.Entry(font.getName(), usedName, font);
+                if (newEntry.isEntryValid()) {
+                    add(newEntry);
+                }
             }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
     public Entry get(PDFont find) {
-        for (Entry entryOn : entries) {
-            if (entryOn.equalToPDFont(find)) {
-                return entryOn;
+        try {
+            for (Entry entryOn : entries) {
+                if (entryOn.equalToPDFont(find)) {
+                    return entryOn;
+                }
             }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
-
         return null;
     }
 
     public List<Entry> getEntries() {
-        return new ArrayList<Entry>(entries);
+        return new ArrayList<>(entries);
     }
 
     public String getUsedName(PDFont font) {
@@ -115,7 +120,7 @@ public class FontTable {
         public String usedName;
         public PDFontDescriptor descriptor;
 
-        private PDFont baseFont;
+        private final PDFont baseFont;
         private byte[] cachedFontData;
         private String mimeType = "x-font-truetype";
         private String fileEnding;
@@ -129,58 +134,69 @@ public class FontTable {
             this.baseFont = font;
         }
 
-        public byte[] getData() throws IOException {
-            if (cachedFontData != null) {
+        @Override
+        public byte[] getData() {
+            try {
+                if (cachedFontData != null) {
+                    return cachedFontData;
+                }
+
+                if (baseFont instanceof PDType1CFont || baseFont instanceof PDType1Font) {
+                    cachedFontData = loadType1Font(descriptor.getFontFile3());
+
+                } else if (descriptor.getFontFile2() != null && baseFont instanceof PDType0Font) {
+                    cachedFontData = loadType0TtfDescendantFont();
+
+                } else if (descriptor.getFontFile2() != null) {
+                    cachedFontData = loadTrueTypeFont(descriptor.getFontFile2());
+
+                } else if (descriptor.getFontFile() != null) {
+                    cachedFontData = loadType1Font(descriptor.getFontFile());
+
+                } else if (descriptor.getFontFile3() != null) {
+                    // FontFile3 docs say any font type besides TTF/OTF or Type 1..
+                    cachedFontData = loadOtherTypeFont(descriptor.getFontFile3());
+                }
                 return cachedFontData;
+            } catch (Exception e) {
+                MyBoxLog.console(e.toString());
+                return null;
             }
-
-            if (descriptor.getFontFile2() != null && baseFont instanceof PDType0Font) {
-                cachedFontData = loadType0TtfDescendantFont();
-            } else if (descriptor.getFontFile2() != null) {
-                cachedFontData = loadTrueTypeFont(descriptor.getFontFile2());
-            } else if (descriptor.getFontFile() != null) {
-                cachedFontData = loadType1Font(descriptor.getFontFile());
-            } else if (descriptor.getFontFile3() != null) // FontFile3 docs say any font type besides TTF/OTF or Type 1..
-            {
-                cachedFontData = loadOtherTypeFont(descriptor.getFontFile3());
-            }
-
-            return cachedFontData;
         }
 
         public boolean isEntryValid() {
-            byte[] fontData = new byte[0];
             try {
+                byte[] fontData = new byte[0];
                 fontData = getData();
-            } catch (IOException e) {
-                log.warn("Error loading font '{}' Message: {} {}", fontName, e.getMessage(), e.getClass());
-            }
 
-            return fontData != null && fontData.length != 0;
+                return fontData != null && fontData.length != 0;
+            } catch (Exception e) {
+                MyBoxLog.console(e.toString());
+                return false;
+            }
         }
 
-        private byte[] loadTrueTypeFont(PDStream fontFile) throws IOException {
-            // could convert to WOFF though for optimal html output instead.
-            mimeType = "application/x-font-truetype";
-            fileEnding = "otf";
-
-            byte[] fontData = fontFile.toByteArray();
-            byte[] fvFontData = null;
-            try {
-                FVFont font = FontVerter.readFont(fontData);
-                fvFontData = tryNormalizeFVFont(font);
-            } catch (IOException e) {
-                log.warn("Unsupported FontFile found. Normalisation will be skipped.");
-            }
-
-            if (fvFontData != null && fvFontData.length != 0) {
-                fontData = fvFontData;
-            }
-
-            return fontData;
+        private byte[] loadTrueTypeFont(PDStream fontFile) {
+//            MyBoxLog.console("Fail to convert True Type fonts.");
+//            try {
+//                // could convert to WOFF though for optimal html output instead.
+//                FVFont font = FontVerter.readFont(fontFile.toByteArray());
+//                if (font != null) {
+//                    byte[] fvFontData = tryNormalizeFVFont(font);
+//                    if (fvFontData != null && fvFontData.length != 0) {
+//                        mimeType = "application/x-font-truetype";
+//                        fileEnding = "otf";
+//                        return fvFontData;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                MyBoxLog.console("Unsupported FontFile found. Normalisation will be skipped.");
+//                MyBoxLog.console(e.toString());
+//            }
+            return new byte[0];
         }
 
-        private byte[] loadType0TtfDescendantFont() throws IOException {
+        private byte[] loadType0TtfDescendantFont() {
             mimeType = "application/x-font-truetype";
             fileEnding = "ttf";
             try {
@@ -191,20 +207,23 @@ public class FontTable {
                     return fontData;
                 }
             } catch (Exception ex) {
-                log.warn("Error loading type 0 with ttf descendant font '{}' Message: {} {}",
-                        fontName, ex.getMessage(), ex.getClass());
+//                MyBoxLog.console("Error loading type 0 with ttf descendant font '{}' Message: {} {}",
+//                        fontName + " " + ex.getMessage() + " " + ex.getClass());
 
             }
-
-            return descriptor.getFontFile2().toByteArray();
+            try {
+                return descriptor.getFontFile2().toByteArray();
+            } catch (Exception ex) {
+                return new byte[0];
+            }
         }
 
-        private byte[] loadType1Font(PDStream fontFile) throws IOException {
-            log.warn("Type 1 fonts are not supported by Pdf2Dom.");
+        private byte[] loadType1Font(PDStream fontFile) {
+//            MyBoxLog.console("Type 1 fonts are not supported by Pdf2Dom.");
             return new byte[0];
         }
 
-        private byte[] loadOtherTypeFont(PDStream fontFile) throws IOException {
+        private byte[] loadOtherTypeFont(PDStream fontFile) {
             // Likley Bare CFF which needs to be converted to a font supported by browsers, can be
             // other font types which are not yet supported.
             try {
@@ -214,8 +233,8 @@ public class FontTable {
 
                 return font.getData();
             } catch (Exception ex) {
-                log.error("Issue converting Bare CFF font or the font type is not supportedby Pdf2Dom, "
-                        + "Font: {} Exception: {} {}", fontName, ex.getMessage(), ex.getClass());
+//                MyBoxLog.console("Issue converting Bare CFF font or the font type is not supportedby Pdf2Dom, "
+//                        + "Font: {} Exception: {} {}" + "  " + fontName, ex.getMessage() + "  " + ex.getClass());
 
                 // don't barf completley for font conversion issue, html will still be useable without.
                 return new byte[0];
@@ -231,8 +250,8 @@ public class FontTable {
 
                 return font.getData();
             } catch (Exception ex) {
-                log.warn("Error normalizing font '{}' Message: {} {}",
-                        fontName, ex.getMessage(), ex.getClass());
+//                MyBoxLog.console("Error normalizing font '{}' Message: {} {}",
+//                        fontName + "  " + ex.getMessage() + "  " + ex.getClass());
             }
 
             return new byte[0];
@@ -277,6 +296,7 @@ public class FontTable {
             return true;
         }
 
+        @Override
         public String getFileEnding() {
             return fileEnding;
         }
@@ -285,6 +305,7 @@ public class FontTable {
             return FontTable.this;
         }
 
+        @Override
         public String getMimeType() {
             return mimeType;
         }

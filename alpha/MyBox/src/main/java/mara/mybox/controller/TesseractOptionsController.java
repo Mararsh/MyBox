@@ -293,16 +293,23 @@ public class TesseractOptionsController extends BaseChildController {
     @Override
     public void okAction() {
         try {
-            File tesseract = tesseractPathController.pickFile();
-            if (!tesseract.exists()) {
-                popError(message("InvalidParameters"));
+            if (tesseractRadio.isSelected()) {
+                File tesseract = tesseractPathController.pickFile();
+                if (tesseract == null || !tesseract.exists()) {
+                    popError(message("InvalidParameters") + ": " + message("tesseractInstallationPath"));
+                    return;
+                }
+                options.setTesseract(tesseract);
+            }
+
+            if (options.getTesseractVersion() < 0) {
+                popError(message("InvalidParameters") + ": " + message("tesseractInstallationPath"));
                 return;
             }
-            options.setTesseract(tesseract);
 
             File dataPath = dataPathController.pickFile();
-            if (!dataPath.exists()) {
-                popError(message("InvalidParameters"));
+            if (dataPath == null || !dataPath.exists()) {
+                popError(message("InvalidParameters") + ": " + message("OCRDataPath"));
                 return;
             }
             options.setDataPath(dataPath);
@@ -319,12 +326,6 @@ public class TesseractOptionsController extends BaseChildController {
             } else {
                 String[] vs = pss.split("    ");
                 options.setPsm(Integer.parseInt(vs[0]));
-            }
-
-            int tesseractVersion = options.tesseractVersion();
-            if (tesseractVersion < 0) {
-                popError(message("InvalidParameters"));
-                return;
             }
 
             options.writeValues();

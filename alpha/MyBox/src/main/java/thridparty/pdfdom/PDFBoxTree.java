@@ -29,7 +29,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import mara.mybox.dev.MyBoxLog;
 import org.apache.pdfbox.contentstream.operator.Operator;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorN;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingColorSpace;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceCMYKColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceGrayColor;
+import org.apache.pdfbox.contentstream.operator.color.SetNonStrokingDeviceRGBColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorN;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
+import org.apache.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
+import org.apache.pdfbox.contentstream.operator.state.SetFlatness;
+import org.apache.pdfbox.contentstream.operator.state.SetLineCapStyle;
+import org.apache.pdfbox.contentstream.operator.state.SetLineDashPattern;
+import org.apache.pdfbox.contentstream.operator.state.SetLineJoinStyle;
+import org.apache.pdfbox.contentstream.operator.state.SetLineMiterLimit;
+import org.apache.pdfbox.contentstream.operator.state.SetLineWidth;
+import org.apache.pdfbox.contentstream.operator.state.SetRenderingIntent;
+import org.apache.pdfbox.contentstream.operator.text.SetFontAndSize;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSNumber;
@@ -47,8 +68,6 @@ import static org.apache.pdfbox.pdmodel.graphics.state.RenderingMode.*;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A generic tree of boxes created from a PDF file. It processes the PDF
@@ -57,10 +76,10 @@ import org.slf4j.LoggerFactory;
  * these actions in order to build the resulting document tree.
  *
  * @author burgetr
+ *
+ * Updated by Mara
  */
 public abstract class PDFBoxTree extends PDFTextStripper {
-
-    private static Logger log = LoggerFactory.getLogger(PDFBoxTree.class);
 
     /**
      * Length units used in the generated CSS
@@ -189,26 +208,26 @@ public abstract class PDFBoxTree extends PDFTextStripper {
         super.setSuppressDuplicateOverlappingText(true);
 
         //add operators for tracking the graphic state
-//        addOperator(new SetStrokingColorSpace());
-//        addOperator(new SetNonStrokingColorSpace());
-//        addOperator(new SetLineDashPattern());
-//        addOperator(new SetStrokingDeviceGrayColor());
-//        addOperator(new SetNonStrokingDeviceGrayColor());
-//        addOperator(new SetFlatness());
-//        addOperator(new SetLineJoinStyle());
-//        addOperator(new SetLineCapStyle());
-//        addOperator(new SetStrokingDeviceCMYKColor());
-//        addOperator(new SetNonStrokingDeviceCMYKColor());
-//        addOperator(new SetLineMiterLimit());
-//        addOperator(new SetStrokingDeviceRGBColor());
-//        addOperator(new SetNonStrokingDeviceRGBColor());
-//        addOperator(new SetRenderingIntent());
-//        addOperator(new SetStrokingColor());
-//        addOperator(new SetNonStrokingColor());
-//        addOperator(new SetStrokingColorN());
-//        addOperator(new SetNonStrokingColorN());
-//        addOperator(new SetFontAndSize());
-//        addOperator(new SetLineWidth());
+        addOperator(new SetStrokingColorSpace(this));
+        addOperator(new SetNonStrokingColorSpace(this));
+        addOperator(new SetLineDashPattern(this));
+        addOperator(new SetStrokingDeviceGrayColor(this));
+        addOperator(new SetNonStrokingDeviceGrayColor(this));
+        addOperator(new SetFlatness(this));
+        addOperator(new SetLineJoinStyle(this));
+        addOperator(new SetLineCapStyle(this));
+        addOperator(new SetStrokingDeviceCMYKColor(this));
+        addOperator(new SetNonStrokingDeviceCMYKColor(this));
+        addOperator(new SetLineMiterLimit(this));
+        addOperator(new SetStrokingDeviceRGBColor(this));
+        addOperator(new SetNonStrokingDeviceRGBColor(this));
+        addOperator(new SetRenderingIntent(this));
+        addOperator(new SetStrokingColor(this));
+        addOperator(new SetNonStrokingColor(this));
+        addOperator(new SetStrokingColorN(this));
+        addOperator(new SetNonStrokingColorN(this));
+        addOperator(new SetFontAndSize(this));
+        addOperator(new SetLineWidth(this));
         init();
     }
 
@@ -219,19 +238,25 @@ public abstract class PDFBoxTree extends PDFTextStripper {
         style = new BoxStyle(UNIT);
         textLine = new StringBuilder();
         textMetrics = null;
-        graphicsPath = new Vector<PathSegment>();
+        graphicsPath = new Vector<>();
         startPage = 0;
         endPage = Integer.MAX_VALUE;
         fontTable = new FontTable();
     }
 
-    public void processPage(PDPage page) throws IOException {
-        if (getCurrentPageNo() >= startPage && getCurrentPageNo() <= endPage) {
-            pdpage = page;
-            updateFontTable();
-            startNewPage();
-            super.processPage(page);
-            finishBox();
+    @Override
+    public void processPage(PDPage page) {
+        try {
+            int p = this.getCurrentPageNo();
+            if (p >= startPage && p <= endPage) {
+                pdpage = page;
+                updateFontTable();
+                startNewPage();
+                super.processPage(page);
+                finishBox();
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -378,58 +403,58 @@ public abstract class PDFBoxTree extends PDFTextStripper {
      * Updates the font table by adding new fonts used at the current page.
      */
     protected void updateFontTable() {
-        PDResources resources = pdpage.getResources();
-        if (resources != null) {
-            try {
+        try {
+            PDResources resources = pdpage.getResources();
+            if (resources != null) {
                 processFontResources(resources, fontTable);
-            } catch (IOException e) {
-                log.error("Error processing font resources: "
-                        + "Exception: {} {}", e.getMessage(), e.getClass());
             }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
-    private void processFontResources(PDResources resources, FontTable table) throws IOException {
-        String fontNotSupportedMessage = "Font: {} skipped because type '{}' is not supported.";
-
-        for (COSName key : resources.getFontNames()) {
-            PDFont font = resources.getFont(key);
-            if (font instanceof PDTrueTypeFont) {
-                table.addEntry(font);
-                log.debug("Font: " + font.getName() + " TTF");
-            } else if (font instanceof PDType0Font) {
-                PDCIDFont descendantFont = ((PDType0Font) font).getDescendantFont();
-                if (descendantFont instanceof PDCIDFontType2) {
+    private void processFontResources(PDResources resources, FontTable table) {
+        try {
+            for (COSName key : resources.getFontNames()) {
+                PDFont font = resources.getFont(key);
+                if (font instanceof PDTrueTypeFont) {
+                    table.addEntry(font);
+                } else if (font instanceof PDType0Font) {
+                    PDCIDFont descendantFont = ((PDType0Font) font).getDescendantFont();
+                    if (descendantFont instanceof PDCIDFontType2) {
+                        table.addEntry(font);
+                    } else {
+//                        MyBoxLog.console("fontNotSupported: " + font.getName() + " " + font.getClass().getSimpleName());
+                    }
+                } else if (font instanceof PDType1CFont) {
                     table.addEntry(font);
                 } else {
-                    log.warn(fontNotSupportedMessage, font.getName(), font.getClass().getSimpleName());
-                }
-            } else if (font instanceof PDType1CFont) {
-                table.addEntry(font);
-            } else {
-                log.warn(fontNotSupportedMessage, font.getName(), font.getClass().getSimpleName());
-            }
-        }
-
-        for (COSName name : resources.getXObjectNames()) {
-            PDXObject xobject = resources.getXObject(name);
-            if (xobject instanceof PDFormXObject) {
-                PDFormXObject xObjectForm = (PDFormXObject) xobject;
-                PDResources formResources = xObjectForm.getResources();
-                if (formResources != null && formResources != resources && formResources.getCOSObject() != resources.getCOSObject()) {
-                    processFontResources(formResources, table);
+//                    MyBoxLog.console("fontNotSupported: " + font.getName() + " " + font.getClass().getSimpleName());
                 }
             }
-        }
 
+            for (COSName name : resources.getXObjectNames()) {
+                PDXObject xobject = resources.getXObject(name);
+                if (xobject instanceof PDFormXObject) {
+                    PDFormXObject xObjectForm = (PDFormXObject) xobject;
+                    PDResources formResources = xObjectForm.getResources();
+                    if (formResources != null && formResources != resources
+                            && formResources.getCOSObject() != resources.getCOSObject()) {
+                        processFontResources(formResources, table);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
     //===========================================================================================
     @Override
-    protected void processOperator(Operator operator, List<COSBase> arguments)
-            throws IOException {
-        String operation = operator.getName();
-        /*System.out.println("Operator: " + operation + ":" + arguments.size());
+    protected void processOperator(Operator operator, List<COSBase> arguments) {
+        try {
+            String operation = operator.getName();
+            /*System.out.println("Operator: " + operation + ":" + arguments.size());
         if (operation.equals("sc") || operation.equals("cs"))
         {
             System.out.print("  ");
@@ -438,153 +463,171 @@ public abstract class PDFBoxTree extends PDFTextStripper {
             System.out.println();
         }*/
 
-        //word spacing
-        if (operation.equals("Tw")) {
-            style.setWordSpacing(getLength(arguments.get(0)));
-        } //letter spacing
-        else if (operation.equals("Tc")) {
-            style.setLetterSpacing(getLength(arguments.get(0)));
-        } //graphics
-        else if (operation.equals("m")) //move
-        {
-            if (!disableGraphics) {
-                if (arguments.size() == 2) {
-                    float[] pos = transformPosition(getLength(arguments.get(0)), getLength(arguments.get(1)));
-                    path_x = pos[0];
-                    path_y = pos[1];
-                    path_start_x = pos[0];
-                    path_start_y = pos[1];
+            //word spacing
+            if (operation.equals("Tw")) {
+                style.setWordSpacing(getLength(arguments.get(0)));
+            } //letter spacing
+            else if (operation.equals("Tc")) {
+                style.setLetterSpacing(getLength(arguments.get(0)));
+            } //graphics
+            else if (operation.equals("m")) //move
+            {
+                if (!disableGraphics) {
+                    if (arguments.size() == 2) {
+                        float[] pos = transformPosition(getLength(arguments.get(0)), getLength(arguments.get(1)));
+                        path_x = pos[0];
+                        path_y = pos[1];
+                        path_start_x = pos[0];
+                        path_start_y = pos[1];
+                    }
                 }
-            }
-        } else if (operation.equals("l")) //line
-        {
-            if (!disableGraphics) {
-                if (arguments.size() == 2) {
-                    float[] pos = transformPosition(getLength(arguments.get(0)), getLength(arguments.get(1)));
-                    graphicsPath.add(new PathSegment(path_x, path_y, pos[0], pos[1]));
-                    path_x = pos[0];
-                    path_y = pos[1];
+            } else if (operation.equals("l")) //line
+            {
+                if (!disableGraphics) {
+                    if (arguments.size() == 2) {
+                        float[] pos = transformPosition(getLength(arguments.get(0)), getLength(arguments.get(1)));
+                        graphicsPath.add(new PathSegment(path_x, path_y, pos[0], pos[1]));
+                        path_x = pos[0];
+                        path_y = pos[1];
+                    }
                 }
-            }
-        } else if (operation.equals("h")) //end subpath
-        {
-            if (!disableGraphics) {
+            } else if (operation.equals("h")) //end subpath
+            {
+                if (!disableGraphics) {
+                    graphicsPath.add(new PathSegment(path_x, path_y, path_start_x, path_start_y));
+                }
+            } //rectangle
+            else if (operation.equals("re")) {
+                if (!disableGraphics) {
+                    if (arguments.size() == 4) {
+                        float x = getLength(arguments.get(0));
+                        float y = getLength(arguments.get(1));
+                        float width = getLength(arguments.get(2));
+                        float height = getLength(arguments.get(3));
+
+                        float[] p1 = transformPosition(x, y);
+                        float[] p2 = transformPosition(x + width, y + height);
+
+                        graphicsPath.add(new PathSegment(p1[0], p1[1], p2[0], p1[1]));
+                        graphicsPath.add(new PathSegment(p2[0], p1[1], p2[0], p2[1]));
+                        graphicsPath.add(new PathSegment(p2[0], p2[1], p1[0], p2[1]));
+                        graphicsPath.add(new PathSegment(p1[0], p2[1], p1[0], p1[1]));
+                    }
+                }
+            } //fill
+            else if (operation.equals("f") || operation.equals("F") || operation.equals("f*")) {
+                renderPath(graphicsPath, false, true);
+                graphicsPath.removeAllElements();
+            } //stroke
+            else if (operation.equals("S")) {
+                renderPath(graphicsPath, true, false);
+                graphicsPath.removeAllElements();
+            } else if (operation.equals("s")) {
                 graphicsPath.add(new PathSegment(path_x, path_y, path_start_x, path_start_y));
-            }
-        } //rectangle
-        else if (operation.equals("re")) {
-            if (!disableGraphics) {
-                if (arguments.size() == 4) {
-                    float x = getLength(arguments.get(0));
-                    float y = getLength(arguments.get(1));
-                    float width = getLength(arguments.get(2));
-                    float height = getLength(arguments.get(3));
-
-                    float[] p1 = transformPosition(x, y);
-                    float[] p2 = transformPosition(x + width, y + height);
-
-                    graphicsPath.add(new PathSegment(p1[0], p1[1], p2[0], p1[1]));
-                    graphicsPath.add(new PathSegment(p2[0], p1[1], p2[0], p2[1]));
-                    graphicsPath.add(new PathSegment(p2[0], p2[1], p1[0], p2[1]));
-                    graphicsPath.add(new PathSegment(p1[0], p2[1], p1[0], p1[1]));
+                renderPath(graphicsPath, true, false);
+                graphicsPath.removeAllElements();
+            } //stroke and fill
+            else if (operation.equals("B") || operation.equals("B*")) {
+                renderPath(graphicsPath, true, true);
+                graphicsPath.removeAllElements();
+            } else if (operation.equals("b") || operation.equals("b*")) {
+                graphicsPath.add(new PathSegment(path_x, path_y, path_start_x, path_start_y));
+                renderPath(graphicsPath, true, true);
+                graphicsPath.removeAllElements();
+            } //cancel path
+            else if (operation.equals("n")) {
+                graphicsPath.removeAllElements();
+            } //invoke named object - images
+            else if (operation.equals("Do")) {
+                if (!disableImages) {
+                    processImageOperation(arguments);
                 }
             }
-        } //fill
-        else if (operation.equals("f") || operation.equals("F") || operation.equals("f*")) {
-            renderPath(graphicsPath, false, true);
-            graphicsPath.removeAllElements();
-        } //stroke
-        else if (operation.equals("S")) {
-            renderPath(graphicsPath, true, false);
-            graphicsPath.removeAllElements();
-        } else if (operation.equals("s")) {
-            graphicsPath.add(new PathSegment(path_x, path_y, path_start_x, path_start_y));
-            renderPath(graphicsPath, true, false);
-            graphicsPath.removeAllElements();
-        } //stroke and fill
-        else if (operation.equals("B") || operation.equals("B*")) {
-            renderPath(graphicsPath, true, true);
-            graphicsPath.removeAllElements();
-        } else if (operation.equals("b") || operation.equals("b*")) {
-            graphicsPath.add(new PathSegment(path_x, path_y, path_start_x, path_start_y));
-            renderPath(graphicsPath, true, true);
-            graphicsPath.removeAllElements();
-        } //cancel path
-        else if (operation.equals("n")) {
-            graphicsPath.removeAllElements();
-        } //invoke named object - images
-        else if (operation.equals("Do")) {
-            if (!disableImages) {
-                processImageOperation(arguments);
-            }
-        }
 
-        super.processOperator(operator, arguments);
+            super.processOperator(operator, arguments);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
-    protected void processImageOperation(List<COSBase> arguments) throws IOException {
-        COSName objectName = (COSName) arguments.get(0);
-        PDXObject xobject = getResources().getXObject(objectName);
-        if (xobject instanceof PDImageXObject) {
-            PDImageXObject pdfImage = (PDImageXObject) xobject;
-            BufferedImage outputImage = pdfImage.getImage();
-            outputImage = rotateImage(outputImage);
+    protected void processImageOperation(List<COSBase> arguments) {
+        try {
+            COSName objectName = (COSName) arguments.get(0);
+            PDXObject xobject = getResources().getXObject(objectName);
+            if (xobject instanceof PDImageXObject) {
+                PDImageXObject pdfImage = (PDImageXObject) xobject;
+                BufferedImage outputImage = pdfImage.getImage();
+                outputImage = rotateImage(outputImage);
 
-            ImageResource imageData = new ImageResource(getTitle(), outputImage);
+                ImageResource imageData = new ImageResource(getTitle(), outputImage);
 
-            Rectangle2D bounds = calculateImagePosition(pdfImage);
-            float x = (float) bounds.getX();
-            float y = (float) bounds.getY();
+                Rectangle2D bounds = calculateImagePosition(pdfImage);
+                float x = (float) bounds.getX();
+                float y = (float) bounds.getY();
 
-            renderImage(x, y, (float) bounds.getWidth(), (float) bounds.getHeight(), imageData);
+                renderImage(x, y, (float) bounds.getWidth(), (float) bounds.getHeight(), imageData);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
     private BufferedImage rotateImage(BufferedImage outputImage) {
-        // x, y and size are handled by css attributes but still need to rotate the image so pulling
-        // only rotation out of the matrix so no giant whitespace offset from translations
-        Matrix ctm = getGraphicsState().getCurrentTransformationMatrix();
+        try {
+            // x, y and size are handled by css attributes but still need to rotate the image so pulling
+            // only rotation out of the matrix so no giant whitespace offset from translations
+            Matrix ctm = getGraphicsState().getCurrentTransformationMatrix();
 
-        AffineTransform tr = ctm.createAffineTransform();
-        double rotate = Math.atan2(tr.getShearY(), tr.getScaleY()) - Math.toRadians(pdpage.getRotation());
-        outputImage = ImageUtils.rotateImage(outputImage, rotate);
+            AffineTransform tr = ctm.createAffineTransform();
+            double rotate = Math.atan2(tr.getShearY(), tr.getScaleY()) - Math.toRadians(pdpage.getRotation());
+            outputImage = ImageUtils.rotateImage(outputImage, rotate);
 
-        return outputImage;
+            return outputImage;
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return null;
+        }
     }
 
-    private Rectangle2D calculateImagePosition(PDImageXObject pdfImage) throws IOException {
-        Matrix ctm = getGraphicsState().getCurrentTransformationMatrix();
-        Rectangle2D imageBounds = pdfImage.getImage().getRaster().getBounds();
+    private Rectangle2D calculateImagePosition(PDImageXObject pdfImage) {
+        try {
+            Matrix ctm = getGraphicsState().getCurrentTransformationMatrix();
+            Rectangle2D imageBounds = pdfImage.getImage().getRaster().getBounds();
 
-        AffineTransform imageTransform = new AffineTransform(ctm.createAffineTransform());
-        imageTransform.scale(1.0 / pdfImage.getWidth(), -1.0 / pdfImage.getHeight());
-        imageTransform.translate(0, -pdfImage.getHeight());
+            AffineTransform imageTransform = new AffineTransform(ctm.createAffineTransform());
+            imageTransform.scale(1.0 / pdfImage.getWidth(), -1.0 / pdfImage.getHeight());
+            imageTransform.translate(0, -pdfImage.getHeight());
 
-        AffineTransform pageTransform = createCurrentPageTransformation();
-        pageTransform.concatenate(imageTransform);
+            AffineTransform pageTransform = createCurrentPageTransformation();
+            pageTransform.concatenate(imageTransform);
 
-        return pageTransform.createTransformedShape(imageBounds).getBounds2D();
+            return pageTransform.createTransformedShape(imageBounds).getBounds2D();
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return null;
+        }
     }
 
     @Override
     protected void processTextPosition(TextPosition text) {
-        if (text.isDiacritic()) {
-            lastDia = text;
-        } else if (!text.getUnicode().trim().isEmpty()) {
-            if (lastDia != null) {
-                if (text.contains(lastDia)) {
-                    text.mergeDiacritic(lastDia);
+        try {
+            if (text.isDiacritic()) {
+                lastDia = text;
+            } else if (!text.getUnicode().trim().isEmpty()) {
+                if (lastDia != null) {
+                    if (text.contains(lastDia)) {
+                        text.mergeDiacritic(lastDia);
+                    }
+                    lastDia = null;
                 }
-                lastDia = null;
-            }
 
-            /*float[] c = transformPosition(text.getX(), text.getY());
+                /*float[] c = transformPosition(text.getX(), text.getY());
             cur_x = c[0];
             cur_y = c[1];*/
-            cur_x = text.getX();
-            cur_y = text.getY();
+                cur_x = text.getX();
+                cur_y = text.getY();
 
-            /*System.out.println("Text: " + text.getCharacter());
+                /*System.out.println("Text: " + text.getCharacter());
             System.out.println(" Font size: " + text.getFontSize() + " " + text.getFontSizeInPt() + "pt");
             System.out.println(" Width: " + text.getWidth());
             System.out.println(" Width adj: " + text.getWidthDirAdj());
@@ -592,38 +635,41 @@ public abstract class PDFBoxTree extends PDFTextStripper {
             System.out.println(" Height dir: " + text.getHeightDir());
             System.out.println(" XScale: " + text.getXScale());
             System.out.println(" YScale: " + text.getYScale());*/
-            float distx = 0;
-            float disty = 0;
-            if (lastText != null) {
-                distx = text.getX() - (lastText.getX() + lastText.getWidth());
-                disty = text.getY() - lastText.getY();
-            }
-
-            //should we split the boxes?
-            boolean split = lastText == null || distx > 1.0f || distx < -6.0f || Math.abs(disty) > 1.0f
-                    || isReversed(getTextDirectionality(text)) != isReversed(getTextDirectionality(lastText));
-            //if the style changed, we should split the boxes
-            updateStyle(style, text);
-            if (!style.equals(curstyle)) {
-                split = true;
-            }
-
-            if (split) //start of a new box
-            {
-                //finish current box (if any)
+                float distx = 0;
+                float disty = 0;
                 if (lastText != null) {
-                    finishBox();
+                    distx = text.getX() - (lastText.getX() + lastText.getWidth());
+                    disty = text.getY() - lastText.getY();
                 }
-                //start a new box
-                curstyle = new BoxStyle(style);
+
+                //should we split the boxes?
+                boolean split = lastText == null || distx > 1.0f || distx < -6.0f || Math.abs(disty) > 1.0f
+                        || isReversed(getTextDirectionality(text)) != isReversed(getTextDirectionality(lastText));
+                //if the style changed, we should split the boxes
+                updateStyle(style, text);
+                if (!style.equals(curstyle)) {
+                    split = true;
+                }
+
+                if (split) //start of a new box
+                {
+                    //finish current box (if any)
+                    if (lastText != null) {
+                        finishBox();
+                    }
+                    //start a new box
+                    curstyle = new BoxStyle(style);
+                }
+                textLine.append(text.getUnicode());
+                if (textMetrics == null) {
+                    textMetrics = new TextMetrics(text);
+                } else {
+                    textMetrics.append(text);
+                }
+                lastText = text;
             }
-            textLine.append(text.getUnicode());
-            if (textMetrics == null) {
-                textMetrics = new TextMetrics(text);
-            } else {
-                textMetrics.append(text);
-            }
-            lastText = text;
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -632,21 +678,25 @@ public abstract class PDFBoxTree extends PDFTextStripper {
      * element from it.
      */
     protected void finishBox() {
-        if (textLine.length() > 0) {
-            String s;
-            if (isReversed(Character.getDirectionality(textLine.charAt(0)))) {
-                s = textLine.reverse().toString();
-            } else {
-                s = textLine.toString();
+        try {
+            if (textLine.length() > 0) {
+                String s;
+                if (isReversed(Character.getDirectionality(textLine.charAt(0)))) {
+                    s = textLine.reverse().toString();
+                } else {
+                    s = textLine.toString();
+                }
+
+                curstyle.setLeft(textMetrics.getX());
+                curstyle.setTop(textMetrics.getTop());
+                curstyle.setLineHeight(textMetrics.getHeight());
+
+                renderText(s, textMetrics);
+                textLine = new StringBuilder();
+                textMetrics = null;
             }
-
-            curstyle.setLeft(textMetrics.getX());
-            curstyle.setTop(textMetrics.getTop());
-            curstyle.setLineHeight(textMetrics.getHeight());
-
-            renderText(s, textMetrics);
-            textLine = new StringBuilder();
-            textMetrics = null;
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -658,16 +708,19 @@ public abstract class PDFBoxTree extends PDFTextStripper {
      * @return
      */
     protected boolean isReversed(byte directionality) {
-        switch (directionality) {
-            case Character.DIRECTIONALITY_RIGHT_TO_LEFT:
-            case Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC:
-            case Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING:
-            case Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE:
-                return true;
+        try {
+            switch (directionality) {
+                case Character.DIRECTIONALITY_RIGHT_TO_LEFT:
+                case Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC:
+                case Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING:
+                case Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE:
+                    return true;
 
-            default:
-                return false;
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
+        return false;
     }
 
     /**
@@ -677,77 +730,88 @@ public abstract class PDFBoxTree extends PDFTextStripper {
      * @param text the text position
      */
     protected void updateStyle(BoxStyle bstyle, TextPosition text) {
-        String font = text.getFont().getName();
-        String family = null;
-        String weight = null;
-        String fstyle = null;
+        try {
+            String font = text.getFont().getName();
+            String family = null;
+            String weight = null;
+            String fstyle = null;
 
-        bstyle.setFontSize(text.getXScale()); //this seems to give better results than getFontSizeInPt()
-        bstyle.setLineHeight(text.getHeight());
+            bstyle.setFontSize(text.getXScale()); //this seems to give better results than getFontSizeInPt()
+            bstyle.setLineHeight(text.getHeight());
 
-        if (font != null) {
-            //font style and weight
-            for (int i = 0; i < pdFontType.length; i++) {
-                if (font.toLowerCase().lastIndexOf(pdFontType[i]) >= 0) {
-                    weight = cssFontWeight[i];
-                    fstyle = cssFontStyle[i];
-                    break;
+            if (font != null) {
+                //font style and weight
+                for (int i = 0; i < pdFontType.length; i++) {
+                    if (font.toLowerCase().lastIndexOf(pdFontType[i]) >= 0) {
+                        weight = cssFontWeight[i];
+                        fstyle = cssFontStyle[i];
+                        break;
+                    }
+                }
+                if (weight != null) {
+                    bstyle.setFontWeight(weight);
+                } else {
+                    bstyle.setFontWeight(cssFontWeight[0]);
+                }
+                if (fstyle != null) {
+                    bstyle.setFontStyle(fstyle);
+                } else {
+                    bstyle.setFontStyle(cssFontStyle[0]);
+                }
+
+                //font family
+                //If it's a known common font don't embed in html output to save space
+                String knownFontFamily = findKnownFontFamily(font);
+                if (!knownFontFamily.equals("")) {
+                    family = knownFontFamily;
+                } else {
+                    family = fontTable.getUsedName(text.getFont());
+                    if (family == null) {
+                        family = font;
+                    }
+                }
+
+                if (family != null) {
+                    bstyle.setFontFamily(family);
                 }
             }
-            if (weight != null) {
-                bstyle.setFontWeight(weight);
-            } else {
-                bstyle.setFontWeight(cssFontWeight[0]);
-            }
-            if (fstyle != null) {
-                bstyle.setFontStyle(fstyle);
-            } else {
-                bstyle.setFontStyle(cssFontStyle[0]);
-            }
 
-            //font family
-            //If it's a known common font don't embed in html output to save space
-            String knownFontFamily = findKnownFontFamily(font);
-            if (!knownFontFamily.equals("")) {
-                family = knownFontFamily;
-            } else {
-                family = fontTable.getUsedName(text.getFont());
-                if (family == null) {
-                    family = font;
-                }
-            }
-
-            if (family != null) {
-                bstyle.setFontFamily(family);
-            }
+            updateStyleForRenderingMode();
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
-
-        updateStyleForRenderingMode();
     }
 
     private String findKnownFontFamily(String font) {
-        for (String fontFamilyOn : cssFontFamily) {
-            if (font.toLowerCase().lastIndexOf(fontFamilyOn.toLowerCase().replaceAll("\\s+", "")) >= 0) {
-                return fontFamilyOn;
+        try {
+            for (String fontFamilyOn : cssFontFamily) {
+                if (font.toLowerCase().lastIndexOf(fontFamilyOn.toLowerCase().replaceAll("\\s+", "")) >= 0) {
+                    return fontFamilyOn;
+                }
             }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
-
         return "";
     }
 
     private void updateStyleForRenderingMode() {
-        String fillColor = colorString(getGraphicsState().getNonStrokingColor());
-        String strokeColor = colorString(getGraphicsState().getStrokingColor());
+        try {
+            String fillColor = colorString(getGraphicsState().getNonStrokingColor());
+            String strokeColor = colorString(getGraphicsState().getStrokingColor());
 
-        if (isTextFillEnabled()) {
-            style.setColor(fillColor);
-        } else {
-            style.setColor(BoxStyle.transparentColor);
-        }
-        if (isTextStrokeEnabled()) {
-            style.setStrokeColor(strokeColor);
-        } else {
-            style.setStrokeColor(BoxStyle.transparentColor);
+            if (isTextFillEnabled()) {
+                style.setColor(fillColor);
+            } else {
+                style.setColor(BoxStyle.transparentColor);
+            }
+            if (isTextStrokeEnabled()) {
+                style.setStrokeColor(strokeColor);
+            } else {
+                style.setStrokeColor(BoxStyle.transparentColor);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -911,10 +975,8 @@ public abstract class PDFBoxTree extends PDFTextStripper {
         try {
             float[] rgb = pdcolor.getColorSpace().toRGB(pdcolor.getComponents());
             color = colorString(rgb[0], rgb[1], rgb[2]);
-        } catch (IOException e) {
-            log.error("colorString: IOException: {}", e.getMessage());
-        } catch (UnsupportedOperationException e) {
-            log.error("colorString: UnsupportedOperationException: {}", e.getMessage());
+        } catch (Exception e) {
+            MyBoxLog.console("colorString: IOException: " + e.getMessage());
         }
         return color;
     }

@@ -153,46 +153,26 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
         }
         htmlTask = new FxTask<Void>(this) {
 
-            protected String title;
-
             @Override
             protected boolean handle() {
-                title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
                 htmlFile = FileTmpTools.getTempFile(".html");
-                MyBoxLog.console(title);
-                MyBoxLog.console(htmlFile);
-                subPath = new File(htmlFile.getParent() + File.separator
-                        + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
-                subPath.mkdirs();
-                MyBoxLog.console(subPath);
-                domConfig.setFontHandler(new SaveResourceToDirHandler(subPath));
-                domConfig.setImageHandler(new SaveResourceToDirHandler(subPath));
-                MyBoxLog.console(domConfig != null);
-                try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
-                    MyBoxLog.console(doc != null);
+                try (PDDocument doc = Loader.loadPDF(sourceFile, password);
+                        Writer output = new PrintWriter(htmlFile, "utf-8")) {
+                    subPath = new File(htmlFile.getParent() + File.separator
+                            + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
+                    subPath.mkdirs();
+                    domConfig.setFontHandler(new SaveResourceToDirHandler(subPath));
+                    domConfig.setImageHandler(new SaveResourceToDirHandler(subPath));
                     PDFDomTree parser = new PDFDomTree(domConfig);
-                    MyBoxLog.console(parser != null);
                     parser.setStartPage(frameIndex + 1);
-                    MyBoxLog.console(parser != null);
                     parser.setEndPage(frameIndex + 1);
-                    parser.setPageStart(title);
-                    MyBoxLog.console(parser.getSpacingTolerance());
-                    parser.setSpacingTolerance(0f);
-                    try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
-                        try {
-                            parser.writeText(doc, output);
-                        } catch (Exception e) {
-                            MyBoxLog.console(e.toString());
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.console(error);
-                    }
+                    parser.setPageStart(sourceFile.getAbsolutePath() + " "
+                            + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + ""));
+//                    parser.setSpacingTolerance(0f);
+                    parser.writeText(doc, output);
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.console(error);
                 }
-                MyBoxLog.console(htmlFile.exists());
                 return htmlFile.exists();
             }
 
