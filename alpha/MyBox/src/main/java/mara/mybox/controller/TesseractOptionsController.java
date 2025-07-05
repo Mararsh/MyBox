@@ -277,18 +277,6 @@ public class TesseractOptionsController extends BaseChildController {
         }
     }
 
-    public boolean checkCommandPamameters(boolean html, boolean pdf) {
-        try {
-
-            this.cleanPane();
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            MyBoxLog.console(e.toString());
-            return false;
-        }
-    }
-
     @FXML
     @Override
     public void okAction() {
@@ -319,6 +307,7 @@ public class TesseractOptionsController extends BaseChildController {
             options.setOutPdf(pdfCheck.isSelected());
             options.setSelectedLanguages(selectedLanguages);
             options.setMore(optionsArea.getText());
+            options.setTessInstance(null);
 
             String pss = psmSelector.getSelectionModel().getSelectedItem();
             if (pss == null || pss.isBlank()) {

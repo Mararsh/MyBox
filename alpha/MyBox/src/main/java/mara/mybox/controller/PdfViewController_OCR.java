@@ -51,6 +51,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
             super.initControls();
 
             tesseractOptions = new TesseractOptions()
+                    .setSetFormats(false)
                     .setOutHtml(false)
                     .setOutPdf(false);
 
@@ -72,11 +73,6 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
     @FXML
     public void startOCR(boolean pop) {
         if (imageView.getImage() == null) {
-            return;
-        }
-        File dataPath = tesseractOptions.getDataPath();
-        if (!dataPath.exists()) {
-            popError(message("InvalidParameters"));
             return;
         }
         if (tesseractOptions.isEmbed()) {

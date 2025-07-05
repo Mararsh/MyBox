@@ -14,20 +14,20 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.VBox;
+import mara.mybox.data.StringTable;
+import mara.mybox.data.TesseractOptions;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.image.data.ImageBinary;
 import mara.mybox.image.data.ImageContrast;
 import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.image.tools.TransformTools;
-import mara.mybox.data.StringTable;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -49,22 +49,18 @@ import net.sourceforge.tess4j.util.ImageHelper;
  */
 public class ImageOCRBatchController extends BaseBatchImageController {
 
+    protected TesseractOptions tesseractOptions;
     protected float scale;
     protected int threshold, rotate;
     protected ImageContrast.ContrastAlgorithm contrastAlgorithm;
     protected BufferedImage lastImage;
-    protected Tesseract OCRinstance;
     protected List<File> textFiles;
     protected Process process;
 
     @FXML
-    protected VBox preprocessVBox, ocrOptionsVBox;
-    @FXML
     protected ComboBox<String> algorithmSelector, rotateSelector, binarySelector, scaleSelector;
     @FXML
     protected CheckBox deskewCheck, invertCheck, mergeCheck;
-    @FXML
-    protected ControlOCROptions ocrOptionsController;
 
     public ImageOCRBatchController() {
         baseTitle = message("ImageOCRBatch");
@@ -78,7 +74,8 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     @Override
     public void initOptionsSection() {
         try {
-            ocrOptionsController.setParameters(this, true, true);
+            tesseractOptions = new TesseractOptions()
+                    .setSetFormats(true);
 
             scale = 1.0f;
             scaleSelector.getItems().addAll(Arrays.asList(
@@ -182,6 +179,11 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     }
 
     @FXML
+    public void ocrOptions() {
+        TesseractOptionsController.open(this, tesseractOptions);
+    }
+
+    @FXML
     public void clearAlgorithm() {
         algorithmSelector.setValue(null);
     }
@@ -201,30 +203,11 @@ public class ImageOCRBatchController extends BaseBatchImageController {
         if (!super.makeActualParameters()) {
             return false;
         }
-        try {
-            if (ocrOptionsController.embedRadio.isSelected()) {
-                OCRinstance = ocrOptionsController.tesseract();
-
-            } else {
-
-                if (!ocrOptionsController.checkCommandPamameters(true, true)) {
-                    return false;
-                }
-            }
-            textFiles = new ArrayList<>();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
+        textFiles = new ArrayList<>();
+        if (tesseractOptions.isEmbed()) {
+            return tesseractOptions.makeInstance() != null;
         }
-
-    }
-
-    @Override
-    public void disableControls(boolean disable) {
-        super.disableControls(disable);
-        preprocessVBox.setDisable(disable);
-        ocrOptionsVBox.setDisable(disable);
+        return true;
     }
 
     @Override
@@ -242,7 +225,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 return message("Failed");
             }
             boolean ret;
-            if (ocrOptionsController.embedRadio.isSelected()) {
+            if (tesseractOptions.isEmbed()) {
                 ret = embedded(currentTask, srcFile, target);
             } else {
                 ret = command(currentTask, srcFile, target);
@@ -395,15 +378,15 @@ public class ImageOCRBatchController extends BaseBatchImageController {
 
     protected boolean embedded(FxTask currentTask, File srcFile, File targetFile) {
         try {
-            if (lastImage == null || OCRinstance == null) {
+            if (lastImage == null) {
                 return false;
             }
             List<ITesseract.RenderedFormat> formats = new ArrayList<>();
             formats.add(ITesseract.RenderedFormat.TEXT);
-            if (ocrOptionsController.htmlCheck.isSelected()) {
+            if (tesseractOptions.isOutHtml()) {
                 formats.add(ITesseract.RenderedFormat.HOCR);
             }
-            if (ocrOptionsController.pdfCheck.isSelected()) {
+            if (tesseractOptions.isOutPdf()) {
                 formats.add(ITesseract.RenderedFormat.PDF);
             }
             // Looks OCR engine does not support non-English file name
@@ -411,7 +394,11 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                     + FileNameTools.prefix(targetFile.getName());
             String tmpPrefix = FileTmpTools.getTempFile().getAbsolutePath();
 
-            OCRinstance.createDocumentsWithResults​(lastImage, tmpPrefix,
+            Tesseract tessInstance = tesseractOptions.getTessInstance();
+            if (tessInstance == null) {
+                tessInstance = tesseractOptions.makeInstance();
+            }
+            tessInstance.createDocumentsWithResults​(lastImage, tmpPrefix,
                     tmpPrefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
             if (currentTask == null || !currentTask.isWorking()) {
                 return false;
@@ -427,7 +414,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
-            if (ocrOptionsController.htmlCheck.isSelected()) {
+            if (tesseractOptions.isOutHtml()) {
                 File hocrFile = new File(tmpPrefix + ".hocr");
                 File htmlFile = new File(actualPrefix + ".html");
                 if (FileTools.override(hocrFile, htmlFile)) {
@@ -435,7 +422,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             }
 
-            if (ocrOptionsController.pdfCheck.isSelected()) {
+            if (tesseractOptions.isOutPdf()) {
                 File tmpPdfFile = new File(tmpPrefix + ".pdf");
                 File pdfFile = new File(actualPrefix + ".pdf");
                 if (FileTools.override(tmpPdfFile, pdfFile)) {
@@ -443,8 +430,9 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             }
 
-            if (ocrOptionsController.wordLevel >= 0) {
-                List<Word> words = OCRinstance.getWords(lastImage, ocrOptionsController.wordLevel);
+            int wl = tesseractOptions.wordLevel();
+            if (wl >= 0) {
+                List<Word> words = tessInstance.getWords(lastImage, wl);
                 List<String> names = new ArrayList<>();
                 names.addAll(Arrays.asList(message("Index"),
                         message("Contents"), message("Confidence"),
@@ -470,8 +458,9 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             }
 
-            if (ocrOptionsController.regionLevel >= 0) {
-                List<Rectangle> rectangles = OCRinstance.getSegmentedRegions(lastImage, ocrOptionsController.regionLevel);
+            int rl = tesseractOptions.regionLevel();
+            if (rl >= 0) {
+                List<Rectangle> rectangles = tessInstance.getSegmentedRegions(lastImage, rl);
                 List<String> names = new ArrayList<>();
                 names.addAll(Arrays.asList(message("Index"),
                         message("CoordinateX"), message("CoordinateY"),
@@ -514,7 +503,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                     + FileNameTools.prefix(targetFile.getName());
             String tmpPrefix = FileTmpTools.getTempFile().getAbsolutePath();
 
-            process = ocrOptionsController.process(srcFile, tmpPrefix);
+            process = tesseractOptions.process(srcFile, tmpPrefix);
 
             if (process == null) {
                 return false;
@@ -545,7 +534,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
-            if (ocrOptionsController.htmlCheck.isSelected()) {
+            if (tesseractOptions.isOutHtml()) {
                 File hocrFile = new File(tmpPrefix + ".hocr");
                 File htmlFile = new File(actualPrefix + ".html");
                 if (FileTools.override(hocrFile, htmlFile)) {
@@ -553,7 +542,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             }
 
-            if (ocrOptionsController.pdfCheck.isSelected()) {
+            if (tesseractOptions.isOutPdf()) {
                 File tmpPdfFile = new File(tmpPrefix + ".pdf");
                 File pdfFile = new File(actualPrefix + ".pdf");
                 if (FileTools.override(tmpPdfFile, pdfFile)) {
@@ -591,7 +580,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 targetFileGenerated(mFile);
             }
         }
-        OCRinstance = null;
+        tesseractOptions.clearResults();
     }
 
 }

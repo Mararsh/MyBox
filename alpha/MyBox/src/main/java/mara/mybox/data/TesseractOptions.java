@@ -40,7 +40,6 @@ public class TesseractOptions {
 
     // https://github.com/nguyenq/tess4j/blob/master/src/test/java/net/sourceforge/tess4j/Tesseract1Test.java#L177
     public static final double MINIMUM_DESKEW_THRESHOLD = 0.05d;
-    public static final String TessDataPath = "TessDataPath";
 
     protected File tesseract, dataPath;
     protected String os, selectedLanguages, regionLevel, wordLevel, more,
@@ -50,6 +49,7 @@ public class TesseractOptions {
     protected int psm, tesseractVersion;
     protected boolean embed, setFormats, setLevels, isVersion3, outHtml, outPdf;
     protected File configFile;
+    protected Tesseract tessInstance;
 
     public TesseractOptions() {
         initValues();
@@ -59,6 +59,7 @@ public class TesseractOptions {
         os = SystemTools.os();
         readValues();
         configFile = null;
+        tessInstance = null;
         clearResults();
     }
 
@@ -66,7 +67,7 @@ public class TesseractOptions {
         try (Connection conn = DerbyBase.getConnection()) {
             tesseract = new File(UserConfig.getString(conn, "TesseractPath",
                     "win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tesseract.exe" : "/bin/tesseract"));
-            dataPath = new File(UserConfig.getString(conn, TessDataPath,
+            dataPath = new File(UserConfig.getString(conn, "TesseractData",
                     "win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tessdata" : "/usr/local/share/tessdata/"));
 
             embed = UserConfig.getBoolean(conn, "TesseracEmbed", true);
@@ -85,7 +86,7 @@ public class TesseractOptions {
     public void writeValues() {
         try (Connection conn = DerbyBase.getConnection()) {
             UserConfig.setString(conn, "TesseractPath", tesseract.getAbsolutePath());
-            UserConfig.setString(conn, TessDataPath, dataPath.getAbsolutePath());
+            UserConfig.setString(conn, "TesseractData", dataPath.getAbsolutePath());
             UserConfig.setBoolean(conn, "ImageOCREmbed", embed);
             UserConfig.setString(conn, "ImageOCRLanguages", selectedLanguages);
             UserConfig.setInt(conn, "TesseractPSM", psm);
@@ -131,6 +132,14 @@ public class TesseractOptions {
         } else {
             return -1;
         }
+    }
+
+    public int wordLevel() {
+        return level(wordLevel);
+    }
+
+    public int regionLevel() {
+        return level(regionLevel);
     }
 
     public Map<String, String> moreOptions() {
@@ -230,25 +239,25 @@ public class TesseractOptions {
         return data;
     }
 
-    public Tesseract tesseract() {
+    public Tesseract makeInstance() {
         try {
-            Tesseract instance = new Tesseract();
+            tessInstance = new Tesseract();
             // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-            instance.setVariable("user_defined_dpi", "96");
-            instance.setVariable("debug_file", "/dev/null");
-            instance.setPageSegMode(psm);
+            tessInstance.setVariable("user_defined_dpi", "96");
+            tessInstance.setVariable("debug_file", "/dev/null");
+            tessInstance.setPageSegMode(psm);
 
             Map<String, String> moreOptions = moreOptions();
             if (moreOptions != null && !moreOptions.isEmpty()) {
                 for (String key : moreOptions.keySet()) {
-                    instance.setVariable(key, moreOptions.get(key));
+                    tessInstance.setVariable(key, moreOptions.get(key));
                 }
             }
-            instance.setDatapath(dataPath.getAbsolutePath());
+            tessInstance.setDatapath(dataPath.getAbsolutePath());
             if (selectedLanguages != null) {
-                instance.setLanguage(selectedLanguages);
+                tessInstance.setLanguage(selectedLanguages);
             }
-            return instance;
+            return tessInstance;
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
@@ -294,11 +303,13 @@ public class TesseractOptions {
         try {
             configFile = FileTmpTools.getTempFile();
             String s = "tessedit_create_txt 1\n";
-            if (outHtml) {
-                s += "tessedit_create_hocr 1\n";
-            }
-            if (outPdf) {
-                s += "tessedit_create_pdf 1\n";
+            if (setFormats) {
+                if (outHtml) {
+                    s += "tessedit_create_hocr 1\n";
+                }
+                if (outPdf) {
+                    s += "tessedit_create_pdf 1\n";
+                }
             }
             Map<String, String> moreOptions = moreOptions();
             if (moreOptions != null) {
@@ -325,7 +336,9 @@ public class TesseractOptions {
             if (bufferedImage == null || (currentTask != null && !currentTask.isWorking())) {
                 return false;
             }
-            Tesseract instance = tesseract();
+            if (tessInstance == null) {
+                tessInstance = makeInstance();
+            }
             List<ITesseract.RenderedFormat> formats = new ArrayList<>();
             formats.add(ITesseract.RenderedFormat.TEXT);
             if (allData) {
@@ -336,7 +349,7 @@ public class TesseractOptions {
             String tmp = tmpFile.getAbsolutePath();
             FileDeleteTools.delete(tmpFile);
 
-            instance.createDocumentsWithResults​(bufferedImage, tmp,
+            tessInstance.createDocumentsWithResults​(bufferedImage, tmp,
                     tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
             File txtFile = new File(tmp + ".txt");
             texts = TextFileTools.readTexts(currentTask, txtFile);
@@ -352,13 +365,13 @@ public class TesseractOptions {
                     return false;
                 }
 
-                int wl = level(wordLevel);
+                int wl = wordLevel();
                 if (wl >= 0) {
-                    words = instance.getWords(bufferedImage, wl);
+                    words = tessInstance.getWords(bufferedImage, wl);
                 }
-                int rl = level(regionLevel);
+                int rl = regionLevel();
                 if (rl >= 0) {
-                    rectangles = instance.getSegmentedRegions(bufferedImage, rl);
+                    rectangles = tessInstance.getSegmentedRegions(bufferedImage, rl);
                 }
             }
 
@@ -641,6 +654,14 @@ public class TesseractOptions {
     public TesseractOptions setMore(String more) {
         this.more = more;
         return this;
+    }
+
+    public Tesseract getTessInstance() {
+        return tessInstance;
+    }
+
+    public void setTessInstance(Tesseract tessInstance) {
+        this.tessInstance = tessInstance;
     }
 
 }
