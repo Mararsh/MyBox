@@ -1,10 +1,11 @@
 package mara.mybox.fxml.cell;
 
-import mara.mybox.fxml.image.ImageViewInfoTask;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+import mara.mybox.controller.BaseController;
+import mara.mybox.fxml.image.ImageViewInfoTask;
 import mara.mybox.image.data.ImageInformation;
 
 /**
@@ -14,6 +15,12 @@ import mara.mybox.image.data.ImageInformation;
  */
 public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
         implements Callback<TableColumn<T, ImageInformation>, TableCell<T, ImageInformation>> {
+
+    private final BaseController controller;
+
+    public TableImageInfoCell(BaseController controller) {
+        this.controller = controller;
+    }
 
     @Override
     public TableCell<T, ImageInformation> call(TableColumn<T, ImageInformation> param) {
@@ -29,7 +36,7 @@ public class TableImageInfoCell<T> extends TableCell<T, ImageInformation>
                 if (empty || item == null) {
                     return;
                 }
-                ImageViewInfoTask task = new ImageViewInfoTask()
+                ImageViewInfoTask task = new ImageViewInfoTask(controller)
                         .setCell(this).setView(imageview).setItem(item);
                 Thread thread = new Thread(task);
                 thread.setDaemon(false);

@@ -153,9 +153,8 @@ public class PdfViewController extends PdfViewController_Html {
             ocrLabel.setText("");
             textsArea.clear();
             textsLabel.setText("");
-            if (webViewController != null) {
-                webViewController.loadContent(null);
-            }
+            htmlController.loadContent(null);
+            htmlFile = null;
             if (file == null) {
                 return;
             }
@@ -543,7 +542,7 @@ public class PdfViewController extends PdfViewController_Html {
             menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent event) -> {
                 if (htmlRadio.isSelected()) {
-                    HtmlPopController.showHtml(myController, webViewController.currentHtml());
+                    HtmlPopController.openFile(myController, htmlFile);
                 } else {
                     convertHtml(true);
                 }

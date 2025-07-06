@@ -115,7 +115,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
             sourceFile = parentController.sourceFile;
             tableFileBackup = new TableFileBackup();
             if (parentController instanceof BaseImageController) {
-                backupColumn.setCellFactory(new TableFileNameCell());
+                backupColumn.setCellFactory(new TableFileNameCell(this));
             }
 
             fileLabel.setText(sourceFile.getAbsolutePath());

@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.image.ImageView;
+import mara.mybox.controller.BaseController;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
@@ -21,6 +22,10 @@ public class ImageViewFileTask<Void> extends FxTask<Void> {
     private String filename = null;
     private ImageView view = null;
     private int thumbWidth = AppVariables.thumbnailWidth;
+
+    public ImageViewFileTask(BaseController controller) {
+        this.controller = controller;
+    }
 
     public ImageViewFileTask<Void> setCell(IndexedCell cell) {
         this.cell = cell;

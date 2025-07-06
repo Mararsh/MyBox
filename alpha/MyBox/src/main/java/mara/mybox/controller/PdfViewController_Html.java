@@ -40,7 +40,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     protected int htmlPage;
 
     @FXML
-    protected ControlWebView webViewController;
+    protected ControlWebView htmlController;
 
     public PdfViewController_Html() {
         checkBottomScript
@@ -70,9 +70,9 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
         try {
             super.initControls();
 
-            webViewController.setParent(this);
-            webView = webViewController.webView;
-            webEngine = webViewController.webEngine;
+            htmlController.setParent(this);
+            webView = htmlController.webView;
+            webEngine = htmlController.webEngine;
 
             domConfig = PDFDomTreeConfig.createDefaultConfig();
 
@@ -181,20 +181,14 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                 if (pop) {
                     HtmlPopController.openFile(myController, htmlFile);
                 } else {
-                    webViewController.loadFile(htmlFile);
+                    htmlController.loadFile(htmlFile);
                     webView.requestFocus();
                     atBottom = false;
                     htmlPage = frameIndex;
                 }
-
             }
         };
         start(htmlTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-    }
-
-    @FXML
-    public void editHtml() {
-        HtmlEditorController.openHtml(webViewController.loadedHtml());
     }
 
 }

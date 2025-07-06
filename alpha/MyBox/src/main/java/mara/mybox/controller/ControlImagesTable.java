@@ -15,8 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageFileInformation;
-import mara.mybox.image.data.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -25,6 +23,8 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.fxml.converter.LongStringFromatConverter;
+import mara.mybox.image.data.ImageFileInformation;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -126,7 +126,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
             if (imageColumn != null) {
                 imageColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
-                imageColumn.setCellFactory(new TableImageInfoCell());
+                imageColumn.setCellFactory(new TableImageInfoCell(this));
             }
 
             if (pixelsColumn != null) {

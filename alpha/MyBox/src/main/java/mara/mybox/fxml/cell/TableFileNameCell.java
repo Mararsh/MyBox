@@ -1,10 +1,11 @@
 package mara.mybox.fxml.cell;
 
-import mara.mybox.fxml.image.ImageViewFileTask;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+import mara.mybox.controller.BaseController;
+import mara.mybox.fxml.image.ImageViewFileTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileExtensions;
@@ -18,9 +19,10 @@ public class TableFileNameCell<T> extends TableCell<T, String>
         implements Callback<TableColumn<T, String>, TableCell<T, String>> {
 
     protected int thumbWidth = AppVariables.thumbnailWidth;
+    private BaseController controller;
 
-    public TableFileNameCell() {
-
+    public TableFileNameCell(BaseController controller) {
+        this.controller = controller;
     }
 
     public TableFileNameCell(int imageSize) {
@@ -44,7 +46,7 @@ public class TableFileNameCell<T> extends TableCell<T, String>
                 }
                 String suffix = FileNameTools.ext(item).toLowerCase();
                 if (FileExtensions.SupportedImages.contains(suffix)) {
-                    ImageViewFileTask task = new ImageViewFileTask()
+                    ImageViewFileTask task = new ImageViewFileTask(controller)
                             .setCell(this).setView(imageview)
                             .setFilename(item).setThumbWidth(thumbWidth);
                     Thread thread = new Thread(task);
