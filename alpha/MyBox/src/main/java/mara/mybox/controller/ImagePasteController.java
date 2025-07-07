@@ -59,7 +59,7 @@ public class ImagePasteController extends BaseImageEditController {
     @FXML
     protected Label listLabel;
     @FXML
-    protected ControlImagesBlend blendController;
+    protected ControlColorsBlend blendController;
 
     public ImagePasteController() {
         baseTitle = message("Paste");

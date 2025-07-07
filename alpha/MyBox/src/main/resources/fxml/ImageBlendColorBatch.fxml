@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                                           <fx:include fx:id="color" source="ControlColorSet.fxml" />
                                        </children>
                                     </HBox>
-                                    <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
+                                    <fx:include fx:id="blend" source="ControlColorsBlend.fxml" />
                                     <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                        <children>
                                           <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">

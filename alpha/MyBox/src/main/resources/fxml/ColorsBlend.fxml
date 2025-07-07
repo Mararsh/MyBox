@@ -83,15 +83,6 @@ License:    Apache License Version 2.0
                                                                     <children>
                                                                         <HBox spacing="2.0">
                                                                             <children>
-                                                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                                                                                    <graphic>
-                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                            <image>
-                                                                                                <Image url="@../buttons/Red/iconOK.png" />
-                                                                                            </image>
-                                                                                        </ImageView>
-                                                                                    </graphic>
-                                                                                </Button>
                                                                                 <Button fx:id="paletteAddInButton" mnemonicParsing="false" onAction="#addColor">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -101,9 +92,18 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
+                                                            <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconDemo.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
                                                                             </children>
                                                                         </HBox>
-                                                                        <fx:include fx:id="blend" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesBlend.fxml" VBox.vgrow="ALWAYS" />
+                                                                        <fx:include fx:id="blend" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlColorsBlend.fxml" VBox.vgrow="ALWAYS" />
                                                                     </children>
                                                                     <padding>
                                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

@@ -18,7 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageBlendColorController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageBlendColorController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
             <items>
@@ -64,7 +64,7 @@ License:    Apache License Version 2.0
                                         <fx:include fx:id="color" source="ControlColorSet.fxml" />
                                     </children>
                                 </HBox>
-                                <fx:include fx:id="blend" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesBlend.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="blend" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlColorsBlend.fxml" VBox.vgrow="ALWAYS" />
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
                                         <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">

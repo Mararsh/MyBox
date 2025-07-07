@@ -67,7 +67,7 @@ public class ControlImageText extends BaseController {
     @FXML
     protected RadioButton rightBottomRadio, rightTopRadio, leftBottomRadio, leftTopRadio, centerRadio, customRadio;
     @FXML
-    protected ControlImagesBlend blendController;
+    protected ControlColorsBlend blendController;
     @FXML
     protected VBox bordersBox;
     @FXML

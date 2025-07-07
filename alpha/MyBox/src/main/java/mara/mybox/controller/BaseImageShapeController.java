@@ -30,7 +30,7 @@ public class BaseImageShapeController extends BaseImageEditController {
     @FXML
     protected ControlStroke strokeController;
     @FXML
-    protected ControlImagesBlend blendController;
+    protected ControlColorsBlend blendController;
     @FXML
     protected Button shapeButton;
 

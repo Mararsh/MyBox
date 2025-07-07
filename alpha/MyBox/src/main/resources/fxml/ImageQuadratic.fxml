@@ -210,7 +210,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                             <children>
-                                                                <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
+                                                                <fx:include fx:id="blend" source="ControlColorsBlend.fxml" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

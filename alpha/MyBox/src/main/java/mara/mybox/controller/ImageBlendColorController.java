@@ -27,7 +27,7 @@ public class ImageBlendColorController extends BasePixelsController {
     @FXML
     protected ControlColorSet colorController;
     @FXML
-    protected ControlImagesBlend blendController;
+    protected ControlColorsBlend blendController;
 
     public ImageBlendColorController() {
         baseTitle = message("BlendColor");

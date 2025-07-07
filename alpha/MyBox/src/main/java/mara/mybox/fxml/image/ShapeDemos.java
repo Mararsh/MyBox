@@ -3,14 +3,14 @@ package mara.mybox.fxml.image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
-import mara.mybox.image.tools.ImageTextTools;
-import mara.mybox.image.data.PixelsBlend;
-import mara.mybox.image.data.PixelsBlendFactory;
-import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.controller.ControlImageText;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.data.PixelsBlend;
+import mara.mybox.image.data.PixelsBlendFactory;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.ImageTextTools;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -47,8 +47,9 @@ public class ShapeDemos {
                 }
                 mode = PixelsBlendFactory.blendMode(name);
                 blender = PixelsBlendFactory.create(mode).setBlendMode(mode);
-                blender.setWeight(1.0F).setBaseAbove(false).setBaseTransparentAs(
-                        PixelsBlend.TransparentAs.Another).setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
+                blender.setWeight(1.0F).setBaseAbove(false)
+                        .setBaseTransparentAs(PixelsBlend.TransparentAs.Another)
+                        .setOverlayTransparentAs(PixelsBlend.TransparentAs.Another);
                 blended = PixelsBlend.blend(currentTask, overlayBI, baseBI, x, y, blender);
                 if (currentTask == null || !currentTask.isWorking()) {
                     return;

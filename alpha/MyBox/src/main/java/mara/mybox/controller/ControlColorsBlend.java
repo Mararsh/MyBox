@@ -5,7 +5,11 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -13,8 +17,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
@@ -37,13 +43,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-2-6
  * @License Apache License Version 2.0
  */
-public class ControlImagesBlend extends BaseController {
+public class ControlColorsBlend extends BaseController {
 
     protected ImagesBlendMode blendMode;
     protected float weight;
     protected int keepRatioType;
     protected TransparentAs baseTransparentAs = TransparentAs.Transparent,
             overlayTransparentAs = TransparentAs.Another;
+    protected SimpleBooleanProperty changeNotify;
 
     @FXML
     protected ListView<String> modeList;
@@ -76,6 +83,7 @@ public class ControlImagesBlend extends BaseController {
         try {
             this.parentController = parent;
             baseName = parentController.baseName + "_Blend";
+            changeNotify = new SimpleBooleanProperty(false);
 
             baseAboveCheck.setSelected(UserConfig.getBoolean(conn, baseName + "BaseAbove", false));
 
@@ -113,14 +121,53 @@ public class ControlImagesBlend extends BaseController {
             modeList.scrollTo(mode);
             modeList.getSelectionModel().select(mode);
 
+            modeList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    valueChanged();
+                }
+            });
+
             weight = UserConfig.getInt(conn, baseName + "BlendWeight", 100) / 100f;
             weight = (weight >= 0.0f && weight <= 1.0f) ? weight : 1.0f;
             weightSelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             weightSelector.setValue(weight + "");
 
+            weightSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    valueChanged();
+                }
+            });
+
+            baseAboveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    valueChanged();
+                }
+            });
+
+            baseGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    valueChanged();
+                }
+            });
+
+            overlayGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    valueChanged();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void valueChanged() {
+        changeNotify.set(!changeNotify.get());
     }
 
     public TransparentAs baseTransparentAs() {
