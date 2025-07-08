@@ -167,6 +167,9 @@ public class ControlColorsBlend extends BaseController {
     }
 
     public void valueChanged() {
+        if (isSettingValues) {
+            return;
+        }
         changeNotify.set(!changeNotify.get());
     }
 

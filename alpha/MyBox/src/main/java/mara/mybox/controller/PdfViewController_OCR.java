@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public abstract class PdfViewController_OCR extends BaseFileImagesController {
+public abstract class PdfViewController_OCR extends PdfViewController_Base {
 
     protected TesseractOptions tesseractOptions;
     protected int orcPage;

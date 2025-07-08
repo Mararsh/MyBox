@@ -24,7 +24,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 public abstract class PdfViewController_Texts extends PdfViewController_OCR {
 
     protected PDFTextStripper stripper;
-    protected String password;
     protected int textsPage;
     protected Task textsTask;
 

@@ -85,7 +85,7 @@ public abstract class BaseFileImagesController extends BaseFileController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean(baseName + "Thumbnails", viewThumbsCheck.isSelected());
-                        loadThumbs();
+                        refreshThumbs();
                     }
                 });
 
@@ -177,7 +177,7 @@ public abstract class BaseFileImagesController extends BaseFileController {
                                 thumbWidth = v;
                                 UserConfig.setInt(baseName + "ThumbnailWidth", thumbWidth);
                                 ValidationTools.setEditorNormal(thumbWidthSelector);
-                                loadThumbs();
+                                refreshThumbs();
                             } else {
                                 ValidationTools.setEditorBadStyle(thumbWidthSelector);
                             }
@@ -329,8 +329,10 @@ public abstract class BaseFileImagesController extends BaseFileController {
     }
 
     protected void loadPage(int pageNumber) {
+        MyBoxLog.console(pageNumber);
         setCurrentPage(pageNumber);
         loadPage();
+        loadThumbs();
     }
 
     public void initCurrentPage() {
@@ -380,16 +382,18 @@ public abstract class BaseFileImagesController extends BaseFileController {
     }
 
     protected void loadThumbs() {
+        MyBoxLog.console(thumbTask != null);
         if (thumbTask != null) {
             thumbTask.cancel();
         }
         if (!viewThumbsCheck.isSelected()) {
+            thumbBox.getChildren().clear();
             return;
         }
         if (thumbBox.getChildren().isEmpty()) {
             for (int i = 0; i < framesNumber; ++i) {
                 ImageView view = new ImageView();
-                view.setFitHeight(50);
+                view.setFitWidth(thumbWidth);
                 view.setPreserveRatio(true);
                 final int p = i;
                 view.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -412,10 +416,12 @@ public abstract class BaseFileImagesController extends BaseFileController {
         int pos = Math.max(0, (int) (framesNumber * thumbScrollPane.getVvalue() / thumbScrollPane.getVmax()) - 1);
         int end = Math.min(pos + 20, framesNumber);
         List<Integer> missed = new ArrayList<>();
+        MyBoxLog.console(pos);
         for (int i = pos; i < end; ++i) {
             ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
             if (view.getImage() == null) {
                 missed.add(i);
+                MyBoxLog.console(i);
             }
         }
         if (missed.isEmpty()) {
@@ -425,12 +431,21 @@ public abstract class BaseFileImagesController extends BaseFileController {
 
             @Override
             protected boolean handle() {
-                return loadThumbs(missed);
+                loadThumbs(missed);
+                return true;
             }
 
             @Override
             protected void whenSucceeded() {
                 thumbBox.layout();
+            }
+
+            @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
             }
 
         };
@@ -484,6 +499,10 @@ public abstract class BaseFileImagesController extends BaseFileController {
 
     @FXML
     public void refreshThumbs() {
+        if (thumbTask != null) {
+            thumbTask.cancel();
+        }
+        thumbBox.getChildren().clear();
         loadThumbs();
     }
 
