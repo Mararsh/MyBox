@@ -19,7 +19,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -160,35 +159,20 @@ public class PdfViewController_Base extends BaseFileImagesController {
     }
 
     @Override
-    protected boolean loadThumbs(List<Integer> missed) {
+    protected Image loadThumb(Integer page) {
         try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
             PDFRenderer renderer = new PDFRenderer(doc);
-            for (Integer index : missed) {
-                if (thumbTask == null || !thumbTask.isWorking()) {
-                    break;
-                }
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * index);
-                MyBoxLog.console(2 * index);
-                if (view.getImage() != null) {
-                    continue;
-                }
-                try {
-                    BufferedImage bufferedImage = renderer.renderImageWithDPI(index, 72, ImageType.RGB);  // 0-based
-                    if (bufferedImage.getWidth() > thumbWidth) {
-                        bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, thumbWidth);
-                    }
-                    Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
-                    view.setImage(thumb);
-                } catch (Exception e) {
-                }
+            BufferedImage bufferedImage = renderer.renderImageWithDPI(page, 72, ImageType.RGB);  // 0-based
+            if (bufferedImage.getWidth() > thumbWidth) {
+                bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, thumbWidth);
             }
+            Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
             doc.close();
+            return thumb;
         } catch (Exception e) {
-//            thumbTask.setError(e.toString());
 //            MyBoxLog.debug(e);
-            return false;
+            return null;
         }
-        return true;
     }
 
     @FXML

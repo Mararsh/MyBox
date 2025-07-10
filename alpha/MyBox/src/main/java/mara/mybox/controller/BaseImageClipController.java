@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.IndexedCell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -73,7 +75,6 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
                     ImageView imageview = new ImageView();
                     imageview.setPreserveRatio(true);
                     imageview.setFitWidth(thumbWidth);
-                    imageview.setFitHeight(thumbWidth);
                     TableCell<ImageClipboard, ImageClipboard> cell = new TableCell<ImageClipboard, ImageClipboard>() {
                         @Override
                         public void updateItem(ImageClipboard item, boolean empty) {
@@ -83,8 +84,11 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
                                 setText(null);
                                 return;
                             }
-                            imageview.setImage(item.loadThumb(null));
-                            setGraphic(imageview);
+                            ImageViewClipTask task = new ImageViewClipTask(myController)
+                                    .setCell(this).setView(imageview);
+                            Thread thread = new Thread(task);
+                            thread.setDaemon(false);
+                            thread.start();
                         }
                     };
                     return cell;
@@ -103,6 +107,52 @@ public class BaseImageClipController extends BaseSysTableController<ImageClipboa
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public class ImageViewClipTask<Void> extends FxTask<Void> {
+
+        private IndexedCell cell;
+        private ImageClipboard item = null;
+        private ImageView view = null;
+
+        public ImageViewClipTask(BaseController controller) {
+            this.controller = controller;
+        }
+
+        public ImageViewClipTask<Void> setCell(IndexedCell cell) {
+            this.cell = cell;
+            return this;
+        }
+
+        public ImageViewClipTask<Void> setItem(ImageClipboard item) {
+            this.item = item;
+            return this;
+        }
+
+        public ImageViewClipTask<Void> setView(ImageView view) {
+            this.view = view;
+            return this;
+        }
+
+        @Override
+        public void run() {
+            if (view == null || item == null) {
+                return;
+            }
+            Image image = item.loadThumb(null);
+            if (image != null) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setImage(image);
+                        if (cell != null) {
+                            cell.setGraphic(view);
+                        }
+                    }
+                });
+            }
+        }
+
     }
 
     @Override

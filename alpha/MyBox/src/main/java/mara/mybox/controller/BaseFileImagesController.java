@@ -2,24 +2,26 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.IndexedCell;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -37,7 +39,6 @@ public abstract class BaseFileImagesController extends BaseFileController {
 
     protected int percent, thumbWidth, framesNumber, frameIndex;
     protected ImageView imageView;
-    protected FxTask thumbTask;
     protected LoadingController loading;
     protected Process process;
 
@@ -46,9 +47,7 @@ public abstract class BaseFileImagesController extends BaseFileController {
     @FXML
     protected CheckBox viewThumbsCheck;
     @FXML
-    protected ScrollPane thumbScrollPane;
-    @FXML
-    protected VBox thumbBox;
+    protected ListView<Integer> thumbsList;
     @FXML
     protected Label pageLabel;
     @FXML
@@ -75,24 +74,6 @@ public abstract class BaseFileImagesController extends BaseFileController {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         checkCurrentPage();
-                    }
-                });
-            }
-
-            if (viewThumbsCheck != null) {
-                viewThumbsCheck.setSelected(UserConfig.getBoolean(baseName + "Thumbnails", false));
-                viewThumbsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "Thumbnails", viewThumbsCheck.isSelected());
-                        refreshThumbs();
-                    }
-                });
-
-                thumbScrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                        loadThumbs();
                     }
                 });
             }
@@ -158,35 +139,8 @@ public abstract class BaseFileImagesController extends BaseFileController {
                 });
             }
 
-            if (thumbWidthSelector != null) {
-                thumbWidthSelector.getItems().addAll(Arrays.asList("200", "100", "50", "150", "300"));
-                thumbWidth = UserConfig.getInt(baseName + "ThumbnailWidth", 200);
-                if (thumbWidth <= 0) {
-                    thumbWidth = 200;
-                }
-                thumbWidthSelector.getSelectionModel().select(dpi + "");
-                thumbWidthSelector.valueProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                thumbWidth = v;
-                                UserConfig.setInt(baseName + "ThumbnailWidth", thumbWidth);
-                                ValidationTools.setEditorNormal(thumbWidthSelector);
-                                refreshThumbs();
-                            } else {
-                                ValidationTools.setEditorBadStyle(thumbWidthSelector);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(thumbWidthSelector);
-                        }
-                    }
-                });
-            }
+            initThumbsList();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -232,6 +186,170 @@ public abstract class BaseFileImagesController extends BaseFileController {
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    public void initThumbsList() {
+        try {
+            thumbWidth = UserConfig.getInt(baseName + "ThumbnailWidth", 200);
+            if (thumbWidth <= 0) {
+                thumbWidth = 200;
+            }
+            if (thumbWidthSelector != null) {
+                thumbWidthSelector.getItems().addAll(Arrays.asList("200", "100", "50", "150", "300"));
+                thumbWidthSelector.getSelectionModel().select(thumbWidth + "");
+                thumbWidthSelector.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        try {
+                            int v = Integer.parseInt(newValue);
+                            if (v > 0) {
+                                thumbWidth = v;
+                                UserConfig.setInt(baseName + "ThumbnailWidth", thumbWidth);
+                                ValidationTools.setEditorNormal(thumbWidthSelector);
+                                refreshThumbs();
+                            } else {
+                                ValidationTools.setEditorBadStyle(thumbWidthSelector);
+                            }
+                        } catch (Exception e) {
+                            ValidationTools.setEditorBadStyle(thumbWidthSelector);
+                        }
+                    }
+                });
+            }
+
+            if (viewThumbsCheck != null) {
+                viewThumbsCheck.setSelected(UserConfig.getBoolean(baseName + "Thumbnails", false));
+                viewThumbsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "Thumbnails", viewThumbsCheck.isSelected());
+                        refreshThumbs();
+                    }
+                });
+            }
+
+            if (thumbsList != null) {
+                thumbsList.setCellFactory(new Callback<ListView<Integer>, ListCell<Integer>>() {
+                    @Override
+                    public ListCell<Integer> call(ListView<Integer> param) {
+                        final ImageView imageview = new ImageView();
+                        imageview.setPreserveRatio(true);
+                        final Label label = new Label();
+                        label.setAlignment(Pos.CENTER);
+                        final VBox vbox = new VBox();
+                        vbox.getChildren().addAll(imageview, label);
+                        ListCell<Integer> cell = new ListCell<Integer>() {
+                            @Override
+                            public void updateItem(Integer item, boolean empty) {
+                                super.updateItem(item, empty);
+                                setText(null);
+                                setGraphic(null);
+                                if (empty || item == null || !viewThumbsCheck.isSelected()) {
+                                    imageview.setImage(null);
+                                    label.setText(null);
+                                    return;
+                                }
+                                if (imageview.getImage() == null) {
+                                    LoadThumbTask task = new LoadThumbTask(myController)
+                                            .setCell(this).setBox(vbox).setPage(item);
+                                    myController.start(task, false);
+                                } else {
+                                    setGraphic(vbox);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                });
+                thumbsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Integer> v, Integer oldV, Integer newV) {
+                        if (newV != null) {
+                            loadPage(newV);
+                        }
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public class LoadThumbTask<Void> extends FxTask<Void> {
+
+        private IndexedCell cell;
+        private Integer page = null;
+        private VBox box;
+
+        public LoadThumbTask(BaseController controller) {
+            this.controller = controller;
+        }
+
+        public LoadThumbTask<Void> setCell(IndexedCell cell) {
+            this.cell = cell;
+            return this;
+        }
+
+        public LoadThumbTask<Void> setPage(Integer page) {
+            this.page = page;
+            return this;
+        }
+
+        public LoadThumbTask<Void> setBox(VBox vbox) {
+            this.box = vbox;
+            return this;
+        }
+
+        @Override
+        public void run() {
+            if (cell == null || box == null || page == null) {
+                return;
+            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    ImageView view = (ImageView) box.getChildren().get(0);
+                    view.setFitWidth(thumbWidth);
+                    if (view.getImage() == null) {
+                        view.setImage(loadThumb(page));
+                    }
+                    Label label = (Label) box.getChildren().get(1);
+                    label.setText((page + 1) + "");
+                    label.setPrefWidth(thumbWidth);
+                    box.setPrefWidth(thumbWidth + 10);
+                    cell.setGraphic(box);
+                }
+            });
+        }
+
+    }
+
+    protected Image loadThumb(Integer page) {
+        return null;
+    }
+
+    protected void clearThumbs() {
+        if (thumbsList != null) {
+            thumbsList.getItems().clear();
+        }
+    }
+
+    @FXML
+    public void refreshThumbs() {
+        if (thumbsList == null) {
+            return;
+        }
+        thumbsList.getItems().clear();
+        if (!viewThumbsCheck.isSelected()) {
+            return;
+        }
+        for (int i = 0; i < framesNumber; i++) {
+            thumbsList.getItems().add(i);
         }
     }
 
@@ -306,17 +424,13 @@ public abstract class BaseFileImagesController extends BaseFileController {
             isSettingValues = true;
             pageSelector.getItems().clear();
             pageSelector.setValue(null);
-            thumbBox.getChildren().clear();
+            clearThumbs();
             isSettingValues = false;
             bottomLabel.setText("");
             pageLabel.setText("");
             setSourceFile(file);
             if (openSourceButton != null) {
                 openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
-            }
-            if (thumbTask != null) {
-                thumbTask.cancel();
-                thumbTask = null;
             }
             if (file == null) {
                 getMyStage().setTitle(getBaseTitle());
@@ -329,10 +443,8 @@ public abstract class BaseFileImagesController extends BaseFileController {
     }
 
     protected void loadPage(int pageNumber) {
-        MyBoxLog.console(pageNumber);
         setCurrentPage(pageNumber);
         loadPage();
-        loadThumbs();
     }
 
     public void initCurrentPage() {
@@ -355,7 +467,7 @@ public abstract class BaseFileImagesController extends BaseFileController {
         if (sourceFile == null) {
             return;
         }
-        if (task != null && !task.isQuit()) {
+        if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
@@ -379,81 +491,6 @@ public abstract class BaseFileImagesController extends BaseFileController {
     // return error
     protected Image readPageImage() {
         return null;
-    }
-
-    protected void loadThumbs() {
-        MyBoxLog.console(thumbTask != null);
-        if (thumbTask != null) {
-            thumbTask.cancel();
-        }
-        if (!viewThumbsCheck.isSelected()) {
-            thumbBox.getChildren().clear();
-            return;
-        }
-        if (thumbBox.getChildren().isEmpty()) {
-            for (int i = 0; i < framesNumber; ++i) {
-                ImageView view = new ImageView();
-                view.setFitWidth(thumbWidth);
-                view.setPreserveRatio(true);
-                final int p = i;
-                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        loadPage(p);
-                    }
-                });
-                thumbBox.getChildren().add(view);
-                Label label = new Label((i + 1) + "");
-                label.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        loadPage(p);
-                    }
-                });
-                thumbBox.getChildren().add(label);
-            }
-        }
-        int pos = Math.max(0, (int) (framesNumber * thumbScrollPane.getVvalue() / thumbScrollPane.getVmax()) - 1);
-        int end = Math.min(pos + 20, framesNumber);
-        List<Integer> missed = new ArrayList<>();
-        MyBoxLog.console(pos);
-        for (int i = pos; i < end; ++i) {
-            ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
-            if (view.getImage() == null) {
-                missed.add(i);
-                MyBoxLog.console(i);
-            }
-        }
-        if (missed.isEmpty()) {
-            return;
-        }
-        thumbTask = new FxTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                loadThumbs(missed);
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                thumbBox.layout();
-            }
-
-            @Override
-            protected void whenCanceled() {
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
-        };
-        start(thumbTask, false);
-    }
-
-    protected boolean loadThumbs(List<Integer> missed) {
-        return true;
     }
 
     @FXML
@@ -497,15 +534,6 @@ public abstract class BaseFileImagesController extends BaseFileController {
 
     }
 
-    @FXML
-    public void refreshThumbs() {
-        if (thumbTask != null) {
-            thumbTask.cancel();
-        }
-        thumbBox.getChildren().clear();
-        loadThumbs();
-    }
-
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (super.keyEventsFilter(event)) {
@@ -517,10 +545,6 @@ public abstract class BaseFileImagesController extends BaseFileController {
     @Override
     public void cleanPane() {
         try {
-            if (thumbTask != null) {
-                thumbTask.cancel();
-                thumbTask = null;
-            }
             if (process != null) {
                 process.destroy();
                 process = null;

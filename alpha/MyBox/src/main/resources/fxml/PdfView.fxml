@@ -11,6 +11,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -419,9 +420,9 @@ License:    Apache License Version 2.0
                                                       </Button>
                                                    </children>
                                                 </FlowPane>
-                                                          <ScrollPane fx:id="thumbScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                               <content>
-                                                                  <VBox fx:id="thumbBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" />
+                                                            <ListView fx:id="thumbsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                                               </content>
                                                           </ScrollPane>
                                              </children>

@@ -74,10 +74,8 @@ public class PdfViewController extends PdfViewController_Html {
                 }
             });
 
-            formatPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
-            playPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
-            viewButton.disableProperty().bind(imageController.imageView.imageProperty().isNull());
-
+            leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+            showRightPane();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

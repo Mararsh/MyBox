@@ -7,14 +7,12 @@ import javafx.scene.image.ImageView;
 /**
  * @Author Mara
  * @CreateDate 2019-3-15 14:17:47
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class ListImageCell extends ListCell<Image> {
 
     private ImageView view;
-    private int height;
+    private final int height;
 
     public ListImageCell() {
         height = 30;
@@ -38,6 +36,7 @@ public class ListImageCell extends ListCell<Image> {
         if (!empty && item != null) {
             view.setImage(item);
             setGraphic(view);
+            setText(item.getUrl());
         } else {
             setGraphic(null);
             setText(null);

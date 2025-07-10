@@ -1,11 +1,17 @@
 package mara.mybox.fxml.cell;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.IndexedCell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.controller.BaseController;
-import mara.mybox.fxml.image.ImageViewFileTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileExtensions;
@@ -58,6 +64,59 @@ public class TableFileNameCell<T> extends TableCell<T, String>
             }
         };
         return cell;
+    }
+
+    public class ImageViewFileTask<Void> extends FxTask<Void> {
+
+        private IndexedCell cell;
+        private String filename = null;
+        private ImageView view = null;
+        private int thumbWidth = AppVariables.thumbnailWidth;
+
+        public ImageViewFileTask(BaseController controller) {
+            this.controller = controller;
+        }
+
+        public ImageViewFileTask<Void> setCell(IndexedCell cell) {
+            this.cell = cell;
+            return this;
+        }
+
+        public ImageViewFileTask<Void> setFilename(String filename) {
+            this.filename = filename;
+            return this;
+        }
+
+        public ImageViewFileTask<Void> setView(ImageView view) {
+            this.view = view;
+            return this;
+        }
+
+        public ImageViewFileTask<Void> setThumbWidth(int thumbWidth) {
+            this.thumbWidth = thumbWidth;
+            return this;
+        }
+
+        @Override
+        public void run() {
+            if (view == null || filename == null) {
+                return;
+            }
+            File file = new File(filename);
+            BufferedImage image = ImageFileReaders.readImage(this, file, thumbWidth);
+            if (image != null) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setImage(SwingFXUtils.toFXImage(image, null));
+                        if (cell != null) {
+                            cell.setGraphic(view);
+                        }
+                    }
+                });
+            }
+        }
+
     }
 
 }
