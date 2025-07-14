@@ -40,7 +40,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class WeiboSnapController extends BaseController {
+public class WeiboSnapController extends BaseFileController {
 
     public final static String exmapleAddress = "https://weibo.com/p/1001067609807801/home";
     private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval, likeStartPage;

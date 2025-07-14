@@ -99,7 +99,7 @@ public abstract class FindReplaceBatchController extends BaseBatchFileController
         if (editType == Edit_Type.Bytes) {
             fileInfo = new BytesEditInformation(file);
         } else {
-            fileInfo = new TextEditInformation(file, null);
+            fileInfo = new TextEditInformation(file);
             if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {
                 return null;
             }

@@ -18,7 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="-Infinity" prefHeight="300.0" prefWidth="500.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextEditorSaveAsController">
+<VBox fx:id="thisPane" maxHeight="-Infinity" prefHeight="300.0" prefWidth="500.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextEditorSaveAsController">
       <children>
       <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
@@ -38,17 +38,6 @@ License:    Apache License Version 2.0
             </RadioButton>
             <RadioButton fx:id="crRadio" mnemonicParsing="false" text="%CR" toggleGroup="$lineBreakGroup" />
             <RadioButton fx:id="crlfRadio" mnemonicParsing="false" text="%CRLF" toggleGroup="$lineBreakGroup" />
-         </children>
-      </VBox>
-      <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-         <children>
-            <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
-               <toggleGroup>
-                  <ToggleGroup fx:id="saveAsGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
-            <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
          </children>
       </VBox>
       <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">

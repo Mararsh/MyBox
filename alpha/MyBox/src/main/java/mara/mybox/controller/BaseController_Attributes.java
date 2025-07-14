@@ -11,11 +11,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
@@ -51,8 +49,8 @@ public abstract class BaseController_Attributes {
 
     protected BaseController parentController, myController;
     protected FxTask<Void> task, backgroundTask;
-    protected int SourceFileType = -1, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
-            operationType, dpi;
+    protected int SourceFileType = -1, SourcePathType, TargetFileType, TargetPathType,
+            AddFileType, AddPathType, operationType;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
     protected String myFxml, parentFxml, currentStatus, baseTitle, baseName, interfaceName, TipsLabelKey;
     protected Stage myStage;
@@ -66,16 +64,11 @@ public abstract class BaseController_Attributes {
     protected boolean isSettingValues, isTopPane = false;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected StageType stageType;
-    protected SaveAsType saveAsType;
     protected TableFileBackup tableFileBackup;
     protected Pagination pagination;
 
     public static enum StageType {
         Normal, Child, RefferredTop, Referred, Fork, Top, Popup, OneOpen
-    }
-
-    public static enum SaveAsType {
-        Load, Open, Edit, None
     }
 
     @FXML
@@ -115,15 +108,11 @@ public abstract class BaseController_Attributes {
     protected CheckBox rightPaneCheck, leftPaneCheck, toolbarCheck, onTopCheck,
             closeAfterCheck, miaoCheck, openCheck;
     @FXML
-    protected ToggleGroup saveAsGroup, fileTypeGroup;
-    @FXML
-    protected RadioButton saveLoadRadio, saveOpenRadio, saveEditRadio, saveJustRadio;
+    protected ToggleGroup fileTypeGroup;
     @FXML
     protected SplitPane splitPane;
     @FXML
     protected ScrollPane leftPane, rightPane;
-    @FXML
-    protected ComboBox<String> dpiSelector;
     @FXML
     protected TabPane tabPane;
     @FXML

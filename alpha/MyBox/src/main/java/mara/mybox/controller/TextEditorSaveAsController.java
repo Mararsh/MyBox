@@ -98,7 +98,6 @@ public class TextEditorSaveAsController extends BaseChildController {
             if (targetFile == null) {
                 return;
             }
-            fileController.saveAsType = saveAsType;
             fileController.saveAs(targetFile);
 
             if (closeAfterCheck.isSelected()) {

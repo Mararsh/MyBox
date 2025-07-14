@@ -98,7 +98,7 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
             sourceFile = file;
 
             FileEditInformation existedInfo = sourceInformation;
-            sourceInformation = FileEditInformation.create(editType, file, pagination);
+            sourceInformation = FileEditInformation.create(editType, file);
             sourceInformation.pagination = pagination;
             if (existedInfo != null) {
                 sourceInformation.setCharset(existedInfo.getCharset());

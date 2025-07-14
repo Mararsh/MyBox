@@ -109,41 +109,16 @@ public abstract class BaseFileImagesController extends BaseFileController {
                 });
             }
 
-            if (dpiSelector != null) {
-                dpiSelector.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
-                dpi = UserConfig.getInt(baseName + "DPI", 96);
-                if (dpi < 0) {
-                    dpi = 96;
-                }
-                dpiSelector.getSelectionModel().select(dpi + "");
-                dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                dpi = v;
-                                UserConfig.setInt(baseName + "DPI", dpi);
-                                loadPage();
-                                ValidationTools.setEditorNormal(dpiSelector);
-                            } else {
-                                ValidationTools.setEditorBadStyle(dpiSelector);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(dpiSelector);
-                        }
-                    }
-                });
-            }
-
             initThumbsList();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void dpiChanged() {
+        loadPage();
     }
 
     public void initImageView() {

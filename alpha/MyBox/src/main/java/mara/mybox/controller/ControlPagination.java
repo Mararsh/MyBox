@@ -132,7 +132,14 @@ public class ControlPagination extends BaseController {
             }
             isSettingValues = true;
             thisPane.getChildren().clear();
-            if (thisPane.getWidth() > 800) {
+            double width = thisPane.getWidth();
+            if (getMyStage() != null) {
+                width = Math.min(width, getMyStage().getWidth());
+            }
+            if (parentController != null && parentController.getMyStage() != null) {
+                width = Math.min(width, parentController.getMyStage().getWidth());
+            }
+            if (width > 1000) {
                 thisPane.getChildren().add(navigatorBox);
             } else {
                 thisPane.getChildren().add(menuPane);

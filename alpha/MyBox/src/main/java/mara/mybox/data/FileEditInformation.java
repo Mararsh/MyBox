@@ -64,11 +64,6 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         super(file);
     }
 
-    public FileEditInformation(File file, Pagination pagi) {
-        super(file);
-        initValues(pagi);
-    }
-
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
@@ -85,11 +80,11 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         }
     }
 
-    protected final void initValues(Pagination pagi) {
+    protected final void initValues() {
         filterType = StringFilterType.IncludeOne;
         withBom = totalNumberRead = charsetDetermined = false;
         charset = defaultCharset();
-        pagination = pagi != null ? pagi : new Pagination();
+        pagination = new Pagination();
         pagination.init(editType == Edit_Type.Bytes
                 ? Pagination.ObjectType.Bytes
                 : Pagination.ObjectType.Text);
@@ -117,14 +112,14 @@ public abstract class FileEditInformation extends FileInformation implements Clo
         return Charset.forName("UTF-8");
     }
 
-    public static FileEditInformation create(Edit_Type type, File file, Pagination pagi) {
+    public static FileEditInformation create(Edit_Type type, File file) {
         switch (type) {
             case Text:
-                return new TextEditInformation(file, pagi);
+                return new TextEditInformation(file);
             case Bytes:
-                return new BytesEditInformation(file, pagi);
+                return new BytesEditInformation(file);
             default:
-                return new TextEditInformation(file, pagi);
+                return new TextEditInformation(file);
         }
     }
 

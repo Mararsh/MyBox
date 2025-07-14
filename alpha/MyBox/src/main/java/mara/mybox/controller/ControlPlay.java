@@ -41,7 +41,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-17
  * @License Apache License Version 2.0
  */
-public class ControlPlay extends BaseController {
+public class ControlPlay extends BaseFileController {
 
     protected int total, currentIndex, fromFrame, toFrame;
     protected long timeValue;

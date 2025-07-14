@@ -29,17 +29,6 @@ public class BytesEditInformation extends FileEditInformation {
         editType = Edit_Type.Bytes;
     }
 
-    public BytesEditInformation(Pagination pagi) {
-        editType = Edit_Type.Bytes;
-        initValues(pagi);
-    }
-
-    public BytesEditInformation(File file, Pagination pagi) {
-        super(file);
-        editType = Edit_Type.Bytes;
-        initValues(pagi);
-    }
-
     @Override
     public boolean readTotalNumbers(FxTask currentTask) {
         try {

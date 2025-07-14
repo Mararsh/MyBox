@@ -39,7 +39,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-7-5
  * @License Apache License Version 2.0
  */
-public class ControlImageFormat extends BaseController {
+public class ControlImageFormat extends BaseFileController {
 
     protected ImageAttributes attributes;
     protected boolean includeDpi;

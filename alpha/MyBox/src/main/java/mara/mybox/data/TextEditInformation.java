@@ -27,10 +27,10 @@ public class TextEditInformation extends FileEditInformation {
         editType = Edit_Type.Text;
     }
 
-    public TextEditInformation(File file, Pagination pagi) {
+    public TextEditInformation(File file) {
         super(file);
         editType = Edit_Type.Text;
-        initValues(pagi);
+        initValues();
     }
 
     @Override

@@ -184,7 +184,7 @@ public class ImageConverterController extends BaseChildController {
             protected void whenSucceeded() {
                 popInformation(message("Saved"));
                 recordFileWritten(targetFile);
-                afterSaveAs(targetFile);
+                ImageEditorController.openFile(targetFile);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }
@@ -193,23 +193,6 @@ public class ImageConverterController extends BaseChildController {
         };
         start(task);
     }
-
-    public void afterSaveAs(File file) {
-        if (file == null) {
-            return;
-        }
-        if (saveAsType == SaveAsType.Load) {
-            imageController.sourceFileChanged(file);
-
-        } else if (saveAsType == SaveAsType.Open) {
-            ImagePopController.openFile(this, file.getAbsolutePath());
-
-        } else if (saveAsType == SaveAsType.Edit) {
-            ImageEditorController.openFile(file);
-
-        }
-    }
-
 
     /*
         static methods

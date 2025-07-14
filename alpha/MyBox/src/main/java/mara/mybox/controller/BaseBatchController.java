@@ -45,7 +45,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-4-28
  * @License Apache License Version 2.0
  */
-public abstract class BaseBatchController<T> extends BaseTaskController {
+public abstract class BaseBatchController<T> extends BaseFileController {
 
     protected String targetSubdirKey;
     protected ObservableList<T> tableData;

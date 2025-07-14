@@ -95,7 +95,6 @@ public class Fxmls {
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
     public static final String BytesEditorFormatFxml = "/fxml/BytesEditorFormat.fxml";
-    public static final String BytesEditorSaveAsFxml = "/fxml/BytesEditorSaveAs.fxml";
     public static final String BytesFindBatchFxml = "/fxml/BytesFindBatch.fxml";
     public static final String BytesPopFxml = "/fxml/BytesPop.fxml";
 

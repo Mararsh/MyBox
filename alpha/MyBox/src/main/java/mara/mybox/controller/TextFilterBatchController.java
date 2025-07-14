@@ -63,7 +63,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
             if (target == null) {
                 return message("Skip");
             }
-            TextEditInformation fileInfo = new TextEditInformation(srcFile, null);
+            TextEditInformation fileInfo = new TextEditInformation(srcFile);
             fileInfo.setLineBreak(TextTools.checkLineBreak(currentTask, srcFile));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
             fileInfo.checkCharset();

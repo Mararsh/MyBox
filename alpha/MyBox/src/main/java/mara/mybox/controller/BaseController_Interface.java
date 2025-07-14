@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -22,7 +19,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
@@ -122,79 +118,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         );
                     }
                 }
-            }
-
-            saveAsType = BaseController.SaveAsType.Open;
-            if (saveAsGroup != null && saveLoadRadio != null) {
-                String v = UserConfig.getString(interfaceName + "SaveAsType", BaseController.SaveAsType.Edit.name());
-                for (BaseController.SaveAsType s : BaseController.SaveAsType.values()) {
-                    if (v.equals(s.name())) {
-                        saveAsType = s;
-                        break;
-                    }
-                }
-                if (saveAsType == null || (saveLoadRadio == null && saveAsType == BaseController.SaveAsType.Load)) {
-                    saveAsType = BaseController.SaveAsType.Open;
-                }
-                switch (saveAsType) {
-                    case Load:
-                        saveLoadRadio.setSelected(true);
-                        break;
-                    case Open:
-                        saveOpenRadio.setSelected(true);
-                        break;
-                    case Edit:
-                        if (saveEditRadio != null) {
-                            saveEditRadio.setSelected(true);
-                        } else if (saveLoadRadio != null) {
-                            saveLoadRadio.setSelected(true);
-                        }
-                        break;
-                    case None:
-                        saveJustRadio.setSelected(true);
-                        break;
-                    default:
-                        break;
-                }
-                saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (saveOpenRadio.isSelected()) {
-                            saveAsType = BaseController.SaveAsType.Open;
-                        } else if (saveJustRadio.isSelected()) {
-                            saveAsType = BaseController.SaveAsType.None;
-                        } else if (saveLoadRadio != null && saveLoadRadio.isSelected()) {
-                            saveAsType = BaseController.SaveAsType.Load;
-                        } else if (saveEditRadio != null && saveEditRadio.isSelected()) {
-                            saveAsType = BaseController.SaveAsType.Edit;
-                        } else {
-                            saveAsType = BaseController.SaveAsType.Open;
-                        }
-                        UserConfig.setString(interfaceName + "SaveAsType", saveAsType.name());
-                    }
-                });
-            }
-
-            dpi = UserConfig.getInt(interfaceName + "DPI", 96);
-            if (dpiSelector != null) {
-                List<String> dpiValues = new ArrayList();
-                dpiValues.addAll(Arrays.asList("96", "72", "300", "160", "240", "120", "600", "400"));
-                String sValue = (int) NodeTools.screenResolution() + "";
-                if (dpiValues.contains(sValue)) {
-                    dpiValues.remove(sValue);
-                }
-                dpiValues.add(0, sValue);
-                sValue = (int) NodeTools.screenDpi() + "";
-                if (dpiValues.contains(sValue)) {
-                    dpiValues.remove(sValue);
-                }
-                dpiValues.add(sValue);
-                dpiSelector.getItems().addAll(dpiValues);
-                dpiSelector.setValue(dpi + "");
-                dpiSelector.getSelectionModel().selectedItemProperty().addListener(
-                        (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                            checkDPI();
-                        });
             }
 
             if (openSourceButton != null) {
@@ -387,21 +310,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             });
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    public void checkDPI() {
-        try {
-            int v = Integer.parseInt(dpiSelector.getValue());
-            if (v > 0) {
-                dpi = v;
-                UserConfig.setInt(interfaceName + "DPI", dpi);
-                dpiSelector.getEditor().setStyle(null);
-            } else {
-                dpiSelector.getEditor().setStyle(UserConfig.badStyle());
-            }
-        } catch (Exception e) {
-            dpiSelector.getEditor().setStyle(UserConfig.badStyle());
         }
     }
 
