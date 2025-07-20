@@ -190,7 +190,7 @@ public class TextTools {
     }
 
     public static String readText(FxTask task, File file) {
-        return readText(task, new TextEditInformation(file, null));
+        return readText(task, new TextEditInformation(file));
     }
 
     public static String readText(FxTask task, FileEditInformation info) {

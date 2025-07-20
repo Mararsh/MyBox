@@ -27,6 +27,7 @@ public class BytesEditInformation extends FileEditInformation {
     public BytesEditInformation(File file) {
         super(file);
         editType = Edit_Type.Bytes;
+        initValues();
     }
 
     @Override
@@ -313,6 +314,7 @@ public class BytesEditInformation extends FileEditInformation {
     @Override
     public boolean writePage(FxTask currentTask, FileEditInformation sourceInfo, String hex) {
         try {
+            MyBoxLog.console(file);
             if (file == null || hex == null || hex.isEmpty()
                     || sourceInfo.getFile() == null || sourceInfo.getCharset() == null) {
                 return false;

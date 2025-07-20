@@ -4,26 +4,20 @@
 This is compute application to provide simple and easy functions. It's free and open sources.
 
 ## What's New                       
-2025-6-23 v6.8.9               
+2025-7-20 v6.9.0               
                                                                                                                           
-* Add:                                      
-     - Function: Blend colors.                                                                                                                                           
-     - Colors blend modes: Kubelka Munk Mode(diffuse of pigments), CMYK mode, and weighted CMYK mode.                                                                                                                               
 * Improve:                                      
-     - The 3rd edit mode of data tree: html tree.                                                                                                                                           
-     - Conversion between Java arc and SVG arc.                                                                                                                                 
-     - Provide example to all editors.                                                                                                                                 
+     - View PDF: Select mode to view or pop.                                                                                                                                           
+     - Set OCR options in child window.                                                                                                                                 
+     - Blend colors: Options are picked immediately after changed. Demos are provided.                                                                                                                                 
 * Solved problems:                                
-     - Data manufacture: Updates are lost when switch from csv mode.                                                                                                                                                      
-     - Shape "arc" is displayed incorrectly.                                                                                                                                 
-     - When convert SVG shape to relative path, the start point should be absoluate.                                                                                                                                 
-     - When edit web favoriate, address is not saved.                                                                                                                                 
-     - When edit geography code, "description" is not saved.                                                                                                                                 
-     - When query color, other values should not change while silder is dragged.                                                                                                                                 
-     - After change node of data tree, it is not refreshed in the tree.                                                                                                                                 
-     - When query result of data tree is empty, error popped.                                                                                                                                  
-    
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.9)       
+     - Bytes editor: Fail to save as.                                                                                                                                                      
+     - View PDF/PPT: When hide right pane and close the interface, it can never be opened and functions lose entrance.                                                                                                                                 
+     - View PDF/PPT: Thumbnails are loaded slowly and badly.                                                                                                                                 
+     - Fail to convert PDF to html.                                                                                                                                 
+     - Blend colors: Error popped when mode is not selected while opened at first time.                                                                                                                                 
+
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.0)       
             
 ## Notice         
 Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
@@ -31,13 +25,13 @@ Without enough testings, MyBox has low reliability and bad stability. When use M
 * Files/Data are damaged.       
 * Output wrong results.      
 * Functions fail.      
-* Other unexpected behaviours.     
+* Other unexpected behaviors.     
 
 
 # Download and Execution
 
 ## Source Codes          
-| Download | Size | Developement Guide | Packing Steps |           
+| Download | Size | Development Guide | Packing Steps |           
 | --- | --- | --- | --- | 
 | [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)  |  120M- | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
            
@@ -74,7 +68,7 @@ Contents of this document may be expired, but its links refer to the latest vers
 
 The latest versions and archived versions can be downloaded in following addresses:             
 
-| address | dowloads | readme | 
+| address | download | readme | 
 | --- | --- | --- | 
 | github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme_en.html)     [Chinese](https://mararsh.github.io/MyBox/readme_zh.html) |
 | sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme_en.html)    [Chinese](https://mara-mybox.sourceforge.io/readme_zh.html) |
@@ -93,7 +87,7 @@ Add parameter "config=\"FilePath\"" when run jar to change configuration file te
 Function "Settings" can be used to change configuration values.        
 
 ## Migration
-1. Each version has itself's configuration file. New version can copy parameters from existed versions.             
+1. Each version has itself configuration file. New version can copy parameters from existed versions.             
 2. Data handled in each version are under "Data Directory" referred by it. Multiple versions can refer to same data directory.
 3. MyBox is backward compatibility: Later version can work on data of previous versions.
 While forward compatibility is not supported: Wrong may happen when old version handles data of new version.          
@@ -144,12 +138,12 @@ In MyBox:
 # Documents        
 |              Name              | Version |   Time     |                                                                                                                                            English                                                                                                                                            |                                                                                                                                            Chinese                                                                                                                                            |
 |--------------------------------|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Development Logs               | 6.8.9   | 2025-6-23  | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html)                                                                                                                                                                                                                                    |
+| Development Logs               | 6.9.0   | 2025-7-20  | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html)                                                                                                                                                                                                                                    |
 | Shortcuts and Icons            | 6.8.5   | 2025-3-5   | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html)                                                                                                                                                                                                                                  |
 | Functions List                 | 6.8.2   | 2024-12-24 | [html](https://mara-mybox.sourceforge.io/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_functions_zh.html)                                                                                                                                                                                                                                  |
 | Packing Steps                  | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mara-mybox.sourceforge.io/pack_steps.html)                                                                                                                                                                                                                                       |
 | Development Guide              | 2.1     | 2020-8-27  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.odt)                                                                                                                                                                                  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf)  [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.odt)                                                                                                                                                                                                                |
-| User Guide - Overview          | 6.8.9   | 2025-6-23  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt)                     |
+| User Guide - Overview          | 6.9.0   | 2025-7-20  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt)                     |
 | User Guide - Data Tools        | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DataTools-en/MyBox-DataTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.odt)                 | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DataTools-zh/MyBox-DataTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.odt)                 |
 | User Guide - Document Tools    | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DocumentTools-en/MyBox-DocumentTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.odt) | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DocumentTools-zh/MyBox-DocumentTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.odt) |
 | User Guide - Image Tools       | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-ImageTools-en/MyBox-ImageTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-ImageTools-zh/MyBox-ImageTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.odt)             |
@@ -274,6 +268,7 @@ MyBox is based on following open sources:
 | webp-imageio | WebP | <https://github.com/sejda-pdf/webp-imageio>    |
 | Book | Materials | ISBN:7-5305-231 7-1    |
 | DeepSeek | Knowledge | <https://www.deepseek.com/>     |
+| LibreOffice                         | Document                        | <https://www.libreoffice.org/>                                                                                                                                                                                                        |
 
 
 # Features        
@@ -285,7 +280,7 @@ Versions before v5.3 are based on Java 8.
 ## Internationalized       
 
 1. All codes of MyBox are internationalized. Language can be switched in time.
-2. Each langauge is defined in one resource file, like: "Messages_NAME.properties".
+2. Each language is defined in one resource file, like: "Messages_NAME.properties".
 3. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.        
 Example,  the new language is named as "aa", and its resource file is "Messages_aa.properties".        
 4. Translated languages can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.        
@@ -311,7 +306,7 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
 1. Provide tips of current function/interface.       
 2. Remember user's inputs or selections, and provide histories list.
 3. Interfaces can be adjusted and some panes can be hidden.
-4. Behaviours of some controls can be chosen. 
+4. Behaviors of some controls can be chosen. 
 5. Provide context menu and function menu to texts/image/html/table/tree.
 6. Current texts/image/html/data can be popped.
 7. Clipboards of texts/image/data can be managed.
@@ -343,10 +338,10 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
     - Processes out of local host can not visit the database directly.                
 4. MyBox internal tables store the data required by all functions. User can access and modify the internal data online.            
 5. User can define customized database tables.            
-6. User can view and edit definitons and data of database tables in paginated tables, and execute SQL statements.                   
-7. To implement data sorting, tranposing, statistic, and grouping, MyBox will create temporary database tables, and clear them in time.            
+6. User can view and edit definitions and data of database tables in paginated tables, and execute SQL statements.                   
+7. To implement data sorting, transposing, statistic, and grouping, MyBox will create temporary database tables, and clear them in time.            
 
-## Assit Coding Self            
+## Assist Coding Self            
 
 1. Monitor memory/CPU usage in real time.
 2. Adjust logging online.       

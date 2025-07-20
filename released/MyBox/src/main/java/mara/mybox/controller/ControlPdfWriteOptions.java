@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-07
  * @License Apache License Version 2.0
  */
-public class ControlPdfWriteOptions extends BaseController {
+public class ControlPdfWriteOptions extends BaseFileController {
 
     protected String author, header, footer, ttfFile;
     protected boolean isImageSize, includeImageOptions, dithering, showPageNumber, landscape;

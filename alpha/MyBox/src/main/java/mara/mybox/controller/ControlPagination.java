@@ -269,7 +269,7 @@ public class ControlPagination extends BaseController {
                     || value == null || value.isBlank()) {
                 return;
             }
-            int v = Integer.parseInt(value);
+            int v = Integer.parseInt(value.replaceAll(",", ""));
             if (v == pagination.pageSize || v <= 0) {
                 return;
             }

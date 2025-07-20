@@ -49,7 +49,7 @@ import mara.mybox.value.UserConfig;
 public class Data2DManufactureController extends BaseData2DViewController {
 
     protected final SimpleBooleanProperty savedNotify;
-    protected boolean isCSVModified, isCSVpicked, askedTmp;
+    protected boolean isCSVModified, askedTmp;
 
     @FXML
     protected FlowPane opsPane;
@@ -74,7 +74,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     if (isSettingValues) {
                         return;
                     }
-                    isCSVpicked = false;
                     if (isCSVModified) {
                         return;
                     }
@@ -108,12 +107,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
     }
 
     @Override
-    public void checkFormat(Toggle ov) {
+    public void checkFormat(Toggle from) {
         if (isSettingValues) {
             return;
         }
-        MyBoxLog.console((csvRadio != ov) + "   " + isCSVModified + "   " + isCSVpicked);
-        if (invalidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
+        if (invalidData() || csvRadio != from || !isCSVModified) {
             switchFormat();
             return;
         }
@@ -152,7 +150,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void switchFormat() {
         super.switchFormat();
         isCSVModified = false;
-        isCSVpicked = false;
     }
 
     @Override
@@ -217,7 +214,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         isCSVModified = false;
-        isCSVpicked = false;
         if (data2D == null || !data2D.hasPageData()) {
             isSettingValues = true;
             csvArea.setText("");
@@ -272,7 +268,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     public boolean pickCSV(FxTask task) {
         try {
-            if (!isCSVModified || isCSVpicked) {
+            if (!isCSVModified) {
                 return true;
             }
             if (delimiterName == null) {
@@ -308,7 +304,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             data2D.setPageData(tableData);
             isSettingValues = false;
             isCSVModified = false;
-            isCSVpicked = true;
             return true;
         } catch (Exception e) {
             displayError(e.toString());

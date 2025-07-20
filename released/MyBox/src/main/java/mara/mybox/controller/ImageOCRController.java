@@ -25,6 +25,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.TesseractOptions;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -55,6 +56,7 @@ TIFF has the advantage of the ability to contain multiple images (pages) in a fi
  */
 public class ImageOCRController extends BaseController {
 
+    protected TesseractOptions tesseractOptions;
     protected float scale;
     protected int threshold, rotate;
     protected LoadingController loading;
@@ -63,7 +65,7 @@ public class ImageOCRController extends BaseController {
     @FXML
     protected BaseImageController sourceController;
     @FXML
-    protected Tab imageTab, processTab, optionsTab;
+    protected Tab imageTab, processTab;
     @FXML
     protected TextArea textArea;
     @FXML
@@ -73,15 +75,11 @@ public class ImageOCRController extends BaseController {
     @FXML
     protected HtmlTableController regionsTableController, wordsTableController, htmlController;
     @FXML
-    protected ControlOCROptions ocrOptionsController;
-    @FXML
     protected ImageOCRProcessController preprocessController;
     @FXML
     protected TabPane resultsTabPane;
     @FXML
     protected Tab txtTab, htmlTab, regionsTab, wordsTab;
-    @FXML
-    protected Tab ocrOptionsTab;
     @FXML
     protected VBox resultsBox, optionsBox;
 
@@ -99,11 +97,12 @@ public class ImageOCRController extends BaseController {
         try {
             super.initControls();
 
+            tesseractOptions = new TesseractOptions()
+                    .setSetFormats(false)
+                    .setOutHtml(true)
+                    .setOutPdf(false);
+
             preprocessController.OCRController = this;
-            ocrOptionsController.setParameters(this, false, true);
-            ocrOptionsController.isSettingValues = true;
-            ocrOptionsController.htmlCheck.setSelected(true);
-            ocrOptionsController.isSettingValues = false;
 
             startCheck.setSelected(UserConfig.getBoolean(baseName + "Start", false));
             startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -155,6 +154,11 @@ public class ImageOCRController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    @FXML
+    public void ocrOptions() {
+        TesseractOptionsController.open(this, tesseractOptions);
     }
 
     @FXML
@@ -261,14 +265,7 @@ public class ImageOCRController extends BaseController {
     @FXML
     @Override
     public void startAction() {
-        ocrOptionsController.setLanguages();
-        File dataPath = ocrOptionsController.dataPathController.pickFile();
-        if (!dataPath.exists()) {
-            popError(message("InvalidParameters"));
-            ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
-            return;
-        }
-        if (ocrOptionsController.embedRadio.isSelected()) {
+        if (tesseractOptions.isEmbed()) {
             embedded();
         } else {
             command();
@@ -277,9 +274,6 @@ public class ImageOCRController extends BaseController {
 
     protected void command() {
         if (preprocessController.imageView.getImage() == null || timer != null || process != null) {
-            return;
-        }
-        if (!ocrOptionsController.checkCommandPamameters(true, false)) {
             return;
         }
         task = new FxSingletonTask<Void>(this) {
@@ -297,7 +291,7 @@ public class ImageOCRController extends BaseController {
                     bufferedImage = AlphaTools.removeAlpha(this, bufferedImage);
                     ImageFileWriters.writeImageFile(this, bufferedImage, "png", imageFile.getAbsolutePath());
                     String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
-                    process = ocrOptionsController.process(imageFile, fileBase);
+                    process = tesseractOptions.process(imageFile, fileBase);
                     if (process == null) {
                         return false;
                     }
@@ -363,8 +357,7 @@ public class ImageOCRController extends BaseController {
     }
 
     protected void embedded() {
-        if (preprocessController.imageView.getImage() == null
-                || ocrOptionsController.dataPathController.pickFile() == null) {
+        if (preprocessController.imageView.getImage() == null) {
             return;
         }
         if (task != null) {
@@ -379,7 +372,7 @@ public class ImageOCRController extends BaseController {
                     if (selected == null) {
                         selected = preprocessController.imageView.getImage();
                     }
-                    return ocrOptionsController.imageOCR(this, selected, true);
+                    return tesseractOptions.imageOCR(this, selected, true);
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.debug(e);
@@ -389,25 +382,30 @@ public class ImageOCRController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                if (ocrOptionsController.texts.length() == 0) {
+                String texts = tesseractOptions.getTexts();
+                if (texts == null || texts.length() == 0) {
                     popWarn(message("OCRMissComments"));
+                    resultLabel.setText(null);
+                } else {
+                    resultLabel.setText(MessageFormat.format(message("OCRresults"),
+                            texts.length(), DateTools.datetimeMsDuration(cost)));
                 }
-                textArea.setText(ocrOptionsController.texts);
-                resultLabel.setText(MessageFormat.format(message("OCRresults"),
-                        ocrOptionsController.texts.length(), DateTools.datetimeMsDuration(cost)));
+                textArea.setText(texts);
+
                 resultsTabPane.getSelectionModel().select(txtTab);
 
-                htmlController.loadHtml(ocrOptionsController.html);
+                htmlController.loadHtml(tesseractOptions.getHtml());
 
-                if (ocrOptionsController.rectangles != null) {
+                List<Rectangle> rectangles = tesseractOptions.getRectangles();
+                if (rectangles != null) {
                     List<String> names = new ArrayList<>();
                     names.addAll(Arrays.asList(message("Index"),
                             message("CoordinateX"), message("CoordinateY"),
                             message("Width"), message("Height")
                     ));
                     regionsTableController.initTable(message(""), names);
-                    for (int i = 0; i < ocrOptionsController.rectangles.size(); ++i) {
-                        Rectangle rect = ocrOptionsController.rectangles.get(i);
+                    for (int i = 0; i < rectangles.size(); ++i) {
+                        Rectangle rect = rectangles.get(i);
                         List<String> data = new ArrayList<>();
                         data.addAll(Arrays.asList(
                                 i + "", rect.x + "", rect.y + "", rect.width + "", rect.height + ""
@@ -419,7 +417,8 @@ public class ImageOCRController extends BaseController {
                     regionsTableController.clear();
                 }
 
-                if (ocrOptionsController.words != null) {
+                List<Word> words = tesseractOptions.getWords();
+                if (words != null) {
                     List<String> names = new ArrayList<>();
                     names.addAll(Arrays.asList(message("Index"),
                             message("Contents"), message("Confidence"),
@@ -427,8 +426,8 @@ public class ImageOCRController extends BaseController {
                             message("Width"), message("Height")
                     ));
                     wordsTableController.initTable(message(""), names);
-                    for (int i = 0; i < ocrOptionsController.words.size(); ++i) {
-                        Word word = ocrOptionsController.words.get(i);
+                    for (int i = 0; i < words.size(); ++i) {
+                        Word word = words.get(i);
                         Rectangle rect = word.getBoundingBox();
                         List<String> data = new ArrayList<>();
                         data.addAll(Arrays.asList(
@@ -447,7 +446,7 @@ public class ImageOCRController extends BaseController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                ocrOptionsController.clearResults();
+                tesseractOptions.clearResults();
             }
 
         };

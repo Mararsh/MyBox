@@ -3,66 +3,101 @@
         <title>JavaScript</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <style type="text/css">
-                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
-              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
-              th { font-weight:bold;  text-align:center;} 
-              tr { height: 1.2em;  } 
-              .center { text-align:center;  max-width:95%; } 
-              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
-              .boldText { font-weight:bold;  } 
- body { margin:0 auto; width: 900px; } 
-              img { max-width: 900px; } 
-              .valueText { color:#2e598a;  } 
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+            body {
+                margin:0 auto;
+                width: 900px;
+            }
+            img {
+                max-width: 900px;
+            }
+            .valueText {
+                color:#2e598a;
+            }
 
         </style>
     </HEAD>
     <BODY>
         <H2>JavaScript</H2>
- <script>
-    function nodeClicked(id) {
-      var obj = document.getElementById(id);
-      var objv = obj.style.display;
-      if (objv == 'none') {
-        obj.style.display = 'block';
-      } else {
-        obj.style.display = 'none';
-      }
-    }
-    function showClass(className, show) {
-      var nodes = document.getElementsByClassName(className);  　
-      if ( show) {
-           for (var i = 0 ; i < nodes.length; i++) {
-              nodes[i].style.display = '';
-           }
-       } else {
-           for (var i = 0 ; i < nodes.length; i++) {
-              nodes[i].style.display = 'none';
-           }
-       }
-    }
-  </script>
+        <script>
+            function nodeClicked(id) {
+                var obj = document.getElementById(id);
+                var objv = obj.style.display;
+                if (objv == 'none') {
+                    obj.style.display = 'block';
+                } else {
+                    obj.style.display = 'none';
+                }
+            }
+            function showClass(className, show) {
+                var nodes = document.getElementsByClassName(className);
+         
+                        if (show) {
+                    for (var i = 0; i < nodes.length; i++) {
+                        nodes[i].style.display = '';
+                    }
+                } else {
+                    for (var i = 0; i < nodes.length; i++) {
+                        nodes[i].style.display = 'none';
+                    }
+                }
+            }
+        </script>
 
-<DIV>
-<DIV>
-    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开</INPUT>
-    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号</INPUT>
-    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签</INPUT>
-    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值</INPUT>
-</DIV>
-<HR>
-    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>JavaScript</a>
-    </DIV>
-    <DIV class="TreeNode" id='item1'>
-        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>示例</a>
-        </DIV>
-    <DIV class="TreeNode" id='item2'>
-            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>变量</a>
+        <DIV>
+            <DIV>
+                <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开</INPUT>
+                <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号</INPUT>
+                <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签</INPUT>
+                <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值</INPUT>
             </DIV>
-    <DIV class="TreeNode" id='item3'>
-                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>字串
+            <HR>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>JavaScript</a>
+            </DIV>
+            <DIV class="TreeNode" id='item1'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>示例</a>
                 </DIV>
-                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
-                <PRE><CODE>var 字串a = "hello";
+                <DIV class="TreeNode" id='item2'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>变量</a>
+                    </DIV>
+                    <DIV class="TreeNode" id='item3'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>字串
+                        </DIV>
+                        <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                                    <PRE><CODE>var 字串a = "hello";
 字串a += " world";
 "包含e："+ (字串a.indexOf("e") >= 0) + "    长度：" + 字串a.length</CODE></PRE>
                 </DIV></DIV></DIV>
@@ -685,7 +720,7 @@ div.innerHTML;</CODE></PRE>
                     <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.3.6&nbsp;&nbsp;</SPAN>打开网址
                     </DIV>
                     <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
-                    <PRE><CODE>window.open("http://www.nlc.cn");</CODE></PRE>
+                    <PRE><CODE>window.open("https://moon.bao.ac.cn");</CODE></PRE>
                     </DIV></DIV></DIV>
     <DIV class="TreeNode" id='item86'>
     </DIV>

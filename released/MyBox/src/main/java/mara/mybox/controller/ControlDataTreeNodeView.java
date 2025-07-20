@@ -8,7 +8,6 @@ import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -29,7 +28,7 @@ public class ControlDataTreeNodeView extends ControlWebView {
             nodeTable = table;
 
             setParent(parent);
-            initStyle = HtmlStyles.styleValue("Table");
+//            initStyle = HtmlStyles.styleValue("Table");
 
             nullLoad();
 

@@ -887,7 +887,7 @@ div.innerHTML;]]>
                         <![CDATA[open address]]>
                         </title>
                         <script>
-                        <![CDATA[window.open("http://www.deepseek.com");]]>
+                        <![CDATA[window.open("https://moon.bao.ac.cn");]]>
                         </script>
                     </NodeAttributes>
                 </TreeNode>

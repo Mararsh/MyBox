@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
@@ -19,9 +18,9 @@ import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.fit.pdfdom.PDFDomTree;
-import org.fit.pdfdom.PDFDomTreeConfig;
-import thridparty.PDFResourceToDirHandler;
+import thridparty.pdfdom.PDFDomTree;
+import thridparty.pdfdom.PDFDomTreeConfig;
+import thridparty.pdfdom.SaveResourceToDirHandler;
 
 /**
  * @Author Mara
@@ -41,9 +40,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     protected int htmlPage;
 
     @FXML
-    protected Tab htmlTab;
-    @FXML
-    protected ControlWebView webViewController;
+    protected ControlWebView htmlController;
 
     public PdfViewController_Html() {
         checkBottomScript
@@ -73,9 +70,9 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
         try {
             super.initControls();
 
-            webViewController.setParent(this);
-            webView = webViewController.webView;
-            webEngine = webViewController.webEngine;
+            htmlController.setParent(this);
+            webView = htmlController.webView;
+            webEngine = htmlController.webEngine;
 
             domConfig = PDFDomTreeConfig.createDefaultConfig();
 
@@ -147,7 +144,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     }
 
     @FXML
-    public void convertHtml() {
+    public void convertHtml(boolean pop) {
         if (imageView.getImage() == null) {
             return;
         }
@@ -156,55 +153,42 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
         }
         htmlTask = new FxTask<Void>(this) {
 
-            protected String title;
-
             @Override
             protected boolean handle() {
-                title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
                 htmlFile = FileTmpTools.getTempFile(".html");
-                subPath = new File(htmlFile.getParent() + File.separator
-                        + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
-                subPath.mkdirs();
-                domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
-                domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
-                try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
+                try (PDDocument doc = Loader.loadPDF(sourceFile, password);
+                        Writer output = new PrintWriter(htmlFile, "utf-8")) {
+                    subPath = new File(htmlFile.getParent() + File.separator
+                            + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
+                    subPath.mkdirs();
+                    domConfig.setFontHandler(new SaveResourceToDirHandler(subPath));
+                    domConfig.setImageHandler(new SaveResourceToDirHandler(subPath));
                     PDFDomTree parser = new PDFDomTree(domConfig);
                     parser.setStartPage(frameIndex + 1);
                     parser.setEndPage(frameIndex + 1);
-                    parser.setPageStart(title);
-//                    MyBoxLog.debug(parser.getSpacingTolerance());
+                    parser.setPageStart(sourceFile.getAbsolutePath() + " "
+                            + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + ""));
 //                    parser.setSpacingTolerance(0f);
-                    try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
-                        try {
-                            parser.writeText(doc, output);
-                        } catch (Exception e) {
-//                                MyBoxLog.debug(error);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-//                            MyBoxLog.debug(error);
-                    }
+                    parser.writeText(doc, output);
                 } catch (Exception e) {
                     error = e.toString();
-//                        MyBoxLog.debug(error);
                 }
                 return htmlFile.exists();
             }
 
             @Override
             protected void whenSucceeded() {
-                webViewController.loadFile(htmlFile);
-                webView.requestFocus();
-                atBottom = false;
-                htmlPage = frameIndex;
+                if (pop) {
+                    HtmlPopController.openFile(myController, htmlFile);
+                } else {
+                    htmlController.loadFile(htmlFile);
+                    webView.requestFocus();
+                    atBottom = false;
+                    htmlPage = frameIndex;
+                }
             }
         };
         start(htmlTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-    }
-
-    @FXML
-    public void editHtml() {
-        HtmlEditorController.openHtml(webViewController.loadedHtml());
     }
 
 }

@@ -10,39 +10,22 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.Toggle;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import mara.mybox.data.PdfInformation;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
@@ -53,48 +36,25 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  */
 public class PdfViewController extends PdfViewController_Html {
 
-    protected SimpleBooleanProperty infoLoaded;
-    protected FxTask bookmarksTask;
-
-    @FXML
-    protected CheckBox transparentBackgroundCheck, viewBookmarkCheck,
-            wrapTextsCheck, refreshSwitchTextsCheck, refreshChangeTextsCheck,
-            wrapOCRCheck, refreshChangeOCRCheck, refreshSwitchOCRCheck,
-            refreshChangeHtmlCheck, refreshSwitchHtmlCheck;
-    @FXML
-    protected ScrollPane bookmarksScrollPane;
-    @FXML
-    protected TreeView bookmarksTree;
-
     public PdfViewController() {
         baseTitle = message("PdfView");
         TipsLabelKey = "PdfViewTips";
     }
 
     @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            infoLoaded = new SimpleBooleanProperty(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
-    }
-
-    @Override
     public void initControls() {
         try {
             super.initControls();
+            infoLoaded = new SimpleBooleanProperty(false);
+            viewBox.getChildren().clear();
+            VBox.setVgrow(viewBox, Priority.ALWAYS);
 
-            if (ocrOptionsController != null) {
-                ocrOptionsController.setParameters(this, false, false);
-            }
-            initTabPane();
+            formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    showPage();
+                }
+            });
 
             viewBookmarkCheck.setSelected(UserConfig.getBoolean(baseName + "Bookmarks", true));
             viewBookmarkCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -115,104 +75,7 @@ public class PdfViewController extends PdfViewController_Html {
             });
 
             leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initTabPane() {
-        try {
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                    if (imageView.getImage() == null) {
-                        return;
-                    }
-                    if (newValue == ocrTab) {
-                        if (orcPage != frameIndex && refreshSwitchOCRCheck.isSelected()) {
-                            startOCR();
-                        }
-                    } else if (newValue == textsTab) {
-                        if (textsPage != frameIndex && refreshSwitchTextsCheck.isSelected()) {
-                            extractTexts();
-                        }
-                    } else if (newValue == htmlTab) {
-                        if (htmlPage != frameIndex && refreshSwitchHtmlCheck.isSelected()) {
-                            convertHtml();
-                        }
-                    }
-                }
-            });
-
-            wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapTexts", true));
-            wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WrapTexts", newValue);
-                    textsArea.setWrapText(newValue);
-                }
-            });
-            textsArea.setWrapText(wrapTextsCheck.isSelected());
-
-            refreshSwitchTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchTexts", true));
-            refreshSwitchTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchTexts", newValue);
-                }
-            });
-
-            refreshChangeTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeTexts", false));
-            refreshChangeTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshChangeTexts", newValue);
-                }
-            });
-
-            wrapOCRCheck.setSelected(UserConfig.getBoolean(baseName + "WrapOCR", true));
-            wrapOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WrapOCR", newValue);
-                    ocrArea.setWrapText(newValue);
-                }
-            });
-            ocrArea.setWrapText(wrapTextsCheck.isSelected());
-
-            refreshSwitchOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchOCR", true));
-            refreshSwitchOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchOCR", newValue);
-                }
-            });
-
-            refreshChangeOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeOCR", false));
-            refreshChangeOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshChangeOCR", newValue);
-                }
-            });
-
-            refreshSwitchHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchHtml", true));
-            refreshSwitchHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshSwitchHtml", newValue);
-                }
-            });
-
-            refreshChangeHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeHtml", false));
-            refreshChangeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "RefreshChangeHtml", newValue);
-                }
-            });
-
+            showRightPane();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -243,9 +106,8 @@ public class PdfViewController extends PdfViewController_Html {
             ocrLabel.setText("");
             textsArea.clear();
             textsLabel.setText("");
-            if (webViewController != null) {
-                webViewController.loadContent(null);
-            }
+            htmlController.loadContent(null);
+            htmlFile = null;
             if (file == null) {
                 return;
             }
@@ -315,7 +177,7 @@ public class PdfViewController extends PdfViewController_Html {
                 initCurrentPage();
                 loadPage();
                 loadBookmarks();
-                loadThumbs();
+                refreshThumbs();
             }
 
         };
@@ -345,134 +207,35 @@ public class PdfViewController extends PdfViewController_Html {
             return;
         }
         super.setImage(image, percent);
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (refreshChangeOCRCheck.isSelected() || tab == ocrTab) {
-            startOCR();
-        } else if (refreshChangeTextsCheck.isSelected() || tab == textsTab) {
-            extractTexts();
-        } else if (refreshChangeHtmlCheck.isSelected() || tab == htmlTab) {
-            convertHtml();
-        }
+        showPage();
     }
 
-    protected void loadBookmarks() {
-        if (bookmarksTask != null) {
-            bookmarksTask.cancel();
-        }
-        if (!viewBookmarkCheck.isSelected() || !infoLoaded.get()) {
-            return;
-        }
-        bookmarksTree.setRoot(null);
-        bookmarksTask = new FxTask<Void>(this) {
-            private TreeItem outlineRoot;
-
-            @Override
-            protected boolean handle() {
-                try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
-                    PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                    if (outline != null) {
-                        outlineRoot = new TreeItem<>(message("Bookmarks"));
-                        outlineRoot.setExpanded(true);
-                        ok = loadOutlineItem(outline, outlineRoot);
-                    }
-                    doc.close();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-                return ok;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                bookmarksTree.setRoot(outlineRoot);
-                bookmarksScrollPane.applyCss();
-                bookmarksScrollPane.layout();
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
-        };
-        start(bookmarksTask, false);
-    }
-
-    protected boolean loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
+    public void showPage() {
         try {
-            PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
-            while (childOutlineItem != null) {
-                if (bookmarksTask == null || bookmarksTask.isCancelled()) {
-                    return false;
-                }
-                int pageNumber = 0;
-                if (childOutlineItem.getDestination() instanceof PDPageDestination) {
-                    PDPageDestination pd = (PDPageDestination) childOutlineItem.getDestination();
-                    pageNumber = pd.retrievePageNumber();
-                } else if (childOutlineItem.getAction() instanceof PDActionGoTo) {
-                    PDActionGoTo gta = (PDActionGoTo) childOutlineItem.getAction();
-                    if (gta.getDestination() instanceof PDPageDestination) {
-                        PDPageDestination pd = (PDPageDestination) gta.getDestination();
-                        pageNumber = pd.retrievePageNumber();
-                    }
-                }
-                Text link = new Text();
-                final int p = pageNumber;
-                link.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        loadPage(p);
-                    }
-                });
-                link.setText(childOutlineItem.getTitle() + " ... " + (pageNumber + 1));
-                TreeItem<Text> treeItem = new TreeItem<>(link);
-                treeItem.setExpanded(true);
-                parentTreeItem.getChildren().add(treeItem);
-                if (bookmarksTask == null || bookmarksTask.isCancelled()) {
-                    return false;
-                }
-                loadOutlineItem(childOutlineItem, treeItem);
-                childOutlineItem = childOutlineItem.getNextSibling();
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
+            viewBox.getChildren().clear();
+            if (ocrRadio.isSelected()) {
+                viewBox.getChildren().add(ocrBox);
+                VBox.setVgrow(ocrBox, Priority.ALWAYS);
+                startOCR(false);
 
-    @Override
-    protected boolean loadThumbs(List<Integer> missed) {
-        try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
-            PDFRenderer renderer = new PDFRenderer(doc);
-            for (Integer index : missed) {
-                if (thumbTask == null || thumbTask.isCancelled()) {
-                    break;
-                }
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * index);
-                if (view.getImage() != null) {
-                    continue;
-                }
-                BufferedImage bufferedImage = renderer.renderImageWithDPI(index, 72, ImageType.RGB);  // 0-based
-                if (bufferedImage.getWidth() > thumbWidth) {
-                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, thumbWidth);
-                }
-                Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
-                view.setImage(thumb);
-                view.setFitHeight(view.getImage().getHeight());
-            }
-            doc.close();
-        } catch (Exception e) {
-            thumbTask.setError(e.toString());
-            MyBoxLog.debug(e);
-            return false;
-        }
-        return true;
-    }
+            } else if (textsRadio.isSelected()) {
+                viewBox.getChildren().add(textsBox);
+                VBox.setVgrow(textsBox, Priority.ALWAYS);
+                extractTexts(false);
 
-    @FXML
-    public void refreshBookmarks() {
-        loadBookmarks();
+            } else if (htmlRadio.isSelected()) {
+                viewBox.getChildren().add(htmlBox);
+                VBox.setVgrow(htmlBox, Priority.ALWAYS);
+                convertHtml(false);
+
+            } else {
+                viewBox.getChildren().add(imageBox);
+                VBox.setVgrow(imageBox, Priority.ALWAYS);
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML
@@ -520,74 +283,44 @@ public class PdfViewController extends PdfViewController_Html {
         super.cleanPane();
     }
 
-    @FXML
     @Override
-    public void playAction() {
-        ImagesPlayController.playPDF(sourceFile, password);
-    }
-
-    @FXML
-    public void permissionAction() {
-        PdfAttributesController.open(sourceFile, password);
-    }
-
-    @FXML
-    protected void exampleAction() {
-        File example = HelpTools.pdfExample(Languages.embedFileLang());
-        if (example != null && example.exists()) {
-            sourceFileChanged(example);
-        }
-    }
-
-    @Override
-    public List<MenuItem> fileMenuItems(Event fevent) {
+    public List<MenuItem> viewMenuItems(Event fevent) {
         try {
-
             List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
 
-            if (sourceFile != null) {
-                menu = new MenuItem(message("Permissions"), StyleTools.getIconImageView("iconPermission.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    permissionAction();
-                });
-                items.add(menu);
-
-                menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
-                        StyleTools.getIconImageView("iconInfo.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                items.add(menu);
-
-                items.add(new SeparatorMenuItem());
-            }
-
-            menu = new MenuItem(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                exampleAction();
+            MenuItem menu = new MenuItem(message("Image") + " - " + message("Pop"), StyleTools.getIconImageView("iconImage.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagePopController.openImage(myController, imageView.getImage());
             });
             items.add(menu);
 
-            if (sourceFile == null) {
-                return items;
-            }
-
-            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent event) -> {
-                openSourcePath();
+                if (htmlRadio.isSelected()) {
+                    HtmlPopController.openFile(myController, htmlFile);
+                } else {
+                    convertHtml(true);
+                }
             });
             items.add(menu);
 
-            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu = new MenuItem(message("PageDataInText") + " - " + message("Pop"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
-                FileBrowseController.open(this);
+                if (textsRadio.isSelected()) {
+                    TextPopController.loadText(textsArea.getText());
+                } else {
+                    extractTexts(true);
+                }
             });
             items.add(menu);
 
-            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu = new MenuItem(message("OCR") + " - " + message("Pop"), StyleTools.getIconImageView("iconOCR.png"));
             menu.setOnAction((ActionEvent event) -> {
-                systemMethod();
+                if (ocrRadio.isSelected()) {
+                    TextPopController.loadText(ocrArea.getText());
+                } else {
+                    startOCR(true);
+                }
             });
             items.add(menu);
 

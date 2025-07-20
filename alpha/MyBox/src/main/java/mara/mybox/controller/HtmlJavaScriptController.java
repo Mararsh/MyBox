@@ -33,7 +33,7 @@ public class HtmlJavaScriptController extends BaseJavaScriptController {
                     "alert(\"" + (Languages.isChinese() ? "人生得意须尽欢！" : "Beauty is everywhere if you know where to look.") + "\");",
                     "confirm(\"" + (Languages.isChinese() ? "能饮一杯无？" : "A gentle word opens an iron gate.") + "\");",
                     "prompt(\"" + (Languages.isChinese() ? "君不见" : "Your cat") + "\");",
-                    "window.open(\"http://www.deepseek.com\");",
+                    "window.open(\"https://moon.bao.ac.cn\");",
                     "function addStyle(style) {\n"
                     + "    var node = document.createElement(\"style\");        \n"
                     + "    node.id = \"mystyleid\";        \n"

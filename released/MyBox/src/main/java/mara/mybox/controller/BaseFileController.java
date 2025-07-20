@@ -2,15 +2,20 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
@@ -27,6 +32,10 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseFileController extends BaseTaskController {
 
     protected FileSortTools.FileSortMode sortMode;
+    protected int dpi;
+
+    @FXML
+    protected ComboBox<String> dpiSelector;
 
     @Override
     public void initControls() {
@@ -35,9 +44,62 @@ public abstract class BaseFileController extends BaseTaskController {
 
             sortMode = FileSortMode.NameAsc;
 
+            initDPI();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void initDPI() {
+        try {
+            dpi = UserConfig.getInt(baseName + "DPI", 96);
+            if (dpi < 0) {
+                dpi = 96;
+            }
+            if (dpiSelector == null) {
+                return;
+            }
+            List<String> dpiValues = new ArrayList();
+            dpiValues.addAll(Arrays.asList("96", "72", "300", "160", "240", "120", "600", "400"));
+            String sValue = (int) NodeTools.screenResolution() + "";
+            if (dpiValues.contains(sValue)) {
+                dpiValues.remove(sValue);
+            }
+            dpiValues.add(0, sValue);
+            sValue = (int) NodeTools.screenDpi() + "";
+            if (dpiValues.contains(sValue)) {
+                dpiValues.remove(sValue);
+            }
+            dpiValues.add(sValue);
+            dpiSelector.getItems().addAll(dpiValues);
+            dpiSelector.setValue(dpi + "");
+            dpiSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        int v = Integer.parseInt(dpiSelector.getValue());
+                        if (v > 0) {
+                            dpi = v;
+                            UserConfig.setInt(baseName + "DPI", dpi);
+                            dpiSelector.getEditor().setStyle(null);
+                            dpiChanged();
+                        } else {
+                            dpiSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        dpiSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            dpiSelector.getEditor().setStyle(UserConfig.badStyle());
+        }
+    }
+
+    public void dpiChanged() {
     }
 
     @FXML

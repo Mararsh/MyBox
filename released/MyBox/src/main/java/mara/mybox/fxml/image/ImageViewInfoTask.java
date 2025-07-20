@@ -4,8 +4,9 @@ import javafx.application.Platform;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import mara.mybox.image.data.ImageInformation;
+import mara.mybox.controller.BaseController;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -18,6 +19,10 @@ public class ImageViewInfoTask<Void> extends FxTask<Void> {
     private IndexedCell cell;
     private ImageInformation item = null;
     private ImageView view = null;
+
+    public ImageViewInfoTask(BaseController controller) {
+        this.controller = controller;
+    }
 
     public ImageViewInfoTask<Void> setCell(IndexedCell cell) {
         this.cell = cell;

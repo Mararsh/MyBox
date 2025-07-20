@@ -95,7 +95,6 @@ public class Fxmls {
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
     public static final String BytesEditorFormatFxml = "/fxml/BytesEditorFormat.fxml";
-    public static final String BytesEditorSaveAsFxml = "/fxml/BytesEditorSaveAs.fxml";
     public static final String BytesFindBatchFxml = "/fxml/BytesFindBatch.fxml";
     public static final String BytesPopFxml = "/fxml/BytesPop.fxml";
 
@@ -519,6 +518,7 @@ public class Fxmls {
     public static final String FileBackupFxml = "/fxml/FileBackup.fxml";
     public static final String FileBrowseFxml = "/fxml/FileBrowse.fxml";
     public static final String ImageExampleSelectFxml = "/fxml/ImageExampleSelect.fxml";
+    public static final String TesseractOptionsFxml = "/fxml/TesseractOptions.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

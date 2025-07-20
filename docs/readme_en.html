@@ -9,39 +9,31 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2025-6-23 v6.8.9</p>
+  <p>2025-7-20 v6.9.0</p>
   <ul>
-   <li>Add: 
-    <ul>
-     <li>Function: Blend colors.</li>
-     <li>Colors blend modes: Kubelka Munk Mode(diffuse of pigments), CMYK mode, and weighted CMYK mode.</li>
-    </ul></li>
    <li>Improve: 
     <ul>
-     <li>The 3rd edit mode of data tree: html tree.</li>
-     <li>Conversion between Java arc and SVG arc.</li>
-     <li>Provide example to all editors.</li>
+     <li>View PDF: Select mode to view or pop.</li>
+     <li>Set OCR options in child window.</li>
+     <li>Blend colors: Options are picked immediately after changed. Demos are provided.</li>
     </ul></li>
    <li>Solved problems: 
     <ul>
-     <li>Data manufacture: Updates are lost when switch from csv mode.</li>
-     <li>Shape “arc” is displayed incorrectly.</li>
-     <li>When convert SVG shape to relative path, the start point should be absoluate.</li>
-     <li>When edit web favoriate, address is not saved.</li>
-     <li>When edit geography code, “description” is not saved.</li>
-     <li>When query color, other values should not change while silder is dragged.</li>
-     <li>After change node of data tree, it is not refreshed in the tree.</li>
-     <li>When query result of data tree is empty, error popped.</li>
+     <li>Bytes editor: Fail to save as.</li>
+     <li>View PDF/PPT: When hide right pane and close the interface, it can never be opened and functions lose entrance.</li>
+     <li>View PDF/PPT: Thumbnails are loaded slowly and badly.</li>
+     <li>Fail to convert PDF to html.</li>
+     <li>Blend colors: Error popped when mode is not selected while opened at first time.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.9">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.0">Closed requirements/bugs in this version</a></p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
    <li>Files/Data are damaged.</li>
    <li>Output wrong results.</li>
    <li>Functions fail.</li>
-   <li>Other unexpected behaviours.</li>
+   <li>Other unexpected behaviors.</li>
   </ul>
   <h1>Download and Execution</h1>
   <h2>Source Codes</h2>
@@ -50,7 +42,7 @@
     <tr>
      <th>Download</th>
      <th>Size</th>
-     <th>Developement Guide</th>
+     <th>Development Guide</th>
      <th>Packing Steps</th>
     </tr>
    </thead>
@@ -137,7 +129,7 @@
    <thead>
     <tr>
      <th>address</th>
-     <th>dowloads</th>
+     <th>download</th>
      <th>readme</th>
     </tr>
    </thead>
@@ -187,7 +179,7 @@
     Function “Settings” can be used to change configuration values.</p>
   <h2>Migration</h2>
   <ol>
-   <li>Each version has itself’s configuration file. New version can copy parameters from existed versions.</li>
+   <li>Each version has itself configuration file. New version can copy parameters from existed versions.</li>
    <li>Data handled in each version are under “Data Directory” referred by it. Multiple versions can refer to same data directory.</li>
    <li>MyBox is backward compatibility: Later version can work on data of previous versions. While forward compatibility is not supported: Wrong may happen when old version handles data of new version.</li>
   </ol>
@@ -440,8 +432,8 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8.9</td>
-     <td>2025-6-23</td>
+     <td>6.9.0</td>
+     <td>2025-7-20</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -475,8 +467,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8.9</td>
-     <td>2025-6-23</td>
+     <td>6.9.0</td>
+     <td>2025-7-20</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -1180,6 +1172,11 @@
      <td>Knowledge</td>
      <td><a target=_blank href="https://www.deepseek.com/">https://www.deepseek.com/</a></td>
     </tr>
+    <tr>
+     <td>LibreOffice</td>
+     <td>Document</td>
+     <td><a target=_blank href="https://www.libreoffice.org/">https://www.libreoffice.org/</a></td>
+    </tr>
    </tbody>
   </table>
   <h1>Features</h1>
@@ -1189,7 +1186,7 @@
   <h2>Internationalized</h2>
   <ol>
    <li>All codes of MyBox are internationalized. Language can be switched in time.</li>
-   <li>Each langauge is defined in one resource file, like: “Messages_NAME.properties”.</li>
+   <li>Each language is defined in one resource file, like: “Messages_NAME.properties”.</li>
    <li>Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.<br>
      Example, the new language is named as “aa”, and its resource file is “Messages_aa.properties”.</li>
    <li>Translated languages can be shared with others: Put the files under “mybox_languages” of data path and MyBox is aware of them immediately.</li>
@@ -1226,7 +1223,7 @@
    <li>Provide tips of current function/interface.</li>
    <li>Remember user’s inputs or selections, and provide histories list.</li>
    <li>Interfaces can be adjusted and some panes can be hidden.</li>
-   <li>Behaviours of some controls can be chosen.</li>
+   <li>Behaviors of some controls can be chosen.</li>
    <li>Provide context menu and function menu to texts/image/html/table/tree.</li>
    <li>Current texts/image/html/data can be popped.</li>
    <li>Clipboards of texts/image/data can be managed.</li>
@@ -1262,10 +1259,10 @@
     </ul></li>
    <li>MyBox internal tables store the data required by all functions. User can access and modify the internal data online.</li>
    <li>User can define customized database tables.</li>
-   <li>User can view and edit definitons and data of database tables in paginated tables, and execute SQL statements.</li>
-   <li>To implement data sorting, tranposing, statistic, and grouping, MyBox will create temporary database tables, and clear them in time.</li>
+   <li>User can view and edit definitions and data of database tables in paginated tables, and execute SQL statements.</li>
+   <li>To implement data sorting, transposing, statistic, and grouping, MyBox will create temporary database tables, and clear them in time.</li>
   </ol>
-  <h2>Assit Coding Self</h2>
+  <h2>Assist Coding Self</h2>
   <ol>
    <li>Monitor memory/CPU usage in real time.</li>
    <li>Adjust logging online.</li>

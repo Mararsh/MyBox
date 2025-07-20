@@ -99,7 +99,7 @@ public class FileBrowseController extends BaseController {
             sortMode = FileSortMode.NameAsc;
 
             if (parentController instanceof BaseImageController) {
-                fileColumn.setCellFactory(new TableFileNameCell());
+                fileColumn.setCellFactory(new TableFileNameCell(this));
             }
 
             refreshAction();

@@ -35,18 +35,6 @@ License:    Apache License Version 2.0
                 <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" />
             </content>
         </ScrollPane>
-        <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
-            <children>
-                <RadioButton fx:id="saveLoadRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs" wrapText="true">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="saveAsGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton fx:id="saveOpenRadio" minHeight="-Infinity" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" wrapText="true" />
-                <RadioButton fx:id="saveEditRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EditAfterSaveAs" toggleGroup="$saveAsGroup" wrapText="true" />
-                <RadioButton fx:id="saveJustRadio" minHeight="-Infinity" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" wrapText="true" />
-            </children>
-        </FlowPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">

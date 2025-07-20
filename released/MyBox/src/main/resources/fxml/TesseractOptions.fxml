@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TesseractOptionsController">
+    <children>
+      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="%Engine">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <HBox fx:id="codeBox21111" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTips.png" />
+                                 </image>
+                              </ImageView>
+                              <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Hyperlink onAction="#aboutTesseract" text="%AboutTesseract" />
+                           </children>
+                        </HBox>
+                        <RadioButton fx:id="embedRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EmbeddedInMyBox" wrapText="true">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="engineGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="tesseractRadio" minHeight="-Infinity" mnemonicParsing="false" text="%tesseractInstallationPath" toggleGroup="$engineGroup" wrapText="true" />
+                        <fx:include fx:id="tesseractPath" source="ControlFileInput.fxml" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="%Languages">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                        <Label text="%OCRDataPath" VBox.vgrow="NEVER" />
+                        <fx:include fx:id="dataPath" source="ControlFileInput.fxml" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="refreshButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconRefresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <fx:include fx:id="languages" source="ControlSelection.fxml" />
+                        <Label minHeight="-Infinity" text="%OCRLanguagesComments" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="%Parameters">
+               <content>
+                  <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                        <Label minHeight="-Infinity" text="%PageSegmentationMode" wrapText="true" />
+                        <ComboBox fx:id="psmSelector" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
+                        <HBox fx:id="outputsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <CheckBox fx:id="htmlCheck" mnemonicParsing="false" text="html" />
+                              <CheckBox fx:id="pdfCheck" mnemonicParsing="false" text="PDF" />
+                           </children>
+                        </HBox>
+                        <VBox fx:id="levelsBox" spacing="5.0" VBox.vgrow="NEVER">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                    <Label minWidth="-Infinity" text="%Regions" />
+                                    <ComboBox fx:id="regionSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                    <Label minWidth="-Infinity" text="%Words" />
+                                    <ComboBox fx:id="wordSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="%Others">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                        <HBox fx:id="outputsBox1" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%OCRParametersLabel" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="helpMeButton" mnemonicParsing="false" onAction="#helpMe">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconClaw.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <TextArea fx:id="optionsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</VBox>

@@ -11,13 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -56,7 +55,7 @@ public class PptViewController extends BaseFileImagesController {
 
             imageBox.disableProperty().bind(imageController.imageView.imageProperty().isNull());
             leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
-
+            showRightPane();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -117,7 +116,7 @@ public class PptViewController extends BaseFileImagesController {
                 isSettingValues = false;
                 initCurrentPage();
                 loadPage();
-                loadThumbs();
+                refreshThumbs();
             }
 
         };
@@ -204,40 +203,28 @@ public class PptViewController extends BaseFileImagesController {
     }
 
     @Override
-    protected boolean loadThumbs(List<Integer> missed) {
+    protected Image loadThumb(Integer page) {
         try (SlideShow ppt = SlideShowFactory.create(sourceFile)) {
             List<Slide> slides = ppt.getSlides();
+            Slide slide = slides.get(page);
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;
-            for (Integer index : missed) {
-                if (thumbTask == null || thumbTask.isCancelled()) {
-                    break;
-                }
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * index);
-                if (view.getImage() != null) {
-                    continue;
-                }
-                Slide slide = slides.get(index);
-                BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = slideImage.createGraphics();
-                if (AppVariables.ImageHints != null) {
-                    g.addRenderingHints(AppVariables.ImageHints);
-                }
-                slide.draw(g);
-                if (slideImage.getWidth() > thumbWidth) {
-                    slideImage = ScaleTools.scaleImageWidthKeep(slideImage, thumbWidth);
-                }
-                Image thumb = SwingFXUtils.toFXImage(slideImage, null);
-                view.setImage(thumb);
-                view.setFitHeight(view.getImage().getHeight());
+            BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = slideImage.createGraphics();
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
+            slide.draw(g);
+            if (slideImage.getWidth() > thumbWidth) {
+                slideImage = ScaleTools.scaleImageWidthKeep(slideImage, thumbWidth);
+            }
+            Image thumb = SwingFXUtils.toFXImage(slideImage, null);
             ppt.close();
+            return thumb;
         } catch (Exception e) {
-            thumbTask.setError(e.toString());
-            MyBoxLog.debug(e);
-            return false;
+//            MyBoxLog.debug(e);
+            return null;
         }
-        return true;
     }
 
     @FXML

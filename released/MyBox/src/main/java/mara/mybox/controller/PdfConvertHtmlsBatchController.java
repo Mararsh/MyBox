@@ -19,10 +19,10 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.fit.pdfdom.PDFDomTree;
-import org.fit.pdfdom.PDFDomTreeConfig;
-import org.fit.pdfdom.resource.IgnoreResourceHandler;
-import thridparty.PDFResourceToDirHandler;
+import thridparty.pdfdom.PDFDomTree;
+import thridparty.pdfdom.PDFDomTreeConfig;
+import thridparty.pdfdom.IgnoreResourceHandler;
+import thridparty.pdfdom.SaveResourceToDirHandler;
 
 /**
  * @Author Mara
@@ -188,7 +188,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
             }
             switch (fontSaveType) {
                 case File:
-                    domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
+                    domConfig.setFontHandler(new SaveResourceToDirHandler(subPath));
                     break;
                 case Embed:
                     domConfig.setFontHandler(PDFDomTreeConfig.embedAsBase64());
@@ -199,7 +199,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
             }
             switch (imageSaveType) {
                 case File:
-                    domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
+                    domConfig.setImageHandler(new SaveResourceToDirHandler(subPath));
                     break;
                 case Embed:
                     domConfig.setImageHandler(PDFDomTreeConfig.embedAsBase64());

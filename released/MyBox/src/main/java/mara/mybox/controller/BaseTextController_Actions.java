@@ -161,10 +161,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         if (file == null || !validateMainArea()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
-        }
-        FileEditInformation targetInformation = FileEditInformation.create(editType, file, pagination);
+        FileEditInformation targetInformation = FileEditInformation.create(editType, file);
         targetInformation.setFile(file);
         targetInformation.setCharset(Charset.forName(UserConfig.getString(baseName + "TargetCharset", "utf-8")));
         targetInformation.setPageSize(sourceInformation.getPageSize());
@@ -177,7 +174,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
         tlk = Line_Break.valueOf(UserConfig.getString(baseName + "TargetLineBreak", tlk.toString()));
         targetInformation.setLineBreak(tlk);
         targetInformation.setLineBreakValue(TextTools.lineBreakValue(tlk));
-        task = new FxSingletonTask<Void>(this) {
+        FxTask saveTask = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -187,23 +184,16 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
             @Override
             protected void whenSucceeded() {
                 recordFileWritten(file);
-                BaseTextController editor = null;
-                if (saveAsType == SaveAsType.Load) {
-                    editor = (BaseTextController) myController;
-                } else if (saveAsType == SaveAsType.Open) {
-                    editor = openNewStage();
-                }
-                if (editor != null) {
-                    editor.editType = editType;
-                    editor.sourceInformation = targetInformation;
-                    editor.sourceInformation.setCharsetDetermined(true);
-                    editor.openFile(file);
-                }
+                BaseTextController editor = openNewStage();
+                editor.editType = editType;
+                editor.sourceInformation = targetInformation;
+                editor.sourceInformation.setCharsetDetermined(true);
+                editor.openFile(file);
                 popSaved();
             }
 
         };
-        start(task);
+        start(saveTask);
     }
 
     public BaseTextController openNewStage() {
@@ -246,7 +236,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                     filterInfo = sourceInformation;
                 } else {
                     File tmpfile = TextFileTools.writeFile(FileTmpTools.getTempFile(".txt"), mainArea.getText(), Charset.forName("utf-8"));
-                    filterInfo = FileEditInformation.create(editType, tmpfile, null);
+                    filterInfo = FileEditInformation.create(editType, tmpfile);
                     if (editType != Edit_Type.Bytes) {
                         filterInfo.setLineBreak(TextTools.checkLineBreak(this, tmpfile));
                         filterInfo.setLineBreakValue(TextTools.lineBreakValue(filterInfo.getLineBreak()));

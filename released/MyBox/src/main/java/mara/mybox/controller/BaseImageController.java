@@ -342,6 +342,12 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Example"), StyleTools.getIconImageView("iconExamples.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                exampleAction();
+            });
+            items.add(menu);
+
             boolean imageShown = imageView != null && imageView.getImage() != null;
 
             menu = new MenuItem(message("LoadContentInSystemClipboard")

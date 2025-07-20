@@ -35,8 +35,6 @@ public class ImagePopController extends BaseImageController {
                 baseName = parentController.baseName + "_" + baseName;
             }
 
-            saveAsType = SaveAsType.Open;
-
             sourceListener = new ChangeListener<Image>() {
                 @Override
                 public void changed(ObservableValue ov, Image oldv, Image newv) {

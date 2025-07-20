@@ -45,12 +45,12 @@ import javafx.stage.Stage;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.CropTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.CropTools;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -74,7 +74,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  * @Description
  * @License Apache License Version 2.0
  */
-public class WeiboSnapRunController extends BaseController {
+public class WeiboSnapRunController extends BaseFileController {
 
     protected WebEngine webEngine;
     protected WeiboSnapParameters parameters;
@@ -887,7 +887,7 @@ public class WeiboSnapRunController extends BaseController {
                                         }
                                         if (stasisTimes >= MaxStasisTimes) {
 //                                            errorString = AppVariables.message("TimeOver");
-////                                            MyBoxLog.debug(errorString);
+                                            ////                                            MyBoxLog.debug(errorString);
 //                                            loadFailed = loadCompleted = true;
                                             loadCompleted = true;  // Snap anyway
                                             return;

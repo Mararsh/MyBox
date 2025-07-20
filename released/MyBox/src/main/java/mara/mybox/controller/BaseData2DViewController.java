@@ -200,8 +200,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     /*
         format
      */
-    public void checkFormat(Toggle ov) {
-        if (formatGroup.getSelectedToggle() == ov) {
+    public void checkFormat(Toggle from) {
+        if (formatGroup.getSelectedToggle() == from) {
             loadContents();
         } else {
             switchFormat();

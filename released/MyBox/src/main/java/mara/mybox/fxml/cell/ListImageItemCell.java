@@ -1,8 +1,6 @@
 package mara.mybox.fxml.cell;
 
 import javafx.scene.control.ListCell;
-import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
 import mara.mybox.data.ImageItem;
 
 /**
@@ -12,26 +10,13 @@ import mara.mybox.data.ImageItem;
  */
 public class ListImageItemCell extends ListCell<ImageItem> {
 
-    protected int imageSize = 60;
-    private ImageView view;
-    private Rectangle rect;
+    protected int height = 60;
 
     public ListImageItemCell() {
-        init();
     }
 
     public ListImageItemCell(int imageSize) {
-        this.imageSize = imageSize;
-        init();
-    }
-
-    private void init() {
-        view = new ImageView();
-        view.setPreserveRatio(true);
-        view.setFitHeight(imageSize);
-        rect = new Rectangle();
-        rect.setWidth(40);
-        rect.setHeight(40);
+        this.height = imageSize;
     }
 
     @Override
@@ -42,7 +27,7 @@ public class ListImageItemCell extends ListCell<ImageItem> {
             setGraphic(null);
             return;
         }
-        setGraphic(item.makeNode(imageSize, true));
+        setGraphic(item.makeNode(height, true));
     }
 
 }

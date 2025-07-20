@@ -295,7 +295,7 @@ public class ImagesBrowserController extends ControlImagesTable {
                 iView.setPreserveRatio(true);
                 iView.setUserData(sPane);
                 aPane.getChildren().add(iView);
-                ImageViewInfoTask itask = new ImageViewInfoTask()
+                ImageViewInfoTask itask = new ImageViewInfoTask<Void>(this)
                         .setView(iView).setItem(imageInfo);
                 Thread thread = new Thread(itask);
                 thread.setDaemon(false);

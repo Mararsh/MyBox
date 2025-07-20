@@ -46,7 +46,7 @@ public class ImagePasteBatchController extends BaseImageEditBatchController {
     @FXML
     protected TextField xInput, yInput, marginInput;
     @FXML
-    protected ControlImagesBlend blendController;
+    protected ControlColorsBlend blendController;
 
     public ImagePasteBatchController() {
         baseTitle = message("ImageBatch") + " - " + message("Paste");

@@ -229,7 +229,15 @@ public class BytesEditorController extends BaseTextController {
     @FXML
     @Override
     public void saveAsAction() {
-        BytesEditorSaveAsController.open(this);
+        try {
+            targetFile = saveAsFile();
+            if (targetFile == null) {
+                return;
+            }
+            saveAs(targetFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML

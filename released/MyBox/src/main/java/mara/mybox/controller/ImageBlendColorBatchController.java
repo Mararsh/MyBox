@@ -24,7 +24,7 @@ public class ImageBlendColorBatchController extends BaseImageEditBatchController
     @FXML
     protected ControlColorSet colorController;
     @FXML
-    protected ControlImagesBlend blendController;
+    protected ControlColorsBlend blendController;
 
     public ImageBlendColorBatchController() {
         baseTitle = message("ImageBatch") + " - " + message("BlendColor");

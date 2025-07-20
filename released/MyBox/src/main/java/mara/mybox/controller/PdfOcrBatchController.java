@@ -20,7 +20,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import mara.mybox.data.TesseractOptions;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -60,6 +60,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  */
 public class PdfOcrBatchController extends BaseBatchPdfController {
 
+    protected TesseractOptions tesseractOptions;
     protected String separator;
     protected String ocrTexts;
     protected File tmpFile;
@@ -87,10 +88,6 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     protected HBox scaleBox, dpiBox;
     @FXML
     protected FlowPane imageOptionsPane;
-    @FXML
-    protected ControlOCROptions ocrOptionsController;
-    @FXML
-    protected VBox preprocessVBox, ocrOptionsVBox;
 
     public PdfOcrBatchController() {
         baseTitle = message("PdfOCRBatch");
@@ -114,16 +111,11 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     @Override
     public void initOptionsSection() {
         try {
-            initPreprocessBox();
-            ocrOptionsController.setParameters(this, false, false);
+            tesseractOptions = new TesseractOptions()
+                    .setSetFormats(false)
+                    .setOutHtml(false)
+                    .setOutPdf(false);
 
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    protected void initPreprocessBox() {
-        try {
             getImageType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> v, Toggle oldV, Toggle newV) {
@@ -225,6 +217,11 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         }
     }
 
+    @FXML
+    public void ocrOptions() {
+        TesseractOptionsController.open(this, tesseractOptions);
+    }
+
     protected void checkGetImageType() {
         if (convertRadio.isSelected()) {
             if (imageOptionsPane.getChildren().contains(scaleBox)) {
@@ -270,29 +267,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
         if (!separatorCheck.isSelected() || separator == null || separator.isEmpty()) {
             separator = null;
         }
-        try {
-            if (ocrOptionsController.embedRadio.isSelected()) {
-                OCRinstance = ocrOptionsController.tesseract();
-
-            } else {
-
-                if (!ocrOptionsController.checkCommandPamameters(false, false)) {
-                    return false;
-                }
-
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
+        if (tesseractOptions.isEmbed()) {
+            return tesseractOptions.makeInstance() != null;
         }
-    }
-
-    @Override
-    public void disableControls(boolean disable) {
-        super.disableControls(disable);
-        preprocessVBox.setDisable(disable);
-        ocrOptionsVBox.setDisable(disable);
+        return true;
     }
 
     @Override
@@ -537,9 +515,9 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }
-            if (ocrOptionsController.embedRadio.isSelected()) {
-                ocrOptionsController.bufferedImageOCR(currentTask, lastImage, false);
-                return ocrOptionsController.texts;
+            if (tesseractOptions.isEmbed()) {
+                tesseractOptions.bufferedImageOCR(currentTask, lastImage, false);
+                return tesseractOptions.getTexts();
             }
             if (process != null) {
                 process.destroy();
@@ -555,7 +533,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 return null;
             }
             String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
-            process = ocrOptionsController.process(imageFile, fileBase);
+            process = tesseractOptions.process(imageFile, fileBase);
             if (process == null || currentTask == null || !currentTask.isWorking()) {
                 return null;
             }

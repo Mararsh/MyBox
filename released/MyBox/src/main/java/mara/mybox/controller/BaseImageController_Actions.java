@@ -658,14 +658,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             protected void whenSucceeded() {
                 popInformation(message("Saved"));
                 recordFileWritten(newfile);
-
-                if (saveAsType == SaveAsType.Load) {
-                    sourceFileChanged(newfile);
-
-                } else if (saveAsType == SaveAsType.Open) {
-                    ImageEditorController.openFile(newfile);
-
-                }
+                ImageEditorController.openFile(newfile);
             }
         };
         start(task);

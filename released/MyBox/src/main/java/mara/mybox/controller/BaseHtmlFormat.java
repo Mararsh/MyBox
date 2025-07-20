@@ -111,6 +111,16 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     }
 
     @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(textsRadio, message("HtmlTextsFormatComment"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();

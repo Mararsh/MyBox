@@ -26,8 +26,6 @@ import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import mara.mybox.image.data.ImageFileInformation;
-import mara.mybox.image.data.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -35,6 +33,8 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.image.data.ImageFileInformation;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
@@ -210,8 +210,7 @@ public class ImagesPlayController extends BaseFileController {
     }
 
     @Override
-    public void checkDPI() {
-        super.checkDPI();
+    public void dpiChanged() {
         if (fileFormat != null && fileFormat.equalsIgnoreCase("pdf")) {
             reloadImages();
         }
