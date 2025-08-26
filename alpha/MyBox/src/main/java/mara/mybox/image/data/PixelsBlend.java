@@ -89,8 +89,7 @@ public abstract class PixelsBlend {
     }
 
     protected void makeAlpha() {
-        float w = fixWeight(weight);
-        alpha = (int) (foreColor.getAlpha() * w + backColor.getAlpha() * (1.0f - w));
+        alpha = blendValues(foreColor.getAlpha(), backColor.getAlpha(), weight);
     }
 
     public BufferedImage blend(FxTask task, BufferedImage overlay, BufferedImage baseImage, int x, int y) {

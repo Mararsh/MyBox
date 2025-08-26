@@ -16,15 +16,13 @@ import mara.mybox.tools.FloatMatrixTools;
 /**
  * @Author Mara
  * @CreateDate 2018-11-10 19:35:49
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageConvolution extends PixelsOperation {
 
     protected ConvolutionKernel kernel;
-    protected int matrixWidth, matrixHeight, edge_op, radiusX, radiusY, maxX, maxY;
-    protected boolean keepOpacity, isEmboss, isGray, isInvert;
+    protected int matrixWidth, matrixHeight, edge_op, color_op, radiusX, radiusY, maxX, maxY;
+    protected boolean keepOpacity, isEmboss, isInvert;
     protected float[][] matrix;
     protected int[][] intMatrix;
     protected int intScale;
@@ -45,6 +43,15 @@ public class ImageConvolution extends PixelsOperation {
         return new ImageConvolution();
     }
 
+    public ImageConvolution setGrey() {
+        color_op = ConvolutionKernel.Color.Grey;
+        return this;
+    }
+
+    public boolean isGrey() {
+        return color_op == ConvolutionKernel.Color.Grey;
+    }
+
     public ImageConvolution setKernel(ConvolutionKernel kernel) {
         this.kernel = kernel;
         matrix = kernel.getMatrix();
@@ -63,7 +70,7 @@ public class ImageConvolution extends PixelsOperation {
         maxX = image.getWidth() - 1;
         maxY = image.getHeight() - 1;
         isEmboss = (kernel.getType() == ConvolutionKernel.Convolution_Type.EMBOSS);
-        isGray = (kernel.isGray());
+        color_op = kernel.getColor();
         keepOpacity = (kernel.getType() != ConvolutionKernel.Convolution_Type.EMBOSS
                 && kernel.getType() != ConvolutionKernel.Convolution_Type.EDGE_DETECTION);
         isInvert = kernel.isInvert();
@@ -109,7 +116,7 @@ public class ImageConvolution extends PixelsOperation {
             blue = Math.min(Math.max(newColor.getBlue() + v, 0), 255);
             newColor = new Color(red, green, blue, newColor.getAlpha());
         }
-        if (isGray) {
+        if (isGrey()) {
             newColor = ColorConvertTools.color2gray(newColor);
         }
         target.setRGB(x, y, newColor.getRGB());
@@ -216,7 +223,7 @@ public class ImageConvolution extends PixelsOperation {
         if (task != null && !task.isWorking()) {
             return null;
         }
-        if (convolutionKernel.isGray()) {
+        if (convolutionKernel.isGrey()) {
             target = ImageGray.byteGray(task, target);
         }
         return target;
@@ -362,14 +369,24 @@ public class ImageConvolution extends PixelsOperation {
         return this;
     }
 
-    public boolean isIsGray() {
-        return isGray;
+    public int getColor() {
+        return color_op;
     }
 
-    public ImageConvolution setIsGray(boolean isGray) {
-        this.isGray = isGray;
+    public ImageConvolution setColor(int color_op) {
+        this.color_op = color_op;
         return this;
     }
+
+    public boolean isIsInvert() {
+        return isInvert;
+    }
+
+    public ImageConvolution setIsInvert(boolean isInvert) {
+        this.isInvert = isInvert;
+        return this;
+    }
+
 
     public float[][] getMatrix() {
         return matrix;

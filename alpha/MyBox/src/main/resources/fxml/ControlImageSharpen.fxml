@@ -13,10 +13,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageSharpen">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageSharpen">
     <children>
-              <VBox fx:id="sharpenABox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                  <children>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
                       <Label text="%Algorithm" />
                       <RadioButton fx:id="unmaskRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%UnsharpMasking" wrapText="true">
                           <toggleGroup>
@@ -24,14 +24,26 @@ License:    Apache License Version 2.0
                           </toggleGroup>
                       </RadioButton>
                       <RadioButton fx:id="eightRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EightNeighborLaplace" toggleGroup="$sharpenGroup" wrapText="true" />
-                      <RadioButton fx:id="fourRadio" layoutX="15.0" layoutY="96.0" minHeight="-Infinity" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$sharpenGroup" wrapText="true" />
-                  </children>
-              </VBox>
+                      <RadioButton fx:id="fourRadio" minHeight="-Infinity" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$sharpenGroup" wrapText="true" />
+         </children>
+      </VBox>
               <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
                   <children>
                       <Label minHeight="-Infinity" text="%Intensity" wrapText="true" />
                       <ComboBox fx:id="intensitySelector" prefWidth="80.0" />
                   </children>
               </FlowPane>
+      <VBox layoutX="10.0" layoutY="197.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Color" />
+            <RadioButton fx:id="keepRadio" mnemonicParsing="false" selected="true" text="%Keep">
+               <toggleGroup>
+                  <ToggleGroup fx:id="colorGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="greyRadio" mnemonicParsing="false" text="%Grey" toggleGroup="$colorGroup" />
+            <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
+         </children>
+      </VBox>
     </children>
 </VBox>

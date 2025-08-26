@@ -74,8 +74,25 @@ public class DataMigrationFrom68 {
             if (lastVersion < 6008008) {
                 updateIn688(controller, conn, lang);
             }
+            if (lastVersion < 6009001) {
+                updateIn691(controller, conn, lang);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static void updateIn691(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        MyBoxLog.info("Updating tables in 6.9.1...");
+        controller.info("Updating tables in 6.9.1...");
+        try (Statement statement = conn.createStatement()) {
+            statement.executeUpdate("ALTER TABLE Convolution_Kernel ADD COLUMN color SMALLINT");
+            statement.executeUpdate("UPDATE Convolution_Kernel SET color=0  WHERE is_gray=FALSE");
+            statement.executeUpdate("UPDATE Convolution_Kernel SET color=1  WHERE is_gray=TRUE");
+            statement.executeUpdate("ALTER TABLE Convolution_Kernel DROP COLUMN is_gray");
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 

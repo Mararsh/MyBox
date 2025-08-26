@@ -41,6 +41,7 @@ import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.Word;
 
+
 /**
  * @Author Mara
  * @CreateDate 2019-9-17

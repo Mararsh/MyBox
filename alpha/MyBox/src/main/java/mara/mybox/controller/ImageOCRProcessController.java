@@ -16,19 +16,19 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.image.data.ImageBinary;
 import mara.mybox.image.data.ImageContrast;
 import mara.mybox.image.data.ImageContrast.ContrastAlgorithm;
 import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.image.data.PixelsOperation;
 import mara.mybox.image.data.PixelsOperationFactory;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.image.tools.TransformTools;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.ValidationTools;
-import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.OCRTools;
 import static mara.mybox.value.Languages.message;
@@ -389,13 +389,13 @@ public class ImageOCRProcessController extends BaseImageController {
                         ocrImage = imageConvolution.startFx();
 
                     } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
-                        ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
+                        ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGrey();
                         ImageConvolution imageConvolution = ImageConvolution.create().
                                 setImage(imageView.getImage()).setKernel(kernel);
                         ocrImage = imageConvolution.startFx();
 
                     } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
-                        ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
+                        ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGrey();
                         ImageConvolution imageConvolution = ImageConvolution.create().
                                 setImage(imageView.getImage()).setKernel(kernel);
                         ocrImage = imageConvolution.startFx();
@@ -438,7 +438,7 @@ public class ImageOCRProcessController extends BaseImageController {
                     BufferedImage image = SwingFXUtils.fromFXImage(OCRController.sourceImage(), null);
                     image = ScaleTools.demoImage(image);
 
-                    ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
+                    ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGrey();
                     ImageConvolution imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     BufferedImage bufferedImage = imageConvolution.start();
@@ -449,7 +449,7 @@ public class ImageOCRProcessController extends BaseImageController {
                         task.setInfo(tmpFile);
                     }
 
-                    kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
+                    kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGrey();
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.start();

@@ -6,13 +6,12 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageEdge">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageEdge">
     <children>
               <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                   <children>
@@ -27,6 +26,17 @@ License:    Apache License Version 2.0
                       <RadioButton fx:id="fourLaplaceExcludedRadio" layoutX="15.0" layoutY="97.0" minHeight="-Infinity" mnemonicParsing="false" text="%FourNeighborLaplaceInvert" toggleGroup="$edgeGroup" wrapText="true" />
                   </children>
               </VBox>
-              <CheckBox fx:id="greyCheck" mnemonicParsing="false" selected="true" text="%Grey" />
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Color" />
+            <RadioButton fx:id="keepRadio" mnemonicParsing="false" selected="true" text="%Keep">
+               <toggleGroup>
+                  <ToggleGroup fx:id="colorGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="greyRadio" mnemonicParsing="false" text="%Grey" toggleGroup="$colorGroup" />
+            <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
+         </children>
+      </VBox>
     </children>
 </VBox>

@@ -20,9 +20,9 @@ import static mara.mybox.value.Languages.message;
 public class ConvolutionKernel extends BaseData {
 
     private String name, description, modifyTime, createTime;
-    private int width, height, type, edge;
+    private int width, height, type, edge, color;
     private float[][] matrix;
-    private boolean invert, gray;
+    private boolean invert;
 
     public static class Convolution_Type {
 
@@ -42,6 +42,14 @@ public class ConvolutionKernel extends BaseData {
 
     }
 
+    public static class Color {
+
+        public static int Keep = 0;
+        public static int Grey = 1;
+        public static int BlackWhite = 2;
+
+    }
+
     public ConvolutionKernel() {
         name = "";
         description = "";
@@ -51,7 +59,7 @@ public class ConvolutionKernel extends BaseData {
         height = 0;
         type = 0;
         edge = 0;
-        invert = gray = false;
+        invert = false;
     }
 
     @Override
@@ -68,6 +76,21 @@ public class ConvolutionKernel extends BaseData {
     public Object getValue(String column) {
         return null;
     }
+
+    public ConvolutionKernel setGrey() {
+        color = Color.Grey;
+        return this;
+    }
+
+    public boolean isGrey() {
+        return color == Color.Grey;
+    }
+
+    public ConvolutionKernel setBW() {
+        color = Color.BlackWhite;
+        return this;
+    }
+
 
     /*
         Static methods
@@ -383,7 +406,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {0, 1, 0},
@@ -402,7 +425,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {0, -1, 0},
@@ -421,7 +444,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {0, 0, 0},
@@ -440,7 +463,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {0, 0, 0},
@@ -459,7 +482,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {1, 0, 0},
@@ -478,7 +501,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {-1, 0, 0},
@@ -497,7 +520,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {0, 0, -1},
@@ -516,7 +539,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(true);
+        kernel.setGrey();
         kernel.setDescription("");
         float[][] k = {
             {0, 0, 1},
@@ -679,7 +702,7 @@ public class ConvolutionKernel extends BaseData {
         return m;
     }
 
-    public static ConvolutionKernel makeEmbossKernel(Direction direction, int size, boolean gray) {
+    public static ConvolutionKernel makeEmbossKernel(Direction direction, int size, int color) {
         ConvolutionKernel kernel = new ConvolutionKernel();
         kernel.setName(message("Emboss") + " "
                 + message("Direction") + ": " + message("direction") + " "
@@ -689,7 +712,7 @@ public class ConvolutionKernel extends BaseData {
         kernel.setWidth(size);
         kernel.setHeight(size);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(gray);
+        kernel.setColor(color);
         kernel.setDescription("");
 
         float[][] k = makeEmbossMatrix(direction, size);
@@ -761,6 +784,16 @@ public class ConvolutionKernel extends BaseData {
         this.edge = edge;
     }
 
+    public int getColor() {
+        return color;
+    }
+
+    public ConvolutionKernel setColor(int color) {
+        this.color = color;
+        return this;
+    }
+
+
     public float[][] getMatrix() {
         return matrix;
     }
@@ -769,14 +802,6 @@ public class ConvolutionKernel extends BaseData {
         this.matrix = matrix;
     }
 
-    public boolean isGray() {
-        return gray;
-    }
-
-    public ConvolutionKernel setGray(boolean gray) {
-        this.gray = gray;
-        return this;
-    }
 
     public boolean isInvert() {
         return invert;

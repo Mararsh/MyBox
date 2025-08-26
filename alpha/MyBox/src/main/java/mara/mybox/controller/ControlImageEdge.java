@@ -1,13 +1,8 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -20,25 +15,8 @@ public class ControlImageEdge extends BaseController {
     protected RadioButton eightLaplaceRadio, eightLaplaceExcludedRadio,
             fourLaplaceRadio, fourLaplaceExcludedRadio;
     @FXML
-    protected CheckBox greyCheck;
+    protected RadioButton keepRadio, greyRadio, bwRadio;
 
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            greyCheck.setSelected(UserConfig.getBoolean(baseName + "Grey", true));
-            greyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Grey", greyCheck.isSelected());
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
 
     public ConvolutionKernel pickValues() {
         try {
@@ -54,7 +32,13 @@ public class ControlImageEdge extends BaseController {
             } else {
                 return null;
             }
-            kernel.setGray(greyCheck.isSelected());
+            if (greyRadio.isSelected()) {
+                kernel.setColor(ConvolutionKernel.Color.Grey);
+            } else if (bwRadio.isSelected()) {
+                kernel.setColor(ConvolutionKernel.Color.BlackWhite);
+            } else {
+                kernel.setColor(ConvolutionKernel.Color.Keep);
+            }
             return kernel;
         } catch (Exception e) {
             displayError(e.toString());

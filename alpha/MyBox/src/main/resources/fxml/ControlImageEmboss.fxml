@@ -6,14 +6,13 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageEmboss">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageEmboss">
     <children>
               <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                   <children>
@@ -35,17 +34,28 @@ License:    Apache License Version 2.0
                       </FlowPane>
                   </children>
               </VBox>
-              <FlowPane fx:id="stringBoxPane" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                  <children>
+      <VBox layoutX="10.0" layoutY="184.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
                       <Label fx:id="stringLabel" text="%Radius" />
             <RadioButton fx:id="radius3Radio" mnemonicParsing="false" selected="true" text="3">
                <toggleGroup>
                   <ToggleGroup fx:id="radiusGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="radius5Radio" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="5" toggleGroup="$radiusGroup" />
-                  </children>
-              </FlowPane>
-              <CheckBox fx:id="greyCheck" mnemonicParsing="false" selected="true" text="%Grey" />
+            <RadioButton fx:id="radius5Radio" mnemonicParsing="false" text="5" toggleGroup="$radiusGroup" />
+         </children>
+      </VBox>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Color" />
+            <RadioButton fx:id="keepRadio" mnemonicParsing="false" selected="true" text="%Keep">
+               <toggleGroup>
+                  <ToggleGroup fx:id="colorGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="greyRadio" mnemonicParsing="false" text="%Grey" toggleGroup="$colorGroup" />
+            <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
+         </children>
+      </VBox>
     </children>
 </VBox>

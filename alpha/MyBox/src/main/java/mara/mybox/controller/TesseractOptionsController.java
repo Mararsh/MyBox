@@ -14,6 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -49,6 +50,8 @@ public class TesseractOptionsController extends BaseChildController {
     protected TesseractOptions options;
     protected String selectedLanguages;
 
+    @FXML
+    protected Tab langTab, engineTab;
     @FXML
     protected ControlFileSelecter tesseractPathController, dataPathController;
     @FXML
@@ -222,25 +225,21 @@ public class TesseractOptionsController extends BaseChildController {
                     optionsBox.getChildren().remove(levelsBox);
                 }
             }
-            if (tesseractRadio.isSelected()) {
-                if (parentController != null && parentController instanceof ImageOCRController) {
-                    ImageOCRController ocrController = (ImageOCRController) parentController;
-                    if (ocrController.resultsTabPane.getTabs().contains(ocrController.regionsTab)) {
-                        ocrController.resultsTabPane.getTabs().removeAll(ocrController.regionsTab, ocrController.wordsTab);
-                    }
-                }
-                tesseractPathController.thisPane.setDisable(false);
-                options.setTesseractVersion(4);
-            } else {
+            if (embedRadio.isSelected()) {
+                tesseractPathController.thisPane.setDisable(true);
                 if (parentController != null && parentController instanceof ImageOCRController) {
                     ImageOCRController ocrController = (ImageOCRController) parentController;
                     if (!ocrController.resultsTabPane.getTabs().contains(ocrController.regionsTab)) {
                         ocrController.resultsTabPane.getTabs().addAll(ocrController.regionsTab, ocrController.wordsTab);
                     }
                 }
+                options.setTesseractVersion(5);
+            } else {
+                tesseractPathController.thisPane.setDisable(false);
                 options.setTesseractVersion(options.tesseractVersion());
             }
-
+            
+   
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -285,19 +284,22 @@ public class TesseractOptionsController extends BaseChildController {
                 File tesseract = tesseractPathController.pickFile();
                 if (tesseract == null || !tesseract.exists()) {
                     popError(message("InvalidParameters") + ": " + message("tesseractInstallationPath"));
+                    tabPane.getSelectionModel().select(engineTab);
                     return;
                 }
                 options.setTesseract(tesseract);
             }
-
             if (options.getTesseractVersion() < 0) {
                 popError(message("InvalidParameters") + ": " + message("tesseractInstallationPath"));
+                tabPane.getSelectionModel().select(engineTab);
                 return;
             }
 
             File dataPath = dataPathController.pickFile();
             if (dataPath == null || !dataPath.exists()) {
-                popError(message("InvalidParameters") + ": " + message("OCRDataPath"));
+                popError(message("InvalidParameters") + ". " + message("OCRDataPath")
+                        + (dataPath != null ? " \"" + dataPath.getAbsolutePath() + "\"" : ""));
+                tabPane.getSelectionModel().select(langTab);
                 return;
             }
             options.setDataPath(dataPath);

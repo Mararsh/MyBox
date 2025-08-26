@@ -4,20 +4,18 @@
 这是图形化计算机应用，目标是提供简单易用的功能。免费开源。           
 
 ## 新内容
-2025-7-20 版本6.9.0                
+2025-8-30 版本6.9.1                
                                                                                                                                     
 * 改进：                                     
-     - 查看PDF：选择模式来显示或弹出。                                       
-     - OCR选项在子窗口中设置。                                                                                                       
-     - 混合颜色：混合选项即改即生效；提供演示。                                                                                                       
+     -                                    
+     -                                    
+     -                                    
 * 解决问题：                                     
-     - 编辑字节：另存失败。                               
-     - 查看PDF/PPT：隐藏右面版后关闭界面，然后右面版再也无法打开、导致功能无法使用。                               
-     - 查看PDF/PPT：缩略图加载得既慢又错。                               
-     - PDF无法转换为html。                               
-     - 混合颜色：初始时未选择模式，会弹出错误。                                                           
+     -                                    
+     -                                    
+     -                                    
                                                                        
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.0)                         
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.1)                         
 
 ## 注意       
 MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：                                                            
@@ -266,8 +264,10 @@ MyBox基于以下开放资源：
 | miguelemosreverte | SVG | <https://github.com/miguelemosreverte/imagetracerjava>    |
 | webp-imageio | WebP图像 | <https://github.com/sejda-pdf/webp-imageio>    |
 | 中国美术分类全集 | 素材 | 中国织染服饰全集-织染卷 ISBN：7-5305-231 7-1    |
-| DeepSeek | 知识 | <https://www.deepseek.com/>     |
-| LibreOffice | 文档 | <https://www.libreoffice.org/>    |   
+| DeepSeek | 知识 | <https://www.deepseek.com>     |
+| LibreOffice | 文档 | <https://www.libreoffice.org>    |   
+| 豆包 | 知识 | <https://www.doubao.com>    |   
+
 
 
 # 特点

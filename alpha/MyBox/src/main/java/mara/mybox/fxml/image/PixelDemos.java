@@ -6,18 +6,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.image.tools.BufferedImageTools;
-import mara.mybox.image.tools.BufferedImageTools.Direction;
-import mara.mybox.image.tools.ColorConvertTools;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.image.data.ImageContrast;
 import mara.mybox.image.data.ImageContrast.ContrastAlgorithm;
 import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.image.data.ImageMosaic;
 import mara.mybox.image.data.ImageMosaic.MosaicType;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.BufferedImageTools;
+import mara.mybox.image.tools.BufferedImageTools.Direction;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -646,12 +646,12 @@ public class PixelDemos {
 
             for (Direction d : Direction.values()) {
                 convolution(demoTask, files, path,
-                        convolution.setKernel(ConvolutionKernel.makeEmbossKernel(d, 3, true)));
+                        convolution.setKernel(ConvolutionKernel.makeEmbossKernel(d, 3, ConvolutionKernel.Color.Grey)));
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
                 convolution(demoTask, files, path,
-                        convolution.setKernel(ConvolutionKernel.makeEmbossKernel(d, 5, true)));
+                        convolution.setKernel(ConvolutionKernel.makeEmbossKernel(d, 5, ConvolutionKernel.Color.Grey)));
                 if (demoTask == null || !demoTask.isWorking()) {
                     return;
                 }
@@ -665,8 +665,7 @@ public class PixelDemos {
     public static void convolution(FxTask demoTask, List<String> files,
             String path, ImageConvolution convolution) {
         try {
-            convolution.getKernel().setGray(false);
-            BufferedImage bufferedImage = convolution.setIsGray(false).start();
+            BufferedImage bufferedImage = convolution.setColor(ConvolutionKernel.Color.Keep).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }
@@ -680,8 +679,7 @@ public class PixelDemos {
                 return;
             }
 
-            convolution.getKernel().setGray(true);
-            bufferedImage = convolution.setIsGray(true).start();
+            bufferedImage = convolution.setColor(ConvolutionKernel.Color.Grey).start();
             if (demoTask == null || !demoTask.isWorking()) {
                 return;
             }

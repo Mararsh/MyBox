@@ -38,7 +38,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
         addColumn(new ColumnDefinition("height", ColumnDefinition.ColumnType.Integer, true));
         addColumn(new ColumnDefinition("type", ColumnDefinition.ColumnType.Short));
         addColumn(new ColumnDefinition("edge", ColumnDefinition.ColumnType.Short));
-        addColumn(new ColumnDefinition("is_gray", ColumnDefinition.ColumnType.Boolean));
+        addColumn(new ColumnDefinition("color", ColumnDefinition.ColumnType.Short));
         addColumn(new ColumnDefinition("is_invert", ColumnDefinition.ColumnType.Boolean));
         addColumn(new ColumnDefinition("modify_time", ColumnDefinition.ColumnType.Datetime));
         addColumn(new ColumnDefinition("create_time", ColumnDefinition.ColumnType.Datetime));
@@ -118,7 +118,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             record.setWidth(w);
             record.setHeight(h);
             record.setType(kResult.getInt("type"));
-            record.setGray(kResult.getBoolean("is_gray"));
+            record.setColor(kResult.getInt("color"));
             record.setInvert(kResult.getBoolean("is_invert"));
             record.setEdge(kResult.getInt("edge"));
             Date t = kResult.getTimestamp("create_time");
@@ -186,7 +186,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
 
     public static boolean insert(Connection conn, ConvolutionKernel record) {
         String sql = "INSERT INTO Convolution_Kernel "
-                + "(name, width , height, type, edge, is_gray, is_invert, create_time, modify_time, description) "
+                + "(name, width , height, type, edge, color, is_invert, create_time, modify_time, description) "
                 + " VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
         try (PreparedStatement update = conn.prepareStatement(sql)) {
             update.setString(1, record.getName());
@@ -194,7 +194,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             update.setInt(3, record.getHeight());
             update.setInt(4, record.getType());
             update.setInt(5, record.getEdge());
-            update.setBoolean(6, record.isGray());
+            update.setInt(6, record.getColor());
             update.setBoolean(7, record.isInvert());
             update.setString(8, record.getCreateTime());
             update.setString(9, record.getModifyTime());
@@ -217,7 +217,7 @@ public class TableConvolutionKernel extends BaseTable<ConvolutionKernel> {
             update.setInt(2, record.getHeight());
             update.setInt(3, record.getType());
             update.setInt(4, record.getEdge());
-            update.setBoolean(5, record.isGray());
+            update.setInt(5, record.getColor());
             update.setBoolean(6, record.isInvert());
             update.setString(7, record.getCreateTime());
             update.setString(8, record.getModifyTime());
