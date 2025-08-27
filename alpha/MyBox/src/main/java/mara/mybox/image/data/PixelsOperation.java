@@ -21,7 +21,7 @@ import mara.mybox.value.Colors;
  */
 public abstract class PixelsOperation {
 
-    protected BufferedImage image;
+    protected BufferedImage srcImage, image;
     protected boolean isDithering, skipTransparent, excludeScope,
             boolPara1, boolPara2, boolPara3;
     protected int intPara1, intPara2, intPara3, scopeColor = 0;
@@ -56,6 +56,7 @@ public abstract class PixelsOperation {
     }
 
     public PixelsOperation(BufferedImage image, ImageScope scope, OperationType operationType) {
+        srcImage = image;
         this.image = image;
         this.operationType = operationType;
         this.scope = scope;
@@ -78,22 +79,27 @@ public abstract class PixelsOperation {
         if (image == null || operationType == null) {
             return image;
         }
-        imageWidth = image.getWidth();
-        imageHeight = image.getHeight();
-        if (operationType != OperationType.BlackOrWhite
-                && operationType != OperationType.Quantization) {
-            isDithering = false;
-        }
-        if (scope != null) {
-            scope = ImageScopeFactory.create(scope);
-        }
-        if (scope != null
-                && (scope.getShapeType() == ImageScope.ShapeType.Matting4
-                || scope.getShapeType() == ImageScope.ShapeType.Matting8)) {
-            isDithering = false;
-            return operateMatting();
-        } else {
-            return operateScope();
+        try {
+            imageWidth = image.getWidth();
+            imageHeight = image.getHeight();
+            if (operationType != OperationType.BlackOrWhite
+                    && operationType != OperationType.Quantization) {
+                isDithering = false;
+            }
+            if (scope != null) {
+                scope = ImageScopeFactory.create(scope);
+            }
+            if (scope != null
+                    && (scope.getShapeType() == ImageScope.ShapeType.Matting4
+                    || scope.getShapeType() == ImageScope.ShapeType.Matting8)) {
+                isDithering = false;
+                return operateMatting();
+            } else {
+                return operateScope();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return image;
         }
     }
 
@@ -379,6 +385,7 @@ public abstract class PixelsOperation {
 
     public PixelsOperation setImage(BufferedImage image) {
         this.image = image;
+        srcImage = image;
         return this;
     }
 

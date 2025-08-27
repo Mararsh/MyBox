@@ -91,6 +91,10 @@ public class ConvolutionKernel extends BaseData {
         return this;
     }
 
+    public boolean isBW() {
+        return color == Color.BlackWhite;
+    }
+
 
     /*
         Static methods

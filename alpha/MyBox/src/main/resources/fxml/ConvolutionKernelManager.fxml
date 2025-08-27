@@ -177,15 +177,9 @@ License:    Apache License Version 2.0
                                                       <ToggleGroup fx:id="colorGroup" />
                                                    </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="greyRadio" mnemonicParsing="false" text="%Grey">
-                                                   <toggleGroup>
-                                                      <ToggleGroup fx:id="colorGroup" />
-                                                   </toggleGroup>
+                                                <RadioButton fx:id="greyRadio" mnemonicParsing="false" text="%Grey" toggleGroup="$colorGroup">
                                                 </RadioButton>
-                                                <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite">
-                                                   <toggleGroup>
-                                                      <ToggleGroup fx:id="colorGroup" />
-                                                   </toggleGroup>
+                                                <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup">
                                                 </RadioButton>
                                                         <CheckBox fx:id="invertCheck" mnemonicParsing="false" text="%Invert" />
                                              </children>

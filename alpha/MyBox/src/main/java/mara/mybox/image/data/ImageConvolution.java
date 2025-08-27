@@ -10,7 +10,6 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.image.tools.AlphaTools;
-import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.FloatMatrixTools;
 
 /**
@@ -41,15 +40,6 @@ public class ImageConvolution extends PixelsOperation {
 
     public static ImageConvolution create() {
         return new ImageConvolution();
-    }
-
-    public ImageConvolution setGrey() {
-        color_op = ConvolutionKernel.Color.Grey;
-        return this;
-    }
-
-    public boolean isGrey() {
-        return color_op == ConvolutionKernel.Color.Grey;
     }
 
     public ImageConvolution setKernel(ConvolutionKernel kernel) {
@@ -92,7 +82,11 @@ public class ImageConvolution extends PixelsOperation {
         }
         if (scope == null || scope.isWhole()) {
             return applyConvolution(task, image, kernel);
-
+        }
+        if (kernel.isGrey()) {
+            image = ImageGray.byteGray(task, image);
+        } else if (kernel.isBW()) {
+            image = ImageBinary.byteBinary(task, image);
         }
         return super.operateImage();
     }
@@ -115,9 +109,6 @@ public class ImageConvolution extends PixelsOperation {
             green = Math.min(Math.max(newColor.getGreen() + v, 0), 255);
             blue = Math.min(Math.max(newColor.getBlue() + v, 0), 255);
             newColor = new Color(red, green, blue, newColor.getAlpha());
-        }
-        if (isGrey()) {
-            newColor = ColorConvertTools.color2gray(newColor);
         }
         target.setRGB(x, y, newColor.getRGB());
         return newColor;
@@ -176,15 +167,18 @@ public class ImageConvolution extends PixelsOperation {
 
     }
 
-    public static BufferedImage applyConvolution(FxTask task, BufferedImage source,
+    /*
+        static
+     */
+    public static BufferedImage applyConvolution(FxTask task, BufferedImage inSource,
             ConvolutionKernel convolutionKernel) {
-        BufferedImage clearedSource;
+        BufferedImage source;
         int type = convolutionKernel.getType();
         if (type == ConvolutionKernel.Convolution_Type.EDGE_DETECTION
                 || type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            clearedSource = AlphaTools.removeAlpha(task, source);
+            source = AlphaTools.removeAlpha(task, inSource);
         } else {
-            clearedSource = source;
+            source = inSource;
         }
         if (task != null && !task.isWorking()) {
             return null;
@@ -194,7 +188,15 @@ public class ImageConvolution extends PixelsOperation {
             return null;
         }
         if (k == null) {
-            return clearedSource;
+            return source;
+        }
+        if (convolutionKernel.isGrey()) {
+            source = ImageGray.byteGray(task, source);
+        } else if (convolutionKernel.isBW()) {
+            source = ImageBinary.byteBinary(task, source);
+        }
+        if (task != null && !task.isWorking()) {
+            return null;
         }
         int w = convolutionKernel.getWidth();
         int h = convolutionKernel.getHeight();
@@ -205,26 +207,23 @@ public class ImageConvolution extends PixelsOperation {
         } else {
             imageOp = new ConvolveOp(kernel, ConvolveOp.EDGE_ZERO_FILL, null);
         }
-        BufferedImage target = applyConvolveOp(clearedSource, imageOp);
+        BufferedImage target = applyConvolveOp(source, imageOp);
         if (task != null && !task.isWorking()) {
             return null;
         }
-        if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
-                    OperationType.RGB, ColorActionType.Increase);
-            pixelsOperation.setIntPara1(128).setTask(task);
-            target = pixelsOperation.start();
-        }
+//        if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
+//            PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
+//                    OperationType.RGB, ColorActionType.Increase);
+//            pixelsOperation.setIntPara1(128).setTask(task);
+//            target = pixelsOperation.start();
+//        }
         if (convolutionKernel.isInvert()) {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
                     OperationType.RGB, ColorActionType.Invert).setTask(task);
             target = pixelsOperation.start();
-        }
-        if (task != null && !task.isWorking()) {
-            return null;
-        }
-        if (convolutionKernel.isGrey()) {
-            target = ImageGray.byteGray(task, target);
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
         }
         return target;
     }
@@ -386,7 +385,6 @@ public class ImageConvolution extends PixelsOperation {
         this.isInvert = isInvert;
         return this;
     }
-
 
     public float[][] getMatrix() {
         return matrix;
