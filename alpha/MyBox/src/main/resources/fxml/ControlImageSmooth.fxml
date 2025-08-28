@@ -33,10 +33,21 @@ License:    Apache License Version 2.0
                       <ComboBox fx:id="intensitySelector" editable="true" prefWidth="100.0" />
                   </children>
               </FlowPane>
+      <VBox layoutX="10.0" layoutY="148.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Edges" />
+            <RadioButton fx:id="keepEdgeRadio" mnemonicParsing="false" selected="true" text="%KeepValues">
+               <toggleGroup>
+                  <ToggleGroup fx:id="edgesGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="zeroEdgeRadio" mnemonicParsing="false" text="%FillZero2" toggleGroup="$edgesGroup" />
+         </children>
+      </VBox>
       <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
          <children>
             <Label text="%Color" />
-            <RadioButton fx:id="keepRadio" mnemonicParsing="false" selected="true" text="%Keep">
+            <RadioButton fx:id="keepColorRadio" mnemonicParsing="false" selected="true" text="%Keep">
                <toggleGroup>
                   <ToggleGroup fx:id="colorGroup" />
                </toggleGroup>

@@ -38,8 +38,6 @@ public class ConvolutionKernel extends BaseData {
 
         public static int COPY = 0;
         public static int FILL_ZERO = 1;
-        public static int MOD = 2;
-
     }
 
     public static class Color {
@@ -797,7 +795,6 @@ public class ConvolutionKernel extends BaseData {
         return this;
     }
 
-
     public float[][] getMatrix() {
         return matrix;
     }
@@ -805,7 +802,6 @@ public class ConvolutionKernel extends BaseData {
     public void setMatrix(float[][] matrix) {
         this.matrix = matrix;
     }
-
 
     public boolean isInvert() {
         return invert;

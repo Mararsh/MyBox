@@ -83,26 +83,18 @@ public class ImageConvolution extends PixelsOperation {
         if (scope == null || scope.isWhole()) {
             return applyConvolution(task, image, kernel);
         }
+        BufferedImage target = super.operateImage();
         if (kernel.isGrey()) {
-            image = ImageGray.byteGray(task, image);
+            target = ImageGray.byteGray(task, target);
         } else if (kernel.isBW()) {
-            image = ImageBinary.byteBinary(task, image);
+            target = ImageBinary.byteBinary(task, target);
         }
-        return super.operateImage();
+        return target;
     }
 
     @Override
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
-        int pixel = image.getRGB(x, y);
-        Color newColor = new Color(pixel, true);
-        if (x < radiusX || x + radiusX > maxX
-                || y < radiusY || y + radiusY > maxY) {
-            if (edge_op == ConvolutionKernel.Edge_Op.COPY) {
-                target.setRGB(x, y, pixel);
-                return newColor;
-            }
-        }
-        newColor = applyConvolution(x, y);
+        Color newColor = applyConvolution(x, y);
         if (isEmboss) {
             int v = 128, red, blue, green;
             red = Math.min(Math.max(newColor.getRed() + v, 0), 255);
@@ -118,30 +110,37 @@ public class ImageConvolution extends PixelsOperation {
         try {
             int red = 0, green = 0, blue = 0, opacity = 0;
             int convolveX, convolveY;
-            for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
-                if (taskInvalid()) {
-                    return null;
+            if (x < radiusX || x + radiusX > maxX
+                    || y < radiusY || y + radiusY > maxY) {
+                if (edge_op == ConvolutionKernel.Edge_Op.FILL_ZERO) {
+                    red = green = blue = opacity = 0;
+                } else {
+                    /* copy */
+                    Color color = new Color(image.getRGB(x, y), true);
+                    red = color.getRed();
+                    green = color.getGreen();
+                    blue = color.getBlue();
+                    opacity = color.getAlpha();
                 }
-                for (int matrixX = 0; matrixX < matrixWidth; matrixX++) {
+            } else {
+                matrix:
+                for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
                     if (taskInvalid()) {
                         return null;
                     }
-                    convolveX = x - radiusX + matrixX;
-                    convolveY = y - radiusY + matrixY;
-                    if (convolveX < 0 || convolveX > maxX || convolveY < 0 || convolveY > maxY) {
-                        if (edge_op == ConvolutionKernel.Edge_Op.MOD) {
-                            convolveX = (convolveX + imageWidth) % imageWidth;
-                            convolveY = (convolveY + imageHeight) % imageHeight;
-                        } else {
-                            continue; // Fill_zero
+                    for (int matrixX = 0; matrixX < matrixWidth; matrixX++) {
+                        if (taskInvalid()) {
+                            return null;
                         }
-                    }
-                    Color color = new Color(image.getRGB(convolveX, convolveY), true);
-                    red += color.getRed() * intMatrix[matrixY][matrixX];
-                    green += color.getGreen() * intMatrix[matrixY][matrixX];
-                    blue += color.getBlue() * intMatrix[matrixY][matrixX];
-                    if (keepOpacity) {
-                        opacity += color.getAlpha() * intMatrix[matrixY][matrixX];
+                        convolveX = x - radiusX + matrixX;
+                        convolveY = y - radiusY + matrixY;
+                        Color color = new Color(image.getRGB(convolveX, convolveY), true);
+                        red += color.getRed() * intMatrix[matrixY][matrixX];
+                        green += color.getGreen() * intMatrix[matrixY][matrixX];
+                        blue += color.getBlue() * intMatrix[matrixY][matrixX];
+                        if (keepOpacity) {
+                            opacity += color.getAlpha() * intMatrix[matrixY][matrixX];
+                        }
                     }
                 }
             }
@@ -190,14 +189,6 @@ public class ImageConvolution extends PixelsOperation {
         if (k == null) {
             return source;
         }
-        if (convolutionKernel.isGrey()) {
-            source = ImageGray.byteGray(task, source);
-        } else if (convolutionKernel.isBW()) {
-            source = ImageBinary.byteBinary(task, source);
-        }
-        if (task != null && !task.isWorking()) {
-            return null;
-        }
         int w = convolutionKernel.getWidth();
         int h = convolutionKernel.getHeight();
         Kernel kernel = new Kernel(w, h, k);
@@ -211,12 +202,15 @@ public class ImageConvolution extends PixelsOperation {
         if (task != null && !task.isWorking()) {
             return null;
         }
-//        if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-//            PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
-//                    OperationType.RGB, ColorActionType.Increase);
-//            pixelsOperation.setIntPara1(128).setTask(task);
-//            target = pixelsOperation.start();
-//        }
+        if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
+            PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
+                    OperationType.RGB, ColorActionType.Increase);
+            pixelsOperation.setIntPara1(128).setTask(task);
+            target = pixelsOperation.start();
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+        }
         if (convolutionKernel.isInvert()) {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
                     OperationType.RGB, ColorActionType.Invert).setTask(task);
@@ -224,6 +218,14 @@ public class ImageConvolution extends PixelsOperation {
             if (task != null && !task.isWorking()) {
                 return null;
             }
+        }
+        if (convolutionKernel.isGrey()) {
+            target = ImageGray.byteGray(task, target);
+        } else if (convolutionKernel.isBW()) {
+            target = ImageBinary.byteBinary(task, target);
+        }
+        if (task != null && !task.isWorking()) {
+            return null;
         }
         return target;
     }

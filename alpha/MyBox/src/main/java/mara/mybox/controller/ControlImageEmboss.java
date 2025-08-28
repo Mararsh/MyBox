@@ -22,7 +22,7 @@ public class ControlImageEmboss extends BaseController {
             leftTopRadio, rightBottomRadio, leftBottomRadio, rightTopRadio,
             radius3Radio, radius5Radio;
     @FXML
-    protected RadioButton keepRadio, greyRadio, bwRadio;
+    protected RadioButton zeroEdgeRadio, keepEdgeRadio, keepColorRadio, greyRadio, bwRadio;
 
     @Override
     public void initControls() {
@@ -70,7 +70,6 @@ public class ControlImageEmboss extends BaseController {
             } else {
                 direction = BufferedImageTools.Direction.Top;
             }
-
             int color;
             if (greyRadio.isSelected()) {
                 color = ConvolutionKernel.Color.Grey;
@@ -81,7 +80,11 @@ public class ControlImageEmboss extends BaseController {
             }
             ConvolutionKernel kernel = ConvolutionKernel.makeEmbossKernel(
                     direction, raduis, color);
-
+            if (zeroEdgeRadio.isSelected()) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
+            }
             return kernel;
         } catch (Exception e) {
             MyBoxLog.error(e);

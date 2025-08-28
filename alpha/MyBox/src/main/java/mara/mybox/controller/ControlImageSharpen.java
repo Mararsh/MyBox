@@ -25,7 +25,7 @@ public class ControlImageSharpen extends BaseController {
     protected ComboBox<String> intensitySelector;
     @FXML
     protected RadioButton unmaskRadio, eightRadio, fourRadio,
-            keepRadio, greyRadio, bwRadio;
+            zeroEdgeRadio, keepEdgeRadio, keepColorRadio, greyRadio, bwRadio;
 
     @Override
     public void initControls() {
@@ -86,6 +86,11 @@ public class ControlImageSharpen extends BaseController {
                 kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
             } else {
                 kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
+            }
+            if (zeroEdgeRadio.isSelected()) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
             }
             if (greyRadio.isSelected()) {
                 kernel.setColor(ConvolutionKernel.Color.Grey);

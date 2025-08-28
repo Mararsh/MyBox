@@ -15,8 +15,7 @@ public class ControlImageEdge extends BaseController {
     protected RadioButton eightLaplaceRadio, eightLaplaceExcludedRadio,
             fourLaplaceRadio, fourLaplaceExcludedRadio;
     @FXML
-    protected RadioButton keepRadio, greyRadio, bwRadio;
-
+    protected RadioButton zeroEdgeRadio, keepEdgeRadio, keepColorRadio, greyRadio, bwRadio;
 
     public ConvolutionKernel pickValues() {
         try {
@@ -31,6 +30,11 @@ public class ControlImageEdge extends BaseController {
                 kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplaceInvert();
             } else {
                 return null;
+            }
+            if (zeroEdgeRadio.isSelected()) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
             }
             if (greyRadio.isSelected()) {
                 kernel.setColor(ConvolutionKernel.Color.Grey);

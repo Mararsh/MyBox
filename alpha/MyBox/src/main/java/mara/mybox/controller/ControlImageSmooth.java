@@ -25,7 +25,7 @@ public class ControlImageSmooth extends BaseController {
     protected ComboBox<String> intensitySelector;
     @FXML
     protected RadioButton avarageRadio, gaussianRadio, motionRadio,
-            keepRadio, greyRadio, bwRadio;
+            zeroEdgeRadio, keepEdgeRadio, keepColorRadio, greyRadio, bwRadio;
 
     @Override
     public void initControls() {
@@ -94,6 +94,11 @@ public class ControlImageSmooth extends BaseController {
                 kernel = ConvolutionKernel.makeMotionBlur(intensity);
             } else {
                 kernel = ConvolutionKernel.makeAverageBlur(intensity);
+            }
+            if (zeroEdgeRadio.isSelected()) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
             }
             if (greyRadio.isSelected()) {
                 kernel.setColor(ConvolutionKernel.Color.Grey);
