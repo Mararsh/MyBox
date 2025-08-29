@@ -9,11 +9,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -21,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-4
  * @License Apache License Version 2.0
  */
-public class RunCommandController extends HtmlPopController {
+public class RunCommandController extends BaseWebViewController {
 
     protected Process process;
     protected String outputs = "";
@@ -139,21 +137,6 @@ public class RunCommandController extends HtmlPopController {
     public void clearAction() {
         outputs = "";
         loadContents("");
-    }
-
-    /*
-        static
-     */
-    public static RunCommandController open(BaseController parent, String cmd) {
-        try {
-            RunCommandController controller = (RunCommandController) WindowTools.referredTopStage(
-                    parent, Fxmls.RunCommandFxml);
-            controller.run(cmd);
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
 }

@@ -110,37 +110,37 @@ public class ImageConvolution extends PixelsOperation {
         try {
             int red = 0, green = 0, blue = 0, opacity = 0;
             int convolveX, convolveY;
-            if (x < radiusX || x + radiusX > maxX
-                    || y < radiusY || y + radiusY > maxY) {
-                if (edge_op == ConvolutionKernel.Edge_Op.FILL_ZERO) {
-                    red = green = blue = opacity = 0;
-                } else {
-                    /* copy */
-                    Color color = new Color(image.getRGB(x, y), true);
-                    red = color.getRed();
-                    green = color.getGreen();
-                    blue = color.getBlue();
-                    opacity = color.getAlpha();
+            matrix:
+            for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
+                if (taskInvalid()) {
+                    return null;
                 }
-            } else {
-                matrix:
-                for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
+                for (int matrixX = 0; matrixX < matrixWidth; matrixX++) {
                     if (taskInvalid()) {
                         return null;
                     }
-                    for (int matrixX = 0; matrixX < matrixWidth; matrixX++) {
-                        if (taskInvalid()) {
-                            return null;
+                    convolveX = x - radiusX + matrixX;
+                    convolveY = y - radiusY + matrixY;
+                    if (convolveX < 0 || convolveX > maxX
+                            || convolveY < 0 || convolveY > maxY) {
+                        if (edge_op == ConvolutionKernel.Edge_Op.COPY) {
+                            Color color = new Color(image.getRGB(x, y), true);
+                            red = color.getRed();
+                            green = color.getGreen();
+                            blue = color.getBlue();
+                            opacity = color.getAlpha();
+                            break matrix;
+                        } else {
+                            /* fill zero */
+                            continue;
                         }
-                        convolveX = x - radiusX + matrixX;
-                        convolveY = y - radiusY + matrixY;
-                        Color color = new Color(image.getRGB(convolveX, convolveY), true);
-                        red += color.getRed() * intMatrix[matrixY][matrixX];
-                        green += color.getGreen() * intMatrix[matrixY][matrixX];
-                        blue += color.getBlue() * intMatrix[matrixY][matrixX];
-                        if (keepOpacity) {
-                            opacity += color.getAlpha() * intMatrix[matrixY][matrixX];
-                        }
+                    }
+                    Color color = new Color(image.getRGB(convolveX, convolveY), true);
+                    red += color.getRed() * intMatrix[matrixY][matrixX];
+                    green += color.getGreen() * intMatrix[matrixY][matrixX];
+                    blue += color.getBlue() * intMatrix[matrixY][matrixX];
+                    if (keepOpacity) {
+                        opacity += color.getAlpha() * intMatrix[matrixY][matrixX];
                     }
                 }
             }

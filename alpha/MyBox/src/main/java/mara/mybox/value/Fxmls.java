@@ -498,8 +498,8 @@ public class Fxmls {
     public static final String MyBoxLanguageInputFxml = "/fxml/MyBoxLanguageInput.fxml";
     public static final String AutoTestingCasesFxml = "/fxml/AutoTestingCases.fxml";
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
-    public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
+    public static final String MacroCommandFxml = "/fxml/MacroCommand.fxml";
     public static final String DevTmpFxml = "/fxml/DevTmp.fxml";
 
 

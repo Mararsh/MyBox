@@ -569,9 +569,10 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>                               
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
-                                <MenuItem mnemonicParsing="false" onAction="#MyBoxTables" text="%MyBoxTables" />
-                                <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
+                                  <MenuItem mnemonicParsing="false" onAction="#macroCommand" text="%MacroCommand" />
+                             <MenuItem mnemonicParsing="false" onAction="#MyBoxTables" text="%MyBoxTables" />
+                               <MenuItem mnemonicParsing="false" onAction="#openManageLanguages" text="%ManageLanguages" />
+                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeDocuments" text="%MakeDocuments" />
                                 <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
                                 <MenuItem mnemonicParsing="false" onAction="#allTableNames" text="%AllTableNames" />

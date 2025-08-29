@@ -300,6 +300,11 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
+    protected void macroCommand(ActionEvent event) {
+        openScene(Fxmls.MacroCommandFxml);
+    }
+
+    @FXML
     protected void JConsole(ActionEvent event) {
         try {
             String cmd = System.getProperty("java.home") + File.separator + "bin" + File.separator + "jconsole";

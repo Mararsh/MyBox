@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.dev.BaseMacro;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -30,6 +31,8 @@ public class MyBox {
         } else {
             AppVariables.AppArgs = new String[args.length];
             System.arraycopy(args, 0, AppVariables.AppArgs, 0, args.length);
+            BaseMacro macro = BaseMacro.parse(AppVariables.AppArgs);
+            macro.info();
         }
 
         initBaseValues();
