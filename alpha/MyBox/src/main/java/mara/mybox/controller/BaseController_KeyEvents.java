@@ -310,7 +310,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             pagePreviousAction();
             return true;
         } else if (paginationController != null && paginationController.isVisible()) {
-            pagePreviousAction();
+            paginationController.altPageUp();
             return true;
         }
         return false;
@@ -322,7 +322,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (pageNextButton != null && !pageNextButton.isDisabled() && pageNextButton.isVisible()) {
             pageNextAction();
         } else if (paginationController != null && paginationController.isVisible()) {
-            pageNextAction();
+            paginationController.altPageDown();
             return true;
         }
         return false;
@@ -336,7 +336,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             pageFirstAction();
             return true;
         } else if (paginationController != null && paginationController.isVisible()) {
-            pageFirstAction();
+            paginationController.altHome();
             return true;
         }
         return false;
@@ -350,7 +350,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             pageLastAction();
             return true;
         } else if (paginationController != null && paginationController.isVisible()) {
-            pageLastAction();
+            paginationController.altEnd();
             return true;
         }
         return false;
