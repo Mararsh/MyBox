@@ -514,12 +514,10 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                         return;
                     }
                     currentParentItem.getChildren().remove(nodeItem);
-                    refreshNode(parent);
-                    return;
                 } catch (Exception e) {
                 }
             }
-            unfoldNodeAncestors(node);
+            refreshNode(parent);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -530,6 +528,13 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     }
 
     public void refreshNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        if (node.isRoot()) {
+            loadTree(null);
+            return;
+        }
         TreeItem<DataNode> item = find(node);
         if (item == null) {
             return;

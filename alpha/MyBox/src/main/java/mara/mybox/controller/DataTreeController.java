@@ -22,6 +22,7 @@ import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
 import mara.mybox.db.table.TableNodeJShell;
 import mara.mybox.db.table.TableNodeJavaScript;
+import mara.mybox.db.table.TableNodeMacro;
 import mara.mybox.db.table.TableNodeMathFunction;
 import mara.mybox.db.table.TableNodeRowExpression;
 import mara.mybox.db.table.TableNodeSQL;
@@ -297,18 +298,25 @@ public class DataTreeController extends BaseDataTreeController {
         }
         task = new FxSingletonTask<Void>(this) {
 
+            private DataNode parent;
+
             @Override
             protected boolean handle() {
-                return nodeTable.deleteNode(node.getNodeid()) >= 0;
+                if (nodeTable.deleteNode(node.getNodeid()) >= 0) {
+                    if (isRoot) {
+                        parent = node;
+                    } else {
+                        parent = nodeTable.find(node.getParentid());
+                    }
+                    return parent != null;
+                } else {
+                    return false;
+                }
             }
 
             @Override
             protected void whenSucceeded() {
-                if (isRoot) {
-                    loadTree();
-                } else {
-                    refreshNode(node);
-                }
+                refreshNode(parent);
                 popSuccessful();
             }
 
@@ -776,6 +784,10 @@ public class DataTreeController extends BaseDataTreeController {
 
     public static DataTreeController dataColumn(BaseController pController, boolean replaceScene) {
         return open(pController, replaceScene, new TableNodeDataColumn());
+    }
+
+    public static DataTreeController macroCommands(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeMacro());
     }
 
 }

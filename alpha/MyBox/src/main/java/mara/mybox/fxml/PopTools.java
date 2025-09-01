@@ -1310,4 +1310,17 @@ public class PopTools {
         );
     }
 
+    /*############# */
+    public static MenuController popMacroExamples(BaseController parent, Event event,
+            TextInputControl input, String valueName) {
+        try {
+            MenuController controller = valuesMenu(parent, input, valueName, message("Examples"), event);
+
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
 }

@@ -186,6 +186,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return new TableNodeDataColumn();
         } else if (Languages.match("GeographyCode", name)) {
             return new TableNodeGeographyCode();
+        } else if (Languages.match("MacroCommands", name)) {
+            return new TableNodeMacro();
         }
         return null;
     }
@@ -323,8 +325,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return createRoot() != null ? 1 : -3;
         }
         String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -339,8 +340,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
         String sql = "DELETE FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid";
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {

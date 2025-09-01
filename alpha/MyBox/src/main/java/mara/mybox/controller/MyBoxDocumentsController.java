@@ -346,6 +346,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
             cases.add(new TreeCase("DataColumn", "en"));
             cases.add(new TreeCase("GeographyCode", "zh"));
             cases.add(new TreeCase("GeographyCode", "en"));
+            cases.add(new TreeCase("MacroCommands", "zh"));
+            cases.add(new TreeCase("MacroCommands", "en"));
 
             index = 0;
             finishNotify.addListener(new ChangeListener<Boolean>() {

@@ -280,6 +280,7 @@ public class Fxmls {
     public static final String ControlDataDataColumnFxml = "/fxml/ControlDataDataColumn.fxml";
     public static final String ControlDataRowExpressionFxml = "/fxml/ControlDataRowExpression.fxml";
     public static final String ControlDataGeographyCodeFxml = "/fxml/ControlDataGeographyCode.fxml";
+    public static final String ControlDataMacroFxml = "/fxml/ControlDataMacro.fxml";
 
     public static final String DataTreeNodeEditorFxml = "/fxml/DataTreeNodeEditor.fxml";
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
@@ -499,7 +500,6 @@ public class Fxmls {
     public static final String AutoTestingCasesFxml = "/fxml/AutoTestingCases.fxml";
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
-    public static final String MacroCommandsFxml = "/fxml/MacroCommands.fxml";
     public static final String DevTmpFxml = "/fxml/DevTmp.fxml";
 
 

@@ -301,7 +301,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     protected void macroCommand(ActionEvent event) {
-        openScene(Fxmls.MacroCommandsFxml);
+        DataTreeController.macroCommands(parentController, false);
     }
 
     @FXML
