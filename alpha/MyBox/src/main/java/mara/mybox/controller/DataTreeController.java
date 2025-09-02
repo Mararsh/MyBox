@@ -110,20 +110,15 @@ public class DataTreeController extends BaseDataTreeController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private DataNode stonedNode;
+            private DataNode updated;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    stonedNode = nodeTable.query(conn, node.getNodeid());
-                    if (stonedNode == null) {
-                        return false;
-                    }
-                    stonedNode.setUpdateTime(new Date());
-                    stonedNode.setTitle(name);
-                    stonedNode = nodeTable.updateData(conn, stonedNode);
-                    stonedNode.setHierarchyNumber(node.getHierarchyNumber());
-                    return stonedNode != null;
+                    updated = node.cloneAll();
+                    updated.setUpdateTime(new Date());
+                    updated.setTitle(name);
+                    return nodeTable.updateData(conn, updated) != null;
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.error(e);
@@ -133,19 +128,11 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                refreshNode(stonedNode);
+                refreshNode(updated);
                 popSuccessful();
             }
         };
         start(task);
-    }
-
-    protected void copyNodes(DataNode node) {
-        DataTreeCopyController.open(this, node);
-    }
-
-    protected void moveNodes(DataNode node) {
-        DataTreeMoveController.open(this, node);
     }
 
     protected void reorderNode(DataNode node) {
@@ -168,21 +155,20 @@ public class DataTreeController extends BaseDataTreeController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private DataNode stonedNode, parentNode;
+            private DataNode updated, parent;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    stonedNode = nodeTable.query(conn, node.getNodeid());
-                    if (stonedNode == null) {
+                    updated = node.cloneAll();
+                    updated.setUpdateTime(new Date());
+                    updated.setOrderNumber(fvalue);
+                    if (nodeTable.updateData(conn, updated) == null) {
                         return false;
                     }
-                    stonedNode.setUpdateTime(new Date());
-                    stonedNode.setOrderNumber(fvalue);
-                    stonedNode = nodeTable.updateData(conn, stonedNode);
-                    parentNode = nodeTable.query(conn, node.getParentid());
-                    stonedNode.setParentNode(parentNode);
-                    return stonedNode != null;
+                    parent = nodeTable.query(conn, node.getParentid());
+                    updated.setParentNode(parent);
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.error(e);
@@ -193,8 +179,8 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                refreshNode(parentNode);
-                reloadView(stonedNode);
+                refreshNode(parent);
+                reloadView(updated);
                 popSuccessful();
             }
         };
@@ -233,6 +219,14 @@ public class DataTreeController extends BaseDataTreeController {
 
         };
         start(task);
+    }
+
+    protected void copyNodes(DataNode node) {
+        DataTreeCopyController.open(this, node);
+    }
+
+    protected void moveNodes(DataNode node) {
+        DataTreeMoveController.open(this, node);
     }
 
     public void deleteNodes(DataNode node) {

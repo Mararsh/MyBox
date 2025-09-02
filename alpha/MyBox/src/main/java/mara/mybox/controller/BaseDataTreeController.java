@@ -400,6 +400,11 @@ public class BaseDataTreeController extends BaseFileController {
         }
     }
 
+    /*
+       Node may be added or updated. Or it changes parent,
+       Or some of children are added/deleted.
+       So should check its current parent and refresh its children.
+     */
     public void refreshNode(DataNode node) {
         if (node == null) {
             return;
@@ -412,10 +417,6 @@ public class BaseDataTreeController extends BaseFileController {
             treeController.refreshNode(node);
         }
         reloadView(node);
-    }
-
-    public void importedNode(DataNode node) {
-        refreshNode(node);
     }
 
     protected void reloadView(DataNode node) {
@@ -433,22 +434,6 @@ public class BaseDataTreeController extends BaseFileController {
             return;
         }
         DataTreeController.open(nodeTable, node);
-    }
-
-    public void nodeSaved(DataNode parent, DataNode node) {
-        try {
-            if (tableRadio.isSelected()) {
-                tableController.nodeSaved(parent, node);
-            } else if (htmlRadio.isSelected()) {
-                htmlController.loadTree(node);
-            } else {
-                treeController.nodeSaved(parent, node);
-            }
-            reloadView(node);
-            popSaved();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     public void queryByConditions() {
