@@ -407,7 +407,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         }
     }
 
-    public void unfoldNodeAncestors(DataNode node) {
+    public void unfoldNodeAncestors(DataNode node, boolean refreshChildren) {
         if (node == null) {
             return;
         }
@@ -427,6 +427,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     item = unfoldAncestors(this, conn, rootItem, node);
+                    if (refreshChildren) {
+                        item.getChildren().clear();
+                        item.getChildren().add(dummyItem());
+                        unfold(this, conn, item, false);
+                    }
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -489,11 +494,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 parentItem = chainItem;
             }
             readExtraInfo(conn, node);
-            if (isLoaded(chainItem)) {
-                chainItem.getChildren().clear();
-                chainItem.getChildren().add(dummyItem());
-                unfold(ptask, conn, chainItem, false);
-            }
             return chainItem;
         } catch (Exception e) {
             displayError(e.toString());
@@ -506,7 +506,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         if (treeView == null || node == null) {
             return false;
         }
-        unfoldNodeAncestors(node);
+        unfoldNodeAncestors(node, false);
         return treeView.getRoot() != null;
     }
 
@@ -514,7 +514,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         unfold(find(node), false);
     }
 
-    public void refreshNode(DataNode node) {
+    public void refreshNode(DataNode node, boolean refreshChildren) {
         if (node == null) {
             return;
         }
@@ -532,7 +532,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 item.setValue(node);
             }
         }
-        focusNode(node);
+        unfoldNodeAncestors(node, refreshChildren);
     }
 
 }

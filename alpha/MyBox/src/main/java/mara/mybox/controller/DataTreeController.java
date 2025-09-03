@@ -128,7 +128,7 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                refreshNode(updated);
+                refreshNode(updated, false);
                 popSuccessful();
             }
         };
@@ -179,7 +179,7 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                refreshNode(parent);
+                refreshNode(parent, true);
                 reloadView(updated);
                 popSuccessful();
             }
@@ -212,7 +212,7 @@ public class DataTreeController extends BaseDataTreeController {
             @Override
             protected void whenSucceeded() {
                 if (count > 0) {
-                    refreshNode(node);
+                    refreshNode(node, true);
                 }
                 popSuccessful();
             }
@@ -261,7 +261,7 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                refreshNode(node);
+                refreshNode(node, true);
                 popSuccessful();
             }
 
@@ -310,7 +310,7 @@ public class DataTreeController extends BaseDataTreeController {
 
             @Override
             protected void whenSucceeded() {
-                refreshNode(parent);
+                refreshNode(parent, true);
                 popSuccessful();
             }
 

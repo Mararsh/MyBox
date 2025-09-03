@@ -424,7 +424,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             @Override
             protected void whenSucceeded() {
                 if (dataRunning()) {
-                    dataController.refreshNode(savedNode);
+                    dataController.refreshNode(savedNode, false);
                 } else if (openCheck.isSelected()) {
                     DataTreeController c = DataTreeController.open(nodeTable, savedNode);
                     c.popSaved();

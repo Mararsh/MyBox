@@ -343,7 +343,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         super.afterTask(ok);
 
         if (WindowTools.isRunning(dataController)) {
-            dataController.refreshNode(parentNode);
+            dataController.refreshNode(parentNode, true);
 
             if (isExample) {
                 close();
