@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableNodeMacro;
+import mara.mybox.dev.BaseMacro;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -31,7 +32,23 @@ public class ControlDataMacro extends BaseDataValuesController {
             valueInput = scriptArea;
             valueWrapCheck = wrapCheck;
             valueName = "script";
+
             super.initEditor();
+
+            BaseMacro macro = BaseMacro.parse("a b=3  c    d=1");
+            macro.run();
+
+            macro = BaseMacro.parse("image");
+            macro.run();
+
+            macro = BaseMacro.parse("image edit");
+            macro.run();
+
+            macro = BaseMacro.parse("image edit file='d:\\a.jpg'");
+            macro.run();
+
+//            macro = BaseMacro.parse("image sharp file='d:\\a.jpg'");
+            macro.run();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -40,6 +57,48 @@ public class ControlDataMacro extends BaseDataValuesController {
 
     public void load(String script) {
         scriptArea.setText(script);
+    }
+
+    protected void run() {
+//        if (!checkDemoOptions()) {
+//            return;
+//        }
+//        if (demoTask != null) {
+//            demoTask.cancel();
+//        }
+//        demoTask = new FxTask<Void>(this) {
+//            private List<String> files;
+//
+//            @Override
+//            protected boolean handle() {
+//                try {
+//                    Image demoImage = ScaleTools.demoImage(srcImage());
+//                    if (demoImage == null || !isWorking()) {
+//                        return false;
+//                    }
+//                    files = new ArrayList<>();
+//                    makeDemoFiles(this, files, demoImage);
+//                    return true;
+//                } catch (Exception e) {
+//                    error = e.toString();
+//                    return false;
+//                }
+//            }
+//
+//            @Override
+//            protected void whenSucceeded() {
+//            }
+//
+//            @Override
+//            protected void finalAction() {
+//                super.finalAction();
+//                if (files != null && !files.isEmpty()) {
+//                    ImagesBrowserController.loadNames(files);
+//                }
+//            }
+//
+//        };
+//        start(demoTask);
     }
 
     @FXML
