@@ -151,12 +151,12 @@ public class ControlDataJEXL extends ControlDataJShell {
     }
 
     @Override
-    protected boolean handleCodes(String script) {
+    public boolean doTask(FxTask currentTask) {
         try {
-            if (script == null || script.isBlank()) {
+            if (codes == null || codes.isBlank()) {
                 return false;
             }
-            TableStringValues.add(baseName + "Histories", script.trim());
+            TableStringValues.add(baseName + "Histories", codes.trim());
             String jexlContext = "jexlContext.clear();";
             runSnippet(jexlContext, jexlContext);
             String contexts = contextInput.getText();
@@ -166,9 +166,9 @@ public class ControlDataJEXL extends ControlDataJShell {
                 runCodes(jexlContext);
             }
 
-            String jexlScriptOrignal = "jexlScript = jexlEngine.createScript(\"" + script + "\");\n";
+            String jexlScriptOrignal = "jexlScript = jexlEngine.createScript(\"" + codes + "\");\n";
             String jexlScript = "jexlScript = jexlEngine.createScript(\""
-                    + StringTools.replaceLineBreak(script) + "\");\n";
+                    + StringTools.replaceLineBreak(codes) + "\");\n";
             runSnippet(jexlScriptOrignal, jexlScript);
 
             String parameters = parametersInput.getText();

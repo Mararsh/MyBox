@@ -6,7 +6,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableNodeMacro;
-import mara.mybox.dev.BaseMacro;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -34,22 +33,6 @@ public class ControlDataMacro extends BaseDataValuesController {
             valueName = "script";
 
             super.initEditor();
-
-            BaseMacro macro = BaseMacro.parse("a b=3  c    d=1");
-            macro.run();
-
-            macro = BaseMacro.parse("image");
-            macro.run();
-
-            macro = BaseMacro.parse("image edit");
-            macro.run();
-
-            macro = BaseMacro.parse("image edit file='d:\\a.jpg'");
-            macro.run();
-
-//            macro = BaseMacro.parse("image sharp file='d:\\a.jpg'");
-            macro.run();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

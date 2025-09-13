@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_JavaScript>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+            <![CDATA[Examples]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                <![CDATA[image]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[edit]]>
+                    </title>
+                    <script>
+                    <![CDATA[image edit file='D:\MyBox测试\图片\v1.png']]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[sharp]]>
+                    </title>
+                    <script>
+                    <![CDATA[image sharp file='D:\MyBox测试\图片\v1.png']]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                <![CDATA[PDF]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[view]]>
+                    </title>
+                    <script>
+                    <![CDATA[pdf view file='D:\MyBox测试\pdf\TIFFPM6.pdf']]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[OCR]]>
+                    </title>
+                    <script>
+                    <![CDATA[image sharp file='D:\MyBox测试\pdf\TIFFPM6.pdf']]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+</Node_JavaScript>

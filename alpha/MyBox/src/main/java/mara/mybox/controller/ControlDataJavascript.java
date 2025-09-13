@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
@@ -37,11 +36,11 @@ public class ControlDataJavascript extends BaseJavaScriptController {
 
             outputController.setParent(this, ControlWebView.ScrollType.Bottom);
 
+            MyBoxLog.console(htmlController != null);
+
             htmlWebView = htmlController.webViewController;
-            if (htmlController != null) {
-                htmlController.webViewController.setParent(this, ControlWebView.ScrollType.Bottom);
-                htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
-            }
+            htmlController.webViewController.setParent(this, ControlWebView.ScrollType.Bottom);
+            htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -49,20 +48,15 @@ public class ControlDataJavascript extends BaseJavaScriptController {
     }
 
     @Override
-    public boolean doTask(FxTask currentTask) {
+    public void afterTask(boolean ok) {
         try {
-            if (!super.doTask(currentTask)) {
-                return false;
-            }
             outputs += DateTools.nowString() + "<div class=\"valueText\" >"
                     + HtmlWriteTools.stringToHtml(script) + "</div>";
             outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(results) + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             outputController.loadContent(html);
-            return true;
         } catch (Exception e) {
-            error = e.toString();
-            return false;
+            MyBoxLog.error(e);
         }
     }
 

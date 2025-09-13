@@ -27,7 +27,7 @@ public class MyBoxLog extends BaseData {
     public static int MinInterval = 1;  // ms
 
     public static enum LogType {
-        Console, Error, Debug, Info
+        Console, Error, Debug, Info, Macro
     }
 
     public MyBoxLog() {
