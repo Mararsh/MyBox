@@ -6,9 +6,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableNodeMacro;
+import mara.mybox.db.table.TableStringValues;
+import mara.mybox.dev.BaseMacro;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -18,7 +21,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataMacro extends BaseDataValuesController {
 
-    protected String outputs = "";
+    protected String script, outputs = "";
 
     @FXML
     protected TextArea scriptArea;
@@ -42,46 +45,30 @@ public class ControlDataMacro extends BaseDataValuesController {
         scriptArea.setText(script);
     }
 
-    protected void run() {
-//        if (!checkDemoOptions()) {
-//            return;
-//        }
-//        if (demoTask != null) {
-//            demoTask.cancel();
-//        }
-//        demoTask = new FxTask<Void>(this) {
-//            private List<String> files;
-//
-//            @Override
-//            protected boolean handle() {
-//                try {
-//                    Image demoImage = ScaleTools.demoImage(srcImage());
-//                    if (demoImage == null || !isWorking()) {
-//                        return false;
-//                    }
-//                    files = new ArrayList<>();
-//                    makeDemoFiles(this, files, demoImage);
-//                    return true;
-//                } catch (Exception e) {
-//                    error = e.toString();
-//                    return false;
-//                }
-//            }
-//
-//            @Override
-//            protected void whenSucceeded() {
-//            }
-//
-//            @Override
-//            protected void finalAction() {
-//                super.finalAction();
-//                if (files != null && !files.isEmpty()) {
-//                    ImagesBrowserController.loadNames(files);
-//                }
-//            }
-//
-//        };
-//        start(demoTask);
+    @Override
+    public boolean checkOptions() {
+        script = scriptArea.getText();
+        if (script == null || script.isBlank()) {
+            popError(message("InvalidParameters") + ": Script");
+            return false;
+        }
+        script = script.trim();
+        return true;
+    }
+
+    @Override
+    public void startTask() {
+        try {
+            BaseMacro macro = new BaseMacro(script);
+            showLogs(script + "\n" + macro.getParameters());
+            TableStringValues.add(baseName + "Histories", script);
+            error = null;
+            taskSuccessed = true;
+        } catch (Exception e) {
+            error = e.toString();
+            taskSuccessed = false;
+        }
+        closeTask(taskSuccessed);
     }
 
     @FXML

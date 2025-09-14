@@ -1,7 +1,7 @@
 package mara.mybox.dev;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import mara.mybox.controller.ImageEditorController;
 import mara.mybox.db.data.ConvolutionKernel;
@@ -17,14 +17,105 @@ public class BaseMacro {
 
     public static final String ParameterPrefix = "MacroPara_";
 
-    protected Map<String, String> parameters;
+    protected String script;
+    protected LinkedHashMap<String, String> parameters;
 
     public BaseMacro() {
         init();
     }
 
+    public BaseMacro(String inScript) {
+        parseString(inScript);
+    }
+
     public final void init() {
         parameters = null;
+    }
+
+    public boolean parseArray(String[] args) {
+        if (args == null) {
+            return false;
+        }
+        int index = 0, pos;
+        for (String arg : args) {
+            pos = arg.indexOf("=");
+            if (pos > 0) {
+                put(arg.substring(0, pos), arg.substring(pos + 1, arg.length()));
+            } else {
+                put(ParameterPrefix + ++index, arg);
+            }
+        }
+        return true;
+    }
+
+    // helped with deepseek
+    public final boolean parseString(String inScript) {
+        try {
+            script = inScript;
+            parameters = null;
+            if (script == null || script.isBlank()) {
+                return false;
+            }
+
+            boolean inDoubleQuotes = false;
+            boolean inSingleQuotes = false;
+            StringBuilder currentToken = new StringBuilder();
+
+            for (int i = 0; i < script.length(); i++) {
+                char c = script.charAt(i);
+
+                if (c == '"' && !inSingleQuotes) {
+                    inDoubleQuotes = !inDoubleQuotes;
+                    currentToken.append(c);
+                    continue;
+                } else if (c == '\'' && !inDoubleQuotes) {
+                    inSingleQuotes = !inSingleQuotes;
+                    currentToken.append(c);
+                    continue;
+                }
+
+                if (c == ' ' && !inDoubleQuotes && !inSingleQuotes) {
+                    if (currentToken.length() > 0) {
+                        processToken(currentToken.toString());
+                        currentToken.setLength(0);
+                    }
+                    continue;
+                }
+
+                currentToken.append(c);
+            }
+
+            if (currentToken.length() > 0) {
+                processToken(currentToken.toString());
+            }
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    private void processToken(String token) {
+        if (token.contains("=")) {
+            int equalsIndex = token.indexOf('=');
+            String key = token.substring(0, equalsIndex);
+            String value = token.substring(equalsIndex + 1);
+
+            value = removeQuotes(value);
+            put(key, value);
+        } else {
+            String value = removeQuotes(token);
+            put(ParameterPrefix + (parameters != null ? parameters.size() + 1 : 1), value);
+        }
+    }
+
+    private static String removeQuotes(String str) {
+        if ((str.startsWith("\"") && str.endsWith("\""))
+                || (str.startsWith("'") && str.endsWith("'"))) {
+            return str.substring(1, str.length() - 1);
+        }
+        return str;
     }
 
     public void put(String key, String value) {
@@ -32,7 +123,7 @@ public class BaseMacro {
             return;
         }
         if (parameters == null) {
-            parameters = new HashMap<>();
+            parameters = new LinkedHashMap<>();
         }
         parameters.put(key.toLowerCase(), value);
     }
@@ -168,30 +259,6 @@ public class BaseMacro {
         return new BaseMacro();
     }
 
-    public static BaseMacro parse(String args) {
-        if (args == null) {
-            return null;
-        }
-        return parse(args.split(" "));
-    }
-
-    public static BaseMacro parse(String[] args) {
-        if (args == null) {
-            return null;
-        }
-        BaseMacro macro = create();
-        int index = 0, pos;
-        for (String arg : args) {
-            pos = arg.indexOf("=");
-            if (pos > 0) {
-                macro.put(arg.substring(0, pos), arg.substring(pos + 1, arg.length()));
-            } else {
-                macro.put(ParameterPrefix + ++index, arg);
-            }
-        }
-        return macro;
-    }
-
     /*
         get/set
      */
@@ -199,7 +266,7 @@ public class BaseMacro {
         return parameters;
     }
 
-    public BaseMacro setParameters(Map<String, String> parameters) {
+    public BaseMacro setParameters(LinkedHashMap<String, String> parameters) {
         this.parameters = parameters;
         return this;
     }
