@@ -2,10 +2,6 @@ package mara.mybox.dev;
 
 import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import mara.mybox.controller.ImageEditorController;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.value.AppValues;
 
 /**
@@ -19,6 +15,7 @@ public class BaseMacro {
 
     protected String script;
     protected LinkedHashMap<String, String> parameters;
+    protected File file;
 
     public BaseMacro() {
         init();
@@ -28,31 +25,60 @@ public class BaseMacro {
         parseString(inScript);
     }
 
+    public BaseMacro(LinkedHashMap<String, String> paras) {
+        parameters = paras;
+    }
+
     public final void init() {
+        script = null;
         parameters = null;
+        file = null;
+    }
+
+    public void copyTo(BaseMacro macro) {
+        if (macro == null) {
+            return;
+        }
+        macro.setScript(script);
+        macro.setParameters(parameters);
+    }
+
+    public void copyFrom(BaseMacro macro) {
+        if (macro == null) {
+            return;
+        }
+        script = macro.getScript();
+        parameters = macro.getParameters();
     }
 
     public boolean parseArray(String[] args) {
-        if (args == null) {
+        try {
+            init();
+            if (args == null) {
+                return false;
+            }
+            for (String arg : args) {
+                processToken(arg);
+                if (script == null) {
+                    script = arg;
+                } else {
+                    script += " " + arg;
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        int index = 0, pos;
-        for (String arg : args) {
-            pos = arg.indexOf("=");
-            if (pos > 0) {
-                put(arg.substring(0, pos), arg.substring(pos + 1, arg.length()));
-            } else {
-                put(ParameterPrefix + ++index, arg);
-            }
-        }
-        return true;
+
     }
 
     // helped with deepseek
     public final boolean parseString(String inScript) {
         try {
+            init();
             script = inScript;
-            parameters = null;
             if (script == null || script.isBlank()) {
                 return false;
             }
@@ -129,10 +155,10 @@ public class BaseMacro {
     }
 
     public String get(String key) {
-        if (parameters == null) {
+        if (key == null || parameters == null) {
             return null;
         }
-        return parameters.get(key);
+        return parameters.get(key.toLowerCase());
     }
 
     public int getInt(String key) {
@@ -153,7 +179,7 @@ public class BaseMacro {
 
     public String getFunction() {
         try {
-            return parameters.get(ParameterPrefix + "1");
+            return get(ParameterPrefix + "1");
         } catch (Exception e) {
             return null;
         }
@@ -161,7 +187,7 @@ public class BaseMacro {
 
     public String getOperation() {
         try {
-            return parameters.get(ParameterPrefix + "2");
+            return get(ParameterPrefix + "2");
         } catch (Exception e) {
             return null;
         }
@@ -169,79 +195,14 @@ public class BaseMacro {
 
     public File getFile() {
         try {
-            return new File(parameters.get("file"));
+            file = new File(get("file"));
+            return file;
         } catch (Exception e) {
             return null;
         }
     }
 
     public boolean run() {
-        info();
-        String func = getFunction();
-        if (func == null) {
-            return false;
-        }
-        func = func.toLowerCase();
-        switch (func) {
-            case "image":
-                return handlImage();
-        }
-        return false;
-    }
-
-    public boolean handlImage() {
-        if (parameters == null) {
-            return false;
-        }
-        File file = getFile();
-        if (file == null) {
-            return false;
-        }
-        String op = getOperation();
-        if (op == null) {
-            op = "edit";
-        }
-        op = op.toLowerCase();
-        switch (op) {
-            case "edit":
-                ImageEditorController.openFile(file);
-                return true;
-            case "sharp":
-                short intensity = getShort("intensity");
-                if (intensity == AppValues.InvalidShort) {
-                    intensity = 2;
-                }
-                String a = get("algorithm");
-                ConvolutionKernel kernel;
-                if ("eight".equalsIgnoreCase(a)) {
-                    kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                } else if ("four".equalsIgnoreCase(a)) {
-                    kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                } else {
-                    kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
-                }
-                if ("zero".equalsIgnoreCase(get("edge"))) {
-                    kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
-                } else {
-                    kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
-                }
-                String color = get("color");
-                if ("grey".equalsIgnoreCase(color) || "gray".equalsIgnoreCase(color)) {
-                    kernel.setColor(ConvolutionKernel.Color.Grey);
-                } else if ("bw".equalsIgnoreCase(color) || "blackwhite".equalsIgnoreCase(color)) {
-                    kernel.setColor(ConvolutionKernel.Color.BlackWhite);
-                } else {
-                    kernel.setColor(ConvolutionKernel.Color.Keep);
-                }
-                ImageConvolution convolution = ImageConvolution.create();
-//                convolution.setImage(inImage).setKernel(kernel)
-//                        .setExcludeScope(excludeScope())
-//                        .setSkipTransparent(skipTransparent())
-//                        .setTask(currentTask);
-//                opInfo = message("Intensity") + ": " + sharpenController.intensity;
-//                return convolution.startFx();
-                return true;
-        }
         return false;
     }
 
@@ -259,15 +220,49 @@ public class BaseMacro {
         return new BaseMacro();
     }
 
+    public static BaseMacro parse(String inScript) {
+        BaseMacro macro = new BaseMacro(inScript);
+        try {
+            String func = macro.getFunction();
+            if (func == null) {
+                return macro;
+            }
+            func = func.toLowerCase();
+            switch (func) {
+                case "image":
+                    ImageMacro imageMacro = new ImageMacro();
+                    imageMacro.copyFrom(macro);
+                    return imageMacro;
+                case "pdf":
+                    PdfMacro pdfMacro = new PdfMacro();
+                    pdfMacro.copyFrom(macro);
+                    return pdfMacro;
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return macro;
+    }
+
     /*
         get/set
      */
-    public Map<String, String> getParameters() {
+    public LinkedHashMap<String, String> getParameters() {
         return parameters;
     }
 
     public BaseMacro setParameters(LinkedHashMap<String, String> parameters) {
         this.parameters = parameters;
+        return this;
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public BaseMacro setScript(String script) {
+        this.script = script;
         return this;
     }
 

@@ -59,13 +59,16 @@ public class ControlDataMacro extends BaseDataValuesController {
     @Override
     public void startTask() {
         try {
-            BaseMacro macro = new BaseMacro(script);
+            MyBoxLog.console(script);
+            BaseMacro macro = BaseMacro.parse(script);
+            MyBoxLog.console(macro != null);
             showLogs(script + "\n" + macro.getParameters());
             TableStringValues.add(baseName + "Histories", script);
+            macro.run();
             error = null;
             taskSuccessed = true;
         } catch (Exception e) {
-            error = e.toString();
+            MyBoxLog.error(e);
             taskSuccessed = false;
         }
         closeTask(taskSuccessed);
