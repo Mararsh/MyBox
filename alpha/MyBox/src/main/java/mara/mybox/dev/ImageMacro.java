@@ -1,6 +1,8 @@
 package mara.mybox.dev;
 
 import java.awt.image.BufferedImage;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.ImageEditorController;
 import mara.mybox.db.data.ConvolutionKernel;
@@ -15,23 +17,35 @@ import mara.mybox.value.AppValues;
  */
 public class ImageMacro extends BaseMacro {
 
-    protected BufferedImage image;
+    protected BufferedImage sourceImage;
+    protected BufferedImage resultImage;
+
+    @Override
+    public void reset() {
+        super.reset();
+        sourceImage = null;
+        resultImage = null;
+    }
+
+    @Override
+    public boolean valid() {
+        return parameters != null;
+    }
 
     @Override
     public boolean run() {
         try {
-            if (parameters == null) {
-                return false;
-            }
-            if (image == null) {
+            ok = false;
+            resultImage = null;
+            if (sourceImage == null) {
                 file = getFile();
                 if (file != null && file.exists()) {
-                    image = ImageIO.read(file);
+                    sourceImage = ImageIO.read(file);
                 }
             }
-            if (image == null) {
-                file = FxFileTools.getInternalFile("/img/jade.png", "image", "jade.png");
-                image = ImageIO.read(file);
+            if (sourceImage == null) {
+                file = FxFileTools.getInternalFile("/img/Mybox.png", "image", "Mybox.png");
+                sourceImage = ImageIO.read(file);
             }
             String op = getOperation();
             if (op == null) {
@@ -40,49 +54,68 @@ public class ImageMacro extends BaseMacro {
             op = op.toLowerCase();
             switch (op) {
                 case "edit":
-                    ImageEditorController.openFile(file);
-                    return true;
+                    Platform.runLater(() -> {
+                        ImageEditorController.openFile(file);
+                    });
+                    ok = true;
+                    break;
                 case "sharp":
-                    short intensity = getShort("intensity");
-                    if (intensity == AppValues.InvalidShort) {
-                        intensity = 2;
-                    }
-                    String a = get("algorithm");
-                    ConvolutionKernel kernel;
-                    if ("eight".equalsIgnoreCase(a)) {
-                        kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                    } else if ("four".equalsIgnoreCase(a)) {
-                        kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                    } else {
-                        kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
-                    }
-                    if ("zero".equalsIgnoreCase(get("edge"))) {
-                        kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
-                    } else {
-                        kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
-                    }
-                    String color = get("color");
-                    if ("grey".equalsIgnoreCase(color) || "gray".equalsIgnoreCase(color)) {
-                        kernel.setColor(ConvolutionKernel.Color.Grey);
-                    } else if ("bw".equalsIgnoreCase(color) || "blackwhite".equalsIgnoreCase(color)) {
-                        kernel.setColor(ConvolutionKernel.Color.BlackWhite);
-                    } else {
-                        kernel.setColor(ConvolutionKernel.Color.Keep);
-                    }
-                    ImageConvolution convolution = ImageConvolution.create();
-//                convolution.setImage(inImage).setKernel(kernel)
-//                        .setExcludeScope(excludeScope())
-//                        .setSkipTransparent(skipTransparent())
-//                        .setTask(currentTask);
-//                opInfo = message("Intensity") + ": " + sharpenController.intensity;
-//                return convolution.startFx();
-                    return true;
+                    ok = sharp();
+                    break;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            displayError(e.toString());
         }
-
-        return false;
+        return ok;
     }
 
+    public boolean sharp() {
+        try {
+            short intensity = getShort("intensity");
+            if (intensity == AppValues.InvalidShort) {
+                intensity = 2;
+            }
+            String a = get("algorithm");
+            ConvolutionKernel kernel;
+            if ("eight".equalsIgnoreCase(a)) {
+                kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
+            } else if ("four".equalsIgnoreCase(a)) {
+                kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+            } else {
+                kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
+            }
+            if ("zero".equalsIgnoreCase(get("edge"))) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
+            }
+            String color = get("color");
+            if ("grey".equalsIgnoreCase(color) || "gray".equalsIgnoreCase(color)) {
+                kernel.setColor(ConvolutionKernel.Color.Grey);
+            } else if ("bw".equalsIgnoreCase(color) || "blackwhite".equalsIgnoreCase(color)) {
+                kernel.setColor(ConvolutionKernel.Color.BlackWhite);
+            } else {
+                kernel.setColor(ConvolutionKernel.Color.Keep);
+            }
+            ImageConvolution convolution = ImageConvolution.create();
+            convolution.setImage(sourceImage).setKernel(kernel).setTask(task);
+            resultImage = convolution.start();
+            return resultImage != null;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public void afterSuccess() {
+        try {
+            if (resultImage != null) {
+                ImageEditorController.openImage(SwingFXUtils.toFXImage(resultImage, null));
+            }
+
+        } catch (Exception e) {
+            displayError(e.toString());
+        }
+    }
 }

@@ -2,6 +2,8 @@ package mara.mybox.dev;
 
 import java.io.File;
 import java.util.LinkedHashMap;
+import mara.mybox.controller.BaseTaskController;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 
 /**
@@ -13,26 +15,33 @@ public class BaseMacro {
 
     public static final String ParameterPrefix = "MacroPara_";
 
-    protected String script;
+    protected String script, error, logs;
     protected LinkedHashMap<String, String> parameters;
     protected File file;
+    protected BaseTaskController controller;
+    protected boolean ok;
+    protected FxTask<Void> task;
 
+    /*
+        init
+     */
     public BaseMacro() {
         init();
-    }
-
-    public BaseMacro(String inScript) {
-        parseString(inScript);
-    }
-
-    public BaseMacro(LinkedHashMap<String, String> paras) {
-        parameters = paras;
     }
 
     public final void init() {
         script = null;
         parameters = null;
+        reset();
+    }
+
+    public void reset() {
         file = null;
+        error = null;
+        logs = null;
+        controller = null;
+        task = null;
+        ok = false;
     }
 
     public void copyTo(BaseMacro macro) {
@@ -49,6 +58,41 @@ public class BaseMacro {
         }
         script = macro.getScript();
         parameters = macro.getParameters();
+    }
+
+    public void info() {
+        if (parameters == null) {
+            return;
+        }
+        MyBoxLog.console(parameters);
+    }
+
+    /*
+        parse
+     */
+    public BaseMacro make(String inScript) {
+        try {
+            parseString(inScript);
+            String func = getFunction();
+            if (func == null) {
+                return this;
+            }
+            func = func.toLowerCase();
+            switch (func) {
+                case "image":
+                    ImageMacro imageMacro = new ImageMacro();
+                    imageMacro.copyFrom(this);
+                    return imageMacro;
+                case "pdf":
+                    PdfMacro pdfMacro = new PdfMacro();
+                    pdfMacro.copyFrom(this);
+                    return pdfMacro;
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return this;
     }
 
     public boolean parseArray(String[] args) {
@@ -75,7 +119,7 @@ public class BaseMacro {
     }
 
     // helped with deepseek
-    public final boolean parseString(String inScript) {
+    public boolean parseString(String inScript) {
         try {
             init();
             script = inScript;
@@ -202,16 +246,41 @@ public class BaseMacro {
         }
     }
 
+    /*
+        run
+     */
+    public boolean valid() {
+        return false;
+    }
+
     public boolean run() {
         return false;
     }
 
-    public void info() {
-        if (parameters == null) {
-            return;
-        }
-        MyBoxLog.console(parameters);
+    public void afterSuccess() {
+
     }
+
+    public void displayError(String info) {
+        display(info, true);
+    }
+
+    public void displayInfo(String info) {
+        display(info, false);
+    }
+
+    public void display(String info, boolean isError) {
+        if (controller != null) {
+            controller.showLogs(info);
+        } else if (task != null) {
+            task.setInfo(info);
+        } else if (isError) {
+            MyBoxLog.error(info);
+        } else {
+            MyBoxLog.console(info);
+        }
+    }
+
 
     /*
         static
@@ -220,29 +289,9 @@ public class BaseMacro {
         return new BaseMacro();
     }
 
-    public static BaseMacro parse(String inScript) {
-        BaseMacro macro = new BaseMacro(inScript);
-        try {
-            String func = macro.getFunction();
-            if (func == null) {
-                return macro;
-            }
-            func = func.toLowerCase();
-            switch (func) {
-                case "image":
-                    ImageMacro imageMacro = new ImageMacro();
-                    imageMacro.copyFrom(macro);
-                    return imageMacro;
-                case "pdf":
-                    PdfMacro pdfMacro = new PdfMacro();
-                    pdfMacro.copyFrom(macro);
-                    return pdfMacro;
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return macro;
+    public static BaseMacro create(String inScript) {
+        BaseMacro macro = new BaseMacro();
+        return macro.make(inScript);
     }
 
     /*
@@ -263,6 +312,51 @@ public class BaseMacro {
 
     public BaseMacro setScript(String script) {
         this.script = script;
+        return this;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public BaseMacro setError(String error) {
+        this.error = error;
+        return this;
+    }
+
+    public String getLogs() {
+        return logs;
+    }
+
+    public BaseMacro setLogs(String logs) {
+        this.logs = logs;
+        return this;
+    }
+
+    public BaseTaskController getController() {
+        return controller;
+    }
+
+    public BaseMacro setController(BaseTaskController controller) {
+        this.controller = controller;
+        return this;
+    }
+
+    public boolean isOk() {
+        return ok;
+    }
+
+    public BaseMacro setOk(boolean ok) {
+        this.ok = ok;
+        return this;
+    }
+
+    public FxTask<Void> getTask() {
+        return task;
+    }
+
+    public BaseMacro setTask(FxTask<Void> task) {
+        this.task = task;
         return this;
     }
 

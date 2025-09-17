@@ -9,6 +9,7 @@ import mara.mybox.db.table.TableNodeMacro;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.BaseMacro;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
@@ -21,7 +22,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataMacro extends BaseDataValuesController {
 
-    protected String script, outputs = "";
+    protected BaseMacro macro;
 
     @FXML
     protected TextArea scriptArea;
@@ -47,31 +48,42 @@ public class ControlDataMacro extends BaseDataValuesController {
 
     @Override
     public boolean checkOptions() {
-        script = scriptArea.getText();
-        if (script == null || script.isBlank()) {
-            popError(message("InvalidParameters") + ": Script");
+        try {
+            String script = scriptArea.getText();
+            if (script == null || script.isBlank()) {
+                popError(message("InvalidParameters") + ": Script");
+                return false;
+            }
+            script = script.trim();
+            macro = BaseMacro.create(script);
+            showLogs("\n\nMacro: " + script + "\nParsed: " + macro.getParameters());
+            if (!macro.valid()) {
+                showLogs(macro.getError());
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        script = script.trim();
-        return true;
     }
 
     @Override
-    public void startTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
-            MyBoxLog.console(script);
-            BaseMacro macro = BaseMacro.parse(script);
-            MyBoxLog.console(macro != null);
-            showLogs(script + "\n" + macro.getParameters());
-            TableStringValues.add(baseName + "Histories", script);
-            macro.run();
-            error = null;
-            taskSuccessed = true;
+            TableStringValues.add(baseName + "Histories", macro.getScript());
+            macro.setController(this).setTask(currentTask).run();
+            error = macro.getError();
+            return macro.isOk();
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            taskSuccessed = false;
+            error = e.toString();
+            return false;
         }
-        closeTask(taskSuccessed);
+    }
+
+    @Override
+    public void afterSuccess() {
+        macro.afterSuccess();
     }
 
     @FXML
