@@ -15,9 +15,9 @@ public class BaseMacro {
 
     public static final String ParameterPrefix = "MacroPara_";
 
-    protected String script, error, logs;
+    protected String script, error, logs, command;
     protected LinkedHashMap<String, String> parameters;
-    protected File file;
+    protected File inputFile, outputFile;
     protected BaseTaskController controller;
     protected boolean ok;
     protected FxTask<Void> task;
@@ -36,7 +36,9 @@ public class BaseMacro {
     }
 
     public void reset() {
-        file = null;
+        command = null;
+        inputFile = null;
+        outputFile = null;
         error = null;
         logs = null;
         controller = null;
@@ -237,10 +239,19 @@ public class BaseMacro {
         }
     }
 
-    public File getFile() {
+    public File getInputFile() {
         try {
-            file = new File(get("file"));
-            return file;
+            inputFile = new File(get("inputFile"));
+            return inputFile;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public File getOutputFile() {
+        try {
+            outputFile = new File(get("outputFile"));
+            return outputFile;
         } catch (Exception e) {
             return null;
         }

@@ -18,7 +18,7 @@
                     <![CDATA[编辑]]>
                     </title>
                     <script>
-                    <![CDATA[image edit file='D:\MyBox测试\图片\v1.png']]>
+                    <![CDATA[image edit inputFile='D:\MyBox测试\图片\v1.png']]>
                     </script>
                 </NodeAttributes>
             </TreeNode>
@@ -28,9 +28,39 @@
                     <![CDATA[锐化]]>
                     </title>
                     <script>
-                    <![CDATA[image sharp file='D:\MyBox测试\图片\v1.png']]>
+                    <![CDATA[image sharp inputFile='D:\MyBox测试\图片\v1.png']]>
                     </script>
                 </NodeAttributes>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                       <![CDATA[四领域-原色-边复制]]>
+                        </title>
+                        <script>
+                        <![CDATA[image sharp algorithm=four color=keep edge=copy inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_4neighborg_keep_copy.png']]>
+                        </script>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                       <![CDATA[四领域-灰色-边复制]]>
+                        </title>
+                        <script>
+                        <![CDATA[image sharp algorithm=four color=grey edge=copy inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_4neighborg_grey_copy.png']]>
+                        </script>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                       <![CDATA[四领域-黑白-边填零]]>
+                        </title>
+                        <script>
+                        <![CDATA[image sharp algorithm=four color=blackwhite edge=zero inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_4neighborg_blackwhite_zero.png']]>
+                        </script>
+                    </NodeAttributes>
+                </TreeNode>
             </TreeNode>
         </TreeNode>
         <TreeNode>
@@ -60,5 +90,5 @@
                 </NodeAttributes>
             </TreeNode>
         </TreeNode>
-   </TreeNode>
+    </TreeNode>
 </Node_JavaScript>

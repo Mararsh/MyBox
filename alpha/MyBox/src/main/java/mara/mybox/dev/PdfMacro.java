@@ -18,8 +18,8 @@ public class PdfMacro extends BaseMacro {
             if (parameters == null) {
                 return false;
             }
-            file = getFile();
-            MyBoxLog.console(file);
+            inputFile = getInputFile();
+            MyBoxLog.console(inputFile);
             String op = getOperation();
             MyBoxLog.console(op);
             if (op == null) {
@@ -28,7 +28,7 @@ public class PdfMacro extends BaseMacro {
             op = op.toLowerCase();
             switch (op) {
                 case "edit":
-                    ImageEditorController.openFile(file);
+                    ImageEditorController.openFile(inputFile);
                     return true;
                 case "sharp":
                     short intensity = getShort("intensity");
