@@ -49,14 +49,13 @@ public class ControlDataMacro extends BaseDataValuesController {
     @Override
     public boolean checkOptions() {
         try {
-            String script = scriptArea.getText();
-            if (script == null || script.isBlank()) {
+            macro = BaseMacro.create(scriptArea.getText());
+            if (macro == null) {
                 popError(message("InvalidParameters") + ": Script");
                 return false;
             }
-            script = script.trim();
-            macro = BaseMacro.create(script);
-            showLogs("\n\nMacro: " + script + "\nParsed: " + macro.getParameters());
+            showLogs("\n\nMacro: " + macro.getScript()
+                    + "\nParsed: " + macro.getParameters());
             if (!macro.valid()) {
                 showLogs(macro.getError());
                 return false;

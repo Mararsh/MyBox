@@ -17,6 +17,7 @@ import mara.mybox.controller.AutoTestingExecutionController;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.BaseMacro;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
 import mara.mybox.fxml.TextClipboardMonitor;
@@ -60,6 +61,7 @@ public class AppVariables {
     public static Map<RenderingHints.Key, Object> ImageHints;
     public static StyleData.StyleColor ControlColor;
     public static AutoTestingExecutionController autoTestingController;
+    public static BaseMacro appMacro;
 
     public static void initAppVaribles() {
         try {
@@ -69,6 +71,7 @@ public class AppVariables {
             CurrentBundle = Languages.getBundle();
             ignoreDbUnavailable = false;
             autoTestingController = null;
+            appMacro = null;
 
             loadAppVaribles();
 

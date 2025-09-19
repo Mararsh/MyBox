@@ -77,7 +77,7 @@ public class BaseMacro {
             parseString(inScript);
             String func = getFunction();
             if (func == null) {
-                return this;
+                return null;
             }
             func = func.toLowerCase();
             switch (func) {
@@ -94,7 +94,7 @@ public class BaseMacro {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return this;
+        return null;
     }
 
     public boolean parseArray(String[] args) {
@@ -303,6 +303,12 @@ public class BaseMacro {
     public static BaseMacro create(String inScript) {
         BaseMacro macro = new BaseMacro();
         return macro.make(inScript);
+    }
+
+    public static BaseMacro create(String[] args) {
+        BaseMacro macro = new BaseMacro();
+        macro.parseArray(args);
+        return macro.make(macro.getScript());
     }
 
     /*

@@ -5,6 +5,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
+import mara.mybox.dev.BaseMacro;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.tools.ConfigTools;
@@ -27,18 +28,26 @@ public class MyBox {
     public static void main(String[] args) {
         if (args == null) {
             AppVariables.AppArgs = null;
+            AppVariables.appMacro = null;
         } else {
             AppVariables.AppArgs = new String[args.length];
             System.arraycopy(args, 0, AppVariables.AppArgs, 0, args.length);
+            AppVariables.appMacro = BaseMacro.create(AppVariables.AppArgs);
         }
 
         initBaseValues();
-        launchApp();
+
+        if (AppVariables.appMacro != null) {
+            runMacro();
+        } else {
+            launchApp();
+        }
     }
 
     public static boolean initBaseValues() {
         MyBoxLog.console("Checking configuration parameters...");
         if (AppVariables.AppArgs != null) {
+
             for (String arg : AppVariables.AppArgs) {
                 if (arg.startsWith("config=")) {
                     String config = arg.substring("config=".length());
@@ -85,6 +94,13 @@ public class MyBox {
             }
         }
         return true;
+    }
+
+    public static void runMacro() {
+        MyBoxLog.console("Running Mybox Macro...");
+        MyBoxLog.console("JVM path: " + System.getProperty("java.home"));
+        AppVariables.appMacro.info();
+        AppVariables.appMacro.run();
     }
 
     public static void launchApp() {
