@@ -550,18 +550,7 @@ public class WindowTools {
             }
 
             if (AppVariables.ScheduledTasks == null || AppVariables.ScheduledTasks.isEmpty()) {
-                MyBoxLog.info("Exit now. Bye!");
-                if (DerbyBase.status == DerbyStatus.Embedded) {
-                    MyBoxLog.info("Shut down Derby...");
-                    DerbyBase.shutdownEmbeddedDerby();
-                }
-//                AppVariables.handlingExit = false;
-
-                Platform.setImplicitExit(true);
-                System.gc();
-                Platform.exit(); // Some thread may still be alive after this
-                System.exit(0);  // Go
-                Runtime.getRuntime().halt(0);
+                doExit();
                 return;
             }
 
@@ -570,6 +559,21 @@ public class WindowTools {
         }
         AppVariables.handlingExit = false;
 
+    }
+
+    public static synchronized void doExit() {
+        MyBoxLog.info("Exit now. Bye!");
+        if (DerbyBase.status == DerbyStatus.Embedded) {
+            MyBoxLog.info("Shut down Derby...");
+            DerbyBase.shutdownEmbeddedDerby();
+        }
+//                AppVariables.handlingExit = false;
+
+        Platform.setImplicitExit(true);
+        System.gc();
+        Platform.exit(); // Some thread may still be alive after this
+        System.exit(0);  // Go
+        Runtime.getRuntime().halt(0);
     }
 
     public static void taskInfo(FxTask task, String info) {

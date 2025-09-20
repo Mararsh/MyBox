@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -268,8 +269,23 @@ public class BaseMacro {
         return false;
     }
 
-    public void afterSuccess() {
+    public void displayResult() {
+        displayEnd();
+    }
 
+    public void displayEnd() {
+        try {
+            if (ok) {
+                displayInfo(message("Completed"));
+            } else {
+                displayInfo(message("Failed"));
+            }
+            if (outputFile != null && outputFile.exists()) {
+                displayInfo(message("FileGenerated") + ": " + outputFile);
+            }
+        } catch (Exception e) {
+            displayError(e.toString());
+        }
     }
 
     public void displayError(String info) {

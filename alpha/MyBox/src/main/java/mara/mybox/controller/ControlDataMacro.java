@@ -82,7 +82,7 @@ public class ControlDataMacro extends BaseDataValuesController {
 
     @Override
     public void afterSuccess() {
-        macro.afterSuccess();
+        macro.displayResult();
     }
 
     @FXML

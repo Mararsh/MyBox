@@ -128,11 +128,13 @@ public class ImageMacro extends BaseMacro {
     }
 
     @Override
-    public void afterSuccess() {
+    public void displayResult() {
         try {
+            displayEnd();;
             if (outputFile != null && outputFile.exists()) {
                 ImageEditorController.openFile(outputFile);
             } else if (resultImage != null) {
+                displayInfo(message("ImageGenerated"));
                 ImageEditorController.openImage(SwingFXUtils.toFXImage(resultImage, null));
             }
 
