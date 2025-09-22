@@ -1,0 +1,77 @@
+<!DOCTYPE html><HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>MyBox宏命令</title>
+        <style type="text/css">
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+            .valueText {
+                color:#2e598a;
+            }
+
+        </style>
+    </HEAD>
+    <body style="width: 900px; margin:0 auto;" contenteditable="false">
+        <h1  align="center">MyBox宏命令</h1>
+        <h2>1 宏命令的用途</h2>
+        <p>“宏命令”指用命令行来执行操作，指令及其参数均在命令行里给定，而不是由用户在交互式界面中输入或选择。</p>
+        <h2>2 执行宏命令</h2>
+        <p>宏命令可以按以下方式来执行：</p>
+        <ol>
+            <li>不启动MyBox图形界面，执行操作并输出结果。<br />
+                例如，在系统的命令行窗口中，执行：<br />
+                <code>java -jar .\MyBox.jar  image sharp algorithm=four color=keep edge=copy inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_4neighborg_keep_copy.png</code>'<br />
+                MyBox宏命令可以成为用户shell脚本的一部分，也有利于批处理。<br /><br />
+            </li>
+            <li>在MyBox图形界面下，执行操作并显示结果。<br />
+                例如，在MyBox的宏命令管理窗口中，执行：<br />
+                <code> image sharp algorithm=mask color=grey edge=zero inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_mask_grey_zero.png'</code><br />
+                MyBox按树形管理宏命令，并提供示例，包含了MyBox大多数功能的重要参数组合。
+            </li>
+        </ol>
+        <h2>3 宏命令的格式</h2>
+        <p>MyBox宏命令的如下：</p>
+        <p align="center">功能名 操作名 参数1 参数2 ... 参数n</p>
+        <ul>
+            <li>即：宏命令由空格分割的字符串组成，其中第一个字符串是功能名，第二个字符串是操作名，其它字符串是多个参数。</li>
+            <li>参数可以是“参数名=参数值”、或是单纯的参数值。</li>
+            <li>若参数值包含空格，则它应该被双引号或单引号围起来。</li>
+        </ul>
+        <h2>4 宏命令列表</h2>
+        <h3>4.1 图像处理</h3>
+
+        <br />
+    </body>
+</HTML>

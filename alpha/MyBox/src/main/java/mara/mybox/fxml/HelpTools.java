@@ -192,6 +192,18 @@ public class HelpTools {
         }
     }
 
+    public static File aboutMacro() {
+        try {
+            String lang = Languages.embedFileLang();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_macro_" + lang + ".html",
+                    "doc", "mybox_about_macro_" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static File aboutData2D() {
         try {
             String lang = Languages.embedFileLang();

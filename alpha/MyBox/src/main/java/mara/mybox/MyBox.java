@@ -47,7 +47,7 @@ public class MyBox {
             System.arraycopy(args, 0, AppVariables.AppArgs, 0, args.length);
         }
 
-        initBaseValues();
+        initConfigValues();
 
         BaseMacro macro = BaseMacro.create(AppVariables.AppArgs);
         if (macro != null) {
@@ -57,7 +57,7 @@ public class MyBox {
         }
     }
 
-    public static boolean initBaseValues() {
+    public static boolean initConfigValues() {
         MyBoxLog.console("Checking configuration parameters...");
         if (AppVariables.AppArgs != null) {
             for (String arg : AppVariables.AppArgs) {
@@ -114,6 +114,7 @@ public class MyBox {
         }
         MyBoxLog.console("Running Mybox Macro...");
         MyBoxLog.console("JVM path: " + System.getProperty("java.home"));
+        setSystemProperty();
         initEnv(null, Languages.embedLangName());
         AppVariables.appMacro = macro;
         AppVariables.appMacro.info();

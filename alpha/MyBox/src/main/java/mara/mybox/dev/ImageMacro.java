@@ -93,7 +93,7 @@ public class ImageMacro extends BaseMacro {
                     intensity = 2;
                 }
                 kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
-                command += "sharp\" intensity=" + intensity;
+                command += "mask\" intensity=" + intensity;
             }
             if ("zero".equalsIgnoreCase(get("edge"))) {
                 kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
