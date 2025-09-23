@@ -52,7 +52,7 @@
         <ol>
             <li>不启动MyBox图形界面，执行操作并输出结果。<br />
                 例如，在系统的命令行窗口中，执行：<br />
-                <code>java -jar .\MyBox.jar  image sharp algorithm=four color=keep edge=copy inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_4neighborg_keep_copy.png</code>'<br />
+                <code>java -jar .\MyBox.jar  image sharp algorithm=four color=keep edge=copy inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_4neighborg_keep_copy.png'</code><br />
                 MyBox宏命令可以成为用户shell脚本的一部分，也有利于批处理。<br /><br />
             </li>
             <li>在MyBox图形界面下，执行操作并显示结果。<br />
@@ -68,10 +68,88 @@
             <li>即：宏命令由空格分割的字符串组成，其中第一个字符串是功能名，第二个字符串是操作名，其它字符串是多个参数。</li>
             <li>参数可以是“参数名=参数值”、或是单纯的参数值。</li>
             <li>若参数值包含空格，则它应该被双引号或单引号围起来。</li>
+            <li>若参数有缺省值，则可以省略。</li>
+            <li>功能名、操作名、参数名均是预定义的，如果查不到则是非法宏。</li>
         </ul>
         <h2>4 宏命令列表</h2>
         <h3>4.1 图像处理</h3>
-
+        <h4>4.1.1 通用说明</h4>
+        <p>图像处理的“功能名”均是“image”，以下是通用的参数：</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>参数名</th>
+                    <th>参数值</th>
+                    <th>缺省值</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>inputFile</td>
+                    <td>图像文件的完整路径</td>
+                    <td>MyBox示例图像文件</td>
+                    <td>要处理的图像文件</td>
+                </tr>
+                <tr>
+                    <td>outputFile</td>
+                    <td>图像文件的完整路径</td>
+                    <td></td>
+                    <td>要生成的图像文件。<br />
+                        在图形化界面运行宏时，可省略此参数。在命令行运行宏时，不可省略。</td>
+                </tr>
+            </tbody>
+        </table>
+        <h4>4.1.2 锐化</h4>
+        <p>操作名是“sharp”，参数：</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>参数名</th>
+                    <th>参数值</th>
+                    <th>缺省值</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>algorithm</td>
+                    <td>four：四邻域拉普拉斯<br />
+                        eight：八邻域拉普拉斯<br />
+                        mask：反锐化掩码
+                    </td>
+                    <td>mask</td>
+                    <td>锐化的算法</td>
+                </tr>
+                <tr>
+                    <td>color</td>
+                    <td>keep：保持<br />
+                        grey：灰色<br />
+                        blackwhite：黑白色
+                    </td>
+                    <td>keep</td>
+                    <td>对颜色的处理</td>
+                </tr>
+                <tr>
+                    <td>edge</td>
+                    <td>copy：复制<br />
+                        zero：填零<br />
+                    </td>
+                    <td>copy</td>
+                    <td>对边缘像素的处理</td>
+                </tr>
+                <tr>
+                    <td>intensity</td>
+                    <td>整数，建议小于5</td>
+                    <td>2</td>
+                    <td>卷积半径。只对算法“反锐化掩码”有效。</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>引用示例图像：</p>
+        <code>image sharp  outputFile='D:\临时\2\v1_sharp_example.png'</code><br />
+        <p>参数示例：</p>
+        <code>image sharp algorithm=eight color=blackwhite edge=zero inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_8neighborg_bw_zero.png'</code><br />
         <br />
     </body>
 </HTML>
