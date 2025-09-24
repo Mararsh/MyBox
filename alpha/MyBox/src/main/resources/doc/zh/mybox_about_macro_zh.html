@@ -70,11 +70,9 @@
             <li>若参数值包含空格，则它应该被双引号或单引号围起来。</li>
             <li>若参数有缺省值，则可以省略。</li>
             <li>功能名、操作名、参数名均是预定义的，如果查不到则是非法宏。</li>
+            <li>功能名、操作名、参数名均为大小写不敏感，有的参数值也大小写不敏感。</li>
         </ul>
-        <h2>4 宏命令列表</h2>
-        <h3>4.1 图像处理</h3>
-        <h4>4.1.1 通用说明</h4>
-        <p>图像处理的“功能名”均是“image”，以下是通用的参数：</p>
+        <h2>4 通用参数</h2>
         <table>
             <thead>
                 <tr>
@@ -87,20 +85,142 @@
             <tbody>
                 <tr>
                     <td>inputFile</td>
-                    <td>图像文件的完整路径</td>
-                    <td>MyBox示例图像文件</td>
-                    <td>要处理的图像文件</td>
+                    <td>文件的完整路径</td>
+                    <td>MyBox示例文件</td>
+                    <td>要处理的文件</td>
                 </tr>
                 <tr>
                     <td>outputFile</td>
-                    <td>图像文件的完整路径</td>
+                    <td>文件的完整路径</td>
                     <td></td>
-                    <td>要生成的图像文件。<br />
-                        在图形化界面运行宏时，可省略此参数。在命令行运行宏时，不可省略。</td>
+                    <td>要生成的文件。<br />
+                        在图形化界面运行宏时，可省略此参数，缺省打开生成的对象。<br />
+                        在命令行运行宏时，不可省略此参数。</td>
                 </tr>
             </tbody>
         </table>
-        <h4>4.1.2 锐化</h4>
+        <h2>5 图像处理（image）</h2>
+        <p>图像处理的“功能名”均是“image”，以下只介绍操作名及其参数。</p>
+        <h3>5.1 换色（replace）</h3>
+        <p>操作名是“replace”，参数：</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>参数名</th>
+                    <th>参数值</th>
+                    <th>缺省值</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>color</td>
+                    <td><a href="https://openjfx.io/javadoc/24/javafx.graphics/javafx/scene/paint/Color.html" target=_blank>颜色的web值</a><br />
+                        如“#0000FF”、“hsla(270,100%,100%,1.0)”</td>
+                    <td></td>
+                    <td>被匹配的颜色</td>
+                </tr>
+                <tr>
+                    <td>newColor</td>
+                    <td><a href="https://openjfx.io/javadoc/24/javafx.graphics/javafx/scene/paint/Color.html" target=_blank>颜色的web值</a><br />
+                        如“0x0000FF”、“rgba(0,0,255,1.0)”</td>
+                    <td></td>
+                    <td>被替换成的新颜色</td>
+                </tr>
+                <tr>
+                    <td>invert</td>
+                    <td>true：反选<br />
+                        false：正选
+                    </td>
+                    <td>false</td>
+                    <td>是否反选颜色</td>
+                </tr>
+                <tr>
+                    <td>trans</td>
+                    <td>true：处理<br />
+                        false：不处理
+                    </td>
+                    <td>false</td>
+                    <td>是否处理透明像素</td>
+                </tr>
+                <tr>
+                    <td>algorithm</td>
+                    <td>RGBRoughWeightedEuclidean：RGB简单加权欧几里得<br />
+                        RGBWeightedEuclidean：RGB加权欧几里得<br />
+                        RGBEuclidean：RGB欧几里得<br />
+                        Red：红色<br />
+                        Green：绿色<br />
+                        Blue：蓝色<br />
+                        Hue：色相<br />
+                        Saturation：饱和度<br />
+                        Brightness：亮度<br />
+                        RGBManhattan：RGB曼哈顿<br />
+                        CIE76: LUV色彩空间<br />
+                        CIEDE2000: 色差公式<br />
+                        CIE94: 色差公式<br />
+                        HSBEuclidean: HSB欧几里得<br />
+                        CMC: 色差公式
+                    <td>RGBRoughWeightedEuclidean</td>
+                    <td>匹配颜色的算法</td>
+                </tr>
+                <tr>
+                    <td>threshold</td>
+                    <td>浮点数</td>
+                    <td>各算法的缺省阈值</td>
+                    <td>匹配颜色的阈值</td>
+                </tr>
+                <tr>
+                    <td>hueWeight</td>
+                    <td>浮点数</td>
+                    <td>各算法的缺省权重</td>
+                    <td>色相权重。只对以下算法有效：CIEDE2000、CIE94、HSBEuclidean、CMC</td>
+                </tr>
+                <tr>
+                    <td>brightnessWeight</td>
+                    <td>浮点数</td>
+                    <td>各算法的缺省权重</td>
+                    <td>亮度权重。只对以下算法有效：CIEDE2000、CIE94、HSBEuclidean、CMC</td>
+                </tr>
+                <tr>
+                    <td>saturationWeight</td>
+                    <td>浮点数</td>
+                    <td>各算法的缺省权重</td>
+                    <td>饱和度权重。只对以下算法有效：CIEDE2000、CIE94、HSBEuclidean、CMC</td>
+                </tr>
+                <tr>
+                    <td>hue</td>
+                    <td>true：替换色相<br />
+                        false：不替换色相
+                    </td>
+                    <td>true</td>
+                    <td>是否替换色相</td>
+                </tr>
+                <tr>
+                    <td>brightness</td>
+                    <td>true：替换亮度<br />
+                        false：不替换亮度
+                    </td>
+                    <td>false</td>
+                    <td>是否替换亮度</td>
+                </tr>
+                <tr>
+                    <td>saturation</td>
+                    <td>true：替换饱和度<br />
+                        false：不替换饱和度
+                    </td>
+                    <td>false</td>
+                    <td>是否替换饱和度</td>
+                </tr>
+
+
+            </tbody>
+        </table>
+        <p>引用示例图像：</p>
+        <code>image replace color=0x0000FF newColor=0x7777FF  outputFile='D:\临时\2\v1_replace_example.png'</code><br />
+        <p>参数示例：</p>
+        <code>image replace color=0x0000FF newColor=0x7777FF  algorithm=CMC threshold=6 inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_replace_cmc_w6.png'</code><br />
+
+        <h3>5.1 锐化（sharp）</h3>
         <p>操作名是“sharp”，参数：</p>
         <table>
             <thead>
@@ -128,7 +248,7 @@
                         blackwhite：黑白色
                     </td>
                     <td>keep</td>
-                    <td>对颜色的处理</td>
+                    <td>对颜色的转换</td>
                 </tr>
                 <tr>
                     <td>edge</td>
@@ -150,6 +270,7 @@
         <code>image sharp  outputFile='D:\临时\2\v1_sharp_example.png'</code><br />
         <p>参数示例：</p>
         <code>image sharp algorithm=eight color=blackwhite edge=zero inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_sharp_8neighborg_bw_zero.png'</code><br />
+
         <br />
     </body>
 </HTML>
