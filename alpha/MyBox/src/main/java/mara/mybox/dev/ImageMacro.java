@@ -1,6 +1,7 @@
 package mara.mybox.dev;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.ImageEditorController;
@@ -8,6 +9,7 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -29,8 +31,18 @@ public class ImageMacro extends BaseMacro {
     }
 
     @Override
-    public boolean valid() {
-        return parameters != null;
+    public String defaultOperation() {
+        return "edit";
+    }
+
+    @Override
+    public File defaultInputFile() {
+        return FxFileTools.getInternalFile("/img/Mybox.png", "image", "Mybox.png");
+    }
+
+    @Override
+    public File defaultOutputFile() {
+        return FileTmpTools.tmpFile("macro", "jpg");
     }
 
     @Override
@@ -38,33 +50,22 @@ public class ImageMacro extends BaseMacro {
         try {
             ok = false;
             resultImage = null;
-            command = "function=image";
-            inputFile = getInputFile();
             if (inputFile != null && inputFile.exists()) {
                 sourceImage = ImageIO.read(inputFile);
             }
             if (sourceImage == null) {
-                inputFile = FxFileTools.getInternalFile("/img/Mybox.png", "image", "Mybox.png");
+                inputFile = defaultInputFile();
                 sourceImage = ImageIO.read(inputFile);
             }
-            if (inputFile != null) {
-                command += " inputFile=\"" + inputFile.getAbsolutePath() + "\"";
-            }
-            outputFile = getOutputFile();
-            if (outputFile != null) {
-                command += " outputFile=\"" + outputFile.getAbsolutePath() + "\"";
-            }
-            String op = getOperation();
-            if (op == null) {
-                op = "edit";
-            }
-            op = op.toLowerCase();
-            switch (op) {
+            switch (operation.toLowerCase()) {
                 case "edit":
                     outputFile = inputFile;
-                    command += " operation=edit";
+                    command += commandIO();
                     displayInfo(message("Parameters") + ": " + command);
                     ok = true;
+                    break;
+                case "replace":
+                    ok = sharp();
                     break;
                 case "sharp":
                     ok = sharp();
@@ -78,8 +79,8 @@ public class ImageMacro extends BaseMacro {
 
     public boolean sharp() {
         try {
-            String a = get("algorithm");
-            command += " operation=sharp algorithm=\"";
+            String a = read("algorithm");
+            command += " algorithm=\"";
             ConvolutionKernel kernel;
             if ("eight".equalsIgnoreCase(a)) {
                 kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
@@ -88,21 +89,21 @@ public class ImageMacro extends BaseMacro {
                 kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                 command += "four\"";
             } else {
-                short intensity = getShort("intensity");
+                short intensity = readShort("intensity");
                 if (intensity == AppValues.InvalidShort) {
                     intensity = 2;
                 }
                 kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
                 command += "mask\" intensity=" + intensity;
             }
-            if ("zero".equalsIgnoreCase(get("edge"))) {
+            if ("zero".equalsIgnoreCase(read("edge"))) {
                 kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
                 command += " edge=zero";
             } else {
                 kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
                 command += " edge=copy";
             }
-            String color = get("color");
+            String color = read("color");
             if ("grey".equalsIgnoreCase(color) || "gray".equalsIgnoreCase(color)) {
                 kernel.setColor(ConvolutionKernel.Color.Grey);
                 command += " color=grey";
@@ -113,6 +114,7 @@ public class ImageMacro extends BaseMacro {
                 kernel.setColor(ConvolutionKernel.Color.Keep);
                 command += " color=keep";
             }
+            command += commandIO();
             displayInfo(message("Parameters") + ": " + command);
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(sourceImage).setKernel(kernel).setTask(task);
@@ -128,9 +130,8 @@ public class ImageMacro extends BaseMacro {
     }
 
     @Override
-    public void displayResult() {
+    public void openResult() {
         try {
-            displayEnd();;
             if (outputFile != null && outputFile.exists()) {
                 ImageEditorController.openFile(outputFile);
             } else if (resultImage != null) {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -16,11 +17,11 @@ public class BaseMacro {
 
     public static final String ParameterPrefix = "MacroPara_";
 
-    protected String script, error, logs, command;
+    protected String script, error, logs, command, function, operation;
     protected LinkedHashMap<String, String> parameters;
     protected File inputFile, outputFile;
     protected BaseTaskController controller;
-    protected boolean ok;
+    protected boolean openResult, ok;
     protected FxTask<Void> task;
 
     /*
@@ -28,6 +29,11 @@ public class BaseMacro {
      */
     public BaseMacro() {
         init();
+    }
+
+    public BaseMacro(boolean openResult) {
+        init();
+        this.openResult = openResult;
     }
 
     public final void init() {
@@ -44,6 +50,7 @@ public class BaseMacro {
         logs = null;
         controller = null;
         task = null;
+        openResult = false;
         ok = false;
     }
 
@@ -53,6 +60,15 @@ public class BaseMacro {
         }
         macro.setScript(script);
         macro.setParameters(parameters);
+        macro.setController(controller);
+        macro.setOpenResult(openResult);
+        macro.setTask(task);
+        macro.setError(error);
+        macro.setLogs(logs);
+        macro.setCommand(command);
+        macro.setOk(ok);
+        macro.setInputFile(inputFile);
+        macro.setOutputFile(outputFile);
     }
 
     public void copyFrom(BaseMacro macro) {
@@ -61,6 +77,15 @@ public class BaseMacro {
         }
         script = macro.getScript();
         parameters = macro.getParameters();
+        controller = macro.getController();
+        openResult = macro.isOpenResult();
+        task = macro.getTask();
+        error = macro.getError();
+        logs = macro.getLogs();
+        command = macro.getCommand();
+        ok = macro.isOk();
+        inputFile = macro.getInputFile();
+        outputFile = macro.getOutputFile();
     }
 
     public void info() {
@@ -76,7 +101,7 @@ public class BaseMacro {
     public BaseMacro make(String inScript) {
         try {
             parseString(inScript);
-            String func = getFunction();
+            String func = readFunction();
             if (func == null) {
                 return null;
             }
@@ -100,7 +125,6 @@ public class BaseMacro {
 
     public boolean parseArray(String[] args) {
         try {
-            init();
             if (args == null) {
                 return false;
             }
@@ -124,7 +148,6 @@ public class BaseMacro {
     // helped with deepseek
     public boolean parseString(String inScript) {
         try {
-            init();
             script = inScript;
             if (script == null || script.isBlank()) {
                 return false;
@@ -176,10 +199,10 @@ public class BaseMacro {
             String value = token.substring(equalsIndex + 1);
 
             value = removeQuotes(value);
-            put(key, value);
+            write(key, value);
         } else {
             String value = removeQuotes(token);
-            put(ParameterPrefix + (parameters != null ? parameters.size() + 1 : 1), value);
+            write(ParameterPrefix + (parameters != null ? parameters.size() + 1 : 1), value);
         }
     }
 
@@ -191,7 +214,19 @@ public class BaseMacro {
         return str;
     }
 
-    public void put(String key, String value) {
+    public String defaultOperation() {
+        return null;
+    }
+
+    public File defaultInputFile() {
+        return null;
+    }
+
+    public File defaultOutputFile() {
+        return null;
+    }
+
+    public void write(String key, String value) {
         if (key == null) {
             return;
         }
@@ -201,68 +236,130 @@ public class BaseMacro {
         parameters.put(key.toLowerCase(), value);
     }
 
-    public String get(String key) {
+    public String read(String key) {
         if (key == null || parameters == null) {
             return null;
         }
         return parameters.get(key.toLowerCase());
     }
 
-    public int getInt(String key) {
+    public int readInt(String key) {
         try {
-            return Integer.parseInt(parameters.get(key));
+            return Integer.parseInt(read(key));
         } catch (Exception e) {
             return AppValues.InvalidInteger;
         }
     }
 
-    public short getShort(String key) {
+    public short readShort(String key) {
         try {
-            return Short.parseShort(parameters.get(key));
+            return Short.parseShort(read(key));
         } catch (Exception e) {
             return AppValues.InvalidShort;
         }
     }
 
-    public String getFunction() {
+    public boolean readBoolean(String key) {
         try {
-            return get(ParameterPrefix + "1");
+            return StringTools.isTrue(read(key));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String readFunction() {
+        try {
+            return read(ParameterPrefix + "1");
         } catch (Exception e) {
             return null;
         }
     }
 
-    public String getOperation() {
+    public String readOperation() {
         try {
-            return get(ParameterPrefix + "2");
+            return read(ParameterPrefix + "2");
         } catch (Exception e) {
             return null;
         }
     }
 
-    public File getInputFile() {
+    public File readInputFile() {
         try {
-            inputFile = new File(get("inputFile"));
+            inputFile = new File(read("inputFile"));
             return inputFile;
         } catch (Exception e) {
             return null;
         }
     }
 
-    public File getOutputFile() {
+    public File readOutputFile() {
         try {
-            outputFile = new File(get("outputFile"));
+            outputFile = new File(read("outputFile"));
             return outputFile;
         } catch (Exception e) {
             return null;
         }
     }
 
+    public boolean readOpenResult() {
+        try {
+            String v = read("openResult");
+            if (v != null) {
+                openResult = StringTools.isTrue(v);
+            }
+            return openResult;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String commandIO() {
+        String s = "";
+        if (inputFile != null) {
+            s += " inputFile=\"" + inputFile.getAbsolutePath() + "\"";
+        }
+        if (outputFile != null) {
+            s += " outputFile=\"" + outputFile.getAbsolutePath() + "\"";
+        }
+        if (openResult) {
+            s += " openResult=true";
+        }
+        return s;
+    }
+
     /*
         run
      */
-    public boolean valid() {
-        return false;
+    public boolean readParameters() {
+        try {
+            function = readFunction();
+            if (function == null) {
+                error = message("Invalid" + ": " + message("Function"));
+                return false;
+            }
+            operation = readOperation();
+            if (operation == null) {
+                operation = defaultOperation();
+            }
+            if (operation == null) {
+                error = message("Invalid" + ": " + message("Operation"));
+                return false;
+            }
+            command = "function=" + function + " operation=" + operation;
+            inputFile = readInputFile();
+            if (inputFile == null) {
+                inputFile = defaultInputFile();
+            }
+            outputFile = readOutputFile();
+            if (outputFile == null) {
+                outputFile = defaultOutputFile();
+            }
+            openResult = readOpenResult();
+            return true;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
     }
 
     public boolean run() {
@@ -271,6 +368,9 @@ public class BaseMacro {
 
     public void displayResult() {
         displayEnd();
+        if (openResult) {
+            openResult();
+        }
     }
 
     public void displayEnd() {
@@ -286,6 +386,9 @@ public class BaseMacro {
         } catch (Exception e) {
             displayError(e.toString());
         }
+    }
+
+    public void openResult() {
     }
 
     public void displayError(String info) {
@@ -316,8 +419,8 @@ public class BaseMacro {
         return new BaseMacro();
     }
 
-    public static BaseMacro create(String inScript) {
-        BaseMacro macro = new BaseMacro();
+    public static BaseMacro create(String inScript, boolean openResult) {
+        BaseMacro macro = new BaseMacro(openResult);
         return macro.make(inScript);
     }
 
@@ -366,6 +469,15 @@ public class BaseMacro {
         return this;
     }
 
+    public String getCommand() {
+        return command;
+    }
+
+    public BaseMacro setCommand(String command) {
+        this.command = command;
+        return this;
+    }
+
     public BaseTaskController getController() {
         return controller;
     }
@@ -384,12 +496,39 @@ public class BaseMacro {
         return this;
     }
 
+    public boolean isOpenResult() {
+        return openResult;
+    }
+
+    public BaseMacro setOpenResult(boolean openResult) {
+        this.openResult = openResult;
+        return this;
+    }
+
     public FxTask<Void> getTask() {
         return task;
     }
 
     public BaseMacro setTask(FxTask<Void> task) {
         this.task = task;
+        return this;
+    }
+
+    public File getInputFile() {
+        return inputFile;
+    }
+
+    public BaseMacro setInputFile(File inputFile) {
+        this.inputFile = inputFile;
+        return this;
+    }
+
+    public File getOutputFile() {
+        return outputFile;
+    }
+
+    public BaseMacro setOutputFile(File outputFile) {
+        this.outputFile = outputFile;
         return this;
     }
 

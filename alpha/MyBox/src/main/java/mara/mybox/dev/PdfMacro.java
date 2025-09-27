@@ -18,9 +18,9 @@ public class PdfMacro extends BaseMacro {
             if (parameters == null) {
                 return false;
             }
-            inputFile = getInputFile();
+            inputFile = readInputFile();
             MyBoxLog.console(inputFile);
-            String op = getOperation();
+            String op = readOperation();
             MyBoxLog.console(op);
             if (op == null) {
                 op = "edit";
@@ -31,11 +31,11 @@ public class PdfMacro extends BaseMacro {
                     ImageEditorController.openFile(inputFile);
                     return true;
                 case "sharp":
-                    short intensity = getShort("intensity");
+                    short intensity = readShort("intensity");
                     if (intensity == AppValues.InvalidShort) {
                         intensity = 2;
                     }
-                    String a = get("algorithm");
+                    String a = read("algorithm");
                     ConvolutionKernel kernel;
                     if ("eight".equalsIgnoreCase(a)) {
                         kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
@@ -44,12 +44,12 @@ public class PdfMacro extends BaseMacro {
                     } else {
                         kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
                     }
-                    if ("zero".equalsIgnoreCase(get("edge"))) {
+                    if ("zero".equalsIgnoreCase(read("edge"))) {
                         kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
                     } else {
                         kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
                     }
-                    String color = get("color");
+                    String color = read("color");
                     if ("grey".equalsIgnoreCase(color) || "gray".equalsIgnoreCase(color)) {
                         kernel.setColor(ConvolutionKernel.Color.Grey);
                     } else if ("bw".equalsIgnoreCase(color) || "blackwhite".equalsIgnoreCase(color)) {

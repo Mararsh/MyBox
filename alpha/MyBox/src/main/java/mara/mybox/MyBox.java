@@ -41,7 +41,6 @@ public class MyBox {
     public static void main(String[] args) {
         if (args == null) {
             AppVariables.AppArgs = null;
-            AppVariables.appMacro = null;
         } else {
             AppVariables.AppArgs = new String[args.length];
             System.arraycopy(args, 0, AppVariables.AppArgs, 0, args.length);
@@ -116,10 +115,20 @@ public class MyBox {
         MyBoxLog.console("JVM path: " + System.getProperty("java.home"));
         setSystemProperty();
         initEnv(null, Languages.embedLangName());
-        AppVariables.appMacro = macro;
-        AppVariables.appMacro.info();
-        AppVariables.appMacro.run();
-        AppVariables.appMacro.displayEnd();
+        macro.info();
+        if (macro.readParameters()) {
+            macro.run();
+            macro.displayEnd();
+            if (macro.isOpenResult()) {
+                File file = macro.getOutputFile();
+                if (file != null && file.exists()) {
+                    AppVariables.AppArgs = new String[1];
+                    AppVariables.AppArgs[0] = file.getAbsolutePath();
+                    launchApp();
+                    return;
+                }
+            }
+        }
         WindowTools.doExit();
     }
 

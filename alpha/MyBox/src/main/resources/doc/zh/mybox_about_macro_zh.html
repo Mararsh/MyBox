@@ -87,20 +87,41 @@
                     <td>inputFile</td>
                     <td>文件的完整路径</td>
                     <td>MyBox示例文件</td>
-                    <td>要处理的文件</td>
+                    <td>要处理的文件<br />
+                        若不定义此参数，则引用MyBox的示例文件。
+                    </td>
                 </tr>
                 <tr>
                     <td>outputFile</td>
                     <td>文件的完整路径</td>
-                    <td></td>
+                    <td>MyBox临时文件</td>
                     <td>要生成的文件。<br />
-                        在图形化界面运行宏时，可省略此参数，缺省打开生成的对象。<br />
-                        在命令行运行宏时，不可省略此参数。</td>
+                        若不定义此参数，则用MyBox缺省方式打开生成的对象。
+                </tr>
+                <tr>
+                    <td>openResult</td>
+                    <td>true：打开结果<br />
+                        false：不打开结果
+                    </td>
+                    <td>命令行执行宏命令时，缺省值为false<br />
+                        图形化执行宏命令时，缺省值为true
+                    </td>
+                    <td>是否打开结果</td>
                 </tr>
             </tbody>
         </table>
         <h2>5 图像处理（image）</h2>
         <p>图像处理的“功能名”均是“image”，以下只介绍操作名及其参数。</p>
+
+        <h3>5.1 编辑（edit）</h3>
+        <p>操作名是“edit”，有效参数是“inputFile”，参数“outputFile”无效。</p>
+        <p>引用示例图像：</p>
+        <code>image edit</code><br />
+        <p>参数示例：</p>
+        <code>image edit inputFile='D:\MyBox测试\图片\v1.png'</code><br />
+
+
+
         <h3>5.1 换色（replace）</h3>
         <p>操作名是“replace”，参数：</p>
         <table>
