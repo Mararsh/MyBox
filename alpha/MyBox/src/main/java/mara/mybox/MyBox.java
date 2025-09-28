@@ -116,7 +116,7 @@ public class MyBox {
         setSystemProperty();
         initEnv(null, Languages.embedLangName());
         macro.info();
-        if (macro.readParameters()) {
+        if (macro.checkParameters()) {
             macro.run();
             macro.displayEnd();
             if (macro.isOpenResult()) {

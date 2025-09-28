@@ -17,15 +17,15 @@ public class BaseMacro {
 
     public static final String ParameterPrefix = "MacroPara_";
 
-    protected String script, error, logs, command, function, operation;
-    protected LinkedHashMap<String, String> parameters;
-    protected File inputFile, outputFile;
+    protected String script, error, logs;
+    protected LinkedHashMap<String, String> arguments;  // values defined in macro
+    protected LinkedHashMap<String, Object> parameters;  // values referred when run
     protected BaseTaskController controller;
-    protected boolean openResult, ok;
+    protected boolean defaultOpenResult, ok;
     protected FxTask<Void> task;
 
     /*
-        init
+        build macro
      */
     public BaseMacro() {
         init();
@@ -33,25 +33,24 @@ public class BaseMacro {
 
     public BaseMacro(boolean openResult) {
         init();
-        this.openResult = openResult;
+        this.defaultOpenResult = openResult;
+        MyBoxLog.console(defaultOpenResult);
     }
 
     public final void init() {
         script = null;
-        parameters = null;
+        arguments = null;
         reset();
     }
 
     public void reset() {
-        command = null;
-        inputFile = null;
-        outputFile = null;
+        parameters = null;
         error = null;
         logs = null;
         controller = null;
         task = null;
-        openResult = false;
         ok = false;
+        defaultOpenResult = false;
     }
 
     public void copyTo(BaseMacro macro) {
@@ -59,16 +58,14 @@ public class BaseMacro {
             return;
         }
         macro.setScript(script);
+        macro.setArguments(arguments);
         macro.setParameters(parameters);
         macro.setController(controller);
-        macro.setOpenResult(openResult);
         macro.setTask(task);
         macro.setError(error);
         macro.setLogs(logs);
-        macro.setCommand(command);
         macro.setOk(ok);
-        macro.setInputFile(inputFile);
-        macro.setOutputFile(outputFile);
+        macro.setDefaultOpenResult(defaultOpenResult);
     }
 
     public void copyFrom(BaseMacro macro) {
@@ -76,32 +73,27 @@ public class BaseMacro {
             return;
         }
         script = macro.getScript();
+        arguments = macro.getArguments();
         parameters = macro.getParameters();
         controller = macro.getController();
-        openResult = macro.isOpenResult();
         task = macro.getTask();
         error = macro.getError();
         logs = macro.getLogs();
-        command = macro.getCommand();
         ok = macro.isOk();
-        inputFile = macro.getInputFile();
-        outputFile = macro.getOutputFile();
+        defaultOpenResult = macro.isDefaultOpenResult();
     }
 
     public void info() {
-        if (parameters == null) {
+        if (arguments == null) {
             return;
         }
-        MyBoxLog.console(parameters);
+        MyBoxLog.console(arguments);
     }
 
-    /*
-        parse
-     */
     public BaseMacro make(String inScript) {
         try {
             parseString(inScript);
-            String func = readFunction();
+            String func = pickFunction();
             if (func == null) {
                 return null;
             }
@@ -121,28 +113,6 @@ public class BaseMacro {
             MyBoxLog.error(e);
         }
         return null;
-    }
-
-    public boolean parseArray(String[] args) {
-        try {
-            if (args == null) {
-                return false;
-            }
-            for (String arg : args) {
-                processToken(arg);
-                if (script == null) {
-                    script = arg;
-                } else {
-                    script += " " + arg;
-                }
-            }
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-
     }
 
     // helped with deepseek
@@ -199,10 +169,10 @@ public class BaseMacro {
             String value = token.substring(equalsIndex + 1);
 
             value = removeQuotes(value);
-            write(key, value);
+            writeArgument(key, value);
         } else {
             String value = removeQuotes(token);
-            write(ParameterPrefix + (parameters != null ? parameters.size() + 1 : 1), value);
+            writeArgument(ParameterPrefix + (arguments != null ? arguments.size() + 1 : 1), value);
         }
     }
 
@@ -212,6 +182,169 @@ public class BaseMacro {
             return str.substring(1, str.length() - 1);
         }
         return str;
+    }
+
+    public boolean parseArray(String[] args) {
+        try {
+            if (args == null) {
+                return false;
+            }
+            for (String arg : args) {
+                processToken(arg);
+                if (script == null) {
+                    script = arg;
+                } else {
+                    script += " " + arg;
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+
+    }
+
+    /*
+        arguments: values defined in macro
+     */
+    // key is case-insensitive
+    public void writeArgument(String key, String value) {
+        if (key == null) {
+            return;
+        }
+        if (arguments == null) {
+            arguments = new LinkedHashMap<>();
+        }
+        arguments.put(key.toLowerCase(), value);
+    }
+
+    // key is case-insensitive
+    public String readArgument(String key) {
+        if (key == null || arguments == null) {
+            return null;
+        }
+        return arguments.get(key.toLowerCase());
+    }
+
+    public int readIntArgument(String key) {
+        try {
+            return Integer.parseInt(readArgument(key));
+        } catch (Exception e) {
+            return AppValues.InvalidInteger;
+        }
+    }
+
+    public short readShortArgument(String key) {
+        try {
+            return Short.parseShort(readArgument(key));
+        } catch (Exception e) {
+            return AppValues.InvalidShort;
+        }
+    }
+
+    public boolean readBooleanArgument(String key) {
+        try {
+            return StringTools.isTrue(readArgument(key));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /*
+        parameters: values referred when run
+     */
+    // key is case-insensitive
+    public void writeParameter(String key, Object value) {
+        if (key == null) {
+            return;
+        }
+        if (parameters == null) {
+            parameters = new LinkedHashMap<>();
+        }
+        if (value != null) {
+            parameters.put(key.toLowerCase(), value);
+        } else {
+            parameters.remove(key);
+        }
+    }
+
+    // key is case-insensitive
+    public Object readParameter(String key) {
+        if (key == null || parameters == null) {
+            return null;
+        }
+        return parameters.get(key.toLowerCase());
+    }
+
+    public String pickFunction() {
+        try {
+            String func = readArgument(ParameterPrefix + "1");
+            writeParameter("function", func);
+            return func;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String pickOperation() {
+        try {
+            String op = defaultOperation();
+            String v = readArgument(ParameterPrefix + "2");
+            if (v != null) {
+                op = v;
+            }
+            writeParameter("operation", op);
+            return op;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public File pickInputFile() {
+        try {
+            File file = defaultInputFile();
+            String v = readArgument("inputFile");
+            if (v != null) {
+                File fv = new File(v);
+                if (fv.exists()) {
+                    file = fv;
+                }
+            }
+            writeParameter("inputFile", file);
+            return file;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public File pickOutputFile() {
+        try {
+            File file = defaultOutputFile();
+            String v = readArgument("outputFile");
+            if (v != null) {
+                file = new File(v);
+            }
+            writeParameter("outputFile", file);
+            return file;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean pickOpenResult() {
+        try {
+            boolean bv = defaultOpenResult;
+            String v = readArgument("openResult");
+            if (v != null) {
+                bv = StringTools.isTrue(v);
+            }
+            writeParameter("openResult", bv);
+            return bv;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String defaultOperation() {
@@ -226,140 +359,107 @@ public class BaseMacro {
         return null;
     }
 
-    public void write(String key, String value) {
-        if (key == null) {
-            return;
-        }
-        if (parameters == null) {
-            parameters = new LinkedHashMap<>();
-        }
-        parameters.put(key.toLowerCase(), value);
-    }
-
-    public String read(String key) {
-        if (key == null || parameters == null) {
-            return null;
-        }
-        return parameters.get(key.toLowerCase());
-    }
-
-    public int readInt(String key) {
+    public String getFunction() {
         try {
-            return Integer.parseInt(read(key));
-        } catch (Exception e) {
-            return AppValues.InvalidInteger;
-        }
-    }
-
-    public short readShort(String key) {
-        try {
-            return Short.parseShort(read(key));
-        } catch (Exception e) {
-            return AppValues.InvalidShort;
-        }
-    }
-
-    public boolean readBoolean(String key) {
-        try {
-            return StringTools.isTrue(read(key));
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public String readFunction() {
-        try {
-            return read(ParameterPrefix + "1");
+            return (String) readParameter("function");
         } catch (Exception e) {
             return null;
         }
     }
 
-    public String readOperation() {
+    public String getOperation() {
         try {
-            return read(ParameterPrefix + "2");
+            return (String) readParameter("operation");
         } catch (Exception e) {
             return null;
         }
     }
 
-    public File readInputFile() {
+    public File getInputFile() {
         try {
-            inputFile = new File(read("inputFile"));
-            return inputFile;
+            return (File) readParameter("inputFile");
         } catch (Exception e) {
             return null;
         }
     }
 
-    public File readOutputFile() {
+    public File getOutputFile() {
         try {
-            outputFile = new File(read("outputFile"));
-            return outputFile;
+            return (File) readParameter("outputFile");
         } catch (Exception e) {
             return null;
         }
     }
 
-    public boolean readOpenResult() {
+    public boolean isOpenResult() {
         try {
-            String v = read("openResult");
-            if (v != null) {
-                openResult = StringTools.isTrue(v);
-            }
-            return openResult;
+            return (boolean) readParameter("openResult");
         } catch (Exception e) {
-            return false;
         }
-    }
-
-    public String commandIO() {
-        String s = "";
-        if (inputFile != null) {
-            s += " inputFile=\"" + inputFile.getAbsolutePath() + "\"";
-        }
-        if (outputFile != null) {
-            s += " outputFile=\"" + outputFile.getAbsolutePath() + "\"";
-        }
-        if (openResult) {
-            s += " openResult=true";
-        }
-        return s;
+        return defaultOpenResult;
     }
 
     /*
         run
      */
-    public boolean readParameters() {
+    public boolean checkParameters() {
         try {
-            function = readFunction();
+            parameters = null;
+            String function = pickFunction();
             if (function == null) {
                 error = message("Invalid" + ": " + message("Function"));
                 return false;
             }
-            operation = readOperation();
-            if (operation == null) {
-                operation = defaultOperation();
-            }
+            String operation = pickOperation();
             if (operation == null) {
                 error = message("Invalid" + ": " + message("Operation"));
                 return false;
             }
-            command = "function=" + function + " operation=" + operation;
-            inputFile = readInputFile();
-            if (inputFile == null) {
-                inputFile = defaultInputFile();
+            pickInputFile();
+            pickOutputFile();
+
+            if (!checkMoreParameters()) {
+                return false;
             }
-            outputFile = readOutputFile();
-            if (outputFile == null) {
-                outputFile = defaultOutputFile();
+
+            pickOpenResult();
+
+            String command = "";
+            for (String key : parameters.keySet()) {
+                if ("inputFile".equalsIgnoreCase(key) || "outputFile".equalsIgnoreCase(key)) {
+                    continue;
+                }
+                Object v = readParameter(key);
+                if (v == null) {
+                    continue;
+                }
+                String s = v.toString();
+                if (s.contains(" ")) {
+                    s = "\"" + s + "\"";
+                }
+                if (!command.isBlank()) {
+                    command += " ";
+                }
+                command += key + "=" + s;
             }
-            openResult = readOpenResult();
+            File inputFile = getInputFile();
+            if (inputFile != null) {
+                command += " inputFile=\"" + inputFile.getAbsolutePath() + "\"";
+            }
+            File outputFile = getOutputFile();
+            if (outputFile != null) {
+                command += " outputFile=\"" + outputFile.getAbsolutePath() + "\"";
+            }
+            displayInfo(message("Parameters") + ": " + command);
             return true;
         } catch (Exception e) {
             displayError(e.toString());
             return false;
         }
+    }
+
+    public boolean checkMoreParameters() {
+        return true;
     }
 
     public boolean run() {
@@ -368,7 +468,7 @@ public class BaseMacro {
 
     public void displayResult() {
         displayEnd();
-        if (openResult) {
+        if (isOpenResult()) {
             openResult();
         }
     }
@@ -380,6 +480,7 @@ public class BaseMacro {
             } else {
                 displayInfo(message("Failed"));
             }
+            File outputFile = getOutputFile();
             if (outputFile != null && outputFile.exists()) {
                 displayInfo(message("FileGenerated") + ": " + outputFile);
             }
@@ -433,11 +534,20 @@ public class BaseMacro {
     /*
         get/set
      */
-    public LinkedHashMap<String, String> getParameters() {
+    public LinkedHashMap<String, String> getArguments() {
+        return arguments;
+    }
+
+    public BaseMacro setArguments(LinkedHashMap<String, String> arguments) {
+        this.arguments = arguments;
+        return this;
+    }
+
+    public LinkedHashMap<String, Object> getParameters() {
         return parameters;
     }
 
-    public BaseMacro setParameters(LinkedHashMap<String, String> parameters) {
+    public BaseMacro setParameters(LinkedHashMap<String, Object> parameters) {
         this.parameters = parameters;
         return this;
     }
@@ -448,6 +558,15 @@ public class BaseMacro {
 
     public BaseMacro setScript(String script) {
         this.script = script;
+        return this;
+    }
+
+    public boolean isDefaultOpenResult() {
+        return defaultOpenResult;
+    }
+
+    public BaseMacro setDefaultOpenResult(boolean defaultOpenResult) {
+        this.defaultOpenResult = defaultOpenResult;
         return this;
     }
 
@@ -469,15 +588,6 @@ public class BaseMacro {
         return this;
     }
 
-    public String getCommand() {
-        return command;
-    }
-
-    public BaseMacro setCommand(String command) {
-        this.command = command;
-        return this;
-    }
-
     public BaseTaskController getController() {
         return controller;
     }
@@ -496,39 +606,12 @@ public class BaseMacro {
         return this;
     }
 
-    public boolean isOpenResult() {
-        return openResult;
-    }
-
-    public BaseMacro setOpenResult(boolean openResult) {
-        this.openResult = openResult;
-        return this;
-    }
-
     public FxTask<Void> getTask() {
         return task;
     }
 
     public BaseMacro setTask(FxTask<Void> task) {
         this.task = task;
-        return this;
-    }
-
-    public File getInputFile() {
-        return inputFile;
-    }
-
-    public BaseMacro setInputFile(File inputFile) {
-        this.inputFile = inputFile;
-        return this;
-    }
-
-    public File getOutputFile() {
-        return outputFile;
-    }
-
-    public BaseMacro setOutputFile(File outputFile) {
-        this.outputFile = outputFile;
         return this;
     }
 

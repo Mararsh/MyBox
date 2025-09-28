@@ -54,9 +54,10 @@ public class ControlDataMacro extends BaseDataValuesController {
                 popError(message("InvalidParameters") + ": Script");
                 return false;
             }
+            macro.setController(this);
             showLogs("\n\nMacro: " + macro.getScript()
-                    + "\nParsed: " + macro.getParameters());
-            if (!macro.readParameters()) {
+                    + "\nParsed: " + macro.getArguments());
+            if (!macro.checkParameters()) {
                 showLogs(macro.getError());
                 return false;
             }
@@ -71,7 +72,7 @@ public class ControlDataMacro extends BaseDataValuesController {
     public boolean doTask(FxTask currentTask) {
         try {
             TableStringValues.add(baseName + "Histories", macro.getScript());
-            macro.setController(this).setTask(currentTask).run();
+            macro.setTask(currentTask).run();
             error = macro.getError();
             return macro.isOk();
         } catch (Exception e) {

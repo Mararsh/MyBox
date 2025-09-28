@@ -45,30 +45,135 @@ public class ImageMacro extends BaseMacro {
         return FileTmpTools.tmpFile("macro", "jpg");
     }
 
+    /*
+        parameters
+     */
+    @Override
+    public boolean checkMoreParameters() {
+        try {
+            File inputFile = getInputFile();
+            if (inputFile == null || !inputFile.exists()) {
+                error = message("Invalid" + ": inputFile");
+                return false;
+            }
+            String operation = getOperation();
+            switch (operation.toLowerCase()) {
+                case "edit":
+                    ok = checkEdit();
+                    break;
+                case "replace":
+                    ok = checkReplace();
+                    break;
+                case "sharp":
+                    ok = checkSharp();
+                    break;
+            }
+            sourceImage = ImageIO.read(inputFile);
+            return true;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
+    }
+
+    public boolean checkEdit() {
+        try {
+            File inputFile = getInputFile();
+            writeParameter("outputFile", inputFile);
+            return true;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
+    }
+
+    public boolean checkReplace() {
+        try {
+            File inputFile = getInputFile();
+            writeParameter("outputFile", inputFile);
+            return true;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
+    }
+
+    public boolean checkSharp() {
+        try {
+            String a = readArgument("algorithm");
+            short intensity = 2;
+            if (a == null || "mask".equalsIgnoreCase(a)) {
+                String v = readArgument("intensity");
+                if (v != null) {
+                    try {
+                        intensity = Short.parseShort(v);
+                    } catch (Exception e) {
+                        error = message("Invalid" + ": intensity");
+                        return false;
+                    }
+                }
+                a = "mask";
+                writeParameter("intensity", intensity);
+            }
+            if ("eight".equalsIgnoreCase(a)) {
+                a = "eight";
+            } else if ("four".equalsIgnoreCase(a)) {
+                a = "four";
+            } else {
+                error = message("Invalid" + ": algorithm ");
+                return false;
+            }
+            writeParameter("algorithm", a);
+
+            String edge = readArgument("edge");
+            if (edge == null || "copy".equalsIgnoreCase(edge)) {
+                edge = "copy";
+            } else if ("zero".equalsIgnoreCase(edge)) {
+                edge = "zero";
+            } else {
+                error = message("Invalid" + ": edge");
+                return false;
+            }
+            writeParameter("edge", edge);
+
+            String color = readArgument("color");
+            if (color == null || "keep".equalsIgnoreCase(edge)) {
+                color = "keep";
+            } else if ("grey".equalsIgnoreCase(color) || "gray".equalsIgnoreCase(color)) {
+                color = "grey";
+            } else if ("bw".equalsIgnoreCase(color) || "blackwhite".equalsIgnoreCase(color)) {
+                color = "blackwhite";
+            } else {
+                error = message("Invalid" + ": color");
+                return false;
+            }
+            writeParameter("color", color);
+
+            return true;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
+    }
+
+    /*
+        run
+     */
     @Override
     public boolean run() {
         try {
             ok = false;
             resultImage = null;
-            if (inputFile != null && inputFile.exists()) {
-                sourceImage = ImageIO.read(inputFile);
-            }
-            if (sourceImage == null) {
-                inputFile = defaultInputFile();
-                sourceImage = ImageIO.read(inputFile);
-            }
+            String operation = getOperation();
             switch (operation.toLowerCase()) {
                 case "edit":
-                    outputFile = inputFile;
-                    command += commandIO();
-                    displayInfo(message("Parameters") + ": " + command);
                     ok = true;
                     break;
                 case "replace":
-                    ok = sharp();
+                    ok = runReplace();
                     break;
                 case "sharp":
-                    ok = sharp();
+                    ok = runSharp();
                     break;
             }
         } catch (Exception e) {
@@ -77,48 +182,65 @@ public class ImageMacro extends BaseMacro {
         return ok;
     }
 
-    public boolean sharp() {
+    public boolean runReplace() {
         try {
-            String a = read("algorithm");
-            command += " algorithm=\"";
+            String a = readArgument("algorithm");
+
+//            List<java.awt.Color> colors = new ArrayList();
+//            colors.add(originalColor);
+//            ImageScope scope = new ImageScope()
+//                    .setShapeType(ImageScope.ShapeType.Whole)
+//                    .setColors(colors)
+//                    .setColorExcluded(excludeCheck.isSelected());
+//
+//            PixelsOperation pixelsOperation = PixelsOperationFactory.create(null, scope,
+//                    PixelsOperation.OperationType.ReplaceColor,
+//                    PixelsOperation.ColorActionType.Set)
+//                    .setColorPara1(originalColor)
+//                    .setColorPara2(newColorSetController.awtColor())
+//                    .setSkipTransparent(originalColor.getRGB() != 0 && !handleTransparentCheck.isSelected())
+//                    .setBoolPara1(hueCheck.isSelected())
+//                    .setBoolPara2(saturationCheck.isSelected())
+//                    .setBoolPara3(brightnessCheck.isSelected());
+            return true;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return false;
+        }
+    }
+
+    public boolean runSharp() {
+        try {
+            String a = readArgument("algorithm");
             ConvolutionKernel kernel;
             if ("eight".equalsIgnoreCase(a)) {
                 kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                command += "eight\"";
             } else if ("four".equalsIgnoreCase(a)) {
                 kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                command += "four\"";
             } else {
-                short intensity = readShort("intensity");
+                short intensity = readShortArgument("intensity");
                 if (intensity == AppValues.InvalidShort) {
                     intensity = 2;
                 }
                 kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
-                command += "mask\" intensity=" + intensity;
             }
-            if ("zero".equalsIgnoreCase(read("edge"))) {
+            if ("zero".equalsIgnoreCase(readArgument("edge"))) {
                 kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
-                command += " edge=zero";
             } else {
                 kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
-                command += " edge=copy";
             }
-            String color = read("color");
+            String color = readArgument("color");
             if ("grey".equalsIgnoreCase(color) || "gray".equalsIgnoreCase(color)) {
                 kernel.setColor(ConvolutionKernel.Color.Grey);
-                command += " color=grey";
             } else if ("bw".equalsIgnoreCase(color) || "blackwhite".equalsIgnoreCase(color)) {
                 kernel.setColor(ConvolutionKernel.Color.BlackWhite);
-                command += " color=blackwhite";
             } else {
                 kernel.setColor(ConvolutionKernel.Color.Keep);
-                command += " color=keep";
             }
-            command += commandIO();
-            displayInfo(message("Parameters") + ": " + command);
             ImageConvolution convolution = ImageConvolution.create();
             convolution.setImage(sourceImage).setKernel(kernel).setTask(task);
             resultImage = convolution.start();
+            File outputFile = getOutputFile();
             if (outputFile != null) {
                 ImageFileWriters.writeImageFile(task, resultImage, outputFile);
             }
@@ -132,6 +254,7 @@ public class ImageMacro extends BaseMacro {
     @Override
     public void openResult() {
         try {
+            File outputFile = getOutputFile();
             if (outputFile != null && outputFile.exists()) {
                 ImageEditorController.openFile(outputFile);
             } else if (resultImage != null) {
@@ -143,4 +266,5 @@ public class ImageMacro extends BaseMacro {
             displayError(e.toString());
         }
     }
+
 }
