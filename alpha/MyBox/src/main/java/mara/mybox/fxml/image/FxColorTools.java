@@ -166,6 +166,10 @@ public class FxColorTools {
         return newColor;
     }
 
+    public static java.awt.Color cssToAwt(String css) {
+        return toAwtColor(Color.web(css));
+    }
+
     public static String randomRGB() {
         Random random = new Random();
         return randomRGB(random);

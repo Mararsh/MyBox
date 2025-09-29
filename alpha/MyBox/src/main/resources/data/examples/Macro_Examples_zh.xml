@@ -25,6 +25,36 @@
             <TreeNode>
                 <NodeAttributes>
                     <title>
+                    <![CDATA[换色]]>
+                    </title>
+                    <script>
+                    <![CDATA[image replace inputFile='D:\MyBox测试\图片\v1.png']]>
+                    </script>
+                </NodeAttributes>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                       <![CDATA[HSB欧几里得]]>
+                        </title>
+                        <script>
+                        <![CDATA[image replace color=0xfa7094 newColor=0x7777FF algorithm=HSBEuclidean  inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_replace_HSBEuclidean.png']]>
+                        </script>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                       <![CDATA[CMC]]>
+                        </title>
+                        <script>
+                        <![CDATA[image replace color=0xfa7094 newColor=0x3377CC  algorithm=CMC  threshold=1  inputFile='D:\MyBox测试\图片\v1.png' outputFile='D:\临时\2\v1_replace_CMC.png']]>
+                        </script>
+                    </NodeAttributes>
+                </TreeNode>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
                     <![CDATA[锐化]]>
                     </title>
                     <script>

@@ -17,7 +17,7 @@ public class BaseMacro {
 
     public static final String ParameterPrefix = "MacroPara_";
 
-    protected String script, error, logs;
+    protected String script;
     protected LinkedHashMap<String, String> arguments;  // values defined in macro
     protected LinkedHashMap<String, Object> parameters;  // values referred when run
     protected BaseTaskController controller;
@@ -34,7 +34,6 @@ public class BaseMacro {
     public BaseMacro(boolean openResult) {
         init();
         this.defaultOpenResult = openResult;
-        MyBoxLog.console(defaultOpenResult);
     }
 
     public final void init() {
@@ -45,8 +44,6 @@ public class BaseMacro {
 
     public void reset() {
         parameters = null;
-        error = null;
-        logs = null;
         controller = null;
         task = null;
         ok = false;
@@ -62,8 +59,6 @@ public class BaseMacro {
         macro.setParameters(parameters);
         macro.setController(controller);
         macro.setTask(task);
-        macro.setError(error);
-        macro.setLogs(logs);
         macro.setOk(ok);
         macro.setDefaultOpenResult(defaultOpenResult);
     }
@@ -77,8 +72,6 @@ public class BaseMacro {
         parameters = macro.getParameters();
         controller = macro.getController();
         task = macro.getTask();
-        error = macro.getError();
-        logs = macro.getLogs();
         ok = macro.isOk();
         defaultOpenResult = macro.isDefaultOpenResult();
     }
@@ -407,12 +400,12 @@ public class BaseMacro {
             parameters = null;
             String function = pickFunction();
             if (function == null) {
-                error = message("Invalid" + ": " + message("Function"));
+                displayError(message("Invalid" + ": function"));
                 return false;
             }
             String operation = pickOperation();
             if (operation == null) {
-                error = message("Invalid" + ": " + message("Operation"));
+                displayError(message("Invalid" + ": operation"));
                 return false;
             }
             pickInputFile();
@@ -567,24 +560,6 @@ public class BaseMacro {
 
     public BaseMacro setDefaultOpenResult(boolean defaultOpenResult) {
         this.defaultOpenResult = defaultOpenResult;
-        return this;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public BaseMacro setError(String error) {
-        this.error = error;
-        return this;
-    }
-
-    public String getLogs() {
-        return logs;
-    }
-
-    public BaseMacro setLogs(String logs) {
-        this.logs = logs;
         return this;
     }
 

@@ -57,11 +57,7 @@ public class ControlDataMacro extends BaseDataValuesController {
             macro.setController(this);
             showLogs("\n\nMacro: " + macro.getScript()
                     + "\nParsed: " + macro.getArguments());
-            if (!macro.checkParameters()) {
-                showLogs(macro.getError());
-                return false;
-            }
-            return true;
+            return macro.checkParameters();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -73,7 +69,6 @@ public class ControlDataMacro extends BaseDataValuesController {
         try {
             TableStringValues.add(baseName + "Histories", macro.getScript());
             macro.setTask(currentTask).run();
-            error = macro.getError();
             return macro.isOk();
         } catch (Exception e) {
             error = e.toString();
