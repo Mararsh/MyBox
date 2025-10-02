@@ -144,6 +144,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
                         UserConfig.setBoolean(interfaceName + "CloseAfterOperation", closeAfterCheck.isSelected());
                     }
                 });
@@ -154,6 +157,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
                         UserConfig.setBoolean(interfaceName + "Miao", miaoCheck.isSelected());
                     }
                 });
@@ -164,6 +170,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
                         UserConfig.setBoolean(interfaceName + "OpenTargetPath", openCheck.isSelected());
                     }
                 });

@@ -319,7 +319,8 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     }
 
     @FXML
-    public void selectParent() {
+    @Override
+    public void selectAction() {
         DataSelectParentController.open(this, currentNode, parentNode);
     }
 
@@ -364,7 +365,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
         if (parentNode == null || parentNode.getNodeid() < 0) {
             popError(message("Invalid") + ": " + message("ParentNode"));
             tabPane.getSelectionModel().select(nodeTab);
-            selectParent();
+            selectAction();
             return;
         }
         DataNode attributes = pickAttributes();
@@ -424,7 +425,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             @Override
             protected void whenSucceeded() {
                 if (dataRunning()) {
-                    dataController.nodeSaved(parentNode, savedNode);
+                    dataController.refreshNode(savedNode, false);
                 } else if (openCheck.isSelected()) {
                     DataTreeController c = DataTreeController.open(nodeTable, savedNode);
                     c.popSaved();

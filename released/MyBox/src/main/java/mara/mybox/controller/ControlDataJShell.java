@@ -13,7 +13,6 @@ import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -32,7 +31,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataJShell extends BaseDataValuesController {
 
-    protected String outputs = "";
+    protected String codes, outputs = "";
     protected JShell jShell;
     protected FxTask resetTask;
 
@@ -114,42 +113,19 @@ public class ControlDataJShell extends BaseDataValuesController {
         start(resetTask, true);
     }
 
-    @FXML
     @Override
-    public void startAction() {
-        if (startButton.getUserData() != null) {
-            cancelAction();
-            return;
-        }
-        String codes = codesInput.getText();
+    public boolean checkOptions() {
+        codes = codesInput.getText();
         if (codes == null || codes.isBlank()) {
             popError(message("NoInput"));
-            return;
+            return false;
         }
-        StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
-        startButton.applyCss();
-        startButton.setUserData("started");
         showRightPane();
-        task = new FxSingletonTask<Void>(this) {
-            @Override
-            protected boolean handle() {
-                return handleCodes(codes);
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                cancelAction();
-            }
-        };
-        start(task);
+        return true;
     }
 
-    protected boolean handleCodes(String codes) {
+    @Override
+    public boolean doTask(FxTask currentTask) {
         TableStringValues.add(baseName + "Histories", codes.trim());
         return runCodes(codes);
     }

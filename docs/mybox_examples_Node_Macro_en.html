@@ -1,0 +1,123 @@
+<HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <TITLE>Macro Commands</TITLE>
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>Macro Commands</H2>
+ <script>
+    function changeVisible(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function setVisible(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="setVisible('Children', this.checked);">Unfold</INPUT>
+    <INPUT type="checkbox" checked onclick="setVisible('HierarchyNumber', this.checked);">Hierarchy number</INPUT>
+    <INPUT type="checkbox" checked onclick="setVisible('NodeTag', this.checked);">Tags</INPUT>
+    <INPUT type="checkbox" checked onclick="setVisible('NodeValues', this.checked);">Values</INPUT>
+    <INPUT type="checkbox" checked onclick="setVisible('NodeAttributes', this.checked);">Attributes</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:changeVisible('children1')">Macro Commands</a>
+    </DIV>
+    <DIV class="Children" id='children1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1&nbsp;&nbsp;</SPAN><a href="javascript:changeVisible('children2')">Examples</a>
+        </DIV>
+    <DIV class="Children" id='children2'>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1&nbsp;&nbsp;</SPAN><a href="javascript:changeVisible('children3')">Image</a>
+            </DIV>
+    <DIV class="Children" id='children3'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.1&nbsp;&nbsp;</SPAN>edit
+                </DIV>
+                <DIV class="NodeValues"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <PRE><CODE>image edit inputFile='D:\MyBox-test\images\v1.png'</CODE></PRE>
+                </DIV></DIV></DIV>
+    <DIV class="Children" id='children4'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.2&nbsp;&nbsp;</SPAN><a href="javascript:changeVisible('children5')">Replace color</a>
+                </DIV>
+                <DIV class="NodeValues"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <PRE><CODE>image replace inputFile='D:\MyBox-test\images\v1.png'</CODE></PRE>
+                </DIV></DIV></DIV>
+    <DIV class="Children" id='children5'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.2.1&nbsp;&nbsp;</SPAN>HSB Euclidean
+                    </DIV>
+                    <DIV class="NodeValues"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    <PRE><CODE>image replace color=0xfa7094 newColor=0x7777FF algorithm=HSBEuclidean  inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_replace_HSBEuclidean.png'</CODE></PRE>
+                    </DIV></DIV></DIV>
+    <DIV class="Children" id='children6'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.2.2&nbsp;&nbsp;</SPAN>CMC
+                    </DIV>
+                    <DIV class="NodeValues"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    <PRE><CODE>image replace color=0xfa7094 newColor=0x3377CC  algorithm=CMC  threshold=1  inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_replace_CMC.png'</CODE></PRE>
+                    </DIV></DIV></DIV>
+    <DIV class="Children" id='children7'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.3&nbsp;&nbsp;</SPAN><a href="javascript:changeVisible('children8')">sharp</a>
+                </DIV>
+                <DIV class="NodeValues"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <PRE><CODE>image sharp inputFile='D:\MyBox-test\images\v1.png'</CODE></PRE>
+                </DIV></DIV></DIV>
+    <DIV class="Children" id='children8'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.3.1&nbsp;&nbsp;</SPAN>Four-neighbor Laplace-keep-copy
+                    </DIV>
+                    <DIV class="NodeValues"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    <PRE><CODE>image sharp algorithm=four color=keep edge=copy inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_sharp_4neighborg_keep_copy.png'</CODE></PRE>
+                    </DIV></DIV></DIV>
+    <DIV class="Children" id='children9'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.3.2&nbsp;&nbsp;</SPAN>Four-neighbor Laplace-grey-copy
+                    </DIV>
+                    <DIV class="NodeValues"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    <PRE><CODE>image sharp algorithm=four color=grey edge=copy inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_sharp_4neighborg_grey_copy.png'</CODE></PRE>
+                    </DIV></DIV></DIV>
+    <DIV class="Children" id='children10'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="HierarchyNumber">1.1.3.3&nbsp;&nbsp;</SPAN>Four-neighbor Laplace-blackwhite-zero
+                    </DIV>
+                    <DIV class="NodeValues"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    <PRE><CODE>image sharp algorithm=four color=blackwhite edge=zero inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_sharp_4neighborg_blackwhite_zero.png'</CODE></PRE>
+                    </DIV></DIV></DIV>
+    <DIV class="Children" id='children11'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

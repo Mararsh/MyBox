@@ -192,6 +192,18 @@ public class HelpTools {
         }
     }
 
+    public static File aboutMacro() {
+        try {
+            String lang = Languages.embedFileLang();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_macro_" + lang + ".html",
+                    "doc", "mybox_about_macro_" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static File aboutData2D() {
         try {
             String lang = Languages.embedFileLang();
@@ -1437,6 +1449,45 @@ public class HelpTools {
                 });
                 items.add(hoverMenu);
             }
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    /*############# */
+    public static List<MenuItem> macroHelps() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("XmlTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.xmlEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("XmlTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.xmlZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("DomSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.domSpecification(), true);
+                }
+            });
+            items.add(menuItem);
 
             return items;
         } catch (Exception e) {

@@ -1,11 +1,10 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
-import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -23,7 +22,7 @@ public class ControlImageEmboss extends BaseController {
             leftTopRadio, rightBottomRadio, leftBottomRadio, rightTopRadio,
             radius3Radio, radius5Radio;
     @FXML
-    protected CheckBox greyCheck;
+    protected RadioButton zeroEdgeRadio, keepEdgeRadio, keepColorRadio, greyRadio, bwRadio;
 
     @Override
     public void initControls() {
@@ -38,7 +37,6 @@ public class ControlImageEmboss extends BaseController {
             } else {
                 radius5Radio.setSelected(true);
             }
-            greyCheck.setSelected(UserConfig.getBoolean(baseName + "Grey", true));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -72,10 +70,21 @@ public class ControlImageEmboss extends BaseController {
             } else {
                 direction = BufferedImageTools.Direction.Top;
             }
-            UserConfig.setBoolean(baseName + "Grey", greyCheck.isSelected());
-
+            int color;
+            if (greyRadio.isSelected()) {
+                color = ConvolutionKernel.Color.Grey;
+            } else if (bwRadio.isSelected()) {
+                color = ConvolutionKernel.Color.BlackWhite;
+            } else {
+                color = ConvolutionKernel.Color.Keep;
+            }
             ConvolutionKernel kernel = ConvolutionKernel.makeEmbossKernel(
-                    direction, raduis, greyCheck.isSelected());
+                    direction, raduis, color);
+            if (zeroEdgeRadio.isSelected()) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
+            }
             return kernel;
         } catch (Exception e) {
             MyBoxLog.error(e);

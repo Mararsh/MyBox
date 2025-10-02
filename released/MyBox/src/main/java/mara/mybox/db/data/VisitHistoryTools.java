@@ -273,6 +273,8 @@ public class VisitHistoryTools {
                                 DataTreeController.rowExpression(controller, replaceScene);
                             } else if (message("DataColumn").equals(fname)) {
                                 DataTreeController.dataColumn(controller, replaceScene);
+                            } else if (message("MacroCommands").equals(fname)) {
+                                DataTreeController.macroCommands(controller, replaceScene);
                             }
                         }
                     });

@@ -93,6 +93,9 @@ public abstract class BaseImageEditBatchController extends BaseBatchImageControl
                 return Languages.message("Skip");
             }
             BufferedImage sourceImage = ImageFileReaders.readImage(currentTask, srcFile);
+            if (sourceImage == null) {
+                return Languages.message("Failed");
+            }
             BufferedImage targetImage = handleImage(currentTask, sourceImage);
             if (targetImage == null) {
                 if (errorString != null) {

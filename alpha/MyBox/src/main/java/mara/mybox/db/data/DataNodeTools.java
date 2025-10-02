@@ -113,6 +113,8 @@ public class DataNodeTools {
         String title = node.getHierarchyNumber();
         if (title != null && !title.isBlank()) {
             title = "<SPAN class=\"HierarchyNumber\">" + title + "&nbsp;&nbsp;</SPAN>";
+        } else {
+            title = "";
         }
         if (childrenid != null) {
             title += "<a href=\"javascript:changeVisible('" + childrenid + "')\">" + node.getTitle() + "</a>";

@@ -29,6 +29,7 @@ import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.dev.MyBoxLog;
@@ -79,11 +80,36 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
 
     public void setParameters(BaseDataTreeController parent, DataNode node) {
         try {
-            super.setParameters(parent);
+            if (parent == null) {
+                close();
+                return;
+            }
+            dataController = parent;
+            parentController = parent;
 
-            this.nodeTagsTable = parent.nodeTagsTable;
-            sourceNode = node;
-            sourceNode = node != null ? node : dataController.rootNode;
+            setData(dataController.nodeTable, node != null ? node : dataController.rootNode);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setData(BaseNodeTable table, DataNode node) {
+        try {
+            if (table == null) {
+                close();
+                return;
+            }
+            nodeTable = table;
+            nodeTagsTable = new TableDataNodeTag(nodeTable);
+            dataName = nodeTable.getTableName();
+            baseName = baseName + "_" + dataName;
+
+            sourceNode = node != null ? node : nodeTable.getRoot();
+            if (sourceNode == null) {
+                close();
+                return;
+            }
             sourceid = sourceNode.getNodeid();
 
             baseTitle = nodeTable.getTreeName() + " - "
@@ -107,6 +133,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             dataFormatCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Format", dataFormatCheck.isSelected());
                 }
             });
@@ -115,6 +144,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "ID", idCheck.isSelected());
                 }
             });
@@ -123,6 +155,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             hierarchyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Hierarcy", hierarchyCheck.isSelected());
                 }
             });
@@ -131,6 +166,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Time", timeCheck.isSelected());
                 }
             });
@@ -139,6 +177,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             tagsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Tags", tagsCheck.isSelected());
                 }
             });
@@ -147,6 +188,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             orderCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Order", orderCheck.isSelected());
                 }
             });
@@ -155,6 +199,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             parentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Parent", parentCheck.isSelected());
                 }
             });
@@ -163,6 +210,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             dataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Data", dataCheck.isSelected());
                 }
             });
@@ -171,6 +221,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             treeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "TreeHtml", treeHtmlCheck.isSelected());
                 }
             });
@@ -179,6 +232,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             treeXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "TreeXml", treeXmlCheck.isSelected());
                 }
             });
@@ -187,6 +243,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             treeJsonCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "TreeJson", treeJsonCheck.isSelected());
                 }
             });
@@ -195,6 +254,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             listHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "ListHtml", listHtmlCheck.isSelected());
                 }
             });
@@ -203,6 +265,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             listXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "ListXML", listXmlCheck.isSelected());
                 }
             });
@@ -211,6 +276,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             listCsvCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "ListCSV", listCsvCheck.isSelected());
                 }
             });
@@ -219,6 +287,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             listJsonCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "ListJson", listJsonCheck.isSelected());
                 }
             });
@@ -227,6 +298,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             framesetCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     UserConfig.setBoolean(baseName + "Frameset", framesetCheck.isSelected());
                 }
             });
@@ -242,6 +316,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             charsetSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
                     UserConfig.setString(baseName + "Charset", charset.name());
                 }
@@ -643,7 +720,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
             if (hierarchyCheck.isSelected()) {
                 node.setHierarchyNumber(hierarchyNumber);
             }
-            String nodeChainName = null;
+            String nodeChainName;
             if (parentChainName != null && !parentChainName.isBlank()) {
                 nodeChainName = parentChainName + DataNode.TitleSeparater + node.getTitle();
             } else {
@@ -985,7 +1062,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
 
     @Override
     public void openTarget() {
-        browseURI(targetPath.toURI());
+        if (targetPath != null) {
+            browseURI(targetPath.toURI());
+        }
     }
 
     @FXML

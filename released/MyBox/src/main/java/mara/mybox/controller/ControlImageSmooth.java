@@ -24,7 +24,8 @@ public class ControlImageSmooth extends BaseController {
     @FXML
     protected ComboBox<String> intensitySelector;
     @FXML
-    protected RadioButton avarageRadio, gaussianRadio, motionRadio;
+    protected RadioButton avarageRadio, gaussianRadio, motionRadio,
+            zeroEdgeRadio, keepEdgeRadio, keepColorRadio, greyRadio, bwRadio;
 
     @Override
     public void initControls() {
@@ -86,17 +87,31 @@ public class ControlImageSmooth extends BaseController {
             return null;
         }
         try {
-            if (avarageRadio.isSelected()) {
-                return ConvolutionKernel.makeAverageBlur(intensity);
-            } else if (gaussianRadio.isSelected()) {
-                return ConvolutionKernel.makeGaussBlur(intensity);
+            ConvolutionKernel kernel;
+            if (gaussianRadio.isSelected()) {
+                kernel = ConvolutionKernel.makeGaussBlur(intensity);
             } else if (motionRadio.isSelected()) {
-                return ConvolutionKernel.makeMotionBlur(intensity);
+                kernel = ConvolutionKernel.makeMotionBlur(intensity);
+            } else {
+                kernel = ConvolutionKernel.makeAverageBlur(intensity);
             }
+            if (zeroEdgeRadio.isSelected()) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
+            }
+            if (greyRadio.isSelected()) {
+                kernel.setColor(ConvolutionKernel.Color.Grey);
+            } else if (bwRadio.isSelected()) {
+                kernel.setColor(ConvolutionKernel.Color.BlackWhite);
+            } else {
+                kernel.setColor(ConvolutionKernel.Color.Keep);
+            }
+            return kernel;
         } catch (Exception e) {
             displayError(e.toString());
+            return null;
         }
-        return null;
     }
 
 }

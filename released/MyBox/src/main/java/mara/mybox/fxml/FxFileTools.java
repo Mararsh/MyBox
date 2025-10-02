@@ -64,7 +64,7 @@ public class FxFileTools {
             return null;
         }
         File file = FileTmpTools.getTempFile();
-        try (final InputStream input = NodeTools.class.getResourceAsStream(resourceFile);
+        try (final InputStream input = FxFileTools.class.getResourceAsStream(resourceFile);
                 final OutputStream out = new FileOutputStream(file)) {
             int read;
             byte[] bytes = new byte[1024];

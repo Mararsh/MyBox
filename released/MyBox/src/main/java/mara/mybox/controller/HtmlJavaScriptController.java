@@ -22,6 +22,13 @@ public class HtmlJavaScriptController extends BaseJavaScriptController {
         baseTitle = "JavaScript";
     }
 
+    @Override
+    public void afterTask(boolean ok) {
+        if (error != null) {
+            popError(error);
+        }
+    }
+
     @FXML
     @Override
     protected void showExamplesMenu(Event event) {

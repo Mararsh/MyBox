@@ -10,21 +10,18 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.image.tools.AlphaTools;
-import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.FloatMatrixTools;
 
 /**
  * @Author Mara
  * @CreateDate 2018-11-10 19:35:49
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageConvolution extends PixelsOperation {
 
     protected ConvolutionKernel kernel;
-    protected int matrixWidth, matrixHeight, edge_op, radiusX, radiusY, maxX, maxY;
-    protected boolean keepOpacity, isEmboss, isGray, isInvert;
+    protected int matrixWidth, matrixHeight, edge_op, color_op, radiusX, radiusY, maxX, maxY;
+    protected boolean keepOpacity, isEmboss, isInvert;
     protected float[][] matrix;
     protected int[][] intMatrix;
     protected int intScale;
@@ -63,7 +60,7 @@ public class ImageConvolution extends PixelsOperation {
         maxX = image.getWidth() - 1;
         maxY = image.getHeight() - 1;
         isEmboss = (kernel.getType() == ConvolutionKernel.Convolution_Type.EMBOSS);
-        isGray = (kernel.isGray());
+        color_op = kernel.getColor();
         keepOpacity = (kernel.getType() != ConvolutionKernel.Convolution_Type.EMBOSS
                 && kernel.getType() != ConvolutionKernel.Convolution_Type.EDGE_DETECTION);
         isInvert = kernel.isInvert();
@@ -85,32 +82,25 @@ public class ImageConvolution extends PixelsOperation {
         }
         if (scope == null || scope.isWhole()) {
             return applyConvolution(task, image, kernel);
-
         }
-        return super.operateImage();
+        BufferedImage target = super.operateImage();
+        if (kernel.isGrey()) {
+            target = ImageGray.byteGray(task, target);
+        } else if (kernel.isBW()) {
+            target = ImageBinary.byteBinary(task, target);
+        }
+        return target;
     }
 
     @Override
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
-        int pixel = image.getRGB(x, y);
-        Color newColor = new Color(pixel, true);
-        if (x < radiusX || x + radiusX > maxX
-                || y < radiusY || y + radiusY > maxY) {
-            if (edge_op == ConvolutionKernel.Edge_Op.COPY) {
-                target.setRGB(x, y, pixel);
-                return newColor;
-            }
-        }
-        newColor = applyConvolution(x, y);
+        Color newColor = applyConvolution(x, y);
         if (isEmboss) {
             int v = 128, red, blue, green;
             red = Math.min(Math.max(newColor.getRed() + v, 0), 255);
             green = Math.min(Math.max(newColor.getGreen() + v, 0), 255);
             blue = Math.min(Math.max(newColor.getBlue() + v, 0), 255);
             newColor = new Color(red, green, blue, newColor.getAlpha());
-        }
-        if (isGray) {
-            newColor = ColorConvertTools.color2gray(newColor);
         }
         target.setRGB(x, y, newColor.getRGB());
         return newColor;
@@ -120,6 +110,7 @@ public class ImageConvolution extends PixelsOperation {
         try {
             int red = 0, green = 0, blue = 0, opacity = 0;
             int convolveX, convolveY;
+            matrix:
             for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
                 if (taskInvalid()) {
                     return null;
@@ -130,12 +121,18 @@ public class ImageConvolution extends PixelsOperation {
                     }
                     convolveX = x - radiusX + matrixX;
                     convolveY = y - radiusY + matrixY;
-                    if (convolveX < 0 || convolveX > maxX || convolveY < 0 || convolveY > maxY) {
-                        if (edge_op == ConvolutionKernel.Edge_Op.MOD) {
-                            convolveX = (convolveX + imageWidth) % imageWidth;
-                            convolveY = (convolveY + imageHeight) % imageHeight;
+                    if (convolveX < 0 || convolveX > maxX
+                            || convolveY < 0 || convolveY > maxY) {
+                        if (edge_op == ConvolutionKernel.Edge_Op.COPY) {
+                            Color color = new Color(image.getRGB(x, y), true);
+                            red = color.getRed();
+                            green = color.getGreen();
+                            blue = color.getBlue();
+                            opacity = color.getAlpha();
+                            break matrix;
                         } else {
-                            continue; // Fill_zero
+                            /* fill zero */
+                            continue;
                         }
                     }
                     Color color = new Color(image.getRGB(convolveX, convolveY), true);
@@ -169,15 +166,18 @@ public class ImageConvolution extends PixelsOperation {
 
     }
 
-    public static BufferedImage applyConvolution(FxTask task, BufferedImage source,
+    /*
+        static
+     */
+    public static BufferedImage applyConvolution(FxTask task, BufferedImage inSource,
             ConvolutionKernel convolutionKernel) {
-        BufferedImage clearedSource;
+        BufferedImage source;
         int type = convolutionKernel.getType();
         if (type == ConvolutionKernel.Convolution_Type.EDGE_DETECTION
                 || type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            clearedSource = AlphaTools.removeAlpha(task, source);
+            source = AlphaTools.removeAlpha(task, inSource);
         } else {
-            clearedSource = source;
+            source = inSource;
         }
         if (task != null && !task.isWorking()) {
             return null;
@@ -187,7 +187,7 @@ public class ImageConvolution extends PixelsOperation {
             return null;
         }
         if (k == null) {
-            return clearedSource;
+            return source;
         }
         int w = convolutionKernel.getWidth();
         int h = convolutionKernel.getHeight();
@@ -198,7 +198,7 @@ public class ImageConvolution extends PixelsOperation {
         } else {
             imageOp = new ConvolveOp(kernel, ConvolveOp.EDGE_ZERO_FILL, null);
         }
-        BufferedImage target = applyConvolveOp(clearedSource, imageOp);
+        BufferedImage target = applyConvolveOp(source, imageOp);
         if (task != null && !task.isWorking()) {
             return null;
         }
@@ -207,17 +207,25 @@ public class ImageConvolution extends PixelsOperation {
                     OperationType.RGB, ColorActionType.Increase);
             pixelsOperation.setIntPara1(128).setTask(task);
             target = pixelsOperation.start();
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
         }
         if (convolutionKernel.isInvert()) {
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(target, null,
                     OperationType.RGB, ColorActionType.Invert).setTask(task);
             target = pixelsOperation.start();
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+        }
+        if (convolutionKernel.isGrey()) {
+            target = ImageGray.byteGray(task, target);
+        } else if (convolutionKernel.isBW()) {
+            target = ImageBinary.byteBinary(task, target);
         }
         if (task != null && !task.isWorking()) {
             return null;
-        }
-        if (convolutionKernel.isGray()) {
-            target = ImageGray.byteGray(task, target);
         }
         return target;
     }
@@ -362,12 +370,21 @@ public class ImageConvolution extends PixelsOperation {
         return this;
     }
 
-    public boolean isIsGray() {
-        return isGray;
+    public int getColor() {
+        return color_op;
     }
 
-    public ImageConvolution setIsGray(boolean isGray) {
-        this.isGray = isGray;
+    public ImageConvolution setColor(int color_op) {
+        this.color_op = color_op;
+        return this;
+    }
+
+    public boolean isIsInvert() {
+        return isInvert;
+    }
+
+    public ImageConvolution setIsInvert(boolean isInvert) {
+        this.isInvert = isInvert;
         return this;
     }
 

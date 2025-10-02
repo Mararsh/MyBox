@@ -60,7 +60,7 @@ public class ImageEdgeController extends BasePixelsController {
                     .setSkipTransparent(skipTransparent())
                     .setTask(currentTask);
             operation = kernel.getName();
-            opInfo = message("Grey") + ": " + kernel.isGray();
+            opInfo = message("Color") + ": " + kernel.getColor();
             return convolution.startFx();
         } catch (Exception e) {
             displayError(e.toString());

@@ -55,6 +55,9 @@ public class BaseTableTools {
                 put("NODE_JAVASCRIPT", new TableNodeJavaScript());
                 put("NODE_JAVASCRIPT_NODE_TAG", new TableDataNodeTag(new TableNodeJavaScript()));
                 put("NODE_JAVASCRIPT_TAG", new TableDataTag(new TableNodeJavaScript()));
+                put("NODE_MACRO", new TableNodeMacro());
+                put("NODE_MACRO_NODE_TAG", new TableDataNodeTag(new TableNodeMacro()));
+                put("NODE_MACRO_TAG", new TableDataTag(new TableNodeMacro()));
                 put("NODE_MATH_FUNCTION", new TableNodeMathFunction());
                 put("NODE_MATH_FUNCTION_NODE_TAG", new TableDataNodeTag(new TableNodeMathFunction()));
                 put("NODE_MATH_FUNCTION_TAG", new TableDataTag(new TableNodeMathFunction()));

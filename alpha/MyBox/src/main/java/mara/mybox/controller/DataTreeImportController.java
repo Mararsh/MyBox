@@ -68,12 +68,24 @@ public class DataTreeImportController extends BaseBatchFileController {
             }
             dataController = controller;
 
-            nodeTable = dataController.nodeTable;
-            nodeTagsTable = dataController.nodeTagsTable;
-            tagTable = dataController.tagTable;
-            dataName = dataController.dataName;
+            setData(dataController.nodeTable, node != null ? node : dataController.rootNode, node);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
-            parentNode = node != null ? node : dataController.rootNode;
+    public void setData(BaseNodeTable table, DataNode parent, DataNode node) {
+        try {
+            if (table == null) {
+                close();
+                return;
+            }
+            nodeTable = table;
+            tagTable = new TableDataTag(nodeTable);
+            nodeTagsTable = new TableDataNodeTag(nodeTable);
+            dataName = nodeTable.getTableName();
+
+            parentNode = parent;
             if (parentNode == null) {
                 parentNode = nodeTable.getRoot();
             }
@@ -83,7 +95,7 @@ public class DataTreeImportController extends BaseBatchFileController {
             }
 
             baseName = baseName + "_" + dataName;
-            baseTitle = nodeTable.getTreeName() + " - "
+            baseTitle = dataName + " - "
                     + message("Import") + " : " + parentNode.getTitle();
             chainName = parentNode.shortDescription();
 
@@ -130,17 +142,24 @@ public class DataTreeImportController extends BaseBatchFileController {
     }
 
     public void importExamples(BaseDataTreeController controller, DataNode node) {
-        importExamples(controller, node, null);
+        setParamters(controller, node);
+        File file = nodeTable.exampleFile();
+        isSettingValues = true;
+        updateRadio.setSelected(true);
+        isSettingValues = false;
+        isExample = true;
+        startFile(file);
     }
 
-    public void importExamples(BaseDataTreeController controller, DataNode node, File inFile) {
-        setParamters(controller, node);
+    public void importExamples(BaseNodeTable nodeTable, DataNode node, File inFile) {
+        setData(nodeTable, node, node);
         File file = inFile;
         if (file == null) {
             file = nodeTable.exampleFile();
         }
         isSettingValues = true;
         updateRadio.setSelected(true);
+        miaoCheck.setSelected(false);
         isSettingValues = false;
         isExample = true;
         startFile(file);

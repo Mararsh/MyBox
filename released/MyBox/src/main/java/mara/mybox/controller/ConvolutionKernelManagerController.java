@@ -51,7 +51,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ConvolutionKernelManagerController extends BaseTableViewController<ConvolutionKernel> {
 
-    private int width, height, type, edge_Op;
+    private int width, height, type, edge_Op, color;
     private boolean matrixValid;
     private GridPane matrixPane;
     private TextField[][] matrixInputs;
@@ -68,7 +68,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     @FXML
     protected TableColumn<ConvolutionKernel, Integer> widthColumn, heightColumn;
     @FXML
-    protected ToggleGroup typeGroup, edgesGroup;
+    protected ToggleGroup typeGroup, edgesGroup, colorGroup;
     @FXML
     protected TextField nameInput, desInput;
     @FXML
@@ -78,9 +78,11 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     @FXML
     protected ScrollPane scrollPane;
     @FXML
-    protected CheckBox grayCheck, invertCheck;
+    protected CheckBox invertCheck;
     @FXML
-    protected RadioButton zeroRadio, keepRadio;
+    protected RadioButton blurRadio, sharpRadio, edgeRadio, embossRadio, noneRadio,
+            zeroEdgeRadio, keepEdgeRadio,
+            keepColorRadio, greyRadio, bwRadio;
 
     public ConvolutionKernelManagerController() {
         baseTitle = Languages.message("ConvolutionKernelManager");
@@ -214,6 +216,15 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             });
             checkEdges();
 
+            colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkColor();
+                }
+            });
+            checkColor();
+
             actionBox.setDisable(true);
 
         } catch (Exception e) {
@@ -224,26 +235,19 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     private void checkType() {
         try {
             type = ConvolutionKernel.Convolution_Type.NONE;
-            grayCheck.setDisable(true);
             invertCheck.setDisable(true);
-            RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
-            if (selected == null) {
-                return;
-            }
-            if (Languages.message("Blur").equals(selected.getText())) {
+            if (blurRadio.isSelected()) {
                 type = ConvolutionKernel.Convolution_Type.BLUR;
 
-            } else if (Languages.message("Sharpen").equals(selected.getText())) {
+            } else if (sharpRadio.isSelected()) {
                 type = ConvolutionKernel.Convolution_Type.SHARPNEN;
 
-            } else if (Languages.message("Emboss").equals(selected.getText())) {
+            } else if (embossRadio.isSelected()) {
                 type = ConvolutionKernel.Convolution_Type.EMBOSS;
-                grayCheck.setDisable(false);
                 invertCheck.setDisable(false);
 
-            } else if (Languages.message("EdgeDetection").equals(selected.getText())) {
+            } else if (edgeRadio.isSelected()) {
                 type = ConvolutionKernel.Convolution_Type.EDGE_DETECTION;
-                grayCheck.setDisable(false);
                 invertCheck.setDisable(false);
 
             }
@@ -257,14 +261,28 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             if (isSettingValues) {
                 return;
             }
-            edge_Op = ConvolutionKernel.Edge_Op.COPY;
-            RadioButton selected = (RadioButton) edgesGroup.getSelectedToggle();
-            if (selected == null) {
+            if (zeroEdgeRadio.isSelected()) {
+                edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
+            } else
+                edge_Op = ConvolutionKernel.Edge_Op.COPY;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private void checkColor() {
+        try {
+            if (isSettingValues) {
                 return;
             }
-            if (!Languages.message("KeepValues").equals(selected.getText())) {
-                edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
+            if (greyRadio.isSelected()) {
+                color = ConvolutionKernel.Color.Grey;
+            } else if (bwRadio.isSelected()) {
+                color = ConvolutionKernel.Color.BlackWhite;
+            } else {
+                color = ConvolutionKernel.Color.Keep;
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -432,21 +450,25 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             NodeTools.setRadioSelected(typeGroup, Languages.message("Sharpen"));
         } else if (type == Convolution_Type.EMBOSS) {
             NodeTools.setRadioSelected(typeGroup, Languages.message("Emboss"));
-            grayCheck.setDisable(false);
             invertCheck.setDisable(false);
         } else if (type == Convolution_Type.EDGE_DETECTION) {
             NodeTools.setRadioSelected(typeGroup, Languages.message("EdgeDetection"));
-            grayCheck.setDisable(false);
             invertCheck.setDisable(false);
         } else {
             NodeTools.setRadioSelected(typeGroup, Languages.message("None"));
         }
         if (kernel.getEdge() == ConvolutionKernel.Edge_Op.COPY) {
-            keepRadio.setSelected(true);
+            keepEdgeRadio.setSelected(true);
         } else {
-            zeroRadio.setSelected(true);
+            zeroEdgeRadio.setSelected(true);
         }
-        grayCheck.setSelected(kernel.isGray());
+        if (kernel.getColor() == ConvolutionKernel.Color.Grey) {
+            greyRadio.setSelected(true);
+        } else if (kernel.getColor() == ConvolutionKernel.Color.BlackWhite) {
+            bwRadio.setSelected(true);
+        } else {
+            keepColorRadio.setSelected(true);
+        }
         invertCheck.setSelected(kernel.isInvert());
         nameInput.setDisable(true);
         matrixValues = null;
@@ -626,7 +648,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         kernel.setWidth(width);
         kernel.setHeight(height);
         kernel.setType(type);
-        kernel.setGray(grayCheck.isSelected());
+        kernel.setColor(color);
         kernel.setInvert(invertCheck.isSelected());
         kernel.setEdge(edge_Op);
         kernel.setDescription(description);

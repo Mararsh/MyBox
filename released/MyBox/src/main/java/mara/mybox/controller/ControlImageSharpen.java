@@ -24,7 +24,8 @@ public class ControlImageSharpen extends BaseController {
     @FXML
     protected ComboBox<String> intensitySelector;
     @FXML
-    protected RadioButton unmaskRadio, eightRadio, fourRadio;
+    protected RadioButton unmaskRadio, eightRadio, fourRadio,
+            zeroEdgeRadio, keepEdgeRadio, keepColorRadio, greyRadio, bwRadio;
 
     @Override
     public void initControls() {
@@ -78,17 +79,31 @@ public class ControlImageSharpen extends BaseController {
             return null;
         }
         try {
-            if (unmaskRadio.isSelected()) {
-                return ConvolutionKernel.makeUnsharpMasking(intensity);
-            } else if (eightRadio.isSelected()) {
-                return ConvolutionKernel.MakeSharpenEightNeighborLaplace();
+            ConvolutionKernel kernel;
+            if (eightRadio.isSelected()) {
+                kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
             } else if (fourRadio.isSelected()) {
-                return ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+                kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+            } else {
+                kernel = ConvolutionKernel.makeUnsharpMasking(intensity);
             }
+            if (zeroEdgeRadio.isSelected()) {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.FILL_ZERO);
+            } else {
+                kernel.setEdge(ConvolutionKernel.Edge_Op.COPY);
+            }
+            if (greyRadio.isSelected()) {
+                kernel.setColor(ConvolutionKernel.Color.Grey);
+            } else if (bwRadio.isSelected()) {
+                kernel.setColor(ConvolutionKernel.Color.BlackWhite);
+            } else {
+                kernel.setColor(ConvolutionKernel.Color.Keep);
+            }
+            return kernel;
         } catch (Exception e) {
             displayError(e.toString());
+            return null;
         }
-        return null;
     }
 
 }

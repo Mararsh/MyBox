@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane  prefHeight="750.0" prefWidth="1300.0"  fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ConvolutionKernelManagerController">
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ConvolutionKernelManagerController">
    <content>
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
     <top>
@@ -135,21 +135,21 @@ License:    Apache License Version 2.0
                                                         <TextField fx:id="nameInput" prefWidth="257.0" HBox.hgrow="ALWAYS" />
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                     <children>
                                                         <Label text="%Type" />
-                                                        <RadioButton mnemonicParsing="false" text="%Blur">
+                                                        <RadioButton fx:id="blurRadio" mnemonicParsing="false" text="%Blur">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="typeGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
-                                                        <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$typeGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$typeGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$typeGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%None" toggleGroup="$typeGroup" />
+                                                        <RadioButton fx:id="sharpRadio" mnemonicParsing="false" text="%Sharpen" toggleGroup="$typeGroup" />
+                                                        <RadioButton fx:id="edgeRadio" mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$typeGroup" />
+                                                        <RadioButton fx:id="embossRadio" mnemonicParsing="false" text="%Emboss" toggleGroup="$typeGroup" />
+                                                        <RadioButton fx:id="noneRadio" mnemonicParsing="false" text="%None" toggleGroup="$typeGroup" />
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                     <children>
                                                         <Label text="%Width" />
                                                         <ComboBox fx:id="widthBox" editable="true" prefWidth="100.0" />
@@ -158,23 +158,32 @@ License:    Apache License Version 2.0
                                                         <Label text="%OddNumber" />
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                     <children>
                                                         <Label text="%Edges" />
-                                                        <RadioButton fx:id="keepRadio" mnemonicParsing="false" selected="true" text="%KeepValues">
+                                                        <RadioButton fx:id="keepEdgeRadio" mnemonicParsing="false" selected="true" text="%KeepValues">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="edgesGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
-                                                        <RadioButton fx:id="zeroRadio" mnemonicParsing="false" text="%FillZero2" toggleGroup="$edgesGroup" />
-                                                        <CheckBox fx:id="grayCheck" mnemonicParsing="false" text="%Gray">
-                                                            <HBox.margin>
-                                                                <Insets left="60.0" />
-                                                            </HBox.margin>
-                                                        </CheckBox>
-                                                        <CheckBox fx:id="invertCheck" layoutX="608.0" layoutY="10.0" mnemonicParsing="false" text="%Invert" />
+                                                        <RadioButton fx:id="zeroEdgeRadio" mnemonicParsing="false" text="%FillZero2" toggleGroup="$edgesGroup" />
                                                     </children>
                                                 </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="113.0" spacing="2.0">
+                                             <children>
+                                                <Label text="%Color" />
+                                                <RadioButton fx:id="keepColorRadio" mnemonicParsing="false" selected="true" text="%Keep">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="colorGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="greyRadio" mnemonicParsing="false" text="%Grey" toggleGroup="$colorGroup">
+                                                </RadioButton>
+                                                <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup">
+                                                </RadioButton>
+                                                        <CheckBox fx:id="invertCheck" mnemonicParsing="false" text="%Invert" />
+                                             </children>
+                                          </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
                                                         <Label text="%Description" />

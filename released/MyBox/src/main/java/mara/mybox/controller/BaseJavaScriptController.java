@@ -73,23 +73,21 @@ public class BaseJavaScriptController extends BaseDataValuesController {
 
     @Override
     public void startTask() {
-        closeTask(runScript());
-    }
-
-    public boolean runScript() {
         try {
-            TableStringValues.add(baseName + "Histories", script);
             Object o = htmlWebView.executeScript(script);
             if (o != null) {
                 results = o.toString();
             } else {
                 results = "";
             }
-            return true;
+            TableStringValues.add(baseName + "Histories", script);
+            error = null;
+            taskSuccessed = true;
         } catch (Exception e) {
             error = e.toString();
-            return false;
+            taskSuccessed = false;
         }
+        closeTask(taskSuccessed);
     }
 
     @FXML

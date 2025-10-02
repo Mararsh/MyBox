@@ -13,7 +13,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageSmooth">
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageSmooth">
     <children>
               <VBox fx:id="blurABox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                   <children>
@@ -33,5 +33,28 @@ License:    Apache License Version 2.0
                       <ComboBox fx:id="intensitySelector" editable="true" prefWidth="100.0" />
                   </children>
               </FlowPane>
+      <VBox layoutX="10.0" layoutY="148.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Edges" />
+            <RadioButton fx:id="keepEdgeRadio" mnemonicParsing="false" selected="true" text="%KeepValues">
+               <toggleGroup>
+                  <ToggleGroup fx:id="edgesGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="zeroEdgeRadio" mnemonicParsing="false" text="%FillZero2" toggleGroup="$edgesGroup" />
+         </children>
+      </VBox>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%Color" />
+            <RadioButton fx:id="keepColorRadio" mnemonicParsing="false" selected="true" text="%Keep">
+               <toggleGroup>
+                  <ToggleGroup fx:id="colorGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="greyRadio" mnemonicParsing="false" text="%Grey" toggleGroup="$colorGroup" />
+            <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
+         </children>
+      </VBox>
     </children>
 </VBox>

@@ -57,6 +57,9 @@ public class DerbyBase {
 
     public static Connection getConnection() {
         try {
+            if (AppVariables.MyBoxDerbyPath == null) {
+                return null;
+            }
             return DriverManager.getConnection(protocol + dbHome() + login);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -401,7 +404,11 @@ public class DerbyBase {
                     continue;
                 }
                 internalTables.get(name).createTable(conn);
-                loadingController.info("Created table: " + name);
+                if (loadingController != null) {
+                    loadingController.info("Created table: " + name);
+                } else {
+                    MyBoxLog.console("Created table: " + name);
+                }
             }
             return true;
         } catch (Exception e) {

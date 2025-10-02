@@ -93,6 +93,11 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     }
 
     @FXML
+    protected void AboutMacro(ActionEvent event) {
+        openHtml(HelpTools.aboutMacro());
+    }
+
+    @FXML
     protected void aboutImageScope(ActionEvent event) {
         openHtml(HelpTools.aboutImageScope());
     }

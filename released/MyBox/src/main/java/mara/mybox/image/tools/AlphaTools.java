@@ -53,14 +53,14 @@ public class AlphaTools {
     }
 
     public static BufferedImage removeAlpha(FxTask task, BufferedImage source) {
-        if (!hasAlpha(source)) {
-            return source;
-        }
         return AlphaTools.removeAlpha(task, source, ColorConvertTools.alphaColor());
     }
 
     public static BufferedImage removeAlpha(FxTask task, BufferedImage source, Color alphaColor) {
         try {
+            if (!hasAlpha(source)) {
+                return source;
+            }
             int width = source.getWidth();
             int height = source.getHeight();
             int imageType = BufferedImage.TYPE_INT_RGB;

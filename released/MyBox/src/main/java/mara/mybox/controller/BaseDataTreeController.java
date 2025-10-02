@@ -400,7 +400,7 @@ public class BaseDataTreeController extends BaseFileController {
         }
     }
 
-    public void refreshNode(DataNode node) {
+    public void refreshNode(DataNode node, boolean refreshChildren) {
         if (node == null) {
             return;
         }
@@ -409,13 +409,9 @@ public class BaseDataTreeController extends BaseFileController {
         } else if (htmlRadio.isSelected()) {
             htmlController.loadTree(node);
         } else {
-            treeController.refreshNode(node);
+            treeController.refreshNode(node, refreshChildren);
         }
         reloadView(node);
-    }
-
-    public void importedNode(DataNode node) {
-        refreshNode(node);
     }
 
     protected void reloadView(DataNode node) {
@@ -433,22 +429,6 @@ public class BaseDataTreeController extends BaseFileController {
             return;
         }
         DataTreeController.open(nodeTable, node);
-    }
-
-    public void nodeSaved(DataNode parent, DataNode node) {
-        try {
-            if (tableRadio.isSelected()) {
-                tableController.nodeSaved(parent, node);
-            } else if (htmlRadio.isSelected()) {
-                htmlController.loadTree(node);
-            } else {
-                treeController.nodeSaved(parent, node);
-            }
-            reloadView(node);
-            popSaved();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     public void queryByConditions() {

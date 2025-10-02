@@ -11,13 +11,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.Pagination;
@@ -47,8 +48,6 @@ public class ControlPagination extends BaseController {
     @FXML
     protected Label menuPagesLabel, menuRowsLabel, menuSelectionLabel,
             perPageLabel, pagesLabel, rowsLabel, selectionLabel;
-    @FXML
-    protected CheckBox leftCheck;
 
     public void setParameters(BaseController parent, Pagination pagi, ObjectType type) {
         try {
@@ -95,16 +94,6 @@ public class ControlPagination extends BaseController {
                 }
             });
 
-            leftCheck.setSelected(UserConfig.getBoolean(baseName + "Left", true));
-            setLeftOrientation(leftCheck.isSelected());
-            leftCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Left", leftCheck.isSelected());
-                    setLeftOrientation(leftCheck.isSelected());
-                }
-            });
-
             updateStatus(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -124,14 +113,12 @@ public class ControlPagination extends BaseController {
         selectionLabel.setText(info);
     }
 
-    public void updateStatus(boolean show) {
-        try {
-            thisPane.setVisible(show);
-            if (!show) {
-                return;
-            }
-            isSettingValues = true;
-            thisPane.getChildren().clear();
+    public void setBar() {
+        boolean show = false;
+        String v = UserConfig.getString(baseName + "ShowBar", "show");
+        if ("show".equalsIgnoreCase(v)) {
+            show = true;
+        } else if ("auto".equalsIgnoreCase(v)) {
             double width = thisPane.getWidth();
             if (getMyStage() != null) {
                 width = Math.min(width, getMyStage().getWidth());
@@ -140,10 +127,31 @@ public class ControlPagination extends BaseController {
                 width = Math.min(width, parentController.getMyStage().getWidth());
             }
             if (width > 1000) {
-                thisPane.getChildren().add(navigatorBox);
-            } else {
-                thisPane.getChildren().add(menuPane);
+                show = true;
             }
+        }
+        if (show) {
+            if (!thisPane.getChildren().contains(navigatorBox)) {
+                thisPane.getChildren().add(0, navigatorBox);
+            }
+        } else {
+            if (thisPane.getChildren().contains(navigatorBox)) {
+                thisPane.getChildren().remove(navigatorBox);
+            }
+        }
+    }
+
+    public void updateStatus(boolean show) {
+        try {
+            thisPane.getChildren().clear();
+            thisPane.setVisible(show);
+            if (!show) {
+                return;
+            }
+            isSettingValues = true;
+            thisPane.getChildren().add(menuPane);
+
+            setBar();
 
             String rows = message("Rows") + ": ";
             if (pagination.rowsNumber > 0) {
@@ -198,7 +206,7 @@ public class ControlPagination extends BaseController {
             pageSelector.setDisable(!multiplePages());
             pageSizeSelector.setDisable(!multipleRows());
 
-            setLeftOrientation(leftCheck.isSelected());
+            setLeftOrientation(UserConfig.getBoolean(baseName + "Left", true));
 
             isSettingValues = false;
 
@@ -357,28 +365,72 @@ public class ControlPagination extends BaseController {
         }
 
         menu = new MenuItem(perPageLabel.getText() + "...");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            String value = PopTools.askValue(parentController.getTitle(),
-                    null, perPageLabel.getText(), pagination.pageSize + "");
-            setPageSize(value);
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String value = PopTools.askValue(parentController.getTitle(),
+                        null, perPageLabel.getText(), pagination.pageSize + "");
+                setPageSize(value);
+            }
         });
         items.add(menu);
 
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            parentController.refreshAction();
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                parentController.refreshAction();
+            }
         });
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
 
+        ToggleGroup navGroup = new ToggleGroup();
+        RadioMenuItem showmenu = new RadioMenuItem(message("ShowNavigationBar"));
+        showmenu.setSelected("show".equalsIgnoreCase(UserConfig.getString(baseName + "ShowBar", "show")));
+        showmenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "ShowBar", "show");
+                setBar();
+            }
+        });
+        showmenu.setToggleGroup(navGroup);
+        items.add(showmenu);
+
+        RadioMenuItem hidemenu = new RadioMenuItem(message("HideNavigationBar"));
+        hidemenu.setSelected("hide".equalsIgnoreCase(UserConfig.getString(baseName + "ShowBar", "show")));
+        hidemenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "ShowBar", "hide");
+                setBar();
+            }
+        });
+        hidemenu.setToggleGroup(navGroup);
+        items.add(hidemenu);
+
+        RadioMenuItem automenu = new RadioMenuItem(message("Adaptive"));
+        automenu.setSelected("auto".equalsIgnoreCase(UserConfig.getString(baseName + "ShowBar", "show")));
+        automenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "ShowBar", "auto");
+                setBar();
+            }
+        });
+        automenu.setToggleGroup(navGroup);
+        items.add(automenu);
+
         CheckMenuItem leftItem = new CheckMenuItem(message("Left"),
                 StyleTools.getIconImageView("iconLeft.png"));
-        leftItem.setSelected(leftCheck.isSelected());
+        leftItem.setSelected(UserConfig.getBoolean(baseName + "Left", true));
         leftItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                leftCheck.setSelected(leftItem.isSelected());
+                UserConfig.setBoolean(baseName + "Left", leftItem.isSelected());
+                setLeftOrientation(leftItem.isSelected());
             }
         });
         items.add(leftItem);

@@ -19,7 +19,10 @@ import mara.mybox.value.SystemConfig;
 public class DataMigration {
 
     public static boolean checkUpdates(MyBoxLoadingController controller, String lang) {
-        controller.info("CurrentVersion: " + AppValues.AppVersion);
+        MyBoxLog.info("CurrentVersion: " + AppValues.AppVersion);
+        if (controller != null) {
+            controller.info("CurrentVersion: " + AppValues.AppVersion);
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             SystemConfig.setString(conn, "CurrentVersion", AppValues.AppVersion);
             int lastVersion = DevTools.lastVersion(conn);
@@ -33,7 +36,9 @@ public class DataMigration {
                 return true;
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
-            controller.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
+            if (controller != null) {
+                controller.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
+            }
             if (lastVersion > 0) {
 
                 DataMigrationBefore65.handleVersions(lastVersion, conn);

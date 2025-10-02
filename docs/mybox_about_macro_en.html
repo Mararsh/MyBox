@@ -1,0 +1,300 @@
+<!DOCTYPE html><HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Macro command of MyBox</title>
+        <style type="text/css">
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+            .valueText {
+                color:#2e598a;
+            }
+
+        </style>
+    </HEAD>
+    <body style="width: 900px; margin:0 auto;" contenteditable="false">
+        <h1  align="center">Macro command of MyBox(Not complete)</h1>
+        <h2>1 Usage of macro commands</h2>
+        <p>"Macro Command" is a line with complete operation and parameters to be executed, instead of inputs or selections in GUI.</p>
+        <h2>2 Execute macro commands</h2>
+        <p>Macro commands can be executed in following 2 ways:</p>
+        <ol>
+            <li>Run the operation and output results without GUI of MyBox.<br />
+                Example, run following in command window of system:<br />
+                <code>java -jar .\MyBox.jar  image sharp algorithm=four color=keep edge=copy inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_sharp_4neighborg_keep_copy.png'</code><br />
+                Macro commands of MyBox can be part of user's shell scripts. Also be useful for batch operations.<br /><br />
+            </li>
+            <li>Run the operation and display results In GUI of MyBox.<br />
+                Example, run following with manager window of macro commands in MyBox:<br />
+                <code> image sharp algorithm=mask color=grey edge=zero inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_sharp_mask_grey_zero.png'</code><br />
+                Macro commands are organized in tree by MyBox. Examples are provided, including important parameters of most functions.
+            </li>
+        </ol>
+        <h2>3 Format of macro</h2>
+        <p>Macro commands of MyBox are defined as following:</p>
+        <p align="center">function_name operation_name parameter1 parameter2 ... parameterN</p>
+        <ul>
+            <li>That is, macro command is composed of strings separated by blanks. 
+                The first string is function name. The 2nd string is operation name. Other strings are parameters.</li>
+            <li>Parameter can be "name=value", or just value.</li>
+            <li>If value of parameter contains blanks, it should be surroundded by double quotes or single quotes.</li>
+            <li>If parameter has default value, it can be omitted.</li>
+            <li>Names of functions, opertaions, and parameters are pre-defined. If a name is not the list, the macro is invalid.</li>
+            <li>Values of some parameters are pre-defined. If a value is not the list, the macro is invalid.</li>
+            <li>Names of functions, opertaions, and parameters are case-insensitive. Values of some parameters are case-insensitive too.</li>
+        </ul>
+        <h2>4 Common parameters</h2>
+        <p>Following parameters work for all functions and operations:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>parameter name </th>
+                    <th>parameter value </th>
+                    <th>default value </th>
+                    <th>comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>inputFile</td>
+                    <td>complete path of file</td>
+                    <td>example file of MyBox</td>
+                    <td>file to be handled<br />
+                        If this paramter is omitted, example file is referred.
+                    </td>
+                </tr>
+                <tr>
+                    <td>outputFile</td>
+                    <td>complete path of file</td>
+                    <td>temporary file of MyBox</td>
+                    <td>File to be generated.<br />
+                        If this paramter is omitted, generat object by default method of MyBox.
+                </tr>
+                <tr>
+                    <td>openResult</td>
+                    <td>true: open the result<br />
+                        false: not open the result
+                    </td>
+                    <td>When run macro by command line, default value is false.<br />
+                        When run macro in GUI of Mybox, default value is true.
+                    </td>
+                    <td>Whether open the result.</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>5 Handle image(image)</h2>
+        <p>When handle image, the function name is "image". Operations and their parameters are mentioned in following.</p>
+
+        <h3>5.1 Edit(edit)</h3>
+        <p>Operation name is "edit". Valid parameter is "inputFile" while "outputFile" is ignored.</p>
+        <p>Refer exmaple image:</p>
+        <code>image edit</code><br />
+        <p>Example of parameters:</p>
+        <code>image edit inputFile='D:\MyBox-test\images\v1.png'</code><br />
+
+
+
+        <h3>5.2 Replace color(replace)</h3>
+        <p>Operation name is "replace". Parameters:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>parameter name </th>
+                    <th>parameter value </th>
+                    <th>default value </th>
+                    <th>comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>color</td>
+                    <td><a href="https://openjfx.io/javadoc/24/javafx.graphics/javafx/scene/paint/Color.html" target=_blank>web value of color</a><br />
+                        like "#0000FF", "hsla(270,100%,100%,1.0)"</td>
+                    <td></td>
+                    <td>color to be matched</td>
+                </tr>
+                <tr>
+                    <td>newColor</td>
+                    <td><a href="https://openjfx.io/javadoc/24/javafx.graphics/javafx/scene/paint/Color.html" target=_blank>web value of color</a><br />
+                        like "0x0000FF", "rgba(0,0,255,1.0)"</td>
+                    <td></td>
+                    <td>color to be replaced</td>
+                </tr>
+                <tr>
+                    <td>invert</td>
+                    <td>true:match invertedly<br />
+                        false:match
+                    </td>
+                    <td>false</td>
+                    <td>whether match invertedly</td>
+                </tr>
+                <tr>
+                    <td>trans</td>
+                    <td>true:handle transparency<br />
+                        false:not handle transparency
+                    </td>
+                    <td>false</td>
+                    <td>whether handle transparency</td>
+                </tr>
+                <tr>
+                    <td>algorithm</td>
+                    <td>RGBRoughWeightedEuclidean: RGB rough weighted euclidean<br />
+                        RGBWeightedEuclidean: RGB weighted euclidean<br />
+                        RGBEuclidean: RGB euclidean<br />
+                        HSBEuclidean: HSB euclidean<br />
+                        Red: red<br />
+                        Green: green<br />
+                        Blue: blue<br />
+                        Hue: hue<br />
+                        Saturation: saturation<br />
+                        Brightness: brightness<br />
+                        RGBManhattan: RGB manhattan<br />
+                        CIE76: LUV color space<br />
+                        CIEDE2000: colors difference<br />
+                        CIE94: colors difference<br />
+                        CMC: colors difference
+                    <td>RGBRoughWeightedEuclidean</td>
+                    <td>algorithm of matching colors</td>
+                </tr>
+                <tr>
+                    <td>threshold</td>
+                    <td>float</td>
+                    <td>default threshold of algorithm</td>
+                    <td>the threshold of matching colors</td>
+                </tr>
+                <tr>
+                    <td>hueWeight</td>
+                    <td>float</td>
+                    <td>default weight of algorithm</td>
+                    <td>weight of hue. Only works for CIEDE2000, CIE94, HSBEuclidean</td>
+                </tr>
+                <tr>
+                    <td>brightnessWeight</td>
+                    <td>float</td>
+                    <td>default weight of algorithm</td>
+                    <td>weight of brightness. Only works for CIEDE2000, CIE94, HSBEuclidean, CMC</td>
+                </tr>
+                <tr>
+                    <td>saturationWeight</td>
+                    <td>float</td>
+                    <td>default weight of algorithm</td>
+                    <td>weight of saturation. Only works for CIEDE2000, CIE94, HSBEuclidean, CMC</td>
+                </tr>
+                <tr>
+                    <td>hue</td>
+                    <td>true: replace hue<br />
+                        false: not replace hue
+                    </td>
+                    <td>true</td>
+                    <td>whether replace hue</td>
+                </tr>
+                <tr>
+                    <td>brightness</td>
+                    <td>true: replace brightness<br />
+                        false: not replace brightness
+                    </td>
+                    <td>false</td>
+                    <td>whether replace brightness</td>
+                </tr>
+                <tr>
+                    <td>saturation</td>
+                    <td>true: replace saturation<br />
+                        false: not replace saturation
+                    </td>
+                    <td>false</td>
+                    <td>whether replace saturation</td>
+                </tr>
+
+
+            </tbody>
+        </table>
+        <p>Refer example image:</p>
+        <code>image replace color=0xfa7094 newColor=0x7777FF  outputFile='D:\temp\2\example_replace.png'</code><br />
+        <p>Example of parameters:</p>
+        <code>image replace color=0xfa7094 newColor=0x3377CC   algorithm=CMC  threshold=1  inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_replace_cmc_w6.png'</code><br />
+
+        <h3>5.3 Sharp(sharp)</h3>
+        <p>Operation name is "sharp". Parameters:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>parameter name </th>
+                    <th>parameter value </th>
+                    <th>default value </th>
+                    <th>comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>algorithm</td>
+                    <td>four: Four-neighbor Laplace<br />
+                        eight: Eight-neighbor Laplace<br />
+                        mask: Unsharp masking
+                    </td>
+                    <td>mask</td>
+                    <td>algorithm of sharping</td>
+                </tr>
+                <tr>
+                    <td>color</td>
+                    <td>keep: keep color<br />
+                        grey: convert to grey<br />
+                        blackwhite: convert to black-white
+                    </td>
+                    <td>keep</td>
+                    <td>whether convert colors</td>
+                </tr>
+                <tr>
+                    <td>edge</td>
+                    <td>copy: copy edges<br />
+                        zero: fill zero in edges<br />
+                    </td>
+                    <td>copy</td>
+                    <td>how to handle pixels in edges</td>
+                </tr>
+                <tr>
+                    <td>intensity</td>
+                    <td>integer. Suggest less than 5</td>
+                    <td>2</td>
+                    <td>radius of convolution. Only works for unsharp masking</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Refer example image:</p>
+        <code>image sharp  outputFile='D:\temp\2\example_sharp.png'</code><br />
+        <p>Example of parameters:</p>
+        <code>image sharp algorithm=eight color=blackwhite edge=zero inputFile='D:\MyBox-test\images\v1.png' outputFile='D:\temp\2\v1_sharp_8neighborg_bw_zero.png'</code><br />
+
+        <br />
+    </body>
+</HTML>

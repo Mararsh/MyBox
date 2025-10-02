@@ -238,6 +238,7 @@ public class TestCase {
 
             cases.add(new TestCase(index++, message("MyBoxProperties"), Fxmls.MyBoxPropertiesFxml));
             cases.add(new TestCase(index++, message("MyBoxLogs"), Fxmls.MyBoxLogsFxml));
+            cases.add(new TestCase(index++, message("MacroCommands"), Fxmls.DataTreeFxml).setType(Type.Data));
             cases.add(new TestCase(index++, message("RunSystemCommand"), Fxmls.RunSystemCommandFxml));
             cases.add(new TestCase(index++, message("ManageLanguages"), Fxmls.MyBoxLanguagesFxml));
             cases.add(new TestCase(index++, message("MakeIcons"), Fxmls.MyBoxIconsFxml));

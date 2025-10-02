@@ -73,31 +73,31 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
 
             geoTable = (TableNodeGeographyCode) nodeTable;
 
-            listenerChanged(chineseInput);
-            listenerChanged(englishInput);
-            listenerChanged(longitudeInput);
-            listenerChanged(latitudeInput);
-            listenerChanged(continentInput);
-            listenerChanged(countryInput);
-            listenerChanged(provinceInput);
-            listenerChanged(cityInput);
-            listenerChanged(countyInput);
-            listenerChanged(villageInput);
-            listenerChanged(buildingInput);
-            listenerChanged(poiInput);
-            listenerChanged(code1Input);
-            listenerChanged(code2Input);
-            listenerChanged(code3Input);
-            listenerChanged(code4Input);
-            listenerChanged(code5Input);
-            listenerChanged(alias1Input);
-            listenerChanged(alias2Input);
-            listenerChanged(alias3Input);
-            listenerChanged(alias4Input);
-            listenerChanged(alias5Input);
-            listenerChanged(populationInput);
-            listenerChanged(areaInput);
-            listenerChanged(descArea);
+            listenChanged(chineseInput);
+            listenChanged(englishInput);
+            listenChanged(longitudeInput);
+            listenChanged(latitudeInput);
+            listenChanged(continentInput);
+            listenChanged(countryInput);
+            listenChanged(provinceInput);
+            listenChanged(cityInput);
+            listenChanged(countyInput);
+            listenChanged(villageInput);
+            listenChanged(buildingInput);
+            listenChanged(poiInput);
+            listenChanged(code1Input);
+            listenChanged(code2Input);
+            listenChanged(code3Input);
+            listenChanged(code4Input);
+            listenChanged(code5Input);
+            listenChanged(alias1Input);
+            listenChanged(alias2Input);
+            listenChanged(alias3Input);
+            listenChanged(alias4Input);
+            listenChanged(alias5Input);
+            listenChanged(populationInput);
+            listenChanged(areaInput);
+            listenChanged(descArea);
 
             manageWrapped(wrapCheck, descArea);
 

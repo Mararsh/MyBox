@@ -22,7 +22,8 @@ public class ColorMatch {
     public static enum MatchAlgorithm {
         CIEDE2000, CIE94, CIE76,
         HSBEuclidean, Hue, Saturation, Brightness,
-        RGBEuclidean, RGBRoughWeightedEuclidean, RGBWeightedEuclidean, RGBManhattan,
+        RGBEuclidean, RGBRoughWeightedEuclidean, RGBWeightedEuclidean,
+        RGBManhattan,
         Red, Green, Blue,
         CMC
     }

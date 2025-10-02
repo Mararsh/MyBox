@@ -12,7 +12,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.TreeItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DConvertTools;
@@ -381,43 +380,36 @@ public class MyBoxDocumentsController extends BaseTaskController {
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
             BaseNodeTable nodeTable = BaseNodeTable.create(tableName);
             nodeTable.truncate();
-            DataTreeController dataController;
-            if (tableName.equals("GeographyCode")) {
-                dataController = GeographyCodeController.open(null, false, false);
-            } else {
-                dataController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-                dataController.initDataTree(nodeTable, null, false);
-            }
-            if (dataController == null) {
-                finishNotify();
-                return false;
-            }
-            dataController.setIconified(true);
             DataNode rootNode = nodeTable.getRoot();
             if (rootNode == null) {
                 finishNotify();
                 return false;
             }
-            TreeItem<DataNode> rootItem = new TreeItem(rootNode);
-            dataController.treeController.treeView.setRoot(rootItem);
+
 //            popInformation(message("Handling") + ": " + tableName);
             DataTreeImportController importController = (DataTreeImportController) WindowTools
                     .openStage(Fxmls.DataTreeImportFxml);
-            importController.setIconified(true);
-            importController.miaoCheck.setSelected(false);
-            importController.importExamples(dataController, rootNode, nodeTable.exampleFileLang(lang));
+            importController.importExamples(nodeTable, rootNode, nodeTable.exampleFileLang(lang));
+
             importController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     Platform.runLater(() -> {
                         importController.close();
+
                         DataTreeExportController exportController = (DataTreeExportController) WindowTools
                                 .openStage(Fxmls.DataTreeExportFxml);
-//                        exportController.setIconified(true);
-                        exportController.setParameters(dataController, rootNode);
+                        exportController.setData(nodeTable, rootNode);
+
+                        exportController.isSettingValues = true;
                         exportController.selectAllFormat(false);
                         exportController.treeHtmlCheck.setSelected(true);
+                        exportController.selectAllValue(false);
+                        exportController.hierarchyCheck.setSelected(true);
+                        exportController.tagsCheck.setSelected(true);
+                        exportController.dataCheck.setSelected(true);
                         exportController.openCheck.setSelected(false);
+                        exportController.isSettingValues = false;
                         exportController.startAction();
                         exportController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
                             @Override
@@ -433,7 +425,6 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                         showLogs(message("Failed"));
                                     }
                                     exportController.close();
-                                    dataController.close();
                                     nodeTable.truncate();
                                     CurrentLangName = realLang;
                                     CurrentBundle = realBoundle;
@@ -442,10 +433,12 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                 Platform.requestNextPulse();
                             }
                         });
+                        exportController.setIconified(true);
                     });
                     Platform.requestNextPulse();
                 }
             });
+
             return true;
         } catch (Exception e) {
             error = e.toString();

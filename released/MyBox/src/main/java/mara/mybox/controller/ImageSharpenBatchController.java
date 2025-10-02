@@ -4,11 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
-import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.PixelDemos;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.PixelDemos;
+import mara.mybox.image.data.ImageConvolution;
 import static mara.mybox.value.Languages.message;
 
 /**

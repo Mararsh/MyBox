@@ -335,6 +335,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     public void unfold(FxTask task, Connection conn,
             TreeItem<DataNode> item, boolean unfoldDescendants) {
         try {
+
             if (item == null || item.isLeaf()) {
                 return;
             }

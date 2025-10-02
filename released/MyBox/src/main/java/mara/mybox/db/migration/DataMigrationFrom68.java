@@ -74,15 +74,36 @@ public class DataMigrationFrom68 {
             if (lastVersion < 6008008) {
                 updateIn688(controller, conn, lang);
             }
+            if (lastVersion < 6009001) {
+                updateIn691(controller, conn, lang);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public static void updateIn691(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        MyBoxLog.info("Updating tables in 6.9.1...");
+        if (controller != null) {
+            controller.info("Updating tables in 6.9.1...");
+        }
+        try (Statement statement = conn.createStatement()) {
+            statement.executeUpdate("ALTER TABLE Convolution_Kernel ADD COLUMN color SMALLINT");
+            statement.executeUpdate("UPDATE Convolution_Kernel SET color=0  WHERE is_gray=FALSE");
+            statement.executeUpdate("UPDATE Convolution_Kernel SET color=1  WHERE is_gray=TRUE");
+            statement.executeUpdate("ALTER TABLE Convolution_Kernel DROP COLUMN is_gray");
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 
     public static void updateIn688(MyBoxLoadingController controller,
             Connection conn, String lang) {
         MyBoxLog.info("Updating tables in 6.8.8...");
-        controller.info("Updating tables in 6.8.8...");
+        if (controller != null) {
+            controller.info("Updating tables in 6.8.8...");
+        }
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate("ALTER TABLE Data2D_Column ADD COLUMN label VARCHAR(" + StringMaxLength + ")");
         } catch (Exception e) {
@@ -93,7 +114,9 @@ public class DataMigrationFrom68 {
     public static void updateIn686(MyBoxLoadingController controller,
             Connection conn, String lang) {
         MyBoxLog.info("Updating tables in 6.8.6...");
-        controller.info("Updating tables in 6.8.6...");
+        if (controller != null) {
+            controller.info("Updating tables in 6.8.6...");
+        }
         try {
             conn.setAutoCommit(false);
             try (Statement statement = conn.createStatement();
@@ -114,7 +137,9 @@ public class DataMigrationFrom68 {
                         String dataname = dataid + "";
                         File file = DataMatrix.file(dataname);
                         rowQuery.setLong(1, dataid);
-                        controller.info("Moving matrix:" + file);
+                        if (controller != null) {
+                            controller.info("Moving matrix:" + file);
+                        }
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, charset, false))) {
                             for (int rowID = 0; rowID < rowsNumber; rowID++) {
                                 try {
@@ -183,7 +208,9 @@ public class DataMigrationFrom68 {
             Connection conn, String lang) {
         try (Statement exeStatement = conn.createStatement()) {
             MyBoxLog.info("Updating tables in 6.8.5...");
-            controller.info("Updating tables in 6.8.5...");
+            if (controller != null) {
+                controller.info("Updating tables in 6.8.5...");
+            }
 
             exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN shape_type VARCHAR(128)");
             exeStatement.executeUpdate("ALTER TABLE Node_Image_Scope ADD COLUMN color_algorithm VARCHAR(128)");
@@ -228,7 +255,9 @@ public class DataMigrationFrom68 {
             Connection conn, String lang) {
         try {
             MyBoxLog.info("Updating tables in 6.8.3...");
-            controller.info("Updating tables in 6.8.3...");
+            if (controller != null) {
+                controller.info("Updating tables in 6.8.3...");
+            }
 
             try (Statement statement = conn.createStatement()) {
                 String sql = "ALTER TABLE Data2D_Column DROP COLUMN invalid_as";
@@ -239,7 +268,9 @@ public class DataMigrationFrom68 {
 
             TableNodeGeographyCode gcTable = new TableNodeGeographyCode();
             String tname = gcTable.getTableName();
-            controller.info("Moving data: " + gcTable.getTreeName());
+            if (controller != null) {
+                controller.info("Moving data: " + gcTable.getTreeName());
+            }
 
             // for debug.Remove this block later
 //            try (Statement statement = conn.createStatement()) {
@@ -346,7 +377,9 @@ public class DataMigrationFrom68 {
                     }
                 }
                 conn.commit();
-                controller.info("Saved: " + gcTable.getTreeName() + " count:" + count);
+                if (controller != null) {
+                    controller.info("Saved: " + gcTable.getTreeName() + " count:" + count);
+                }
 
                 result = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
                         + " B.new_nodeid AS parentid "
@@ -371,7 +404,9 @@ public class DataMigrationFrom68 {
                     }
                 }
                 conn.commit();
-                controller.info("Moved: " + gcTable.getTreeName() + " count:" + count);
+                if (controller != null) {
+                    controller.info("Moved: " + gcTable.getTreeName() + " count:" + count);
+                }
 
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -415,7 +450,9 @@ public class DataMigrationFrom68 {
     public static void updateIn682(MyBoxLoadingController controller, Connection conn) {
         try {
             MyBoxLog.info("Updating tables in 6.8.2...");
-            controller.info("Updating tables in 6.8.2...");
+            if (controller != null) {
+                controller.info("Updating tables in 6.8.2...");
+            }
 
             updateIn682_move(controller, conn, new TableNodeHtml(), "Notebook");
             updateIn682_move(controller, conn, new TableNodeText(), "InformationInTree");
@@ -445,7 +482,9 @@ public class DataMigrationFrom68 {
     public static void updateIn682_move(MyBoxLoadingController controller, Connection conn,
             BaseNodeTable dataTable, String category) {
         String tname = dataTable.getTableName();
-        controller.info("Moving data: " + dataTable.getTreeName());
+        if (controller != null) {
+            controller.info("Moving data: " + dataTable.getTreeName());
+        }
         // for debug.Remove this block later
 //        try (Statement statement = conn.createStatement()) {
 //            conn.setAutoCommit(true);
@@ -531,7 +570,9 @@ public class DataMigrationFrom68 {
                 }
             }
             conn.commit();
-            controller.info("Saved: " + dataTable.getTreeName() + " count:" + count);
+            if (controller != null) {
+                controller.info("Saved: " + dataTable.getTreeName() + " count:" + count);
+            }
 
             query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
                     + " B.new_nodeid AS parentid "
@@ -556,7 +597,9 @@ public class DataMigrationFrom68 {
                 }
             }
             conn.commit();
-            controller.info("Moved: " + dataTable.getTreeName() + " count:" + count);
+            if (controller != null) {
+                controller.info("Moved: " + dataTable.getTreeName() + " count:" + count);
+            }
 
             statement.executeUpdate("CREATE TABLE " + tmpTagTable
                     + " ( old_tagid BIGINT, new_tagid BIGINT)");
@@ -581,7 +624,9 @@ public class DataMigrationFrom68 {
                 }
             }
             conn.commit();
-            controller.info("Tags saved: " + dataTable.getTreeName() + " count:" + count);
+            if (controller != null) {
+                controller.info("Tags saved: " + dataTable.getTreeName() + " count:" + count);
+            }
 
             query = conn.createStatement().executeQuery("select  C.new_nodeid AS mnodeid, B.new_tagid AS mtagid "
                     + " from tree_node_tag A, " + tmpTagTable + " AS B, " + tmpTreeTable + " AS C"
@@ -604,7 +649,9 @@ public class DataMigrationFrom68 {
             }
             conn.commit();
             conn.setAutoCommit(true);
-            controller.info("Tags moved: " + dataTable.getTreeName() + " count:" + count);
+            if (controller != null) {
+                controller.info("Tags moved: " + dataTable.getTreeName() + " count:" + count);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);

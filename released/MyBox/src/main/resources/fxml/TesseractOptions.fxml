@@ -24,9 +24,9 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TesseractOptionsController">
     <children>
-      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="%Engine">
+            <Tab fx:id="engineTab" text="%Engine">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                      <children>
@@ -55,7 +55,7 @@ License:    Apache License Version 2.0
                   </VBox>
                </content>
             </Tab>
-            <Tab text="%Languages">
+            <Tab fx:id="langTab" text="%Languages">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                      <children>

@@ -420,8 +420,4 @@ public class ControlDataTreeTable extends BaseTablePagesController<DataNode> {
         return true;
     }
 
-    public void nodeSaved(DataNode parent, DataNode node) {
-        refreshNode(node);
-    }
-
 }

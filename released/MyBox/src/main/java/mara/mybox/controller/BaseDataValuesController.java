@@ -57,7 +57,7 @@ public abstract class BaseDataValuesController extends BaseFileController {
     public void initEditor() {
         try {
             if (valueInput != null) {
-                listenerChanged(valueInput);
+                listenChanged(valueInput);
 
                 if (valueWrapCheck != null) {
                     manageWrapped(valueWrapCheck, (TextArea) valueInput);
@@ -69,7 +69,7 @@ public abstract class BaseDataValuesController extends BaseFileController {
         }
     }
 
-    public void listenerChanged(TextInputControl input) {
+    public void listenChanged(TextInputControl input) {
         input.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue v, String ov, String nv) {

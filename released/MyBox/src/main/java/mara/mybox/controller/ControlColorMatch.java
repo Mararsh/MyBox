@@ -178,14 +178,19 @@ public class ControlColorMatch extends BaseController {
                 popError(message("InvalidParameter") + ": " + message("Algorithm"));
                 return false;
             }
-            if (a == MatchAlgorithm.CIE94 || a == MatchAlgorithm.CIEDE2000) {
+            if (ColorMatch.supportWeights(a)) {
                 double hw, sw, bw;
-                try {
-                    hw = Double.parseDouble(hueWeightInput.getText());
-                } catch (Exception e) {
-                    popError(message("InvalidParameter") + ": " + message("HueWeight"));
-                    return false;
+                if (a != MatchAlgorithm.CMC) {
+                    try {
+                        hw = Double.parseDouble(hueWeightInput.getText());
+                    } catch (Exception e) {
+                        popError(message("InvalidParameter") + ": " + message("HueWeight"));
+                        return false;
+                    }
+                    colorMatch.setHueWeight(hw);
+                    UserConfig.setDouble(conn, baseName + "HueWeight", hw);
                 }
+
                 try {
                     sw = Double.parseDouble(saturationWeightInput.getText());
                 } catch (Exception e) {
@@ -198,11 +203,10 @@ public class ControlColorMatch extends BaseController {
                     popError(message("InvalidParameter") + ": " + message("BrightnessWeight"));
                     return false;
                 }
-                colorMatch.setHueWeight(hw);
+
                 colorMatch.setSaturationWeight(sw);
                 colorMatch.setBrightnessWeight(bw);
 
-                UserConfig.setDouble(conn, baseName + "HueWeight", hw);
                 UserConfig.setDouble(conn, baseName + "SaturationWeight", sw);
                 UserConfig.setDouble(conn, baseName + "BrightnessWeight", bw);
             }

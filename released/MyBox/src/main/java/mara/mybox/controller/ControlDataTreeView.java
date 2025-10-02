@@ -231,6 +231,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         return selectedIDs;
     }
 
+    // to mark the node  "should checked whether has children"
     public TreeItem<DataNode> dummyItem() {
         return new TreeItem(new DataNode());
     }
@@ -330,9 +331,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     }
 
     // item should be invisible in the treeView while doing this
+    // item should have hold dummy node if need expand children
     public void unfold(FxTask task, Connection conn,
             TreeItem<DataNode> item, boolean unfoldDescendants) {
         try {
+
             if (item == null || item.isLeaf()) {
                 return;
             }
@@ -405,7 +408,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         }
     }
 
-    public void unfoldNodeAncestors(DataNode node) {
+    public void unfoldNodeAncestors(DataNode node, boolean refreshChildren) {
         if (node == null) {
             return;
         }
@@ -425,6 +428,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     item = unfoldAncestors(this, conn, rootItem, node);
+                    if (refreshChildren) {
+                        item.getChildren().clear();
+                        item.getChildren().add(dummyItem());
+                        unfold(this, conn, item, false);
+                    }
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -468,8 +476,18 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
             }
             TreeItem<DataNode> parentItem = rootItem, chainItem = rootItem;
             for (DataNode chainNode : chainNodes) {
-                unfold(ptask, conn, parentItem, false);
-                chainItem = findChild(parentItem, chainNode);
+                if (isLoaded(parentItem)) {
+                    chainItem = findChild(parentItem, chainNode);
+                    if (chainItem == null) {
+                        parentItem.getChildren().clear();
+                        parentItem.getChildren().add(dummyItem());
+                        unfold(ptask, conn, parentItem, false);
+                        chainItem = findChild(parentItem, chainNode);
+                    }
+                } else {
+                    unfold(ptask, conn, parentItem, false);
+                    chainItem = findChild(parentItem, chainNode);
+                }
                 if (chainItem == null) {
                     return null;
                 }
@@ -477,16 +495,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 parentItem = chainItem;
             }
             readExtraInfo(conn, node);
-            if (chainItem.isLeaf() && node.getChildrenSize() > 0) {
-                TreeItem<DataNode> unloadItem = chainItem;
-                unloadItem.expandedProperty().addListener(
-                        (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                            if (newVal && !unloadItem.isLeaf() && !isLoaded(unloadItem)) {
-                                unfold(unloadItem, false);
-                            }
-                        });
-                unloadItem.getChildren().add(dummyItem());
-            }
             return chainItem;
         } catch (Exception e) {
             displayError(e.toString());
@@ -499,45 +507,33 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         if (treeView == null || node == null) {
             return false;
         }
-        unfoldNodeAncestors(node);
+        unfoldNodeAncestors(node, false);
         return treeView.getRoot() != null;
-    }
-
-    public void nodeSaved(DataNode parent, DataNode node) {
-        try {
-            TreeItem<DataNode> nodeItem = find(node);
-            if (nodeItem != null) {
-                try {
-                    nodeItem.setValue(node);
-                    TreeItem<DataNode> currentParentItem = nodeItem.getParent();
-                    if (currentParentItem.getValue().equals(parent)) {
-                        return;
-                    }
-                    currentParentItem.getChildren().remove(nodeItem);
-                    refreshNode(parent);
-                    return;
-                } catch (Exception e) {
-                }
-            }
-            unfoldNodeAncestors(node);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     public void unfoldNode(DataNode node) {
         unfold(find(node), false);
     }
 
-    public void refreshNode(DataNode node) {
-        TreeItem<DataNode> item = find(node);
-        if (item == null) {
+    public void refreshNode(DataNode node, boolean refreshChildren) {
+        if (node == null) {
             return;
         }
-        item.setValue(node);
-        item.getChildren().clear();
-        item.getChildren().add(dummyItem());
-        unfold(item, false);
+        if (node.isRoot()) {
+            loadTree(null);
+            return;
+        }
+        TreeItem<DataNode> item = find(node);
+        if (item != null) {
+            TreeItem<DataNode> pitem = item.getParent();
+            // when parent is changed
+            if (pitem.getValue().getNodeid() != node.getParentid()) {
+                pitem.getChildren().remove(item);
+            } else {
+                item.setValue(node);
+            }
+        }
+        unfoldNodeAncestors(node, refreshChildren);
     }
 
 }

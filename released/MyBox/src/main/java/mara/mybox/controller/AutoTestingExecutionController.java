@@ -40,7 +40,6 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
     protected boolean canceled;
     protected ChangeListener<Boolean> caseListener;
     protected final SimpleBooleanProperty caseNotify;
-    protected final Object lock = new Object();
 
     @FXML
     protected TableColumn<TestCase, Integer> aidColumn;
