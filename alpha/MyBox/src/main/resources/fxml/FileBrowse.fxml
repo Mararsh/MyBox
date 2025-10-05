@@ -9,16 +9,14 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileBrowseController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileBrowseController">
     <children>
       <Label fx:id="topLabel" minHeight="-Infinity" wrapText="true" />
       <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
@@ -41,7 +39,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
+            <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -50,14 +48,6 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <RadioButton fx:id="openRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%OpenInNewWindow" wrapText="true">
-               <toggleGroup>
-                  <ToggleGroup fx:id="dcGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="loadRadio" layoutX="159.0" layoutY="16.0" minHeight="-Infinity" mnemonicParsing="false" text="%Load" toggleGroup="$dcGroup" wrapText="true" />
-            <RadioButton fx:id="popRadio" layoutX="325.0" layoutY="16.0" minHeight="-Infinity" mnemonicParsing="false" text="%Pop" toggleGroup="$dcGroup" wrapText="true" />
-            <RadioButton fx:id="sysRadio" layoutX="377.0" layoutY="16.0" minHeight="-Infinity" mnemonicParsing="false" text="%SystemMethod" toggleGroup="$dcGroup" wrapText="true" />
          </children>
       </FlowPane>
       <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">

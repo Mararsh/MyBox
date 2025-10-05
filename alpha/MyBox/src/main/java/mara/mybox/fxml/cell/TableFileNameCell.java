@@ -50,6 +50,7 @@ public class TableFileNameCell<T> extends TableCell<T, String>
                 if (empty || item == null) {
                     return;
                 }
+                setText(item);
                 String suffix = FileNameTools.ext(item).toLowerCase();
                 if (FileExtensions.SupportedImages.contains(suffix)) {
                     ImageViewFileTask task = new ImageViewFileTask(controller)
@@ -58,8 +59,6 @@ public class TableFileNameCell<T> extends TableCell<T, String>
                     Thread thread = new Thread(task);
                     thread.setDaemon(false);
                     thread.start();
-                } else {
-                    setText(item);
                 }
             }
         };
