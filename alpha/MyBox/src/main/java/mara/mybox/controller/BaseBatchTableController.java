@@ -963,34 +963,8 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    @Override
-    public void deleteAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(tableView.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            clearFilesAction();
-            return;
-        }
-        isSettingValues = true;
-        for (int i = selected.size() - 1; i >= 0; --i) {
-            int index = selected.get(i);
-            if (index < 0 || index > tableData.size() - 1) {
-                continue;
-            }
-            tableData.remove(index);
-        }
-        tableView.refresh();
-        isSettingValues = false;
-        tableChanged();
-    }
-
-    @FXML
     public void clearFilesAction() {
-        isSettingValues = true;
-        tableData.clear();
-        tableView.refresh();
-        isSettingValues = false;
-        tableChanged();
+        clear();
     }
 
     public void listAction() {

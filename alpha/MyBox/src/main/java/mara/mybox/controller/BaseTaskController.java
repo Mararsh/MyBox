@@ -326,7 +326,7 @@ public class BaseTaskController extends BaseLogsController {
                 return true;
             }
         }
-        return false;
+        return super.controlAltL();
     }
 
     @Override

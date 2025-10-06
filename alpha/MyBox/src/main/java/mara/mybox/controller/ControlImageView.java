@@ -161,7 +161,7 @@ public class ControlImageView extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Delete") + "    Ctrl+D " + message("Or") + " Alt+D",
+            menu = new MenuItem(message("DeleteFile") + "    DELETE  " + message("Or") + "  Ctrl+D" + message("Or") + " Alt+D",
                     StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent event) -> {
                 deleteAction();

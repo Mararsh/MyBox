@@ -559,6 +559,7 @@ public class ImagesBrowserController extends ControlImagesTable {
         }
     }
 
+    @Override
     public void view(int index) {
         try {
             if (index >= tableData.size()) {
@@ -576,7 +577,7 @@ public class ImagesBrowserController extends ControlImagesTable {
 
     public void delete(int index) {
         try {
-            if (index >= tableData.size()) {
+            if (index < 0 || index >= tableData.size()) {
                 return;
             }
             ImageInformation info = tableData.get(index);
@@ -586,6 +587,7 @@ public class ImagesBrowserController extends ControlImagesTable {
             }
             popSuccessful();
             refreshAction();
+            clicked(null);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -862,7 +864,7 @@ public class ImagesBrowserController extends ControlImagesTable {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("Delete"));
+        menu = new MenuItem(message("DeleteFile"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             delete(index);
         });
@@ -935,7 +937,7 @@ public class ImagesBrowserController extends ControlImagesTable {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("Delete"));
+        menu = new MenuItem(message("DeleteFile"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             delete(index);
         });

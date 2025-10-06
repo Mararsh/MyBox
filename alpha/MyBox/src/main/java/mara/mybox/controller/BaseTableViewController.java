@@ -647,7 +647,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
             isSettingValues = true;
             tableData.removeAll(selected);
             isSettingValues = false;
-            tableChanged(true);
+            tableChanged();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -663,7 +663,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         isSettingValues = true;
         tableData.clear();
         isSettingValues = false;
-        tableChanged(true);
+        tableChanged();
     }
 
     @FXML

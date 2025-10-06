@@ -35,7 +35,8 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
             myFxml = "/fxml/" + interfaceName + ".fxml";
 
             initValues();
-            monitorKeyEvents();
+
+            monitorKeyEvents(thisPane);
 //            monitorMouseEvents();
             initBaseControls();
             initControls();

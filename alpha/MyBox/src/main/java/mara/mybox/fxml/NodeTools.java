@@ -112,12 +112,25 @@ public class NodeTools {
         if (node == null) {
             return node;
         }
-        MyBoxLog.debug("  ".repeat(level) + node.getClass() + " " + node.getId() + " " + node.getStyle());
+        MyBoxLog.console("   ".repeat(level) + node.getClass() + "  id:" + node.getId() + "  style:" + node.getStyle());
         Node parent = node.getParent();
         if (parent == null) {
             return node;
         }
         return parent(level + 1, parent);
+    }
+
+    public static Node root(Node node) {
+        if (node == null) {
+            return node;
+        }
+        MyBoxLog.console(node.getClass() + "  id:" + node.getId() + "  style:" + node.getStyle());
+        Node parent = node.getParent();
+        if (parent == null) {
+            MyBoxLog.console(parent == null);
+            return node;
+        }
+        return root(parent);
     }
 
     public static boolean setRadioFirstSelected(ToggleGroup group) {

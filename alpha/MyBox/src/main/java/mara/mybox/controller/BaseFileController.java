@@ -18,9 +18,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileSortTools;
-import mara.mybox.tools.FileSortTools.FileSortMode;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -38,11 +36,21 @@ public abstract class BaseFileController extends BaseTaskController {
     protected ComboBox<String> dpiSelector;
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            sortMode = FileSortTools.sortMode(UserConfig.getString(baseName + "SortMode", "NameAsc"));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
-
-            sortMode = FileSortMode.NameAsc;
 
             initDPI();
         } catch (Exception e) {
@@ -220,72 +228,12 @@ public abstract class BaseFileController extends BaseTaskController {
         return null;
     }
 
-    public List<File> pathTypeFiles() {
-        try {
-            if (sourceFile == null) {
-                return null;
-            }
-            File path = sourceFile.getParentFile();
-            File[] filesList = path.listFiles();
-            if (filesList == null || filesList.length == 0) {
-                return null;
-            }
-            List<File> files = new ArrayList<>();
-            for (File file : filesList) {
-                if (file.isFile() && FileFilters.accept(sourceExtensionFilter, file)) {
-                    files.add(file);
-                }
-            }
-            FileSortTools.sortFiles(files, sortMode);
-            return files;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public File nextFile() {
-        try {
-            if (sourceFile == null) {
-                return null;
-            }
-            List<File> files = pathTypeFiles();
-            if (files == null || files.isEmpty()) {
-                return null;
-            }
-            for (int i = 0; i < files.size() - 1; i++) {
-                File file = files.get(i);
-                if (sourceFile.equals(file)) {
-                    return files.get(i + 1);
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
+        return FileSortTools.nextFile(sourceFile, SourceFileType, sortMode);
     }
 
     public File previousFile() {
-        try {
-            if (sourceFile == null) {
-                return null;
-            }
-            List<File> files = pathTypeFiles();
-            if (files == null || files.isEmpty()) {
-                return null;
-            }
-            for (int i = 1; i < files.size(); i++) {
-                File file = files.get(i);
-                if (sourceFile.equals(file)) {
-                    return files.get(i - 1);
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
+        return FileSortTools.previousFile(sourceFile, SourceFileType, sortMode);
     }
 
     @Override

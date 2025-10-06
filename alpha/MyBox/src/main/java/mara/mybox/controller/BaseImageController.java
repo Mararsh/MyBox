@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +14,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
@@ -25,6 +28,8 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileSortTools;
+import mara.mybox.tools.FileSortTools.FileSortMode;
 import mara.mybox.value.FileExtensions;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -378,11 +383,25 @@ public class BaseImageController extends BaseImageController_Actions {
             if (sourceFile == null) {
                 return items;
             }
+
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                renameAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("DeleteFile") + "    DELETE  " + message("Or") + "  Ctrl+D" + message("Or") + " Alt+D",
+                    StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                deleteAction();
+            });
+            items.add(menu);
+
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
             menu.setOnAction((ActionEvent event) -> {
-                openSourcePath();
+                systemMethod();
             });
             items.add(menu);
 
@@ -392,32 +411,54 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                openSourcePath();
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
             menu.setOnAction((ActionEvent event) -> {
                 FileBrowseController.open(this);
             });
             items.add(menu);
 
-            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                systemMethod();
-            });
-            items.add(menu);
+            if (FileSortTools.hasNextFile(sourceFile, SourceFileType, sortMode)) {
+                menu = new MenuItem(message("NextFile") + "  PAGE_DOWN",
+                        StyleTools.getIconImageView("iconNext.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    nextAction();
+                });
+                items.add(menu);
+            }
 
-            items.add(new SeparatorMenuItem());
+            if (FileSortTools.hasPreviousFile(sourceFile, SourceFileType, sortMode)) {
+                menu = new MenuItem(message("PreviousFile") + "  PAGE_UP",
+                        StyleTools.getIconImageView("iconPrevious.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    previousAction();
+                });
+                items.add(menu);
+            }
 
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                renameAction();
-            });
-            items.add(menu);
+            Menu sortMenu = new Menu(message("Sort"));
+            items.add(sortMenu);
 
-            menu = new MenuItem(message("Delete") + "    Ctrl+D " + message("Or") + " Alt+D",
-                    StyleTools.getIconImageView("iconDelete.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                deleteAction();
-            });
-            items.add(menu);
+            ToggleGroup sortGroup = new ToggleGroup();
+            for (FileSortMode mode : FileSortMode.values()) {
+                String name = mode.name();
+                RadioMenuItem sortItemMenu = new RadioMenuItem(message(name));
+                sortItemMenu.setSelected(mode == sortMode);
+                sortItemMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        sortMode = mode;
+                        UserConfig.setString(baseName + "SortMode", name);
+                    }
+                });
+                sortItemMenu.setToggleGroup(sortGroup);
+                sortMenu.getItems().add(sortItemMenu);
+            }
 
             return items;
         } catch (Exception e) {
@@ -729,6 +770,42 @@ public class BaseImageController extends BaseImageController_Actions {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    @FXML
+    @Override
+    public void nextAction() {
+        try {
+            File file = nextFile();
+            if (file != null) {
+                sourceFileChanged(file);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    @FXML
+    @Override
+    public void previousAction() {
+        try {
+            File file = previousFile();
+            if (file != null) {
+                sourceFileChanged(file);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public boolean keyPageUp() {
+        previousAction();
+        return true;
+    }
+
+    @Override
+    public boolean keyPageDown() {
+        nextAction();
+        return true;
     }
 
     @Override

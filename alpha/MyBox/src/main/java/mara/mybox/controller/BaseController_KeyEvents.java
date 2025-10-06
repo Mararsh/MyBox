@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.event.EventTarget;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
@@ -20,22 +21,23 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     private KeyEvent keyEvent;
 
     // Flter from top level. Always handle at higher level at first.
-    public void monitorKeyEvents() {
+    public void monitorKeyEvents(Node node) {
         try {
-            if (thisPane != null) {
-                thisPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-//                    MyBoxLog.debug("KeyEvent.KEY_PRESSED");
-                    if (keyEventsFilter(event)) {
-                        event.consume();
-                    }
-                });
-                thisPane.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-//                    MyBoxLog.debug("KeyEvent.KEY_TYPED");
-                    if (keyEventsFilter(event)) {
-                        event.consume();
-                    }
-                });
+            if (node == null) {
+                return;
             }
+            node.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+//                    MyBoxLog.debug("KeyEvent.KEY_PRESSED");
+                if (keyEventsFilter(event)) {
+                    event.consume();
+                }
+            });
+            node.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+//                    MyBoxLog.debug("KeyEvent.KEY_TYPED");
+                if (keyEventsFilter(event)) {
+                    event.consume();
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -87,6 +89,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         if (code == null || code == KeyCode.UNDEFINED) {
             return inputFilter(event);
         }
+//        MyBoxLog.debug("code:" + code);
         switch (code) {
             case ENTER:
                 return keyEnter();
@@ -154,15 +157,15 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         if (event == null) {
             return false;
         }
-        boolean omit = !event.isControlDown() && !event.isAltDown();
-        if (omit && targetIsTextInput()) {
+        boolean isOmitted = !event.isControlDown() && !event.isAltDown();
+        if (isOmitted && targetIsTextInput()) {
             return false;
         }
-        return inputFilter(omit ? event.getCharacter() : event.getText(), omit);
+        return inputFilter(isOmitted ? event.getCharacter() : event.getText(), isOmitted);
     }
 
-    public boolean inputFilter(String input, boolean omit) {
-        if (input == null || (omit && AppVariables.ShortcutsCanNotOmitCtrlAlt)) {
+    public boolean inputFilter(String input, boolean isOmitted) {
+        if (input == null || (isOmitted && AppVariables.ShortcutsCanNotOmitCtrlAlt)) {
             return false;
         }
 //        MyBoxLog.debug("input:" + input.toUpperCase());
@@ -183,7 +186,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return controlAltA();
 
             case "D":
-                return omit ? false : controlAltD();
+                return isOmitted ? false : controlAltD();
 
             case "Z":
                 return controlAltZ();
@@ -201,7 +204,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return controlAltR();
 
             case "S":
-                return omit ? false : controlAltS();
+                return isOmitted ? false : controlAltS();
 
             case "F":
                 return controlAltF();
@@ -243,7 +246,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return controlAltU();
 
             case "L":
-                return omit ? false : controlAltL();
+                return isOmitted ? false : controlAltL();
 
             case "-":
                 setSceneFontSize(AppVariables.sceneFontSize - 1);
