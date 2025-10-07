@@ -532,7 +532,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         try {
             List<DataFilter> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
-                clearAction();
+                popError(message("SelectToHandle"));
                 return;
             }
             tableData.removeAll(selected);

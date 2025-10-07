@@ -161,24 +161,26 @@ public class MediaListController extends BaseTableViewController<MediaList> {
     @FXML
     @Override
     public void deleteAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(tableView.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
+        List<MediaList> selected = selectedItems();
+        if (selected == null || selected.isEmpty()) {
+            popError(message("SelectToHandle"));
             return;
         }
         isSettingValues = true;
-        for (int i = selected.size() - 1; i >= 0; --i) {
-            int index = selected.get(i);
-            if (index < 0 || index > tableData.size() - 1) {
-                continue;
-            }
-            if (TableMediaList.delete(tableData.get(index).getName())) {
-                tableData.remove(index);
+        List<MediaList> deleted = new ArrayList<>();
+        for (MediaList media : selected) {
+            if (TableMediaList.delete(media.getName())) {
+                deleted.add(media);
+            } else {
+                popError(message("Failed") + ": " + media.getName());
+                break;
             }
         }
+        isSettingValues = true;
+        tableData.removeAll(deleted);
         tableView.refresh();
         isSettingValues = false;
-        checkSelected();
+        tableChanged();
     }
 
     @FXML

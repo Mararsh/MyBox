@@ -231,7 +231,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
         try {
             List<DataTag> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
-                clearAction();
+                popError(message("SelectToHandle"));
                 return;
             }
             for (DataTag tag : selected) {

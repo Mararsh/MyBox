@@ -321,7 +321,7 @@ public class ImageHistoriesController extends BaseTableViewController<ImageEditH
     public void deleteAction() {
         List<ImageEditHistory> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
-            clearAction();
+            popError(message("SelectToHandle"));
             return;
         }
         if (task != null && !task.isQuit()) {

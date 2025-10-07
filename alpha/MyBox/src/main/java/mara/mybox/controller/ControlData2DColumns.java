@@ -637,7 +637,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public void deleteRowsAction() {
         List<Data2DColumn> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
-            clearWithSure();
+            popError(message("SelectToHandle"));
             return;
         }
         for (Data2DColumn column : selected) {

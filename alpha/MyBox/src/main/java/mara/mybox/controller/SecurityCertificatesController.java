@@ -199,7 +199,8 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                                 s.append("#### ").append(Languages.message("Alias")).append(": ").append(entry.getAlias()).append("\n");
                                 s.append("----------------------------\n");
                                 if (entry.getCertificateChain() != null) {
-                                    for (Certificate cert : entry.getCertificateChain()) {
+                                    for (Certificate cert
+                                            : entry.getCertificateChain()) {
                                         s.append(cert).append("\n\n");
                                     }
                                 }
@@ -331,6 +332,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         }
         List<CertificateEntry> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
+            popError(message("SelectToHandle"));
             return;
         }
         if (task != null) {
@@ -364,7 +366,6 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
 
             @Override
             protected void whenSucceeded() {
-
                 if (error == null) {
                     loadAll(null);
                     if (needBackup) {

@@ -232,7 +232,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
     public void deleteAction() {
         List<FileBackup> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
-            clearAction();
+            popError(message("SelectToHandle"));
             return;
         }
         if (task != null && !task.isQuit()) {

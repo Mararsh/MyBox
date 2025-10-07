@@ -309,7 +309,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
         try {
             List<ValueRange> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
-                clearAction();
+                popError(message("SelectToHandle"));
                 return;
             }
             tableData.removeAll(selected);
