@@ -11,12 +11,12 @@ public class AppValues {
 
     public static final boolean Alpha = true;
     public static final String AppVersion = "6.9.2";
-    public static final String AppVersionDate = "2025-10-31";
+    public static final String AppVersionDate = "2025-12-31";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
     public static final int AppYear = 2025;
     public static final Image AppIcon = new Image("img/MyBox.png");
-    public static final String JavaVersion = "24";
+    public static final String JavaVersion = "25";
 
     public static final String MyBoxSeparator = "##MyBox#";
     public static final String MyBoxStyle = "/styles/MyBox.css";

@@ -511,7 +511,7 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Sample"), StyleTools.getIconImageView("iconSample.png"));
+            menu = new MenuItem(message("ImageSample"), StyleTools.getIconImageView("iconSample.png"));
             menu.setOnAction((ActionEvent event) -> {
                 sampleAction();
 

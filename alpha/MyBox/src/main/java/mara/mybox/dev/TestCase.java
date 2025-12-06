@@ -143,7 +143,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("ImagesSplice"), Fxmls.ImagesSpliceFxml));
             cases.add(new TestCase(index++, message("ImageAlphaAdd"), Fxmls.ImageAlphaAddBatchFxml));
             cases.add(new TestCase(index++, message("ImageSplit"), Fxmls.ImageSplitFxml));
-            cases.add(new TestCase(index++, message("ImageSubsample"), Fxmls.ImageSampleFxml));
+            cases.add(new TestCase(index++, message("ImageSample"), Fxmls.ImageSampleFxml));
             cases.add(new TestCase(index++, message("ImageAlphaExtract"), Fxmls.ImageAlphaExtractBatchFxml));
             cases.add(new TestCase(index++, message("ImageConverterBatch"), Fxmls.ImageConverterBatchFxml));
             cases.add(new TestCase(index++, message("ImageOCR"), Fxmls.ImageOCRFxml));

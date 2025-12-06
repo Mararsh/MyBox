@@ -11,12 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import mara.mybox.image.data.CropTools;
-import mara.mybox.image.data.ImageInformation;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.image.data.CropTools;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -161,6 +161,9 @@ public class ImageSampleController extends BaseShapeController {
         }
         try {
             x1 = Double.parseDouble(rectLeftTopXInput.getText());
+            if (x1 < 0) {
+                x1 = 0;
+            }
             rectLeftTopXInput.setStyle(null);
         } catch (Exception e) {
             rectLeftTopXInput.setStyle(UserConfig.badStyle());
@@ -169,6 +172,9 @@ public class ImageSampleController extends BaseShapeController {
         }
         try {
             y1 = Double.parseDouble(rectLeftTopYInput.getText());
+            if (y1 < 0) {
+                y1 = 0;
+            }
             rectLeftTopYInput.setStyle(null);
         } catch (Exception e) {
             rectLeftTopYInput.setStyle(UserConfig.badStyle());
@@ -177,6 +183,9 @@ public class ImageSampleController extends BaseShapeController {
         }
         try {
             x2 = Double.parseDouble(rightBottomXInput.getText());
+            if (x2 >= imageView.getImage().getWidth()) {
+                x2 = imageView.getImage().getWidth() - 1;
+            }
             rightBottomXInput.setStyle(null);
         } catch (Exception e) {
             rightBottomXInput.setStyle(UserConfig.badStyle());
@@ -185,6 +194,9 @@ public class ImageSampleController extends BaseShapeController {
         }
         try {
             y2 = Double.parseDouble(rightBottomYInput.getText());
+            if (y2 >= imageView.getImage().getHeight()) {
+                y2 = imageView.getImage().getHeight() - 1;
+            }
             rightBottomYInput.setStyle(null);
         } catch (Exception e) {
             rightBottomYInput.setStyle(UserConfig.badStyle());
@@ -276,6 +288,35 @@ public class ImageSampleController extends BaseShapeController {
         }
     }
 
+    @FXML
+    @Override
+    public void saveAction() {
+        saveAsAction();
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        if (image == null
+                || !checkScales() || widthScale < 1 || heightScale < 1) {
+            return;
+        }
+        try {
+            DoubleRectangle rect = checkRegion();
+            if (rect == null) {
+                return;
+            }
+            maskRectangleData = rect;
+            isSettingValues = true;
+            drawMaskRectangle();
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        super.saveAsAction();
+    }
+
     @Override
     public BufferedImage imageToSaveAs(FxTask currentTask) {
         if (sourceFile != null && imageInformation != null) {
@@ -291,23 +332,6 @@ public class ImageSampleController extends BaseShapeController {
         } else {
             return null;
         }
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        saveAsAction();
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        if (image == null
-                || !checkScales() || widthScale < 1 || heightScale < 1
-                || checkRegion() == null) {
-            return;
-        }
-        super.saveAsAction();
     }
 
 }

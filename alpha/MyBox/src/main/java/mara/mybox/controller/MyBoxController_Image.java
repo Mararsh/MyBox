@@ -117,7 +117,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageSplitFxml);
         });
 
-        MenuItem ImageSample = new MenuItem(message("ImageSubsample"));
+        MenuItem ImageSample = new MenuItem(message("ImageSample"));
         ImageSample.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImageSampleFxml);
         });
