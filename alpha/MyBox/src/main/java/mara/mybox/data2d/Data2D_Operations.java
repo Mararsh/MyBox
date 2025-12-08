@@ -32,6 +32,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -259,7 +260,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         return fixColumnNames(targetColumns);
     }
 
-    public DataFileCSV copy(FxTask task, List<Integer> cols,
+    public DataFileCSV copyTmp(FxTask task, List<Integer> cols,
             boolean includeRowNumber, boolean includeColName, boolean formatValues) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -267,7 +268,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         try {
             DataFileCSVWriter writer = new DataFileCSVWriter();
             List<Data2DColumn> targetColumns = targetColumns(cols, includeRowNumber);
-            writer.setColumns(targetColumns)
+            writer.setPrintFile(FileTmpTools.getTempFile(".csv"))
+                    .setColumns(targetColumns)
                     .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(includeColName)
                     .setFormatValues(formatValues);

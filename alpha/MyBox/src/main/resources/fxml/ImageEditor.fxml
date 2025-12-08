@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageEditorController">
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageEditorController">
    <content>
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
     <top>
@@ -74,8 +74,8 @@ License:    Apache License Version 2.0
                                 <Image url="@../buttons/Red/iconTips.png" />
                             </image>
                         </ImageView>
-                        <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0" HBox.hgrow="ALWAYS">
-                            <children>
+                        <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                           <children>
                                 <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
                                 <CheckBox fx:id="toolbarCheck" mnemonicParsing="false">
                                     <graphic>
@@ -113,7 +113,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="pasteItemButton" layoutX="350.0" layoutY="10.0" mnemonicParsing="false" onAction="#showPasteMenu" onMouseEntered="#popPasteMenu">
+                                <Button fx:id="pasteItemButton" mnemonicParsing="false" onAction="#showPasteMenu" onMouseEntered="#popPasteMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -122,7 +122,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="pixelsButton" layoutX="465.0" layoutY="10.0" mnemonicParsing="false" onAction="#showPixelsMenu" onMouseEntered="#popPixelsMenu">
+                                <Button fx:id="pixelsButton" mnemonicParsing="false" onAction="#showPixelsMenu" onMouseEntered="#popPixelsMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -131,7 +131,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="colorsButton" layoutX="465.0" layoutY="10.0" mnemonicParsing="false" onAction="#showColorsMenu" onMouseEntered="#popColorsMenu">
+                                <Button fx:id="colorsButton" mnemonicParsing="false" onAction="#showColorsMenu" onMouseEntered="#popColorsMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -149,7 +149,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="dataButton" layoutX="671.0" layoutY="10.0" mnemonicParsing="false" onAction="#showDataMenu" onMouseEntered="#popDataMenu">
+                                <Button fx:id="dataButton" mnemonicParsing="false" onAction="#showDataMenu" onMouseEntered="#popDataMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -158,7 +158,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                            </children>
+                           </children>
                         </FlowPane>
                     </children>
                 </HBox>
@@ -193,7 +193,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
+                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                     <children>
                                         <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
                                             <graphic>

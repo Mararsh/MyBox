@@ -60,7 +60,7 @@ public abstract class Data2D extends Data2D_Operations {
                 infoTable.add(row);
             } else {
                 row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Charset"), charset.name()));
+                row.addAll(Arrays.asList(message("Charset"), charset != null ? charset.name() : message("Unknown")));
                 infoTable.add(row);
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Delimiter"), TextTools.delimiterMessage(delimiter)));
