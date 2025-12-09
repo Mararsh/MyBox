@@ -400,6 +400,10 @@ public abstract class BaseController_Attributes {
         return isSettingValues;
     }
 
+    public void setIsSettingValues(boolean isSettingValues) {
+        this.isSettingValues = isSettingValues;
+    }
+
     public String getInterfaceName() {
         return interfaceName;
     }

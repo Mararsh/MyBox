@@ -7,6 +7,8 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import mara.mybox.MyBox;
 import mara.mybox.dev.MyBoxLog;
@@ -19,8 +21,12 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2021-7-29
  * @License Apache License Version 2.0
  */
-public abstract class MainMenuController_Window extends MainMenuController_Base {
+public abstract class MainMenuController_Window extends BaseController {
 
+    @FXML
+    protected Pane mainMenuPane;
+    @FXML
+    protected MenuBar menuBar;
     @FXML
     protected Menu homeMenu;
     @FXML

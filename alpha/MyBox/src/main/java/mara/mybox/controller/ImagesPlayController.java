@@ -209,6 +209,14 @@ public class ImagesPlayController extends BaseFileController {
         }
     }
 
+    public void setAsPDF() {
+        pdfRadio.setSelected(true);
+    }
+
+    public void setAsPPT() {
+        pptRadio.setSelected(true);
+    }
+
     @Override
     public void dpiChanged() {
         if (fileFormat != null && fileFormat.equalsIgnoreCase("pdf")) {
