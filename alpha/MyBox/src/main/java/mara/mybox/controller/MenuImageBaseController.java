@@ -347,11 +347,13 @@ public class MenuImageBaseController extends MenuController {
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         imageController.popFunctionsMenu(event);
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event event) {
         imageController.showFunctionsMenu(event);
     }

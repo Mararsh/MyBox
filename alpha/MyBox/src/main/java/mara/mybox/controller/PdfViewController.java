@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
@@ -286,7 +287,7 @@ public class PdfViewController extends PdfViewController_Html {
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("View"));
 
             MenuItem menu = new MenuItem(message("Image") + " - " + message("Pop"), StyleTools.getIconImageView("iconImage.png"));
             menu.setOnAction((ActionEvent event) -> {

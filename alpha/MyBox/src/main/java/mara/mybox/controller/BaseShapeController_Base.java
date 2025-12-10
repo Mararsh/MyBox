@@ -47,6 +47,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.MenuTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -511,15 +512,8 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
     protected List<MenuItem> maskAnchorMenu(int index, String name, String title, DoublePoint p) {
         try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            menu = new MenuItem(title + "\n" + StringTools.menuPrefix(p.text(2)));
-            menu.setStyle(attributeTextStyle());
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("EditAnchor"), StyleTools.getIconImageView("iconEdit.png"));
+            List<MenuItem> items = MenuTools.initMenu(title + "\n" + StringTools.menuPrefix(p.text(2)), false);
+            MenuItem menu = new MenuItem(message("EditAnchor"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 PointInputController inputController = PointInputController.open(this, title, p);
                 inputController.getNotify().addListener(new ChangeListener<Boolean>() {

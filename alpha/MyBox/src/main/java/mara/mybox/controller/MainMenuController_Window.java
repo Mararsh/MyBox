@@ -55,11 +55,6 @@ public abstract class MainMenuController_Window extends BaseController {
     }
 
     @FXML
-    protected void showHome(ActionEvent event) {
-        openStage(Fxmls.MyboxFxml);
-    }
-
-    @FXML
     protected void SnapshotWindow(ActionEvent event) {
         ImageEditorController.openImage(NodeTools.snap(parentController.thisPane));
     }

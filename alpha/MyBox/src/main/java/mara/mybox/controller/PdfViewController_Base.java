@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
@@ -27,6 +26,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.value.Languages;
@@ -203,7 +203,7 @@ public class PdfViewController_Base extends BaseFileImagesController {
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
 
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("File"));
             MenuItem menu;
 
             if (sourceFile != null) {

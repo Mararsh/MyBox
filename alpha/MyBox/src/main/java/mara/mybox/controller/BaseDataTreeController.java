@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -28,10 +27,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.TextClipboardTools;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -492,16 +490,9 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return null;
         }
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu;
-        if (withTitle) {
-            menu = new MenuItem(StringTools.menuPrefix(label(node)));
-            menu.setStyle(attributeTextStyle());
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-        }
+        List<MenuItem> items = MenuTools.initMenu(withTitle ? label(node) : null);
 
-        menu = new MenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
+        MenuItem menu = new MenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             popNode(node);
         });
@@ -604,12 +595,7 @@ public class BaseDataTreeController extends BaseFileController {
         if (node == null) {
             return null;
         }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(node)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(node));
 
         items.addAll(viewMenuItems(event, node, false));
 

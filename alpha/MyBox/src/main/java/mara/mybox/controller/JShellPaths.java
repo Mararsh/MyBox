@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -19,6 +18,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.style.StyleTools;
@@ -222,7 +222,7 @@ public class JShellPaths extends BaseController {
     @FXML
     protected void showExamplesMenu(Event event) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Examples"));
 
             MenuItem menu = new MenuItem(message("MyBoxClassPaths"));
             menu.setOnAction((ActionEvent e) -> {

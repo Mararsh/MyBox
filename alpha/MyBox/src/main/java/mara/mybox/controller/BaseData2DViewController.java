@@ -26,6 +26,7 @@ import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -599,7 +600,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("View"));
 
             MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+I " + message("Or") + " Alt+I",
                     StyleTools.getIconImageView("iconInfo.png"));

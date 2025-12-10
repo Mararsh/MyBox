@@ -26,10 +26,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.NodeStyleTools;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -506,12 +506,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (item == null) {
             return;
         }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(item));
 
         items.addAll(viewMenuItems(item));
 
@@ -539,7 +534,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
             return null;
         }
 
-        List<MenuItem> items = new ArrayList<>();
+        List<MenuItem> items = MenuTools.initMenu(message("View"));
         if (!treeItem.isLeaf()) {
             items.addAll(foldMenuItems());
 
@@ -616,11 +611,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     public List<MenuItem> makeFunctionsMenu(TreeItem<NodeP> item) {
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(item));
 
         items.addAll(functionMenuItems(item));
 
@@ -747,12 +738,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (item == null) {
             return;
         }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(item));
 
         items.addAll(operationsMenuItems(item));
 

@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Connection;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +29,7 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -302,7 +302,6 @@ public class ImageEditorController extends BaseImageController {
             private ImageEditHistory his;
 
             @Override
-
             protected boolean handle() {
                 hisSize = 0;
                 his = null;
@@ -356,7 +355,7 @@ public class ImageEditorController extends BaseImageController {
     @Override
     public List<MenuItem> dataMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Data"));
             MenuItem menu;
 
             menu = new MenuItem(message("Undo") + "    Ctrl+Z " + message("Or") + " Alt+Z",
@@ -445,7 +444,7 @@ public class ImageEditorController extends BaseImageController {
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Operation"));
             MenuItem menu;
 
             menu = new MenuItem(message("Margins"), StyleTools.getIconImageView("iconRectangle.png"));
@@ -513,7 +512,7 @@ public class ImageEditorController extends BaseImageController {
     @FXML
     public void showColorsMenu(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Color"));
 
             MenuItem menu = new MenuItem(message("ReplaceColor"), StyleTools.getIconImageView("iconPalette.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -591,7 +590,7 @@ public class ImageEditorController extends BaseImageController {
     @FXML
     public void showPixelsMenu(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Pixels"));
             MenuItem menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageMosaicController.open(this);
@@ -672,7 +671,7 @@ public class ImageEditorController extends BaseImageController {
     @FXML
     public void showPasteMenu(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Paste"));
 
             MenuItem menu = new MenuItem(message("Image") + "    Ctrl+V " + message("Or") + " Alt+V",
                     StyleTools.getIconImageView("iconDefault.png"));

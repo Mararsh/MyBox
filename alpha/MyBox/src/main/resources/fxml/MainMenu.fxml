@@ -20,7 +20,6 @@ License:    Apache License Version 2.0
                     <menus>
                         <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#showHome" text="%MainPageShortcut" />
                                 <MenuItem mnemonicParsing="false" onAction="#WindowsList" text="%WindowsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindowComments" />
@@ -213,7 +212,11 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />-->
                             </items>
                         </Menu>
-                        <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help"/>
+                        <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
+                            <items>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                            </items>
+                        </Menu>                   
                     </menus>
                 </MenuBar>
             </children>

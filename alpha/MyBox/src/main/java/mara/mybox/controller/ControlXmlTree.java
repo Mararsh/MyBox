@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -241,7 +242,10 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         if (treeItem == null) {
             return null;
         }
-        List<MenuItem> items = foldMenuItems();
+        List<MenuItem> items = MenuTools.initMenu(message("View"));
+
+        items.addAll(foldMenuItems());
+
         MenuItem menu;
 
         XmlTreeNode node = treeItem.getValue();

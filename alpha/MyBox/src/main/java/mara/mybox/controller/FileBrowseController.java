@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -166,7 +166,7 @@ public class FileBrowseController extends BaseController {
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("View"));
 
             MenuItem menu;
 

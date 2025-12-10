@@ -16,12 +16,12 @@ import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -84,7 +84,7 @@ public abstract class RecentVisitMenu {
 
     public List<MenuItem> menu() {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("SelectFile"));
 
             MenuItem menu = new MenuItem(message("Select..."));
             menu.setOnAction((ActionEvent event1) -> {

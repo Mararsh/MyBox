@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.beans.binding.Bindings;
@@ -24,6 +23,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -302,7 +302,7 @@ public class BaseImageController extends BaseImageController_Actions {
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("File"));
             MenuItem menu;
 
             if (sourceFile != null) {
@@ -470,7 +470,7 @@ public class BaseImageController extends BaseImageController_Actions {
     @Override
     public List<MenuItem> functionsMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Function"));
 
             MenuItem menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -564,7 +564,7 @@ public class BaseImageController extends BaseImageController_Actions {
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Operation"));
             MenuItem menu;
 
             menu = new MenuItem(message("Paste") + "    Ctrl+V " + message("Or") + " Alt+V",
@@ -657,7 +657,7 @@ public class BaseImageController extends BaseImageController_Actions {
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("View"));
 
             MenuItem menu = new MenuItem(message("PickColors") + "    Ctrl+K " + message("Or") + " Alt+K",
                     StyleTools.getIconImageView("iconPickColor.png"));

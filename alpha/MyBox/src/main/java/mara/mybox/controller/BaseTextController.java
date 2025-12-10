@@ -21,6 +21,7 @@ import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -228,7 +229,7 @@ public abstract class BaseTextController extends BaseTextController_Actions {
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("File"));
             MenuItem menu;
 
             if (sourceFile != null) {

@@ -35,6 +35,7 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -986,7 +987,8 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     protected void showExamplesMenu(Event event) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Examples"));
+
             items.addAll(Data2DExampleTools.examplesMenu(this));
 
             items.add(new SeparatorMenuItem());

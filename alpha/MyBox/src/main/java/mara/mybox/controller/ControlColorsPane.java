@@ -31,11 +31,11 @@ import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara

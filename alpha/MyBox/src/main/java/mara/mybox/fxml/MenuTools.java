@@ -22,7 +22,9 @@ import mara.mybox.controller.ImageInSystemClipboardController;
 import mara.mybox.controller.ImagesPlayController;
 import mara.mybox.controller.TextInMyBoxClipboardController;
 import mara.mybox.controller.TextInSystemClipboardController;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -55,9 +57,15 @@ public class MenuTools {
         Menu mediaMenu = new Menu(message("Media"));
         mediaMenu.getItems().addAll(mediaToolsMenu(controller, event));
 
+        MenuItem mainMenu = new MenuItem(message("MainPageShortcut"));
+        mainMenu.setOnAction((ActionEvent event1) -> {
+            controller.openStage(Fxmls.MyboxFxml);
+        });
+
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(documentMenu, imageMenu, fileMenu,
-                networkMenu, dataMenu, mediaMenu));
+                networkMenu, dataMenu, mediaMenu, new SeparatorMenuItem(),
+                mainMenu));
 
         return items;
     }
@@ -1467,6 +1475,24 @@ public class MenuTools {
 
     public static boolean isPopMenu(String name) {
         return UserConfig.getBoolean(name + "MenuPopWhenMouseHovering", true);
+    }
+
+    public static List<MenuItem> initMenu(String name) {
+        return initMenu(name, true);
+    }
+
+    public static List<MenuItem> initMenu(String name, boolean fix) {
+        List<MenuItem> items = new ArrayList<>();
+        if (name == null || name.isBlank()) {
+            return items;
+        }
+
+        MenuItem menu = new MenuItem(fix ? StringTools.menuPrefix(name) : name);
+        menu.setStyle(attributeTextStyle());
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        return items;
     }
 
 }

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -10,6 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -102,7 +102,7 @@ public class ControlImageView extends BaseImageController {
             if (sourceFile == null || imageView.getImage() == null) {
                 return null;
             }
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("File"));
             MenuItem menu;
 
             if (imageInformation != null) {

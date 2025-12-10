@@ -76,7 +76,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showDocumentMenu(Event event) {
-        List<MenuItem> items = MenuTools.documentToolsMenu(this, event);
+        List<MenuItem> items = MenuTools.initMenu(message("Document"));
+        items.addAll(MenuTools.documentToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
         popCenterMenu(documentBox, items);
@@ -91,7 +92,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showImageMenu(Event event) {
-        List<MenuItem> items = MenuTools.imageToolsMenu(this, event);
+        List<MenuItem> items = MenuTools.initMenu(message("Image"));
+        items.addAll(MenuTools.imageToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
         popCenterMenu(imageBox, items);
@@ -106,7 +108,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showFileMenu(Event event) {
-        List<MenuItem> items = MenuTools.fileToolsMenu(this, event);
+        List<MenuItem> items = MenuTools.initMenu(message("File"));
+        items.addAll(MenuTools.fileToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
         popCenterMenu(fileBox, items);
@@ -121,7 +124,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showNetworkMenu(Event event) {
-        List<MenuItem> items = MenuTools.networkToolsMenu(this, event);
+        List<MenuItem> items = MenuTools.initMenu(message("Network"));
+        items.addAll(MenuTools.networkToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
         popCenterMenu(networkBox, items);
@@ -136,7 +140,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showDataMenu(Event event) {
-        List<MenuItem> items = MenuTools.dataToolsMenu(this, event);
+        List<MenuItem> items = MenuTools.initMenu(message("Data"));
+        items.addAll(MenuTools.dataToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
         popCenterMenu(dataBox, items);
@@ -151,7 +156,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showMediaMenu(Event event) {
-        List<MenuItem> items = MenuTools.mediaToolsMenu(this, event);
+        List<MenuItem> items = MenuTools.initMenu(message("Media"));
+        items.addAll(MenuTools.mediaToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
         popCenterMenu(mediaBox, items);
@@ -166,7 +172,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showRecentMenu(Event event) {
-        List<MenuItem> items = VisitHistoryTools.getRecentMenu(this, true);
+        List<MenuItem> items = MenuTools.initMenu(message("RecentAccessed"));
+        items.addAll(VisitHistoryTools.getRecentMenu(this, true));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
         popCenterMenu(recentBox, items);
@@ -278,7 +285,7 @@ public class MyBoxController extends BaseController {
             BaseController c = openStage(Fxmls.SettingsFxml);
         });
 
-        List<MenuItem> items = new ArrayList<>();
+        List<MenuItem> items = MenuTools.initMenu(message("Settings"));
         items.addAll(langItems);
         items.addAll(Arrays.asList(new SeparatorMenuItem(), derbyServer, mybox,
                 new SeparatorMenuItem(), settings));
@@ -308,7 +315,8 @@ public class MyBoxController extends BaseController {
 
     @FXML
     protected void showAboutMenu(Event event) {
-        List<MenuItem> items = MenuTools.helpMenu(this, event);
+        List<MenuItem> items = MenuTools.initMenu(message("Help"));
+        items.addAll(MenuTools.helpMenu(this, event));
 
         items.add(new SeparatorMenuItem());
 

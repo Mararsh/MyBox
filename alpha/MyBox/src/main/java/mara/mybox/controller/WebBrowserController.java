@@ -26,8 +26,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -128,15 +128,7 @@ public class WebBrowserController extends BaseController {
 
     public void showFunctionsMenu(Event fevent, Tab tab, String title) {
         try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu;
-            if (title != null && !title.isBlank()) {
-                menu = new MenuItem(StringTools.menuPrefix(title));
-                menu.setStyle(attributeTextStyle());
-                items.add(menu);
-                items.add(new SeparatorMenuItem());
-            }
+            List<MenuItem> items = MenuTools.initMenu(title);
 
             int index = tabPane.getTabs().indexOf(tab);
 
@@ -152,7 +144,7 @@ public class WebBrowserController extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            menu = new MenuItem(message("AddAtRight"), StyleTools.getIconImageView("iconAdd.png"));
+            MenuItem menu = new MenuItem(message("AddAtRight"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 newTab(index + 1, true);
             });
@@ -214,7 +206,8 @@ public class WebBrowserController extends BaseController {
                 if (index < tabPane.getTabs().size() - 1) {
                     menu = new MenuItem(message("CloseAllInRight"), StyleTools.getIconImageView("iconClose.png"));
                     menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        for (int i = tabPane.getTabs().size() - 1; i > index; i--) {
+                        for (int i = tabPane.getTabs().size() - 1; i > index;
+                                i--) {
                             tabPane.getTabs().remove(i);
                         }
                     });

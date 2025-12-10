@@ -29,14 +29,13 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -287,13 +286,9 @@ public class ControlColorPaletteSelector extends BaseController {
     public List<MenuItem> operationsMenuItems(Event fevent) {
         ColorPaletteName palette = selected();
         boolean isAll = palette.getName().equals(allColors.getName());
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(palette.getName()));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(palette.getName());
 
-        menu = new MenuItem(message("AddPalette"), StyleTools.getIconImageView("iconAdd.png"));
+        MenuItem menu = new MenuItem(message("AddPalette"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             addPalette();
         });

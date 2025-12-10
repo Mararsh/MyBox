@@ -17,9 +17,8 @@ import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.toShape;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -218,12 +217,7 @@ public class ControlSvgTree extends ControlXmlTree {
             return;
         }
 
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(treeItem)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(treeItem));
 
         items.addAll(addShapeMenus(treeItem));
 
