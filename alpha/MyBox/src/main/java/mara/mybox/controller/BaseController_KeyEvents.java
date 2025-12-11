@@ -28,13 +28,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             }
             node.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 //                    MyBoxLog.debug("KeyEvent.KEY_PRESSED");
-                if (keyEventsFilter(event)) {
+                if (handleKeyEvent(event)) {
                     event.consume();
                 }
             });
             node.addEventFilter(KeyEvent.KEY_TYPED, event -> {
 //                    MyBoxLog.debug("KeyEvent.KEY_TYPED");
-                if (keyEventsFilter(event)) {
+                if (handleKeyEvent(event)) {
                     event.consume();
                 }
             });
@@ -44,16 +44,17 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     // return whether handled
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         try {
+//            MyBoxLog.debug("fxml:" + myFxml);
 //            if (getMyWindow() != null) {
 //                MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused());
 //            }
-            keyEvent = event;
+
 //            MyBoxLog.debug("filter:" + this.getClass()
 //                    + " text:" + event.getText() + " code:" + event.getCode() + " char:" + event.getCharacter()
 //                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
-
+            keyEvent = event;
             if (event.isAltDown()) {
                 return altFilter(event);
 

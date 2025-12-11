@@ -41,6 +41,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.image.ImageViewTools;
@@ -660,8 +661,7 @@ public class ChromaticityDiagramController extends BaseImageController {
 
     @FXML
     public void pickDiagramPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             saveAction();
         } else {
             showDiagramPathMenu(event);
@@ -670,7 +670,7 @@ public class ChromaticityDiagramController extends BaseImageController {
 
     @FXML
     public void popDiagramPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showDiagramPathMenu(event);
         }
     }

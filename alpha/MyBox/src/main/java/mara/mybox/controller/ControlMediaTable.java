@@ -25,13 +25,13 @@ import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.cell.TableDurationCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -360,8 +360,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     @FXML
     public void pickMediasLink(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             addLinkAction();
         } else {
             showMediasLinkMenu(event);
@@ -370,7 +369,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     @FXML
     public void popMediasLink(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showMediasLinkMenu(event);
         }
     }

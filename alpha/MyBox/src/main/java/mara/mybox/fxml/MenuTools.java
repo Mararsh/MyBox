@@ -90,78 +90,78 @@ public class MenuTools {
 
         MenuItem pdfView = new MenuItem(message("PdfView"));
         pdfView.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfViewFxml);
+            controller.openScene(Fxmls.PdfViewFxml);
         });
 
         MenuItem PdfPlay = new MenuItem(message("PdfPlay"));
         PdfPlay.setOnAction((ActionEvent event1) -> {
-            ImagesPlayController c = (ImagesPlayController) controller.loadScene(Fxmls.ImagesPlayFxml);
+            ImagesPlayController c = (ImagesPlayController) controller.openScene(Fxmls.ImagesPlayFxml);
             c.setAsPDF();
         });
 
         MenuItem PDFAttributes = new MenuItem(message("PDFAttributes"));
         PDFAttributes.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfAttributesFxml);
+            controller.openScene(Fxmls.PdfAttributesFxml);
         });
 
         MenuItem PDFAttributesBatch = new MenuItem(message("PDFAttributesBatch"));
         PDFAttributesBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfAttributesBatchFxml);
+            controller.openScene(Fxmls.PdfAttributesBatchFxml);
         });
 
         MenuItem pdfExtractImagesBatch = new MenuItem(message("PdfExtractImagesBatch"));
         pdfExtractImagesBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfExtractImagesBatchFxml);
+            controller.openScene(Fxmls.PdfExtractImagesBatchFxml);
         });
 
         MenuItem pdfExtractTextsBatch = new MenuItem(message("PdfExtractTextsBatch"));
         pdfExtractTextsBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfExtractTextsBatchFxml);
+            controller.openScene(Fxmls.PdfExtractTextsBatchFxml);
         });
 
         MenuItem pdfConvertImagesBatch = new MenuItem(message("PdfConvertImagesBatch"));
         pdfConvertImagesBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfConvertImagesBatchFxml);
+            controller.openScene(Fxmls.PdfConvertImagesBatchFxml);
         });
 
         MenuItem pdfOcrBatch = new MenuItem(message("PdfOCRBatch"));
         pdfOcrBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfOCRBatchFxml);
+            controller.openScene(Fxmls.PdfOCRBatchFxml);
         });
 
         MenuItem pdfConvertHtmlsBatch = new MenuItem(message("PdfConvertHtmlsBatch"));
         pdfConvertHtmlsBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfConvertHtmlsBatchFxml);
+            controller.openScene(Fxmls.PdfConvertHtmlsBatchFxml);
         });
 
         MenuItem imagesCombinePdf = new MenuItem(message("ImagesCombinePdf"));
         imagesCombinePdf.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImagesEditorFxml);
+            controller.openScene(Fxmls.ImagesEditorFxml);
         });
 
         MenuItem pdfCompressImagesBatch = new MenuItem(message("PdfCompressImagesBatch"));
         pdfCompressImagesBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfCompressImagesBatchFxml);
+            controller.openScene(Fxmls.PdfCompressImagesBatchFxml);
         });
 
         MenuItem PdfImagesConvertBatch = new MenuItem(message("PdfImagesConvertBatch"));
         PdfImagesConvertBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfImagesConvertBatchFxml);
+            controller.openScene(Fxmls.PdfImagesConvertBatchFxml);
         });
 
         MenuItem pdfMerge = new MenuItem(message("MergePdf"));
         pdfMerge.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfMergeFxml);
+            controller.openScene(Fxmls.PdfMergeFxml);
         });
 
         MenuItem PdfSplitBatch = new MenuItem(message("PdfSplitBatch"));
         PdfSplitBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfSplitBatchFxml);
+            controller.openScene(Fxmls.PdfSplitBatchFxml);
         });
 
         MenuItem PdfAddWatermarkBatch = new MenuItem(message("PdfAddWatermarkBatch"));
         PdfAddWatermarkBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PdfAddWatermarkBatchFxml);
+            controller.openScene(Fxmls.PdfAddWatermarkBatchFxml);
         });
 
         pdfMenu.getItems().addAll(
@@ -176,42 +176,42 @@ public class MenuTools {
 
         MenuItem textEditer = new MenuItem(message("TextEditer"));
         textEditer.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextEditorFxml);
+            controller.openScene(Fxmls.TextEditorFxml);
         });
 
         MenuItem TextConvert = new MenuItem(message("TextConvertSplit"));
         TextConvert.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextFilesConvertFxml);
+            controller.openScene(Fxmls.TextFilesConvertFxml);
         });
 
         MenuItem TextMerge = new MenuItem(message("TextFilesMerge"));
         TextMerge.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextFilesMergeFxml);
+            controller.openScene(Fxmls.TextFilesMergeFxml);
         });
 
         MenuItem TextFindBatch = new MenuItem(message("TextFindBatch"));
         TextFindBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextFindBatchFxml);
+            controller.openScene(Fxmls.TextFindBatchFxml);
         });
 
         MenuItem TextReplaceBatch = new MenuItem(message("TextReplaceBatch"));
         TextReplaceBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextReplaceBatchFxml);
+            controller.openScene(Fxmls.TextReplaceBatchFxml);
         });
 
         MenuItem TextFilterBatch = new MenuItem(message("TextFilterBatch"));
         TextFilterBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextFilterBatchFxml);
+            controller.openScene(Fxmls.TextFilterBatchFxml);
         });
 
         MenuItem TextToHtml = new MenuItem(message("TextToHtml"));
         TextToHtml.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextToHtmlFxml);
+            controller.openScene(Fxmls.TextToHtmlFxml);
         });
 
         MenuItem TextToPdf = new MenuItem(message("TextToPdf"));
         TextToPdf.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.TextToPdfFxml);
+            controller.openScene(Fxmls.TextToPdfFxml);
         });
 
         textsMenu.getItems().addAll(
@@ -222,12 +222,12 @@ public class MenuTools {
 
         MenuItem bytesEditer = new MenuItem(message("BytesEditer"));
         bytesEditer.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.BytesEditorFxml);
+            controller.openScene(Fxmls.BytesEditorFxml);
         });
 
         MenuItem BytesFindBatch = new MenuItem(message("BytesFindBatch"));
         BytesFindBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.BytesFindBatchFxml);
+            controller.openScene(Fxmls.BytesFindBatchFxml);
         });
 
         bytesMenu.getItems().addAll(
@@ -238,87 +238,87 @@ public class MenuTools {
 
         MenuItem htmlEditor = new MenuItem(message("HtmlEditor"));
         htmlEditor.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlEditorFxml);
+            controller.openScene(Fxmls.HtmlEditorFxml);
         });
 
         MenuItem htmlToMarkdown = new MenuItem(message("HtmlToMarkdown"));
         htmlToMarkdown.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlToMarkdownFxml);
+            controller.openScene(Fxmls.HtmlToMarkdownFxml);
         });
 
         MenuItem HtmlToText = new MenuItem(message("HtmlToText"));
         HtmlToText.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlToTextFxml);
+            controller.openScene(Fxmls.HtmlToTextFxml);
         });
 
         MenuItem HtmlToPdf = new MenuItem(message("HtmlToPdf"));
         HtmlToPdf.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlToPdfFxml);
+            controller.openScene(Fxmls.HtmlToPdfFxml);
         });
 
         MenuItem HtmlSetCharset = new MenuItem(message("HtmlSetCharset"));
         HtmlSetCharset.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlSetCharsetFxml);
+            controller.openScene(Fxmls.HtmlSetCharsetFxml);
         });
 
         MenuItem HtmlSetStyle = new MenuItem(message("HtmlSetStyle"));
         HtmlSetStyle.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlSetStyleFxml);
+            controller.openScene(Fxmls.HtmlSetStyleFxml);
         });
 
         MenuItem HtmlSetEquiv = new MenuItem(message("HtmlSetEquiv"));
         HtmlSetStyle.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlSetEquivFxml);
+            controller.openScene(Fxmls.HtmlSetEquivFxml);
         });
 
         MenuItem HtmlSnap = new MenuItem(message("HtmlSnap"));
         HtmlSnap.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlSnapFxml);
+            controller.openScene(Fxmls.HtmlSnapFxml);
         });
 
         MenuItem HtmlTypesetting = new MenuItem(message("HtmlTypesetting"));
         HtmlTypesetting.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlTypesettingFxml);
+            controller.openScene(Fxmls.HtmlTypesettingFxml);
         });
 
         MenuItem WebFind = new MenuItem(message("WebFind"));
         WebFind.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlFindFxml);
+            controller.openScene(Fxmls.HtmlFindFxml);
         });
 
         MenuItem HtmlExtractTables = new MenuItem(message("HtmlExtractTables"));
         HtmlExtractTables.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlExtractTablesFxml);
+            controller.openScene(Fxmls.HtmlExtractTablesFxml);
         });
 
         MenuItem WebElements = new MenuItem(message("WebElements"));
         WebElements.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlElementsFxml);
+            controller.openScene(Fxmls.HtmlElementsFxml);
         });
 
         MenuItem HtmlMergeAsHtml = new MenuItem(message("HtmlMergeAsHtml"));
         HtmlMergeAsHtml.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlMergeAsHtmlFxml);
+            controller.openScene(Fxmls.HtmlMergeAsHtmlFxml);
         });
 
         MenuItem HtmlMergeAsMarkdown = new MenuItem(message("HtmlMergeAsMarkdown"));
         HtmlMergeAsMarkdown.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlMergeAsMarkdownFxml);
+            controller.openScene(Fxmls.HtmlMergeAsMarkdownFxml);
         });
 
         MenuItem HtmlMergeAsPDF = new MenuItem(message("HtmlMergeAsPDF"));
         HtmlMergeAsPDF.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlMergeAsPDFFxml);
+            controller.openScene(Fxmls.HtmlMergeAsPDFFxml);
         });
 
         MenuItem HtmlMergeAsText = new MenuItem(message("HtmlMergeAsText"));
         HtmlMergeAsText.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlMergeAsTextFxml);
+            controller.openScene(Fxmls.HtmlMergeAsTextFxml);
         });
 
         MenuItem HtmlFrameset = new MenuItem(message("HtmlFrameset"));
         HtmlFrameset.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.HtmlFramesetFxml);
+            controller.openScene(Fxmls.HtmlFramesetFxml);
         });
 
         htmlMenu.getItems().addAll(
@@ -331,32 +331,32 @@ public class MenuTools {
 
         MenuItem markdownEditor = new MenuItem(message("MarkdownEditer"));
         markdownEditor.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MarkdownEditorFxml);
+            controller.openScene(Fxmls.MarkdownEditorFxml);
         });
 
         MenuItem markdownOptions = new MenuItem(message("MarkdownOptions"));
         markdownOptions.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MarkdownOptionsFxml);
+            controller.openScene(Fxmls.MarkdownOptionsFxml);
         });
 
         MenuItem MarkdownTypesetting = new MenuItem(message("MarkdownTypesetting"));
         MarkdownTypesetting.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MarkdownTypesettingFxml);
+            controller.openScene(Fxmls.MarkdownTypesettingFxml);
         });
 
         MenuItem markdownToHtml = new MenuItem(message("MarkdownToHtml"));
         markdownToHtml.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MarkdownToHtmlFxml);
+            controller.openScene(Fxmls.MarkdownToHtmlFxml);
         });
 
         MenuItem MarkdownToText = new MenuItem(message("MarkdownToText"));
         MarkdownToText.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MarkdownToTextFxml);
+            controller.openScene(Fxmls.MarkdownToTextFxml);
         });
 
         MenuItem MarkdownToPdf = new MenuItem(message("MarkdownToPdf"));
         MarkdownToPdf.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MarkdownToPdfFxml);
+            controller.openScene(Fxmls.MarkdownToPdfFxml);
         });
 
         markdownMenu.getItems().addAll(
@@ -368,12 +368,12 @@ public class MenuTools {
 
         MenuItem jsonEditorMenu = new MenuItem(message("JsonEditor"));
         jsonEditorMenu.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.JsonEditorFxml);
+            controller.openScene(Fxmls.JsonEditorFxml);
         });
 
         MenuItem jsonTypesettingMenu = new MenuItem(message("JsonTypesetting"));
         jsonTypesettingMenu.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.JsonTypesettingFxml);
+            controller.openScene(Fxmls.JsonTypesettingFxml);
         });
 
         jsonMenu.getItems().addAll(
@@ -384,12 +384,12 @@ public class MenuTools {
 
         MenuItem xmlEditorMenu = new MenuItem(message("XmlEditor"));
         xmlEditorMenu.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.XmlEditorFxml);
+            controller.openScene(Fxmls.XmlEditorFxml);
         });
 
         MenuItem xmlTypesettingMenu = new MenuItem(message("XmlTypesetting"));
         xmlTypesettingMenu.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.XmlTypesettingFxml);
+            controller.openScene(Fxmls.XmlTypesettingFxml);
         });
 
         xmlMenu.getItems().addAll(
@@ -400,62 +400,62 @@ public class MenuTools {
 
         MenuItem ExtractTextsFromMS = new MenuItem(message("ExtractTextsFromMS"));
         ExtractTextsFromMS.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ExtractTextsFromMSFxml);
+            controller.openScene(Fxmls.ExtractTextsFromMSFxml);
         });
 
         MenuItem WordView = new MenuItem(message("WordView"));
         WordView.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.WordViewFxml);
+            controller.openScene(Fxmls.WordViewFxml);
         });
 
         MenuItem WordToHtml = new MenuItem(message("WordToHtml"));
         WordToHtml.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.WordToHtmlFxml);
+            controller.openScene(Fxmls.WordToHtmlFxml);
         });
 
         MenuItem WordToPdf = new MenuItem(message("WordToPdf"));
         WordToPdf.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.WordToPdfFxml);
+            controller.openScene(Fxmls.WordToPdfFxml);
         });
 
         MenuItem PptView = new MenuItem(message("PptView"));
         PptView.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PptViewFxml);
+            controller.openScene(Fxmls.PptViewFxml);
         });
 
         MenuItem PptToImages = new MenuItem(message("PptToImages"));
         PptToImages.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PptToImagesFxml);
+            controller.openScene(Fxmls.PptToImagesFxml);
         });
 
         MenuItem PptToPdf = new MenuItem(message("PptToPdf"));
         PptToPdf.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PptToPdfFxml);
+            controller.openScene(Fxmls.PptToPdfFxml);
         });
 
         MenuItem PptExtract = new MenuItem(message("PptExtract"));
         PptExtract.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PptExtractFxml);
+            controller.openScene(Fxmls.PptExtractFxml);
         });
 
         MenuItem PptxMerge = new MenuItem(message("PptxMerge"));
         PptxMerge.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PptxMergeFxml);
+            controller.openScene(Fxmls.PptxMergeFxml);
         });
 
         MenuItem PptSplit = new MenuItem(message("PptSplit"));
         PptSplit.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.PptSplitFxml);
+            controller.openScene(Fxmls.PptSplitFxml);
         });
 
         MenuItem imagesCombinePPT = new MenuItem(message("ImagesCombinePPT"));
         imagesCombinePPT.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImagesEditorFxml);
+            controller.openScene(Fxmls.ImagesEditorFxml);
         });
 
         MenuItem PptPlay = new MenuItem(message("PptPlay"));
         PptPlay.setOnAction((ActionEvent event1) -> {
-            ImagesPlayController c = (ImagesPlayController) controller.loadScene(Fxmls.ImagesPlayFxml);
+            ImagesPlayController c = (ImagesPlayController) controller.openScene(Fxmls.ImagesPlayFxml);
             c.setAsPPT();
         });
 
@@ -487,7 +487,7 @@ public class MenuTools {
     public static List<MenuItem> imageToolsMenu(BaseController controller, Event event) {
         MenuItem EditImage = new MenuItem(message("EditImage"));
         EditImage.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImageEditorFxml);
+            controller.openScene(Fxmls.ImageEditorFxml);
         });
 
         MenuItem imageScope = new MenuItem(message("ImageScope"));
@@ -497,7 +497,7 @@ public class MenuTools {
 
         MenuItem imageOptions = new MenuItem(message("ImageOptions"));
         imageOptions.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImageShapeOptionsFxml);
+            controller.openScene(Fxmls.ImageShapeOptionsFxml);
         });
 
         MenuItem ManageColors = new MenuItem(message("ManageColors"));
@@ -507,12 +507,12 @@ public class MenuTools {
 
         MenuItem QueryColor = new MenuItem(message("QueryColor"));
         QueryColor.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ColorQueryFxml);
+            controller.openScene(Fxmls.ColorQueryFxml);
         });
 
         MenuItem blendColors = new MenuItem(message("BlendColors"));
         blendColors.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ColorsBlendFxml);
+            controller.openScene(Fxmls.ColorsBlendFxml);
         });
 
         MenuItem ImagesInMyBoxClipboard = new MenuItem(message("ImagesInMyBoxClipboard"));
@@ -540,47 +540,47 @@ public class MenuTools {
 
         MenuItem ImageAnalyse = new MenuItem(message("ImageAnalyse"));
         ImageAnalyse.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImageAnalyseFxml);
+            controller.openScene(Fxmls.ImageAnalyseFxml);
         });
 
         MenuItem ImagesEditor = new MenuItem(message("ImagesEditor"));
         ImagesEditor.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImagesEditorFxml);
+            controller.openScene(Fxmls.ImagesEditorFxml);
         });
 
         MenuItem ImagesSplice = new MenuItem(message("ImagesSplice"));
         ImagesSplice.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImagesSpliceFxml);
+            controller.openScene(Fxmls.ImagesSpliceFxml);
         });
 
         MenuItem ImageSplit = new MenuItem(message("ImageSplit"));
         ImageSplit.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageSplitFxml);
+            controller.openScene(Fxmls.ImageSplitFxml);
         });
 
         MenuItem ImageSample = new MenuItem(message("ImageSample"));
         ImageSample.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageSampleFxml);
+            controller.openScene(Fxmls.ImageSampleFxml);
         });
 
         MenuItem ImageRepeat = new MenuItem(message("ImageRepeatTile"));
         ImageRepeat.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageRepeatFxml);
+            controller.openScene(Fxmls.ImageRepeatFxml);
         });
 
         MenuItem ImagesPlay = new MenuItem(message("ImagesPlay"));
         ImagesPlay.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImagesPlayFxml);
+            controller.openScene(Fxmls.ImagesPlayFxml);
         });
 
         MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));
         imagesBrowser.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImagesBrowserFxml);
+            controller.openScene(Fxmls.ImagesBrowserFxml);
         });
 
         MenuItem imageOCR = new MenuItem(message("ImageOCR"));
         imageOCR.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImageOCRFxml);
+            controller.openScene(Fxmls.ImageOCRFxml);
         });
 
         Menu manufactureMenu = new Menu(message("ImageManufacture"));
@@ -598,27 +598,27 @@ public class MenuTools {
 
         MenuItem imageAlphaAdd = new MenuItem(message("ImageAlphaAdd"));
         imageAlphaAdd.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageAlphaAddBatchFxml);
+            controller.openScene(Fxmls.ImageAlphaAddBatchFxml);
         });
 
         MenuItem imageAlphaExtract = new MenuItem(message("ImageAlphaExtract"));
         imageAlphaExtract.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageAlphaExtractBatchFxml);
+            controller.openScene(Fxmls.ImageAlphaExtractBatchFxml);
         });
 
         MenuItem SvgFromImage = new MenuItem(message("ImageToSvg"));
         SvgFromImage.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.SvgFromImageBatchFxml);
+            controller.openScene(Fxmls.SvgFromImageBatchFxml);
         });
 
         MenuItem imageConverterBatch = new MenuItem(message("FormatsConversion"));
         imageConverterBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImageConverterBatchFxml);
+            controller.openScene(Fxmls.ImageConverterBatchFxml);
         });
 
         MenuItem imageOCRBatch = new MenuItem(message("ImageOCRBatch"));
         imageOCRBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImageOCRBatchFxml);
+            controller.openScene(Fxmls.ImageOCRBatchFxml);
         });
 
         Menu imageBatchMenu = new Menu(message("ImageBatch"));
@@ -633,42 +633,42 @@ public class MenuTools {
 
         MenuItem imageReplaceColorMenu = new MenuItem(message("ReplaceColor"));
         imageReplaceColorMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageReplaceColorBatchFxml);
+            controller.openScene(Fxmls.ImageReplaceColorBatchFxml);
         });
 
         MenuItem imageBlendColorMenu = new MenuItem(message("BlendColor"));
         imageBlendColorMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageBlendColorBatchFxml);
+            controller.openScene(Fxmls.ImageBlendColorBatchFxml);
         });
 
         MenuItem imageAdjustColorMenu = new MenuItem(message("AdjustColor"));
         imageAdjustColorMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageAdjustColorBatchFxml);
+            controller.openScene(Fxmls.ImageAdjustColorBatchFxml);
         });
 
         MenuItem imageBlackWhiteMenu = new MenuItem(message("BlackOrWhite"));
         imageBlackWhiteMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageBlackWhiteBatchFxml);
+            controller.openScene(Fxmls.ImageBlackWhiteBatchFxml);
         });
 
         MenuItem imageGreyMenu = new MenuItem(message("Grey"));
         imageGreyMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageGreyBatchFxml);
+            controller.openScene(Fxmls.ImageGreyBatchFxml);
         });
 
         MenuItem imageSepiaMenu = new MenuItem(message("Sepia"));
         imageSepiaMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageSepiaBatchFxml);
+            controller.openScene(Fxmls.ImageSepiaBatchFxml);
         });
 
         MenuItem imageReduceColorsMenu = new MenuItem(message("ReduceColors"));
         imageReduceColorsMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageReduceColorsBatchFxml);
+            controller.openScene(Fxmls.ImageReduceColorsBatchFxml);
         });
 
         MenuItem imageThresholdingsMenu = new MenuItem(message("Thresholding"));
         imageThresholdingsMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageThresholdingBatchFxml);
+            controller.openScene(Fxmls.ImageThresholdingBatchFxml);
         });
 
         Menu imageColorBatchMenu = new Menu(message("Color"));
@@ -683,47 +683,47 @@ public class MenuTools {
     public static Menu imagePixelsBatchMenu(BaseController controller) {
         MenuItem imageMosaicMenu = new MenuItem(message("Mosaic"));
         imageMosaicMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageMosaicBatchFxml);
+            controller.openScene(Fxmls.ImageMosaicBatchFxml);
         });
 
         MenuItem imageFrostedGlassMenu = new MenuItem(message("FrostedGlass"));
         imageFrostedGlassMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageGlassBatchFxml);
+            controller.openScene(Fxmls.ImageGlassBatchFxml);
         });
 
         MenuItem imageShadowMenu = new MenuItem(message("Shadow"));
         imageShadowMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageShadowBatchFxml);
+            controller.openScene(Fxmls.ImageShadowBatchFxml);
         });
 
         MenuItem imageSmoothMenu = new MenuItem(message("Smooth"));
         imageSmoothMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageSmoothBatchFxml);
+            controller.openScene(Fxmls.ImageSmoothBatchFxml);
         });
 
         MenuItem imageSharpenMenu = new MenuItem(message("Sharpen"));
         imageSharpenMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageSharpenBatchFxml);
+            controller.openScene(Fxmls.ImageSharpenBatchFxml);
         });
 
         MenuItem imageContrastMenu = new MenuItem(message("Contrast"));
         imageContrastMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageContrastBatchFxml);
+            controller.openScene(Fxmls.ImageContrastBatchFxml);
         });
 
         MenuItem imageEdgeMenu = new MenuItem(message("EdgeDetection"));
         imageEdgeMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageEdgeBatchFxml);
+            controller.openScene(Fxmls.ImageEdgeBatchFxml);
         });
 
         MenuItem imageEmbossMenu = new MenuItem(message("Emboss"));
         imageEmbossMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageEmbossBatchFxml);
+            controller.openScene(Fxmls.ImageEmbossBatchFxml);
         });
 
         MenuItem imageConvolutionMenu = new MenuItem(message("Convolution"));
         imageConvolutionMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageConvolutionBatchFxml);
+            controller.openScene(Fxmls.ImageConvolutionBatchFxml);
         });
 
         Menu imagePixelsMenu = new Menu(message("Pixels"));
@@ -738,47 +738,47 @@ public class MenuTools {
     public static Menu imageModifyBatchMenu(BaseController controller) {
         MenuItem imageSizeMenu = new MenuItem(message("Size"));
         imageSizeMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageSizeBatchFxml);
+            controller.openScene(Fxmls.ImageSizeBatchFxml);
         });
 
         MenuItem imageCropMenu = new MenuItem(message("Crop"));
         imageCropMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageCropBatchFxml);
+            controller.openScene(Fxmls.ImageCropBatchFxml);
         });
 
         MenuItem imagePasteMenu = new MenuItem(message("Paste"));
         imagePasteMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImagePasteBatchFxml);
+            controller.openScene(Fxmls.ImagePasteBatchFxml);
         });
 
         MenuItem imageTextMenu = new MenuItem(message("Text"));
         imageTextMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageTextBatchFxml);
+            controller.openScene(Fxmls.ImageTextBatchFxml);
         });
 
         MenuItem imageRoundMenu = new MenuItem(message("Round"));
         imageRoundMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageRoundBatchFxml);
+            controller.openScene(Fxmls.ImageRoundBatchFxml);
         });
 
         MenuItem imageRotateMenu = new MenuItem(message("Rotate"));
         imageRotateMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageRotateBatchFxml);
+            controller.openScene(Fxmls.ImageRotateBatchFxml);
         });
 
         MenuItem imageMirrorMenu = new MenuItem(message("Mirror"));
         imageMirrorMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageMirrorBatchFxml);
+            controller.openScene(Fxmls.ImageMirrorBatchFxml);
         });
 
         MenuItem imageShearMenu = new MenuItem(message("Shear"));
         imageShearMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageShearBatchFxml);
+            controller.openScene(Fxmls.ImageShearBatchFxml);
         });
 
         MenuItem imageMarginsMenu = new MenuItem(message("Margins"));
         imageMarginsMenu.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ImageMarginsBatchFxml);
+            controller.openScene(Fxmls.ImageMarginsBatchFxml);
         });
 
         Menu imagePixelsMenu = new Menu(message("Modify"));
@@ -793,27 +793,27 @@ public class MenuTools {
     public static Menu svgMenu(BaseController controller) {
         MenuItem EditSVG = new MenuItem(message("SVGEditor"));
         EditSVG.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.SvgEditorFxml);
+            controller.openScene(Fxmls.SvgEditorFxml);
         });
 
         MenuItem SvgTypesetting = new MenuItem(message("SvgTypesetting"));
         SvgTypesetting.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.SvgTypesettingFxml);
+            controller.openScene(Fxmls.SvgTypesettingFxml);
         });
 
         MenuItem SvgToImage = new MenuItem(message("SvgToImage"));
         SvgToImage.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.SvgToImageFxml);
+            controller.openScene(Fxmls.SvgToImageFxml);
         });
 
         MenuItem SvgToPDF = new MenuItem(message("SvgToPDF"));
         SvgToPDF.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.SvgToPDFFxml);
+            controller.openScene(Fxmls.SvgToPDFFxml);
         });
 
         MenuItem SvgFromImage = new MenuItem(message("ImageToSvg"));
         SvgFromImage.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.SvgFromImageBatchFxml);
+            controller.openScene(Fxmls.SvgFromImageBatchFxml);
         });
 
         Menu svgMenu = new Menu(message("SVG"));
@@ -825,42 +825,42 @@ public class MenuTools {
     public static Menu colorSpaceMenu(BaseController controller) {
         MenuItem IccEditor = new MenuItem(message("IccProfileEditor"));
         IccEditor.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.IccProfileEditorFxml);
+            controller.openScene(Fxmls.IccProfileEditorFxml);
         });
 
         MenuItem ChromaticityDiagram = new MenuItem(message("DrawChromaticityDiagram"));
         ChromaticityDiagram.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ChromaticityDiagramFxml);
+            controller.openScene(Fxmls.ChromaticityDiagramFxml);
         });
 
         MenuItem ChromaticAdaptationMatrix = new MenuItem(message("ChromaticAdaptationMatrix"));
         ChromaticAdaptationMatrix.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ChromaticAdaptationMatrixFxml);
+            controller.openScene(Fxmls.ChromaticAdaptationMatrixFxml);
         });
 
         MenuItem ColorConversion = new MenuItem(message("ColorConversion"));
         ColorConversion.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.ColorConversionFxml);
+            controller.openScene(Fxmls.ColorConversionFxml);
         });
 
         MenuItem RGBColorSpaces = new MenuItem(message("RGBColorSpaces"));
         RGBColorSpaces.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.RGBColorSpacesFxml);
+            controller.openScene(Fxmls.RGBColorSpacesFxml);
         });
 
         MenuItem RGB2XYZConversionMatrix = new MenuItem(message("LinearRGB2XYZMatrix"));
         RGB2XYZConversionMatrix.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.RGB2XYZConversionMatrixFxml);
+            controller.openScene(Fxmls.RGB2XYZConversionMatrixFxml);
         });
 
         MenuItem RGB2RGBConversionMatrix = new MenuItem(message("LinearRGB2RGBMatrix"));
         RGB2RGBConversionMatrix.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.RGB2RGBConversionMatrixFxml);
+            controller.openScene(Fxmls.RGB2RGBConversionMatrixFxml);
         });
 
         MenuItem Illuminants = new MenuItem(message("Illuminants"));
         Illuminants.setOnAction((ActionEvent event) -> {
-            controller.loadScene(Fxmls.IlluminantsFxml);
+            controller.openScene(Fxmls.IlluminantsFxml);
         });
 
         Menu csMenu = new Menu(message("ColorSpace"));
@@ -876,12 +876,12 @@ public class MenuTools {
 
         MenuItem ImageBase64 = new MenuItem(message("ImageBase64"));
         ImageBase64.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ImageBase64Fxml);
+            controller.openScene(Fxmls.ImageBase64Fxml);
         });
 
         MenuItem convolutionKernelManager = new MenuItem(message("ConvolutionKernelManager"));
         convolutionKernelManager.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ConvolutionKernelManagerFxml);
+            controller.openScene(Fxmls.ConvolutionKernelManagerFxml);
         });
 
         MenuItem pixelsCalculator = new MenuItem(message("PixelsCalculator"));
@@ -901,72 +901,72 @@ public class MenuTools {
     public static List<MenuItem> fileToolsMenu(BaseController controller, Event event) {
         MenuItem filesArrangement = new MenuItem(Languages.message("FilesArrangement"));
         filesArrangement.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesArrangementFxml);
+            controller.openScene(Fxmls.FilesArrangementFxml);
         });
 
         MenuItem dirSynchronize = new MenuItem(Languages.message("DirectorySynchronize"));
         dirSynchronize.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DirectorySynchronizeFxml);
+            controller.openScene(Fxmls.DirectorySynchronizeFxml);
         });
 
         MenuItem filesRename = new MenuItem(Languages.message("FilesRename"));
         filesRename.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesRenameFxml);
+            controller.openScene(Fxmls.FilesRenameFxml);
         });
 
         MenuItem fileCut = new MenuItem(Languages.message("FileCut"));
         fileCut.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FileCutFxml);
+            controller.openScene(Fxmls.FileCutFxml);
         });
 
         MenuItem filesMerge = new MenuItem(Languages.message("FilesMerge"));
         filesMerge.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesMergeFxml);
+            controller.openScene(Fxmls.FilesMergeFxml);
         });
 
         MenuItem filesCopy = new MenuItem(Languages.message("FilesCopy"));
         filesCopy.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesCopyFxml);
+            controller.openScene(Fxmls.FilesCopyFxml);
         });
 
         MenuItem filesMove = new MenuItem(Languages.message("FilesMove"));
         filesMove.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesMoveFxml);
+            controller.openScene(Fxmls.FilesMoveFxml);
         });
 
         MenuItem filesFind = new MenuItem(Languages.message("FilesFind"));
         filesFind.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesFindFxml);
+            controller.openScene(Fxmls.FilesFindFxml);
         });
 
         MenuItem filesCompare = new MenuItem(Languages.message("FilesCompare"));
         filesCompare.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesCompareFxml);
+            controller.openScene(Fxmls.FilesCompareFxml);
         });
 
         MenuItem filesRedundancy = new MenuItem(Languages.message("FilesRedundancy"));
         filesRedundancy.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesRedundancyFxml);
+            controller.openScene(Fxmls.FilesRedundancyFxml);
         });
 
         MenuItem filesDelete = new MenuItem(Languages.message("FilesDelete"));
         filesDelete.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesDeleteFxml);
+            controller.openScene(Fxmls.FilesDeleteFxml);
         });
 
         MenuItem DeleteEmptyDirectories = new MenuItem(Languages.message("DeleteEmptyDirectories"));
         DeleteEmptyDirectories.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesDeleteEmptyDirFxml);
+            controller.openScene(Fxmls.FilesDeleteEmptyDirFxml);
         });
 
         MenuItem DeleteJavaTemporaryPathFiles = new MenuItem(Languages.message("DeleteJavaIOTemporaryPathFiles"));
         DeleteJavaTemporaryPathFiles.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesDeleteJavaTempFxml);
+            controller.openScene(Fxmls.FilesDeleteJavaTempFxml);
         });
 
         MenuItem DeleteNestedDirectories = new MenuItem(Languages.message("DeleteNestedDirectories"));
         DeleteNestedDirectories.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesDeleteNestedDirFxml);
+            controller.openScene(Fxmls.FilesDeleteNestedDirFxml);
         });
 
         Menu fileDeleteMenu = new Menu(Languages.message("Delete"));
@@ -976,22 +976,22 @@ public class MenuTools {
 
         MenuItem filesArchiveCompress = new MenuItem(Languages.message("FilesArchiveCompress"));
         filesArchiveCompress.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesArchiveCompressFxml);
+            controller.openScene(Fxmls.FilesArchiveCompressFxml);
         });
 
         MenuItem filesCompress = new MenuItem(Languages.message("FilesCompressBatch"));
         filesCompress.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesCompressBatchFxml);
+            controller.openScene(Fxmls.FilesCompressBatchFxml);
         });
 
         MenuItem filesDecompressUnarchive = new MenuItem(Languages.message("FileDecompressUnarchive"));
         filesDecompressUnarchive.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FileDecompressUnarchiveFxml);
+            controller.openScene(Fxmls.FileDecompressUnarchiveFxml);
         });
 
         MenuItem filesDecompressUnarchiveBatch = new MenuItem(Languages.message("FilesDecompressUnarchiveBatch"));
         filesDecompressUnarchiveBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FilesDecompressUnarchiveBatchFxml);
+            controller.openScene(Fxmls.FilesDecompressUnarchiveBatchFxml);
         });
 
         Menu archiveCompressMenu = new Menu(Languages.message("FilesArchiveCompress"));
@@ -1015,12 +1015,12 @@ public class MenuTools {
     public static List<MenuItem> networkToolsMenu(BaseController controller, Event event) {
         MenuItem weiboSnap = new MenuItem(message("WeiboSnap"));
         weiboSnap.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.WeiboSnapFxml);
+            controller.openScene(Fxmls.WeiboSnapFxml);
         });
 
         MenuItem webBrowserHtml = new MenuItem(message("WebBrowser"));
         webBrowserHtml.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.WebBrowserFxml);
+            controller.openScene(Fxmls.WebBrowserFxml);
         });
 
         MenuItem WebFavorites = new MenuItem(message("WebFavorites"));
@@ -1030,42 +1030,42 @@ public class MenuTools {
 
         MenuItem WebHistories = new MenuItem(message("WebHistories"));
         WebHistories.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.WebHistoriesFxml);
+            controller.openScene(Fxmls.WebHistoriesFxml);
         });
 
         MenuItem ConvertUrl = new MenuItem(message("ConvertUrl"));
         ConvertUrl.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.NetworkConvertUrlFxml);
+            controller.openScene(Fxmls.NetworkConvertUrlFxml);
         });
 
         MenuItem QueryAddress = new MenuItem(message("QueryNetworkAddress"));
         QueryAddress.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.NetworkQueryAddressFxml);
+            controller.openScene(Fxmls.NetworkQueryAddressFxml);
         });
 
         MenuItem QueryDNSBatch = new MenuItem(message("QueryDNSBatch"));
         QueryDNSBatch.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.NetworkQueryDNSBatchFxml);
+            controller.openScene(Fxmls.NetworkQueryDNSBatchFxml);
         });
 
         MenuItem DownloadFirstLevelLinks = new MenuItem(message("DownloadHtmls"));
         DownloadFirstLevelLinks.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DownloadFirstLevelLinksFxml);
+            controller.openScene(Fxmls.DownloadFirstLevelLinksFxml);
         });
 
         MenuItem RemotePathManage = new MenuItem(message("RemotePathManage"));
         RemotePathManage.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.RemotePathManageFxml);
+            controller.openScene(Fxmls.RemotePathManageFxml);
         });
 
         MenuItem RemotePathSynchronizeFromLocal = new MenuItem(message("RemotePathSynchronizeFromLocal"));
         RemotePathSynchronizeFromLocal.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.RemotePathSynchronizeFromLocalFxml);
+            controller.openScene(Fxmls.RemotePathSynchronizeFromLocalFxml);
         });
 
         MenuItem SecurityCertificates = new MenuItem(message("SecurityCertificates"));
         SecurityCertificates.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.SecurityCertificatesFxml);
+            controller.openScene(Fxmls.SecurityCertificatesFxml);
         });
 
         List<MenuItem> items = new ArrayList<>();
@@ -1081,17 +1081,17 @@ public class MenuTools {
     public static List<MenuItem> dataToolsMenu(BaseController controller, Event event) {
         MenuItem DataManufacture = new MenuItem(message("DataManufacture"));
         DataManufacture.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.Data2DManufactureFxml);
+            controller.openScene(Fxmls.Data2DManufactureFxml);
         });
 
         MenuItem ManageData = new MenuItem(message("ManageData"));
         ManageData.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.Data2DManageFxml);
+            controller.openScene(Fxmls.Data2DManageFxml);
         });
 
         MenuItem SpliceData = new MenuItem(message("SpliceData"));
         SpliceData.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.Data2DSpliceFxml);
+            controller.openScene(Fxmls.Data2DSpliceFxml);
         });
 
         MenuItem RowExpression = new MenuItem(message("RowExpression"));
@@ -1116,32 +1116,32 @@ public class MenuTools {
 
         MenuItem ExcelConvert = new MenuItem(message("ExcelConvert"));
         ExcelConvert.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DataFileExcelConvertFxml);
+            controller.openScene(Fxmls.DataFileExcelConvertFxml);
         });
 
         MenuItem ExcelMerge = new MenuItem(message("ExcelMerge"));
         ExcelMerge.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DataFileExcelMergeFxml);
+            controller.openScene(Fxmls.DataFileExcelMergeFxml);
         });
 
         MenuItem CsvConvert = new MenuItem(message("CsvConvert"));
         CsvConvert.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DataFileCSVConvertFxml);
+            controller.openScene(Fxmls.DataFileCSVConvertFxml);
         });
 
         MenuItem CsvMerge = new MenuItem(message("CsvMerge"));
         CsvMerge.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DataFileCSVMergeFxml);
+            controller.openScene(Fxmls.DataFileCSVMergeFxml);
         });
 
         MenuItem TextDataConvert = new MenuItem(message("TextDataConvert"));
         TextDataConvert.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DataFileTextConvertFxml);
+            controller.openScene(Fxmls.DataFileTextConvertFxml);
         });
 
         MenuItem TextDataMerge = new MenuItem(message("TextDataMerge"));
         TextDataMerge.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DataFileTextMergeFxml);
+            controller.openScene(Fxmls.DataFileTextMergeFxml);
         });
 
         Menu dataFile = new Menu(message("DataFile"));
@@ -1156,12 +1156,12 @@ public class MenuTools {
 
         MenuItem LocationInMap = new MenuItem(message("LocationInMap"));
         LocationInMap.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.LocationInMapFxml);
+            controller.openScene(Fxmls.LocationInMapFxml);
         });
 
         MenuItem ConvertCoordinate = new MenuItem(message("ConvertCoordinate"));
         ConvertCoordinate.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.ConvertCoordinateFxml);
+            controller.openScene(Fxmls.ConvertCoordinateFxml);
         });
 
         Menu Location = new Menu(message("Location"));
@@ -1171,17 +1171,17 @@ public class MenuTools {
 
         MenuItem MatricesManage = new MenuItem(message("MatricesManage"));
         MatricesManage.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MatricesManageFxml);
+            controller.openScene(Fxmls.MatricesManageFxml);
         });
 
         MenuItem MatrixUnaryCalculation = new MenuItem(message("MatrixUnaryCalculation"));
         MatrixUnaryCalculation.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MatrixUnaryCalculationFxml);
+            controller.openScene(Fxmls.MatrixUnaryCalculationFxml);
         });
 
         MenuItem MatricesBinaryCalculation = new MenuItem(message("MatricesBinaryCalculation"));
         MatricesBinaryCalculation.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MatricesBinaryCalculationFxml);
+            controller.openScene(Fxmls.MatricesBinaryCalculationFxml);
         });
 
         Menu matrix = new Menu(message("Matrix"));
@@ -1196,12 +1196,12 @@ public class MenuTools {
 
         MenuItem DatabaseTable = new MenuItem(message("DatabaseTable"));
         DatabaseTable.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DataTablesFxml);
+            controller.openScene(Fxmls.DataTablesFxml);
         });
 
         MenuItem databaseTableDefinition = new MenuItem(message("TableDefinition"));
         databaseTableDefinition.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.DatabaseTableDefinitionFxml);
+            controller.openScene(Fxmls.DatabaseTableDefinitionFxml);
         });
 
         Menu database = new Menu(message("Database"));
@@ -1236,27 +1236,27 @@ public class MenuTools {
 
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));
         barcodeCreator.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.BarcodeCreatorFxml);
+            controller.openScene(Fxmls.BarcodeCreatorFxml);
         });
 
         MenuItem barcodeDecoder = new MenuItem(message("BarcodeDecoder"));
         barcodeDecoder.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.BarcodeDecoderFxml);
+            controller.openScene(Fxmls.BarcodeDecoderFxml);
         });
 
         MenuItem messageDigest = new MenuItem(message("MessageDigest"));
         messageDigest.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MessageDigestFxml);
+            controller.openScene(Fxmls.MessageDigestFxml);
         });
 
         MenuItem Base64Conversion = new MenuItem(message("Base64Conversion"));
         Base64Conversion.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.Base64Fxml);
+            controller.openScene(Fxmls.Base64Fxml);
         });
 
         MenuItem TTC2TTF = new MenuItem(message("TTC2TTF"));
         TTC2TTF.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FileTTC2TTFFxml);
+            controller.openScene(Fxmls.FileTTC2TTFFxml);
         });
 
         Menu miscellaneousMenu = new Menu(message("Miscellaneous"));
@@ -1282,32 +1282,32 @@ public class MenuTools {
     public static List<MenuItem> mediaToolsMenu(BaseController controller, Event event) {
         MenuItem mediaPlayer = new MenuItem(Languages.message("MediaPlayer"));
         mediaPlayer.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MediaPlayerFxml);
+            controller.openScene(Fxmls.MediaPlayerFxml);
         });
 
         MenuItem mediaLists = new MenuItem(Languages.message("ManageMediaLists"));
         mediaLists.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.MediaListFxml);
+            controller.openScene(Fxmls.MediaListFxml);
         });
 
         MenuItem FFmpegInformation = new MenuItem(Languages.message("FFmpegInformation"));
         FFmpegInformation.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FFmpegInformationFxml);
+            controller.openScene(Fxmls.FFmpegInformationFxml);
         });
 
         MenuItem FFprobe = new MenuItem(Languages.message("FFmpegProbeMediaInformation"));
         FFprobe.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FFmpegProbeMediaInformationFxml);
+            controller.openScene(Fxmls.FFmpegProbeMediaInformationFxml);
         });
 
         MenuItem FFmpegConversionFiles = new MenuItem(Languages.message("FFmpegConvertMediaFiles"));
         FFmpegConversionFiles.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FFmpegConvertMediaFilesFxml);
+            controller.openScene(Fxmls.FFmpegConvertMediaFilesFxml);
         });
 
         MenuItem FFmpegConversionStreams = new MenuItem(Languages.message("FFmpegConvertMediaStreams"));
         FFmpegConversionStreams.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FFmpegConvertMediaStreamsFxml);
+            controller.openScene(Fxmls.FFmpegConvertMediaStreamsFxml);
         });
 
         Menu FFmpegConversionMenu = new Menu(Languages.message("FFmpegConvertMedias"));
@@ -1316,17 +1316,17 @@ public class MenuTools {
 
         MenuItem FFmpegMergeImages = new MenuItem(Languages.message("FFmpegMergeImagesInformation"));
         FFmpegMergeImages.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FFmpegMergeImagesFxml);
+            controller.openScene(Fxmls.FFmpegMergeImagesFxml);
         });
 
         MenuItem FFmpegMergeImageFiles = new MenuItem(Languages.message("FFmpegMergeImagesFiles"));
         FFmpegMergeImageFiles.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FFmpegMergeImageFilesFxml);
+            controller.openScene(Fxmls.FFmpegMergeImageFilesFxml);
         });
 
         MenuItem screenRecorder = new MenuItem(Languages.message("FFmpegScreenRecorder"));
         screenRecorder.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.FFmpegScreenRecorderFxml);
+            controller.openScene(Fxmls.FFmpegScreenRecorderFxml);
         });
 
         Menu FFmpegMergeMenu = new Menu(Languages.message("FFmpegMergeImages"));
@@ -1335,17 +1335,17 @@ public class MenuTools {
 
         MenuItem alarmClock = new MenuItem(Languages.message("AlarmClock"));
         alarmClock.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.AlarmClockFxml);
+            controller.openScene(Fxmls.AlarmClockFxml);
         });
 
         MenuItem GameElimniation = new MenuItem(Languages.message("GameElimniation"));
         GameElimniation.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.GameElimniationFxml);
+            controller.openScene(Fxmls.GameElimniationFxml);
         });
 
         MenuItem GameMine = new MenuItem(Languages.message("GameMine"));
         GameMine.setOnAction((ActionEvent event1) -> {
-            controller.loadScene(Fxmls.GameMineFxml);
+            controller.openScene(Fxmls.GameMineFxml);
         });
 
         List<MenuItem> items = new ArrayList<>();
@@ -1460,7 +1460,10 @@ public class MenuTools {
         return items;
     }
 
-    public static CheckMenuItem popCheckMenu(Event mevent, String name) {
+    public static CheckMenuItem popCheckMenu(String name) {
+        if (name == null) {
+            return null;
+        }
         CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
                 StyleTools.getIconImageView("iconPop.png"));
         popItem.setSelected(UserConfig.getBoolean(name + "MenuPopWhenMouseHovering", true));
@@ -1474,7 +1477,14 @@ public class MenuTools {
     }
 
     public static boolean isPopMenu(String name) {
-        return UserConfig.getBoolean(name + "MenuPopWhenMouseHovering", true);
+        return isPopMenu(name, true);
+    }
+
+    public static boolean isPopMenu(String name, boolean init) {
+        if (name == null) {
+            return false;
+        }
+        return UserConfig.getBoolean(name + "MenuPopWhenMouseHovering", init);
     }
 
     public static List<MenuItem> initMenu(String name) {

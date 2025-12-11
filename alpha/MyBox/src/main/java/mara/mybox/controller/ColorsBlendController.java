@@ -275,17 +275,17 @@ public class ColorsBlendController extends ColorQueryController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (overlayTab.isSelected()) {
-            if (colorOverlayController.keyEventsFilter(event)) {
+            if (colorOverlayController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (blendTab.isSelected()) {
-            if (blendController.keyEventsFilter(event)) {
+            if (blendController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

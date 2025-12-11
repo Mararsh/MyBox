@@ -228,11 +228,11 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return editController.keyEventsFilter(event);
+        return editController.handleKeyEvent(event);
     }
 
     @Override

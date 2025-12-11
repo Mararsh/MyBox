@@ -375,14 +375,14 @@ public class Data2DAttributesController extends BaseChildController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == columnsTab) {
-            if (columnsController.keyEventsFilter(event)) {
+            if (columnsController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

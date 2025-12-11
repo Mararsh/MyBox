@@ -8,9 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -113,7 +111,7 @@ public abstract class BaseFileController extends BaseTaskController {
 
     @FXML
     public void popFileMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "FileMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "File")) {
             showFileMenu(event);
         }
     }
@@ -128,15 +126,7 @@ public abstract class BaseFileController extends BaseTaskController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "FileMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "FileMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu(baseName + "File"));
 
             popEventMenu(fevent, items);
         } catch (Exception e) {
@@ -194,7 +184,7 @@ public abstract class BaseFileController extends BaseTaskController {
 
     @FXML
     public void popDataMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "DataMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Data")) {
             showDataMenu(event);
         }
     }
@@ -209,15 +199,7 @@ public abstract class BaseFileController extends BaseTaskController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "DataMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "DataMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu(baseName + "Data"));
 
             popEventMenu(fevent, items);
         } catch (Exception e) {

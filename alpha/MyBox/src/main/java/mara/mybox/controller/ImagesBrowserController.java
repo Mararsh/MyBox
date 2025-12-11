@@ -1026,16 +1026,16 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (viewBox.isFocused() || viewBox.isFocusWithin()) {
-            if (viewController.keyEventsFilter(event)) {
+            if (viewController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return viewController.keyEventsFilter(event);
+        return viewController.handleKeyEvent(event);
     }
 
     /*

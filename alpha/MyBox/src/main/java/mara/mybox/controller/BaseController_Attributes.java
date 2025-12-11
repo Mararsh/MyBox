@@ -72,6 +72,8 @@ public abstract class BaseController_Attributes {
     }
 
     @FXML
+    protected ScrollPane topScrollPane;
+    @FXML
     protected Pane thisPane, mainMenu, operationBar;
     @FXML
     protected MainMenuController mainMenuController;

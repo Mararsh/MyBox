@@ -54,6 +54,11 @@ public class MainMenuController extends MainMenuController_Development {
     }
 
     @Override
+    public BaseController loadScene(String newFxml) {
+        return parentController.loadScene(newFxml);
+    }
+
+    @Override
     public BaseController openStage(String newFxml) {
         return parentController.openStage(newFxml);
     }

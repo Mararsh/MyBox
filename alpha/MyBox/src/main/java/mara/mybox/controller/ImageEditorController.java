@@ -504,7 +504,7 @@ public class ImageEditorController extends BaseImageController {
 
     @FXML
     public void popColorsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "ColorsMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Colors")) {
             showColorsMenu(event);
         }
     }
@@ -564,15 +564,7 @@ public class ImageEditorController extends BaseImageController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "ColorsMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ColorsMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu(baseName + "Colors"));
 
             popEventMenu(fevent, items);
         } catch (Exception e) {
@@ -582,7 +574,7 @@ public class ImageEditorController extends BaseImageController {
 
     @FXML
     public void popPixelsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "PixelsMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Pixels")) {
             showPixelsMenu(event);
         }
     }
@@ -645,15 +637,7 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "PixelsMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "PixelsMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu(baseName + "Pixels"));
 
             popEventMenu(fevent, items);
         } catch (Exception e) {
@@ -663,7 +647,7 @@ public class ImageEditorController extends BaseImageController {
 
     @FXML
     public void popPasteMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "PasteMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Paste")) {
             showPasteMenu(event);
         }
     }
@@ -754,15 +738,7 @@ public class ImageEditorController extends BaseImageController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "PasteMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "PasteMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu(baseName + "Paste"));
 
             popEventMenu(fevent, items);
         } catch (Exception e) {

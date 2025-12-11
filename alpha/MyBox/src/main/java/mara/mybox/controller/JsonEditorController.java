@@ -149,16 +149,16 @@ public class JsonEditorController extends BaseDomEditorController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (treeBox.isFocused() || treeBox.isFocusWithin()) {
-            if (domController.keyEventsFilter(event)) {
+            if (domController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return domController.keyEventsFilter(event);
+        return domController.handleKeyEvent(event);
     }
 
     /*

@@ -11,7 +11,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -127,10 +126,6 @@ public class WindowTools {
             stage.show();
 
             if (controller != null) {
-                Parent root = scene.getRoot();
-                if (controller.getThisPane() != root) {
-                    controller.monitorKeyEvents(root);
-                }
                 controller.afterSceneLoaded();
             }
 

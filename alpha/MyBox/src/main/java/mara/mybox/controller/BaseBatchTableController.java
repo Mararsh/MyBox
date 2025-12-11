@@ -33,6 +33,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableNumberCell;
@@ -1056,15 +1057,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        hoverMenu.setSelected(UserConfig.getBoolean("FilesTablePopWhenMouseHovering", true));
-        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("FilesTablePopWhenMouseHovering", hoverMenu.isSelected());
-            }
-        });
-        items.add(hoverMenu);
+        items.add(MenuTools.popCheckMenu("FilesTable"));
 
         popEventMenu(event, items);
     }

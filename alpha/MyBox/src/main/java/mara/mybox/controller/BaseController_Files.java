@@ -17,6 +17,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -359,8 +360,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void pickSourceFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectSourceFile();
         } else {
             showSourceFilesMenu(event);
@@ -369,7 +369,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void popSourceFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showSourceFilesMenu(event);
         }
     }
@@ -435,8 +435,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void pickFileAdd(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             addFilesAction();
         } else {
             showFileAddMenu(event);
@@ -445,7 +444,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void popFileAdd(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showFileAddMenu(event);
         }
     }
@@ -489,8 +488,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void pickFileInsert(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             insertFilesAction();
         } else {
             showFileInsertMenu(event);
@@ -499,7 +497,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void popFileInsert(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showFileInsertMenu(event);
         }
     }
@@ -540,7 +538,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void pickDirectoryAdd(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             addDirectoryAction();
         } else {
             showDirectoryAddMenu(event);
@@ -549,7 +547,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void popDirectoryAdd(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showDirectoryAddMenu(event);
         }
     }
@@ -589,8 +587,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void pickDirectoryInsert(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             insertDirectoryAction();
         } else {
             showDirectoryInsertMenu(event);
@@ -599,7 +596,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void popDirectoryInsert(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showDirectoryInsertMenu(event);
         }
     }
@@ -636,8 +633,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void pickSourcePath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectSourcePath();
         } else {
             showSourcePathMenu(event);
@@ -646,7 +642,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void popSourcePath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showSourcePathMenu(event);
         }
     }
@@ -677,8 +673,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void pickSaveAs(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             saveAsAction();
         } else {
             showSaveAsMenu(event);
@@ -687,7 +682,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void popSaveAs(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showSaveAsMenu(event);
         }
     }

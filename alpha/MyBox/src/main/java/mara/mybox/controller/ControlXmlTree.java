@@ -56,11 +56,11 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return nodeController.keyEventsFilter(event);
+        return nodeController.handleKeyEvent(event);
     }
 
     /*

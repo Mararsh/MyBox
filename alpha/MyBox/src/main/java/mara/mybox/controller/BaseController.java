@@ -36,7 +36,11 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
 
             initValues();
 
-            monitorKeyEvents(thisPane);
+            if (topScrollPane != null) {
+                monitorKeyEvents(topScrollPane);
+            } else {
+                monitorKeyEvents(thisPane);
+            }
 //            monitorMouseEvents();
             initBaseControls();
             initControls();

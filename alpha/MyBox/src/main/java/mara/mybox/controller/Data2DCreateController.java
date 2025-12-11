@@ -336,18 +336,18 @@ public class Data2DCreateController extends Data2DAttributesController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == attributesTab) {
-            if (attributesController.keyEventsFilter(event)) {
+            if (attributesController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (tab == columnsTab) {
-            if (columnsController.keyEventsFilter(event)) {
+            if (columnsController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

@@ -460,16 +460,16 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (sourceTab != null) {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == sourceTab) {
-                if (matrixController.keyEventsFilter(event)) {
+                if (matrixController.handleKeyEvent(event)) {
                     return true;
                 }
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
 

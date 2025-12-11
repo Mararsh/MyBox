@@ -742,23 +742,23 @@ public class ImagesPlayController extends BaseFileController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (viewBox.isFocused() || viewBox.isFocusWithin()) {
-            if (viewController.keyEventsFilter(event)) {
+            if (viewController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (playBox.isFocused() || playBox.isFocusWithin()) {
-            if (playController.keyEventsFilter(event)) {
+            if (playController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        if (viewController.keyEventsFilter(event)) {
+        if (viewController.handleKeyEvent(event)) {
             return true;
         }
-        return playController.keyEventsFilter(event);
+        return playController.handleKeyEvent(event);
     }
 
     @Override

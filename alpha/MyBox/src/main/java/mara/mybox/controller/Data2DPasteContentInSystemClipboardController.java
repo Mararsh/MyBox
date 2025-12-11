@@ -43,11 +43,11 @@ public class Data2DPasteContentInSystemClipboardController extends BaseData2DPas
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (boardController.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (boardController.handleKeyEvent(event)) {
             return true;
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

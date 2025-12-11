@@ -510,11 +510,11 @@ public abstract class BaseFileImagesController extends BaseFileController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return imageController.keyEventsFilter(event);
+        return imageController.handleKeyEvent(event);
     }
 
     @Override

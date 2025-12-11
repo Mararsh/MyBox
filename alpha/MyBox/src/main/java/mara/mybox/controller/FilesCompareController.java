@@ -20,8 +20,9 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MessageDigestTools;
@@ -232,8 +233,7 @@ public class FilesCompareController extends BaseController {
 
     @FXML
     public void pickFile1(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectFile1();
         } else {
             showFile1Menu(event);
@@ -242,7 +242,7 @@ public class FilesCompareController extends BaseController {
 
     @FXML
     public void popFile1(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showFile1Menu(event);
         }
     }
@@ -283,8 +283,7 @@ public class FilesCompareController extends BaseController {
 
     @FXML
     public void pickFile2(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectFile2();
         } else {
             showFile2Menu(event);
@@ -293,7 +292,7 @@ public class FilesCompareController extends BaseController {
 
     @FXML
     public void popFile2(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showFile2Menu(event);
         }
     }

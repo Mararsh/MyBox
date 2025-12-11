@@ -495,19 +495,19 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (valuesController != null) {
             if (valuesController.thisPane.isFocused() || valuesController.thisPane.isFocusWithin()) {
-                if (valuesController.keyEventsFilter(event)) {
+                if (valuesController.handleKeyEvent(event)) {
                     return true;
                 }
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
         if (valuesController != null) {
-            return valuesController.keyEventsFilter(event);
+            return valuesController.handleKeyEvent(event);
         }
         return false;
     }

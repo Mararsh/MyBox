@@ -113,22 +113,22 @@ public class ImageScopeViewsController extends BaseChildController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == sourceTab) {
-            if (sourceController.keyEventsFilter(event)) {
+            if (sourceController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (tab == selectedTab) {
-            if (selectedController.keyEventsFilter(event)) {
+            if (selectedController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (tab == maskTab) {
-            if (maskController.keyEventsFilter(event)) {
+            if (maskController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

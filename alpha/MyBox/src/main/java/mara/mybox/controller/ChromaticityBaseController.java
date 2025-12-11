@@ -15,6 +15,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
@@ -151,8 +152,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
 
     @FXML
     public void pickExportPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             exportAction();
         } else {
             showExportPathMenu(event);
@@ -161,7 +161,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
 
     @FXML
     public void popExportPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showExportPathMenu(event);
         }
     }

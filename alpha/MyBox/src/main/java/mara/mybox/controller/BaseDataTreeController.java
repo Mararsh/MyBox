@@ -606,12 +606,12 @@ public class BaseDataTreeController extends BaseFileController {
         events
      */
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
         if (viewController != null) {
-            if (viewController.keyEventsFilter(event)) {
+            if (viewController.handleKeyEvent(event)) {
                 return true;
             }
         }

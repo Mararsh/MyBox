@@ -8,7 +8,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -19,6 +18,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.getBound;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.image.ImageViewTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
@@ -623,7 +623,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
 
     @FXML
     public void popShapeMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "ShapeMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Shape")) {
             showShapeMenu(event);
         }
     }
@@ -636,15 +636,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             }
             List<MenuItem> items = maskShapeMenu(event, currentMaskShapeData(), null);
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "ShapeMenuPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent cevent) {
-                    UserConfig.setBoolean(baseName + "ShapeMenuPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu(baseName + "Shape"));
 
             popEventMenu(event, items);
         } catch (Exception e) {

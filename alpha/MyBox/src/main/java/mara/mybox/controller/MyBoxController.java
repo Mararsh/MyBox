@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
@@ -20,14 +19,12 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.MenuTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -67,6 +64,11 @@ public class MyBoxController extends BaseController {
         }
     }
 
+    @Override
+    public BaseController openScene(String newFxml) {
+        return loadScene(newFxml);
+    }
+
     @FXML
     public void popDocumentMenu(Event event) {
         if (MenuTools.isPopMenu("MyBoxHome")) {
@@ -79,7 +81,7 @@ public class MyBoxController extends BaseController {
         List<MenuItem> items = MenuTools.initMenu(message("Document"));
         items.addAll(MenuTools.documentToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
-        items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(documentBox, items);
     }
 
@@ -95,7 +97,7 @@ public class MyBoxController extends BaseController {
         List<MenuItem> items = MenuTools.initMenu(message("Image"));
         items.addAll(MenuTools.imageToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
-        items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(imageBox, items);
     }
 
@@ -111,7 +113,7 @@ public class MyBoxController extends BaseController {
         List<MenuItem> items = MenuTools.initMenu(message("File"));
         items.addAll(MenuTools.fileToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
-        items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(fileBox, items);
     }
 
@@ -127,7 +129,7 @@ public class MyBoxController extends BaseController {
         List<MenuItem> items = MenuTools.initMenu(message("Network"));
         items.addAll(MenuTools.networkToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
-        items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(networkBox, items);
     }
 
@@ -143,7 +145,7 @@ public class MyBoxController extends BaseController {
         List<MenuItem> items = MenuTools.initMenu(message("Data"));
         items.addAll(MenuTools.dataToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
-        items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(dataBox, items);
     }
 
@@ -159,7 +161,7 @@ public class MyBoxController extends BaseController {
         List<MenuItem> items = MenuTools.initMenu(message("Media"));
         items.addAll(MenuTools.mediaToolsMenu(this, event));
         items.add(new SeparatorMenuItem());
-        items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(mediaBox, items);
     }
 
@@ -175,7 +177,7 @@ public class MyBoxController extends BaseController {
         List<MenuItem> items = MenuTools.initMenu(message("RecentAccessed"));
         items.addAll(VisitHistoryTools.getRecentMenu(this, true));
         items.add(new SeparatorMenuItem());
-        items.add(MenuTools.popCheckMenu(event, "MyBoxHome"));
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(recentBox, items);
     }
 
@@ -292,15 +294,7 @@ public class MyBoxController extends BaseController {
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
 
         popCenterMenu(settingsBox, items);
 
@@ -320,15 +314,7 @@ public class MyBoxController extends BaseController {
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
+        items.add(MenuTools.popCheckMenu("MyBoxHome"));
 
         popCenterMenu(aboutBox, items);
 

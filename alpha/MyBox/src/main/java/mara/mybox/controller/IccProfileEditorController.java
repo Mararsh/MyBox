@@ -47,6 +47,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.MenuTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
@@ -1816,8 +1817,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
     @FXML
     public void pickXmlPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             exportXmlAction();
         } else {
             showXmlPathMenu(event);
@@ -1826,7 +1826,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
     @FXML
     public void popXmlPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showXmlPathMenu(event);
         }
     }
