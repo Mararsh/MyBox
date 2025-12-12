@@ -95,6 +95,21 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return dataID;
     }
 
+    public boolean deleteDataDefinition() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (dataID < 0) {
+                return false;
+            }
+            return tableData2DDefinition.deleteDefinition(conn, dataID) > 0;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
     public boolean readColumns(Connection conn) {
         try {
             columns = null;
@@ -147,7 +162,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             } else {
                 colsNumber = 0;
                 if (dataID >= 0 && conn != null) {
-                    tableData2DColumn.clear(conn, dataID);
+                    tableData2DColumn.clearColumns(conn, dataID);
                     tableData2DDefinition.updateData(conn, this);
                     tableData2DStyle.clear(conn, dataID);
                 }

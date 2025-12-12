@@ -306,6 +306,13 @@ public class Data2DMenuTools {
                     }
                 });
                 items.add(menu);
+
+                menu = new MenuItem(message("ClearDefinitionReloadFile"), StyleTools.getIconImageView("iconRefresh.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    data2D.deleteDataDefinition();
+                    dataController.loadDef(data2D);
+                });
+                items.add(menu);
             }
 
             CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));

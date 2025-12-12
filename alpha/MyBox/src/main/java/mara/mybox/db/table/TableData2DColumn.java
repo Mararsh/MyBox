@@ -179,9 +179,9 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
         try (Connection conn = DerbyBase.getConnection()) {
             if (data.getDataID() >= 0) {
-                return clear(conn, data.getDataID());
+                return clearColumns(conn, data.getDataID());
             } else {
-                return clearFile(conn, data.getType(), data.getFile());
+                return clearFileColumns(conn, data.getType(), data.getFile());
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -189,19 +189,19 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
     }
 
-    public boolean clearFile(Data2DDefinition.DataType type, File file) {
+    public boolean clearFileColumns(Data2DDefinition.DataType type, File file) {
         if (file == null) {
             return false;
         }
         try (Connection conn = DerbyBase.getConnection();) {
-            return clearFile(conn, type, file);
+            return TableData2DColumn.this.clearFileColumns(conn, type, file);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    public boolean clearFile(Connection conn, Data2DDefinition.DataType type, File file) {
+    public boolean clearFileColumns(Connection conn, Data2DDefinition.DataType type, File file) {
         if (conn == null || file == null) {
             return false;
         }
@@ -209,10 +209,10 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (dataDefinition == null) {
             return false;
         }
-        return clear(conn, dataDefinition.getDataID());
+        return clearColumns(conn, dataDefinition.getDataID());
     }
 
-    public boolean clear(Connection conn, long d2id) {
+    public boolean clearColumns(Connection conn, long d2id) {
         if (conn == null || d2id < 0) {
             return false;
         }

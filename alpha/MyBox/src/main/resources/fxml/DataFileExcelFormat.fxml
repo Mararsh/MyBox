@@ -15,9 +15,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="100.0" prefWidth="500.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileExcelFormatController">
+<VBox fx:id="thisPane" prefHeight="100.0" prefWidth="500.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileExcelFormatController">
       <children>
       <CheckBox fx:id="sourceWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
+      <CheckBox fx:id="clearCheck" mnemonicParsing="false" selected="true" text="%ClearOriginalDefinition" />
       <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
          <children>
             <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">

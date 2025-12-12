@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -22,6 +23,8 @@ public class DataFileCSVFormatController extends BaseChildController {
 
     @FXML
     protected ControlTextOptions optionsController;
+    @FXML
+    protected CheckBox clearCheck;
 
     public boolean isInvalid() {
         return dataController == null
@@ -79,7 +82,11 @@ public class DataFileCSVFormatController extends BaseChildController {
                     } else {
                         charset = optionsController.getCharset();
                     }
-                    return true;
+                    if (clearCheck.isSelected()) {
+                        return dataController.data2D.deleteDataDefinition();
+                    } else {
+                        return true;
+                    }
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

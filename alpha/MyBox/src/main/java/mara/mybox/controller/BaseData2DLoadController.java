@@ -343,6 +343,19 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     public void beforeOpenFile() {
     }
 
+    public void resetCSVFile(File file, Charset charset, boolean withNames, String delimiter) {
+        try {
+            if (file == null || !checkBeforeNextAction()) {
+                return;
+            }
+            DataFileCSV data = new DataFileCSV();
+            data.setFile(file).setCharset(charset).setHasHeader(withNames).setDelimiter(delimiter);
+            applyOptions(data);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void loadCSVFile(File file, Charset charset, boolean withNames, String delimiter) {
         try {
             if (file == null || !checkBeforeNextAction()) {

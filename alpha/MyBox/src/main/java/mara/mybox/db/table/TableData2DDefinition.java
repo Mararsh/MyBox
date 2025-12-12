@@ -256,7 +256,20 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteFile(Connection conn, DataType type, File file) {
+    public int deleteDefinition(Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return -1;
+        }
+        try (PreparedStatement statement = conn.prepareStatement(DeleteID)) {
+            statement.setLong(1, id);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -2;
+        }
+    }
+
+    public int deleteFileDefinition(Connection conn, DataType type, File file) {
         if (conn == null || file == null) {
             return -1;
         }
@@ -270,7 +283,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteName(Connection conn, DataType type, String name) {
+    public int deleteNameDefinition(Connection conn, DataType type, String name) {
         if (conn == null || name == null || name.isBlank()) {
             return -1;
         }
@@ -307,7 +320,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     }
 
     public int deleteClipboard(Connection conn, File file) {
-        return deleteFile(conn, DataType.MyBoxClipboard, file);
+        return deleteFileDefinition(conn, DataType.MyBoxClipboard, file);
     }
 
     public int clearInvalid(BaseTaskController taskController, Connection conn, boolean clearTmpTables) {
