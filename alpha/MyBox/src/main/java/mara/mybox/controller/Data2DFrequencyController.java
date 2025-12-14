@@ -44,7 +44,7 @@ public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
             if (!super.checkOptions()) {
                 return false;
             }
-            freName = colSelector.getSelectionModel().getSelectedItem();
+            freName = colSelector.getSelectionModel().getSelectedItem().getColumnName();
             freCol = data2D.colOrder(freName);
             Data2DColumn freColumn = data2D.column(freCol);
             if (freColumn == null) {

@@ -9,8 +9,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.cell.CellTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -29,7 +31,9 @@ public class BaseData2DPasteController extends ControlData2DSource {
     @FXML
     protected HBox pasteBox, wayBox;
     @FXML
-    protected ComboBox<String> rowSelector, colSelector;
+    protected ComboBox<String> rowSelector;
+    @FXML
+    protected ComboBox<Data2DColumn> colSelector;
     @FXML
     protected RadioButton replaceRadio, insertRadio, appendRadio;
 
@@ -43,6 +47,8 @@ public class BaseData2DPasteController extends ControlData2DSource {
             dataTarget = targetController.data2D;
 
             initParameters();
+
+            CellTools.makeColumnComboBox(colSelector);
 
             targetStatusListener = new ChangeListener<Boolean>() {
                 @Override
@@ -75,9 +81,8 @@ public class BaseData2DPasteController extends ControlData2DSource {
                 rowSelector.getItems().clear();
             }
 
-            List<String> names = dataTarget.columnNames();
-            if (names != null && !names.isEmpty()) {
-                colSelector.getItems().setAll(names);
+            if (dataTarget.getColumns() != null) {
+                colSelector.getItems().setAll(dataTarget.getColumns());
                 colSelector.getSelectionModel().select(col);
             } else {
                 colSelector.getItems().clear();
@@ -122,10 +127,12 @@ public class BaseData2DPasteController extends ControlData2DSource {
             List<List<String>> rows = new ArrayList<>();
             rows.addAll(targetController.tableData);
             if (replaceRadio.isSelected()) {
-                for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
+                for (int r = row; r < Math.min(row + data.size(), rowsNumber);
+                        r++) {
                     List<String> tableRow = targetController.data2D.pageRow(r, true);
                     List<String> dataRow = data.get(r - row);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
+                    for (int c = col;
+                            c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
                     rows.set(r, tableRow);
@@ -135,7 +142,8 @@ public class BaseData2DPasteController extends ControlData2DSource {
                 for (int r = 0; r < data.size(); r++) {
                     List<String> newRow = targetController.data2D.newRow();
                     List<String> dataRow = data.get(r);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
+                    for (int c = col;
+                            c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));
                     }
                     newRows.add(newRow);

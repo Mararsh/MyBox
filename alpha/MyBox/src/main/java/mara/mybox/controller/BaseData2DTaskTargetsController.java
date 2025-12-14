@@ -10,9 +10,11 @@ import javafx.scene.control.Toggle;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.cell.CellTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -27,12 +29,14 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
-    protected ComboBox<String> colSelector;
+    protected ComboBox<Data2DColumn> colSelector;
 
     @Override
     public void setParameters(BaseData2DLoadController controller) {
         try {
             super.setParameters(controller);
+
+            CellTools.makeColumnComboBox(colSelector);
 
             if (targetController != null) {
                 targetController.setParameters(this, controller);
@@ -64,12 +68,17 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 if (names == null || names.isEmpty()) {
                     return;
                 }
-                String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+
                 isSettingValues = true;
-                colSelector.getItems().setAll(names);
-                if (selectedCol != null && names.contains(selectedCol)) {
-                    colSelector.setValue(selectedCol);
-                } else {
+                colSelector.getItems().setAll(data2D.getColumns());
+                try {
+                    String selectedCol = colSelector.getSelectionModel().getSelectedItem().getColumnName();
+                    if (selectedCol != null && names.contains(selectedCol)) {
+                        CellTools.selectItem(colSelector, selectedCol);
+                    } else {
+                        colSelector.getSelectionModel().select(0);
+                    }
+                } catch (Exception e) {
                     colSelector.getSelectionModel().select(0);
                 }
                 isSettingValues = false;
@@ -255,10 +264,12 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             List<List<String>> tableData = new ArrayList<>();
             tableData.addAll(dataController.tableData);
             if (targetController.replaceRadio.isSelected()) {
-                for (int r = row; r < Math.min(row + outputData.size(), rowsNumber); r++) {
+                for (int r = row;
+                        r < Math.min(row + outputData.size(), rowsNumber); r++) {
                     List<String> tableRow = dataController.data2D.pageRow(r, true);
                     List<String> dataRow = outputData.get(r - row);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
+                    for (int c = col;
+                            c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
                     tableData.set(r, tableRow);
@@ -268,7 +279,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 for (int r = 0; r < outputData.size(); r++) {
                     List<String> newRow = dataController.data2D.newRow();
                     List<String> dataRow = outputData.get(r);
-                    for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
+                    for (int c = col;
+                            c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));
                     }
                     newRows.add(newRow);

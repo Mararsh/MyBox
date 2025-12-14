@@ -56,7 +56,7 @@ public class Data2DExport extends Data2DOperate {
     }
 
     @Override
-    public void setTargetFile(Data2DWriter writer) {
+    public void setPrintFile(Data2DWriter writer) {
         if (writer == null) {
             return;
         }
@@ -117,36 +117,20 @@ public class Data2DExport extends Data2DOperate {
     /*
         control by external method
      */
-    public boolean setColumns(ControlTargetFile controller, List<Data2DColumn> cols, String prefix) {
+    public boolean initExport(ControlTargetFile controller, List<String> cols, String prefix) {
         pathController = controller;
-        targetFile = null;
-        columns = cols;
-        columnNames = Data2DColumnTools.toNames(cols);
-        return initExport(prefix);
-    }
-
-    public boolean setNames(ControlTargetFile controller, List<String> cols, String prefix) {
-        pathController = controller;
-        targetFile = null;
         columnNames = cols;
         columns = Data2DColumnTools.toColumns(columnNames);
         return initExport(prefix);
     }
 
-    public boolean setNames(ControlTargetFile controller, List<String> cols) {
-        pathController = controller;
-        columnNames = cols;
-        columns = Data2DColumnTools.toColumns(columnNames);
-        return initExport(null);
-    }
-
-    private boolean initExport(String prefix) {
+    public boolean initExport(String prefix) {
+        targetFile = null;
         if (pathController == null || writers == null || writers.isEmpty()
                 || columns == null || columns.isEmpty()) {
             return false;
         }
         filePrefix = prefix != null ? prefix : "mexport";
-        targetFile = null;
         File file = pathController.pickFile();
         if (file == null) {
             targetPath = new File(AppPaths.getGeneratedPath() + File.separator);
@@ -206,40 +190,45 @@ public class Data2DExport extends Data2DOperate {
     /*
         set / get
      */
-    public void setPathController(ControlTargetFile pathController) {
+    public Data2DExport setPathController(ControlTargetFile pathController) {
         this.pathController = pathController;
+        return this;
     }
 
     public List<String> getColumnNames() {
         return columnNames;
     }
 
-    public void setColumnNames(List<String> columnNames) {
+    public Data2DExport setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;
+        return this;
     }
 
     public List<Data2DColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<Data2DColumn> columns) {
+    public Data2DExport setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
+        return this;
     }
 
     public String getIndent() {
         return indent;
     }
 
-    public void setIndent(String indent) {
+    public Data2DExport setIndent(String indent) {
         this.indent = indent;
+        return this;
     }
 
     public String getFilePrefix() {
         return filePrefix;
     }
 
-    public void setFilePrefix(String filePrefix) {
+    public Data2DExport setFilePrefix(String filePrefix) {
         this.filePrefix = filePrefix;
+        return this;
     }
 
     public int getMaxLines() {
@@ -255,24 +244,27 @@ public class Data2DExport extends Data2DOperate {
         return targetPath;
     }
 
-    public void setTargetPath(File targetPath) {
+    public Data2DExport setTargetPath(File targetPath) {
         this.targetPath = targetPath;
+        return this;
     }
 
     public File getTargetFile() {
         return targetFile;
     }
 
-    public void setTargetFile(File targetFile) {
+    public Data2DExport setTargetFile(File targetFile) {
         this.targetFile = targetFile;
+        return this;
     }
 
     public String getDataName() {
         return dataName;
     }
 
-    public void setDataName(String dataName) {
+    public Data2DExport setDataName(String dataName) {
         this.dataName = dataName;
+        return this;
     }
 
 }

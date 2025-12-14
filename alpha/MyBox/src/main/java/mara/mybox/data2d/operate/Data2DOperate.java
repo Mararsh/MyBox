@@ -97,7 +97,7 @@ public abstract class Data2DOperate {
             return true;
         }
         for (Data2DWriter writer : writers) {
-            setTargetFile(writer);
+            setPrintFile(writer);
             if (!writer.openWriter()) {
                 failStop(null);
                 end();
@@ -107,7 +107,7 @@ public abstract class Data2DOperate {
         return true;
     }
 
-    public void setTargetFile(Data2DWriter writer) {
+    public void setPrintFile(Data2DWriter writer) {
         if (writer != null && targetFile != null) {
             writer.setPrintFile(targetFile);
         }

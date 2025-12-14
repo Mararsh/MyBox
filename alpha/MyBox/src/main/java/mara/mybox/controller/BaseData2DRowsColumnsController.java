@@ -79,10 +79,11 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
 
             if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
                     && checkedColsIndices.size() != tableView.getColumns().size() - 2) {
-                for (int i = tableColumnStartIndex(); i < tableView.getColumns().size(); i++) {
+                for (int i = tableColumnStartIndex();
+                        i < tableView.getColumns().size(); i++) {
                     TableColumn tableColumn = tableView.getColumns().get(i);
                     CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                    int col = data2D.colOrder(cb.getText());
+                    int col = data2D.colOrderInTable(tableColumn);
                     cb.setSelected(col >= 0 && checkedColsIndices.contains(col));
                 }
             } else {
@@ -106,7 +107,8 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
                 return false;
             }
 
-            for (int i = tableColumnStartIndex(); i < tableView.getColumns().size(); i++) {
+            for (int i = tableColumnStartIndex();
+                    i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = new CheckBox(tableColumn.getText());
                 cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -137,16 +139,17 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
             List<Integer> allIndices = new ArrayList<>();
             List<String> allNames = new ArrayList<>();
             List<Data2DColumn> allCols = new ArrayList<>();
-            for (int i = tableColumnStartIndex(); i < tableView.getColumns().size(); i++) {
+            for (int i = tableColumnStartIndex();
+                    i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
-                CheckBox cb = (CheckBox) tableColumn.getGraphic();
-                String name = cb.getText();
-                int col = data2D.colOrder(name);
+                int col = data2D.colOrderInTable(tableColumn);
                 if (col >= 0) {
+                    String name = data2D.columnName(col);
                     allIndices.add(col);
                     allNames.add(name);
                     Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
                     allCols.add(dcol);
+                    CheckBox cb = (CheckBox) tableColumn.getGraphic();
                     if (cb.isSelected()) {
                         checkedColsIndices.add(col);
                         checkedColsNames.add(name);
@@ -183,7 +186,8 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
     public void setColumnsSelected(boolean select) {
         try {
             isSettingValues = true;
-            for (int i = tableColumnStartIndex(); i < tableView.getColumns().size(); i++) {
+            for (int i = tableColumnStartIndex();
+                    i < tableView.getColumns().size(); i++) {
                 TableColumn tableColumn = tableView.getColumns().get(i);
                 CheckBox cb = (CheckBox) tableColumn.getGraphic();
                 cb.setSelected(select);

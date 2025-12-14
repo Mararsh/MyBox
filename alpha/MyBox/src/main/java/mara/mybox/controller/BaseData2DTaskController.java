@@ -177,20 +177,22 @@ public abstract class BaseData2DTaskController extends BaseFileController {
             isSettingValues = true;
             if (columnsPane != null) {
                 columnsPane.getChildren().clear();
-                List<String> names = data2D.columnNames();
-                if (names != null) {
-                    for (String name : names) {
-                        columnsPane.getChildren().add(new CheckBox(name));
+                if (data2D.getColumns() != null) {
+                    for (Data2DColumn col : data2D.getColumns()) {
+                        CheckBox cb = new CheckBox(col.getLabel());
+                        cb.setUserData(col);
+                        columnsPane.getChildren().add(cb);
                     }
                 }
             }
 
             if (otherColumnsPane != null) {
                 otherColumnsPane.getChildren().clear();
-                List<String> names = data2D.columnNames();
-                if (names != null) {
-                    for (String name : names) {
-                        otherColumnsPane.getChildren().add(new CheckBox(name));
+                if (data2D.getColumns() != null) {
+                    for (Data2DColumn col : data2D.getColumns()) {
+                        CheckBox cb = new CheckBox(col.getLabel());
+                        cb.setUserData(col);
+                        otherColumnsPane.getChildren().add(cb);
                     }
                 }
             }
@@ -201,7 +203,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
                 if (columnsPane != null) {
                     for (Node node : columnsPane.getChildren()) {
                         CheckBox cb = (CheckBox) node;
-                        int col = data2D.colOrder(cb.getText());
+                        int col = data2D.colOrderInCheckBox(cb);
                         cb.setSelected(col >= 0 && checkedColsIndices.contains(col));
                     }
                 }
@@ -214,7 +216,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
                         && otherColsIndices.size() != data2D.getColumns().size()) {
                     for (Node node : otherColumnsPane.getChildren()) {
                         CheckBox cb = (CheckBox) node;
-                        int col = data2D.colOrder(cb.getText());
+                        int col = data2D.colOrderInCheckBox(cb);
                         cb.setSelected(col >= 0 && otherColsIndices.contains(col));
                     }
                 } else {
@@ -333,6 +335,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
     // Check when selections are changed
     public boolean checkParameters() {
         try {
+            MyBoxLog.console("here");
             if (isSettingValues) {
                 return true;
             }
@@ -492,6 +495,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
     // If none selected then select all
     public boolean checkColumns() {
         try {
+            MyBoxLog.console("here");
             checkedColsIndices = new ArrayList<>();
             checkedColsNames = new ArrayList<>();
             checkedColumns = new ArrayList<>();
@@ -504,9 +508,9 @@ public abstract class BaseData2DTaskController extends BaseFileController {
             if (columnsPane != null) {
                 for (Node node : columnsPane.getChildren()) {
                     CheckBox cb = (CheckBox) node;
-                    String name = cb.getText();
-                    int col = data2D.colOrder(name);
+                    int col = data2D.colOrderInCheckBox(cb);
                     if (col >= 0) {
+                        String name = data2D.columnName(col);
                         allIndices.add(col);
                         allNames.add(name);
                         Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
@@ -531,7 +535,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
                 allNames = data2D.columnNames();
                 allCols = data2D.getColumns();
             }
-
+            MyBoxLog.console(checkedColsIndices.size());
             if (noCheckedColumnsMeansAll && checkedColsIndices.isEmpty()) {
                 checkedColsIndices = allIndices;
                 checkedColsNames = allNames;
@@ -541,13 +545,12 @@ public abstract class BaseData2DTaskController extends BaseFileController {
             if (otherColumnsPane != null) {
                 for (Node node : otherColumnsPane.getChildren()) {
                     CheckBox cb = (CheckBox) node;
-                    String name = cb.getText();
-                    int col = data2D.colOrder(name);
+                    int col = data2D.colOrderInCheckBox(cb);
                     if (col >= 0) {
                         Data2DColumn dcol = data2D.getColumns().get(col).cloneAll();
                         if (cb.isSelected()) {
                             otherColsIndices.add(col);
-                            otherColsNames.add(name);
+                            otherColsNames.add(data2D.columnName(col));
                             otherColumns.add(dcol);
                         }
                     }
@@ -557,25 +560,6 @@ public abstract class BaseData2DTaskController extends BaseFileController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
-        }
-    }
-
-    public void selectColumns(List<String> names) {
-        try {
-            selectNoneColumn();
-            if (names == null || names.isEmpty()) {
-                return;
-            }
-            if (columnsPane != null) {
-                for (Node node : columnsPane.getChildren()) {
-                    CheckBox cb = (CheckBox) node;
-                    if (names.contains(cb.getText())) {
-                        cb.setSelected(true);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
         }
     }
 

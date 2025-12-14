@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
@@ -43,6 +44,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.cell.CellTools;
 import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -68,7 +70,9 @@ public class ControlData2DTarget extends BaseDataConvertController {
             jsonRadio, xmlRadio, htmlRadio, pdfRadio,
             systemClipboardRadio, myBoxClipboardRadio, replaceRadio, insertRadio, appendRadio;
     @FXML
-    protected ComboBox<String> rowSelector, colSelector;
+    protected ComboBox<String> rowSelector;
+    @FXML
+    protected ComboBox<Data2DColumn> colSelector;
     @FXML
     protected VBox externalBox, externalDefBox, fileBox, inTableBox;
     @FXML
@@ -88,6 +92,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
     protected ControlNewDataTable dbController;
     @FXML
     protected FlowPane invalidAsPane, extFormatPane, internalFormatPane;
+    @FXML
+    protected CheckBox displayedNameCheck;
 
     public boolean isInvalid() {
         if (tableController == null) {
@@ -120,6 +126,19 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 data2D = null;
                 databaseRadio.setDisable(true);
             }
+
+            displayedNameCheck.setSelected(UserConfig.getBoolean(baseName + "DataTargetLabelAsColumn", true));
+            displayedNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "DataTargetLabelAsColumn", displayedNameCheck.isSelected());
+                }
+            });
+
+            CellTools.makeColumnComboBox(colSelector);
 
             optionsPane.getTabs().clear();
             optionsBox.getChildren().clear();
@@ -435,15 +454,15 @@ public class ControlData2DTarget extends BaseDataConvertController {
             rowSelector.getItems().setAll(rows);
             rowSelector.getSelectionModel().select(thisSelect >= 0 ? thisSelect : 0);
 
-            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+            Data2DColumn selectedCol = colSelector.getSelectionModel().getSelectedItem();
             if (tableController.data2D.getColumns() != null) {
-                List<String> names = tableController.data2D.columnNames();
+                List<Data2DColumn> cols = new ArrayList<>();
                 for (Data2DColumn column : tableController.data2D.getColumns()) {
                     if (!column.isId()) {
-                        names.add(column.getColumnName());
+                        cols.add(column);
                     }
                 }
-                colSelector.getItems().setAll(names);
+                colSelector.getItems().setAll(cols);
                 if (selectedCol != null) {
                     colSelector.setValue(selectedCol);
                 } else {
@@ -532,7 +551,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
         if (!inTable() || tableController == null) {
             return -1;
         }
-        return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
+        return tableController.data2D.colOrder(
+                colSelector.getSelectionModel().getSelectedItem().getColumnName());
     }
 
     public InvalidAs invalidAs() {
@@ -596,7 +616,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
             }
             if (data2D != null) {
                 writer.setColumns(data2D.getColumns())
-                        .setHeaderNames(data2D.columnNames());
+                        .setHeaderNames(displayedNameCheck.isSelected()
+                                ? data2D.columnLabels() : data2D.columnNames());
             }
             writer.setDataName(targetName)
                     .setPrintFile(targetFile)

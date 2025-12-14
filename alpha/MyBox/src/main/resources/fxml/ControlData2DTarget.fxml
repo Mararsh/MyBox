@@ -26,6 +26,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
     <children>
+      <CheckBox fx:id="displayedNameCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%UseDisplayedNameAsColumnName" wrapText="true" />
         <FlowPane fx:id="invalidAsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
             <children>
                 <Label text="%ToInvalidValue" />
@@ -151,7 +152,7 @@ License:    Apache License Version 2.0
                                 </RadioButton>
                             </children>
                         </FlowPane>
-                        <VBox fx:id="externalDefBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                     <children>
@@ -231,22 +232,22 @@ License:    Apache License Version 2.0
                                                                         </ScrollPane>
                                                                     </content>
                                                                 </Tab>
-                                                <Tab fx:id="matrixTab" text="%Matrix">
-                                                   <content>
-                                                      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                         <content>
-                                                            <VBox fx:id="matrixBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                               <children>
-                                                                  <fx:include fx:id="matrixOptions" source="ControlMatrixOptions.fxml" />
-                                                               </children>
-                                                               <padding>
-                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                               </padding>
-                                                            </VBox>
-                                                         </content>
-                                                      </ScrollPane>
-                                                   </content>
-                                                </Tab>
+                                                                <Tab fx:id="matrixTab" text="%Matrix">
+                                                                    <content>
+                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                                            <content>
+                                                                                <VBox fx:id="matrixBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                                    <children>
+                                                                                        <fx:include fx:id="matrixOptions" source="ControlMatrixOptions.fxml" />
+                                                                                    </children>
+                                                                                    <padding>
+                                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                                    </padding>
+                                                                                </VBox>
+                                                                            </content>
+                                                                        </ScrollPane>
+                                                                    </content>
+                                                                </Tab>
                                                                 <Tab fx:id="htmlTab" text="html">
                                                                     <content>
                                                                         <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">

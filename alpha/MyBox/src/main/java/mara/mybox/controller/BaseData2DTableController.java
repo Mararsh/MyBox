@@ -306,7 +306,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 TableColumn tableColumn = new TableColumn<List<String>, String>(dataColumn.getLabel());
                 tableColumn.setPrefWidth(dataColumn.getWidth());
                 tableColumn.setEditable(!readOnly && dataColumn.isEditable() && !dataColumn.isId());
-                tableColumn.setUserData(dataColumn.getIndex());
+                tableColumn.setUserData(dataColumn);
                 int colIndex = i + 1;
 
                 tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>() {
