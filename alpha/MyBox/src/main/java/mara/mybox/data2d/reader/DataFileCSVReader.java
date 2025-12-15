@@ -3,10 +3,8 @@ package mara.mybox.data2d.reader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.StringTools;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -54,15 +52,8 @@ public class DataFileCSVReader extends Data2DReader {
             sourceRow = null;
             if (readerHasHeader) {
                 try {
-                    List<String> values = csvParser.getHeaderNames();
-                    if (StringTools.noDuplicated(values, true)) {
-                        names = new ArrayList<>();
-                        names.addAll(values);
-                        return;
-                    } else {
-                        sourceRow = new ArrayList<>();
-                        sourceRow.addAll(values);
-                    }
+                    sourceRow = new ArrayList<>();
+                    sourceRow.addAll(csvParser.getHeaderNames());
                 } catch (Exception e) {
                     showError(e.toString());
                 }
@@ -74,7 +65,6 @@ public class DataFileCSVReader extends Data2DReader {
                     }
                 }
             }
-            readerHasHeader = false;
             makeHeader();
         } catch (Exception e) {
             showError(e.toString());

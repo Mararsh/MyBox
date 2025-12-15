@@ -27,7 +27,7 @@ public class DataInternalTable extends DataTable {
     }
 
     @Override
-    public boolean readColumns(Connection conn) {
+    public boolean loadColumns(Connection conn) {
         try {
             columns = null;
             if (dataID < 0 || sheet == null) {
@@ -36,7 +36,7 @@ public class DataInternalTable extends DataTable {
             BaseTable internalTable = internalTables().get(sheet.toUpperCase());
             if (internalTable == null) {
                 dataType = DataType.DatabaseTable;
-                return super.readColumns(conn);
+                return super.loadColumns(conn);
             }
             List<ColumnDefinition> dbColumns = internalTable.getColumns();
             if (dbColumns == null) {

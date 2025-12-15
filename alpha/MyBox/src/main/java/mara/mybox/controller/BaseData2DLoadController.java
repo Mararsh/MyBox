@@ -130,11 +130,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(this, null);
-                    data2D.readDataDefinition(conn);
+                    data2D.loadDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
                     }
-                    return data2D.readColumns(conn);
+                    return data2D.loadColumns(conn);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

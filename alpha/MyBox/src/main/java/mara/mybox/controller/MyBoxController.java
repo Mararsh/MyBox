@@ -59,6 +59,7 @@ public class MyBoxController extends BaseController {
                 alertInformation(message("MyBoxWarning"));
                 SystemConfig.setBoolean("MyBoxWarningDisplayed", true);
             }
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

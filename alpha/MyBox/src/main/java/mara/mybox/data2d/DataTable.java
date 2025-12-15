@@ -144,7 +144,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean readColumns(Connection conn) {
+    public boolean loadColumns(Connection conn) {
         try {
             columns = null;
             if (conn == null || dataID < 0 || sheet == null) {

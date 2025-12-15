@@ -93,14 +93,14 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public long readDataDefinition(Connection conn) {
+    public long loadDataDefinition(Connection conn) {
         Data2DReadDefinition reader = Data2DReadDefinition.create(this);
         if (reader == null) {
             hasHeader = false;
             return -2;
         }
         reader.setTask(task).start();
-        return super.readDataDefinition(conn);
+        return super.loadDataDefinition(conn);
     }
 
     public boolean newSheet(String sheetName) {

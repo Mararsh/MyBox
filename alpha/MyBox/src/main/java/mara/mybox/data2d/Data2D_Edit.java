@@ -64,7 +64,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return true;
     }
 
-    public long readDataDefinition(Connection conn) {
+    public long loadDataDefinition(Connection conn) {
         if (isTmpData()) {
             checkForLoad();
             return -1;
@@ -110,7 +110,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public boolean readColumns(Connection conn) {
+    public boolean loadColumns(Connection conn) {
         try {
             columns = null;
             List<String> colNames = readColumnNames();
@@ -195,7 +195,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return pagination.rowsNumber;
     }
 
-    public List<List<String>> readPageData(Connection conn) {
+    public List<List<String>> loadPageData(Connection conn) {
         if (!hasColumns()) {
             pagination.startRowOfCurrentPage = pagination.endRowOfCurrentPage = 0;
             return null;
@@ -214,11 +214,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         if (rows != null) {
             pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage + rows.size();
         }
-        readPageStyles(conn);
+        loadPageStyles(conn);
         return rows;
     }
 
-    public void readPageStyles(Connection conn) {
+    public void loadPageStyles(Connection conn) {
         styles = new ArrayList<>();
         if (dataID < 0 || pagination.startRowOfCurrentPage >= pagination.endRowOfCurrentPage) {
             return;

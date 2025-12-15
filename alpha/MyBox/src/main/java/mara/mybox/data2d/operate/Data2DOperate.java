@@ -97,7 +97,7 @@ public abstract class Data2DOperate {
             return true;
         }
         for (Data2DWriter writer : writers) {
-            setPrintFile(writer);
+            assignPrintFile(writer);
             if (!writer.openWriter()) {
                 failStop(null);
                 end();
@@ -107,7 +107,7 @@ public abstract class Data2DOperate {
         return true;
     }
 
-    public void setPrintFile(Data2DWriter writer) {
+    public void assignPrintFile(Data2DWriter writer) {
         if (writer != null && targetFile != null) {
             writer.setPrintFile(targetFile);
         }
@@ -155,6 +155,7 @@ public abstract class Data2DOperate {
         run
      */
     public Data2DOperate start() {
+        MyBoxLog.console(sourceData == null);
         if (!checkParameters() || !go()) {
             failStop(null);
         }
@@ -163,6 +164,7 @@ public abstract class Data2DOperate {
     }
 
     public boolean checkParameters() {
+        MyBoxLog.console("here");
         handledCount = 0;
         sourceRowIndex = 0;
         sourceRow = null;

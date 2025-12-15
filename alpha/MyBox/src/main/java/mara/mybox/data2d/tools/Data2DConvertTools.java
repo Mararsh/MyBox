@@ -100,7 +100,7 @@ public class Data2DConvertTools {
         List<Data2DColumn> cols = csvData.getColumns();
         if (cols == null || cols.isEmpty()) {
             try (Connection conn = DerbyBase.getConnection()) {
-                csvData.readColumns(conn);
+                csvData.loadColumns(conn);
                 cols = csvData.getColumns();
                 if (cols == null || cols.isEmpty()) {
                     return null;
@@ -261,7 +261,7 @@ public class Data2DConvertTools {
         try (Connection conn = DerbyBase.getConnection()) {
             List<Data2DColumn> columns = sourceData.getColumns();
             if (columns == null || columns.isEmpty()) {
-                sourceData.readColumns(conn);
+                sourceData.loadColumns(conn);
             }
             if (columns == null || columns.isEmpty()) {
                 return null;

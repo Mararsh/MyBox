@@ -412,7 +412,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     @Override
     public List<List<String>> readPageData(FxTask currentTask, Connection conn) {
         data2D.startFilter(null);
-        return data2D.readPageData(conn);
+        return data2D.loadPageData(conn);
     }
 
     @Override

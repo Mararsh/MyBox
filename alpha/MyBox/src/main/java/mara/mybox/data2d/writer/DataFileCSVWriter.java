@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
@@ -105,10 +106,12 @@ public class DataFileCSVWriter extends Data2DWriter {
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.CSV);
+            MyBoxLog.console(printFile);
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.CSV);
                 }
+                MyBoxLog.console(writeHeader);
                 targetData.setTask(task())
                         .setFile(printFile)
                         .setCharset(charset)
@@ -118,6 +121,7 @@ public class DataFileCSVWriter extends Data2DWriter {
                         .setColsNumber(columns.size())
                         .setRowsNumber(targetRowIndex);
                 if (operate != null) {
+                    MyBoxLog.console(operate.getClass());
                     operate.handleTargetData(targetData);
                 }
                 Data2D.saveAttributes(conn(), targetData, columns);

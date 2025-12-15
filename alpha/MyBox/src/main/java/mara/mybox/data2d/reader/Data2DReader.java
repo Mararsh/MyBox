@@ -14,7 +14,6 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -117,11 +116,22 @@ public abstract class Data2DReader {
 
     public void makeHeader() {
         try {
-            names = new ArrayList<>();
-            if (readerHasHeader && StringTools.noDuplicated(sourceRow, true)) {
-                names.addAll(sourceRow);
-            } else {
+            if (sourceRow == null || sourceRow.isEmpty()) {
                 readerHasHeader = false;
+            }
+            names = new ArrayList<>();
+            if (readerHasHeader) {
+                for (int i = 0; i < sourceRow.size(); i++) {
+                    String name = sourceRow.get(i);
+                    if (name == null || name.isBlank()) {
+                        names.add(sourceData.colPrefix() + i);
+                    } else if (names.contains(name)) {
+                        names.add(name + (i + 1));
+                    } else {
+                        names.add(name);
+                    }
+                }
+            } else {
                 if (sourceRow != null) {
                     for (int i = 1; i <= sourceRow.size(); i++) {
                         names.add(sourceData.colPrefix() + i);
@@ -137,7 +147,8 @@ public abstract class Data2DReader {
 
     public void makePageRow() {
         List<String> row = new ArrayList<>();
-        for (int i = 0; i < Math.min(sourceRow.size(), sourceData.columnsNumber()); i++) {
+        for (int i = 0;
+                i < Math.min(sourceRow.size(), sourceData.columnsNumber()); i++) {
             row.add(sourceRow.get(i));
         }
         for (int col = row.size(); col < sourceData.columnsNumber(); col++) {

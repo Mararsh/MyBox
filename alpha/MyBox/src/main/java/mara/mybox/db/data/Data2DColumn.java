@@ -80,7 +80,7 @@ public class Data2DColumn extends ColumnDefinition {
     @Override
     public Data2DColumn cloneAll() {
         try {
-            Data2DColumn newColumn = (Data2DColumn) super.clone();
+            Data2DColumn newColumn = (Data2DColumn) super.cloneAll();
             newColumn.data2DDefinition = data2DDefinition;
             newColumn.columnID = columnID;
             newColumn.dataID = dataID;

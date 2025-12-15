@@ -267,7 +267,7 @@ public class Data2DTableTools {
             }
             List<Data2DColumn> srcColumns = sourceData.getColumns();
             if (srcColumns == null || srcColumns.isEmpty()) {
-                sourceData.readColumns(conn);
+                sourceData.loadColumns(conn);
             }
             if (srcColumns == null || srcColumns.isEmpty()) {
                 return -2;

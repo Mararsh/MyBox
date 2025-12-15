@@ -56,7 +56,7 @@ public class Data2DExport extends Data2DOperate {
     }
 
     @Override
-    public void setPrintFile(Data2DWriter writer) {
+    public void assignPrintFile(Data2DWriter writer) {
         if (writer == null) {
             return;
         }

@@ -335,7 +335,6 @@ public abstract class BaseData2DTaskController extends BaseFileController {
     // Check when selections are changed
     public boolean checkParameters() {
         try {
-            MyBoxLog.console("here");
             if (isSettingValues) {
                 return true;
             }
@@ -495,7 +494,6 @@ public abstract class BaseData2DTaskController extends BaseFileController {
     // If none selected then select all
     public boolean checkColumns() {
         try {
-            MyBoxLog.console("here");
             checkedColsIndices = new ArrayList<>();
             checkedColsNames = new ArrayList<>();
             checkedColumns = new ArrayList<>();
@@ -535,7 +533,6 @@ public abstract class BaseData2DTaskController extends BaseFileController {
                 allNames = data2D.columnNames();
                 allCols = data2D.getColumns();
             }
-            MyBoxLog.console(checkedColsIndices.size());
             if (noCheckedColumnsMeansAll && checkedColsIndices.isEmpty()) {
                 checkedColsIndices = allIndices;
                 checkedColsNames = allNames;
