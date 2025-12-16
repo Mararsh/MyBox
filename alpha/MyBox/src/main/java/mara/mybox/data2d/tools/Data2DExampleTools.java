@@ -55,6 +55,8 @@ public class Data2DExampleTools {
 
             items.add(location(lang, controller));
 
+            items.add(Dictionaries(lang, controller));
+
             items.add(matrix(lang, controller));
 
             items.add(projectManagement(lang, controller));
@@ -458,6 +460,72 @@ public class Data2DExampleTools {
             locationMenu.getItems().add(menu);
 
             return locationMenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Menu Dictionaries(String lang, BaseData2DLoadController controller) {
+        try {
+            Menu dictionariesMenu = new Menu(message(lang, "Dictionaries"),
+                    StyleTools.getIconImageView("iconWu.png"));
+
+            MenuItem menu = new MenuItem(message(lang, "ChineseCharacters"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseCharacters(lang);
+                if (makeExampleFile("ChineseCharacters", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            dictionariesMenu.getItems().add(menu);
+
+            menu = new MenuItem(message(lang, "ChineseRadicals"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseRadicals(lang);
+                if (makeExampleFile("ChineseRadicals", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            dictionariesMenu.getItems().add(menu);
+
+            menu = new MenuItem(message(lang, "ChinesePinyin"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChinesePinyin(lang);
+                if (makeExampleFile("ChinesePinyin", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            dictionariesMenu.getItems().add(menu);
+
+            menu = new MenuItem(message(lang, "ChinesePhrases"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChinesePhrases(lang);
+                if (makeExampleFile("ChinesePhrases", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            dictionariesMenu.getItems().add(menu);
+
+            menu = new MenuItem(message(lang, "ChineseTraditional"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseTraditional(lang);
+                if (makeExampleFile("ChineseTraditional", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            dictionariesMenu.getItems().add(menu);
+
+            menu = new MenuItem(message(lang, "ChinesePolyphone"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChinesePolyphone(lang);
+                if (makeExampleFile("ChinesePolyphone", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            dictionariesMenu.getItems().add(menu);
+
+            return dictionariesMenu;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -1434,6 +1502,84 @@ public class Data2DExampleTools {
         columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
         columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(message(lang, "ChineseHistoricalCapitals"));
+        return data;
+    }
+
+    public static DataFileCSV ChineseCharacters(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "编号" : "Number", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "级别" : "Level", ColumnType.Short));
+        columns.add(new Data2DColumn(isChinese ? "部首" : "Radical", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "笔画数" : "Stroke Count", ColumnType.Short));
+        columns.add(new Data2DColumn(isChinese ? "拼音" : "Pinyin", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "多音" : "Other Pinyin", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "繁体" : "Traditional", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "异形" : "Variant", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "字形" : "Glyph", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "笔顺" : "Strokes", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "拼音首" : "Pinyin Front", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "拼音尾" : "Pinyin End", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "音调" : "Tone", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "五笔" : "Wubi", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "十六进制" : "Hex", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "十进制" : "Dec", ColumnType.String));
+        data.setColumns(columns).setDataName(message(lang, "ChineseCharacters"));
+        return data;
+    }
+
+    public static DataFileCSV ChineseRadicals(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "部首" : "Radical", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "名字" : "Name", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "笔画数" : "Stroke Count", ColumnType.Short));
+        data.setColumns(columns).setDataName(message(lang, "ChineseRadicals"));
+        return data;
+    }
+
+    public static DataFileCSV ChinesePinyin(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "拼音" : "Pinyin", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "字" : "Characters", ColumnType.String));
+        data.setColumns(columns).setDataName(message(lang, "ChinesePinyin"));
+        return data;
+    }
+
+    public static DataFileCSV ChinesePhrases(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "词组" : "Phrase", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "繁体" : "Traditional", ColumnType.String));
+        data.setColumns(columns).setDataName(message(lang, "ChinesePhrases"));
+        return data;
+    }
+
+    public static DataFileCSV ChineseTraditional(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "繁体" : "Traditional", ColumnType.String));
+        data.setColumns(columns).setDataName(message(lang, "ChineseTraditional"));
+        return data;
+    }
+
+    public static DataFileCSV ChinesePolyphone(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "编号" : "Number", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "拼音" : "Pinyin", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "多音" : "Other Pinyin", ColumnType.String));
+        data.setColumns(columns).setDataName(message(lang, "ChinesePolyphone"));
         return data;
     }
 

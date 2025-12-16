@@ -281,6 +281,11 @@ MyBox基于以下开放资源：
 | DeepSeek | 知识 | <https://www.deepseek.com>     |
 | LibreOffice | 文档 | <https://www.libreoffice.org>    |   
 | 豆包 | 知识 | <https://www.doubao.com>    |   
+| 汉字信息 | 数据 | <https://github.com/iDvel/The-Table-of-General-Standard-Chinese-Characters>    |   
+| 汉字拼音 | 数据 | <https://github.com/amorphobia/opencc-tonggui>    |   
+| 汉字笔顺 | 数据 | <https://github.com/hamidun123/chinese-stroke>    |   
+| 汉字编码 | 数据 | <https://github.com/Hansha2011/TongYongGuiFanCharacterTable>    |   
+| 汉语词组 | 数据 | <https://github.com/amorphobia/opencc-tonggui>    |   
 
 
 

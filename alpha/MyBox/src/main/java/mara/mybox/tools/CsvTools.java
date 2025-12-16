@@ -30,7 +30,7 @@ public class CsvTools {
                 .setTrim(true)
                 .setNullString("")
                 .setCommentMarker(d.equals(CommentsMarker + "") ? null : CommentsMarker)
-                .setDuplicateHeaderMode(DuplicateHeaderMode.DISALLOW);
+                .setDuplicateHeaderMode(DuplicateHeaderMode.ALLOW_ALL);
     }
 
     public static CSVFormat csvFormat(String delimiter, boolean hasHeader) {
@@ -40,7 +40,7 @@ public class CsvTools {
         } else {
             builder.setSkipHeaderRecord(false);
         }
-        return builder.build();
+        return builder.get();
     }
 
     public static CSVFormat csvFormat(String delimiter) {

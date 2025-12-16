@@ -126,7 +126,11 @@ public abstract class Data2DReader {
                     if (name == null || name.isBlank()) {
                         names.add(sourceData.colPrefix() + i);
                     } else if (names.contains(name)) {
-                        names.add(name + (i + 1));
+                        int index = 2;
+                        while (names.contains(name + index)) {
+                            index++;
+                        }
+                        names.add(name + index);
                     } else {
                         names.add(name);
                     }

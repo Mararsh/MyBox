@@ -155,7 +155,6 @@ public abstract class Data2DOperate {
         run
      */
     public Data2DOperate start() {
-        MyBoxLog.console(sourceData == null);
         if (!checkParameters() || !go()) {
             failStop(null);
         }
@@ -164,7 +163,6 @@ public abstract class Data2DOperate {
     }
 
     public boolean checkParameters() {
-        MyBoxLog.console("here");
         handledCount = 0;
         sourceRowIndex = 0;
         sourceRow = null;
