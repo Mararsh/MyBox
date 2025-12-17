@@ -74,7 +74,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     protected DoubleArc maskArcData;
     protected DoublePath maskPathData;
     protected boolean maskControlDragged, showAnchors, popItemMenu, popShapeMenu,
-            addPointWhenClick, shapeCanMove;
+            addPointWhenClick;
     protected AnchorShape anchorShape;
     protected Polyline currentLine;
     protected List<DoublePoint> currentLineData;
@@ -534,9 +534,9 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 items.add(menu);
             }
 
-            items.add(anchorShowItem());
-
             items.add(anchorMenuItem());
+
+            items.add(moveShapeMenu());
 
             if (isMaskPolygonShown() || isMaskPolylineShown()) {
                 items.add(addPointMenu());
@@ -614,7 +614,6 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                     shapeCanMoveCheck.setSelected(moveMenuItem.isSelected());
                 } else {
                     UserConfig.setBoolean(baseName + "ShapeCanMove", moveMenuItem.isSelected());
-                    shapeCanMove = moveMenuItem.isSelected();
                 }
             }
         });
@@ -1507,7 +1506,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 @Override
                 public void handle(MouseEvent event) {
                     scrollPane.setPannable(true);
-                    if (isPickingColor) {
+                    if (isPickingColor || !UserConfig.getBoolean(baseName + "ShapeCanMove", true)) {
                         return;
                     }
                     double offsetX = imageOffsetX(event);

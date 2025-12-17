@@ -108,6 +108,8 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
 
             items.add(anchorMenuItem());
 
+            items.add(moveShapeMenu());
+
             items.add(optionsMenu());
 
             items.add(new SeparatorMenuItem());
@@ -175,8 +177,6 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-
-            items.add(moveShapeMenu());
 
             if (isMaskPolygonShown() || isMaskPolylineShown()) {
                 items.add(addPointMenu());

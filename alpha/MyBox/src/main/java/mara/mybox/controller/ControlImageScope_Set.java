@@ -252,8 +252,6 @@ public abstract class ControlImageScope_Set extends ControlImageScope_Base {
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
-        items.add(moveShapeMenu());
-
         CheckMenuItem clearMenuItem = new CheckMenuItem(message("ClearDataWhenLoadImage"), StyleTools.getIconImageView("iconClear.png"));
         clearMenuItem.setSelected(UserConfig.getBoolean(baseName + "ClearDataWhenLoadImage", true));
         clearMenuItem.setOnAction(new EventHandler<ActionEvent>() {
