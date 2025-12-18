@@ -55,7 +55,7 @@ public class Data2DExampleTools {
 
             items.add(location(lang, controller));
 
-            items.add(Dictionaries(lang, controller));
+            items.add(ChineseCharacters(lang, controller));
 
             items.add(matrix(lang, controller));
 
@@ -466,15 +466,15 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu Dictionaries(String lang, BaseData2DLoadController controller) {
+    public static Menu ChineseCharacters(String lang, BaseData2DLoadController controller) {
         try {
-            Menu dictionariesMenu = new Menu(message(lang, "Dictionaries"),
+            Menu dictionariesMenu = new Menu(message(lang, "ChineseCharacters"),
                     StyleTools.getIconImageView("iconWu.png"));
 
-            MenuItem menu = new MenuItem(message(lang, "ChineseCharacters"));
+            MenuItem menu = new MenuItem(message(lang, "ChineseCharactersStandard"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = ChineseCharacters(lang);
-                if (makeExampleFile("ChineseCharacters", data)) {
+                DataFileCSV data = ChineseCharactersStandard(lang);
+                if (makeExampleFile("ChineseCharactersStandard", data)) {
                     controller.loadDef(data);
                 }
             });
@@ -1505,7 +1505,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChineseCharacters(String lang) {
+    public static DataFileCSV ChineseCharactersStandard(String lang) {
         boolean isChinese = Languages.isChinese(lang);
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
@@ -1526,7 +1526,7 @@ public class Data2DExampleTools {
         columns.add(new Data2DColumn(isChinese ? "五笔" : "Wubi", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "十六进制" : "Hex", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "十进制" : "Dec", ColumnType.String));
-        data.setColumns(columns).setDataName(message(lang, "ChineseCharacters"));
+        data.setColumns(columns).setDataName(message(lang, "ChineseCharactersStandard"));
         return data;
     }
 
