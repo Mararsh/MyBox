@@ -54,8 +54,20 @@ public class DataFileTextReader extends Data2DReader {
     @Override
     public void readColumnNames() {
         try {
-            String line;
+            String line, comments;
             while ((line = textReader.readLine()) != null && !isStopped()) {
+                if (line == null || line.isBlank()) {
+                    continue;
+                }
+                if (line.startsWith(DataFileText.CommentsMarker)) {
+                    comments = line.substring(DataFileText.CommentsMarker.length(), line.length());
+                    if (dataComments == null) {
+                        dataComments = comments;
+                    } else {
+                        dataComments += "\n" + comments;
+                    }
+                    continue;
+                }
                 sourceRow = parseFileLine(line);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;

@@ -252,7 +252,7 @@ public class MatrixUnaryCalculationController extends BaseData2DTaskController {
         try {
             controller.setIconified(true);
 
-            matrixController.data2D = controller.data2D.cloneAll();
+            matrixController.data2D = controller.data2D.cloneTo();
             matrixController.tableData.setAll(controller.tableData);
 
             dataLoaded();

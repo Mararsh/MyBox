@@ -26,18 +26,18 @@ License:    Apache License Version 2.0
     <children>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
-            <Tab fx:id="attributesTab" text="%Attributes">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
-                     <children>
-                        <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DNew.fxml" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
+                <Tab fx:id="attributesTab" text="%Attributes">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                            <children>
+                                <fx:include fx:id="attributes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DTarget.fxml" VBox.vgrow="ALWAYS" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
                 <Tab fx:id="columnsTab" text="%Columns">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
@@ -63,21 +63,21 @@ License:    Apache License Version 2.0
                                         <ComboBox fx:id="rowsSelector" editable="true" prefWidth="120.0" />
                                     </children>
                                 </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" spacing="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%Values" wrapText="true" />
-                              <RadioButton fx:id="randomRadio" layoutX="150.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Random">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="valueGroup" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <RadioButton fx:id="randomNonnegativeRadio" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" text="%RandomNonnegative" toggleGroup="$valueGroup" />
-                              <RadioButton fx:id="emptyRadio" mnemonicParsing="false" text="%EmptyValue" toggleGroup="$valueGroup" />
-                              <RadioButton fx:id="nullRadio" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" text="Null" toggleGroup="$valueGroup" />
-                              <RadioButton fx:id="zeroRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="0" toggleGroup="$valueGroup" />
-                              <RadioButton fx:id="oneRadio" layoutX="119.0" layoutY="10.0" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
-                           </children>
-                        </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%Values" wrapText="true" />
+                                        <RadioButton fx:id="randomRadio" layoutX="150.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Random">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="valueGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="randomNonnegativeRadio" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" text="%RandomNonnegative" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="emptyRadio" mnemonicParsing="false" text="%EmptyValue" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="nullRadio" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" text="Null" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="zeroRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="0" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="oneRadio" layoutX="119.0" layoutY="10.0" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
+                                    </children>
+                                </HBox>
                             </children>
                         </VBox>
                     </content>

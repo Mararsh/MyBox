@@ -129,7 +129,7 @@ public class Data2DSetStylesController extends BaseController {
             getMyStage().setTitle(baseTitle + " - " + tableController.data2D.displayName());
 
             listController.sourceChanged();
-            filterController.updateData(tableController.data2D.cloneAll().setController(this));
+            filterController.updateData(tableController.data2D.cloneTo().setController(this));
 
             columnsPane.getChildren().clear();
             for (Data2DColumn column : tableController.data2D.getColumns()) {

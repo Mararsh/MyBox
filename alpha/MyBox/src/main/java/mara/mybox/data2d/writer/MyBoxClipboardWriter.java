@@ -103,18 +103,9 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             if (targetData == null) {
                 targetData = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
             }
-            targetData.setTask(task())
-                    .setFile(printFile)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",")
-                    .setHasHeader(true)
-                    .setDataName(dataName)
-                    .setColsNumber(columns.size())
-                    .setRowsNumber(targetRowIndex);
-            if (operate != null) {
-                operate.handleTargetData(targetData);
-            }
-            Data2D.saveAttributes(conn(), targetData, columns);
+            targetData.setCharset(Charset.forName("UTF-8")).setDelimiter(",");
+            saveTargetData(true, columns);
+
             DataInMyBoxClipboardController.update();
             showInfo(message("Generated") + ": " + printFile + "  "
                     + message("FileSize") + ": " + printFile.length());

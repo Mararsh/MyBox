@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlTargetFile;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.tools.Data2DColumnTools;
@@ -109,10 +108,6 @@ public class Data2DExport extends Data2DOperate {
         }
     }
 
-    @Override
-    public void handleTargetData(Data2D targetData) {
-        copySourceAttriutes(targetData);
-    }
 
     /*
         control by external method

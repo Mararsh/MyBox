@@ -66,10 +66,10 @@ public class Data2DDefinition extends BaseData {
         return def != null && dataID == def.getDataID();
     }
 
-    public Data2DDefinition cloneAll() {
+    public Data2DDefinition cloneTo() {
         try {
             Data2DDefinition newData = new Data2DDefinition();
-            newData.cloneDef(this);
+            newData.cloneFrom(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -77,30 +77,30 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public Data2DDefinition cloneDef(Data2DDefinition d) {
+    public Data2DDefinition cloneFrom(Data2DDefinition d) {
         try {
-            cloneDefBase(d);
-            cloneValueAttributes(d);
+            if (d == null) {
+                return null;
+            }
+            dataID = d.getDataID();
+            dataType = d.getType();
+            copyAllAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
         return this;
     }
 
-    public void cloneDefBase(Data2DDefinition d) {
+    public void copyAllAttributes(Data2DDefinition d) {
         try {
-            if (d == null) {
-                return;
-            }
-            dataID = d.getDataID();
-            dataType = d.getType();
-            cloneBaseAttributes(d);
+            copyFileAttributes(d);
+            copyDataAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneBaseAttributes(Data2DDefinition d) {
+    public void copyFileAttributes(Data2DDefinition d) {
         try {
             if (d == null) {
                 return;
@@ -117,7 +117,7 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public void cloneValueAttributes(Data2DDefinition d) {
+    public void copyDataAttributes(Data2DDefinition d) {
         try {
             if (d == null) {
                 return;
@@ -128,15 +128,6 @@ public class Data2DDefinition extends BaseData {
             colsNumber = d.getColsNumber();
             pagination.copyFrom(d.pagination);
             comments = d.getComments();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    public void cloneDefAttributes(Data2DDefinition d) {
-        try {
-            cloneBaseAttributes(d);
-            cloneValueAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -246,6 +237,10 @@ public class Data2DDefinition extends BaseData {
                 || dataType == DataType.MyBoxClipboard
                 || dataType == DataType.Texts
                 || dataType == DataType.Matrix);
+    }
+
+    public boolean hasComments() {
+        return comments != null && !comments.isBlank();
     }
 
     public String getTitle() {

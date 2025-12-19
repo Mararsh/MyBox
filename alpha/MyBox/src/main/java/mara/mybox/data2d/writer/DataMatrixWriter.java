@@ -34,24 +34,12 @@ public class DataMatrixWriter extends DataFileTextWriter {
     @Override
     public void recordTargetData() {
         try {
-            if (recordTargetData) {
-                if (targetData == null) {
-                    targetData = Data2D.create(Data2DDefinition.DataType.Matrix);
-                }
-                targetData.setTask(task())
-                        .setFile(printFile)
-                        .setSheet(dataType != null ? dataType : "Double")
-                        .setCharset(charset)
-                        .setDelimiter(delimiter)
-                        .setHasHeader(writeHeader)
-                        .setDataName(dataName)
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(targetRowIndex);
-                if (operate != null) {
-                    operate.handleTargetData(targetData);
-                }
-                Data2D.saveAttributes(conn(), targetData, columns);
+            if (targetData == null) {
+                targetData = Data2D.create(Data2DDefinition.DataType.Matrix);
             }
+            targetData.setCharset(charset).setDelimiter(delimiter)
+                    .setSheet(dataType != null ? dataType : "Double");
+            saveTargetData(writeHeader && headerNames != null, columns);
         } catch (Exception e) {
             showError(e.toString());
         }

@@ -164,7 +164,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
 
     public void dataChanged() {
         try {
-            data2D = dataController.data2D.cloneAll().setController(this);
+            data2D = dataController.data2D.cloneTo().setController(this);
 
             if (groupController != null) {
                 groupController.refreshControls();
@@ -787,7 +787,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
     public TmpTable tmpTable(String dname, List<Integer> colIndices, boolean needRowNumber) {
         try {
             FxTask data2DTask = data2D.getTask();
-            Data2D tmp2D = data2D.cloneAll().setController(this);
+            Data2D tmp2D = data2D.cloneTo().setController(this);
             tmp2D.startTask(data2DTask, filterController.filter);
             if (data2DTask != null) {
                 data2DTask.setInfo(message("Filter") + "...");

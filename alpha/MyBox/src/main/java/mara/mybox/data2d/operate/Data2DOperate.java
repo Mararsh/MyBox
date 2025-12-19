@@ -134,23 +134,6 @@ public abstract class Data2DOperate {
         return true;
     }
 
-    public void handleTargetData(Data2D targetData) {
-
-    }
-
-    public void copySourceAttriutes(Data2D data) {
-        if (data == null || sourceData == null) {
-            return;
-        }
-        if (data.getDataName() == null || data.getDataName().isBlank()) {
-            data.setDataName(sourceData.getDataName());
-        }
-        data.setScale(sourceData.getScale());
-        data.setMaxRandom(sourceData.getMaxRandom());
-        data.setComments(sourceData.getComments());
-    }
-
-
     /*
         run
      */

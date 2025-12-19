@@ -72,7 +72,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
-                cloneDef(definition);
+                cloneFrom(definition);
             }
             checkForLoad();
             if (definition == null) {
@@ -311,7 +311,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             attributes.pagination.rowsNumber = operate.rowsCount();
             attributes.tableChanged = false;
             attributes.pagination.currentPage = pagination.currentPage;
-            cloneData(attributes);
+            cloneDataFrom(attributes);
             return attributes.pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
@@ -570,7 +570,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (did < 0) {
                 return false;
             }
-            d.cloneDef(def);
+            d.cloneFrom(def);
             if (inColumns != null && !inColumns.isEmpty()) {
                 try {
                     List<Data2DColumn> targetColumns = new ArrayList<>();

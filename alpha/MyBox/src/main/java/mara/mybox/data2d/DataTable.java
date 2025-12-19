@@ -50,7 +50,7 @@ public class DataTable extends Data2D {
             if (d == null) {
                 return;
             }
-            super.cloneData(d);
+            super.cloneDataFrom(d);
             tableData2D = d.tableData2D;
             if (tableData2D == null) {
                 tableData2D = new TableData2D();
@@ -378,7 +378,7 @@ public class DataTable extends Data2D {
             attributes.pagination.rowsNumber = pagination.rowsNumber;
             attributes.tableChanged = false;
             attributes.pagination.currentPage = pagination.currentPage;
-            cloneData(attributes);
+            cloneDataFrom(attributes);
             return pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {

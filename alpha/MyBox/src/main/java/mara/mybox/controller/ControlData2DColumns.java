@@ -924,7 +924,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected void showExportMenu(Event mevent) {
         try {
-            Data2D currentData = data2D != null ? data2D.cloneAll() : new DataFileCSV();
+            Data2D currentData = data2D != null ? data2D.cloneTo() : new DataFileCSV();
             currentData.setColumns(tableData);
 
             List<MenuItem> items = exportMenu(mevent, currentData);

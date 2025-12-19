@@ -3,7 +3,6 @@ package mara.mybox.data2d.writer;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.Database;
@@ -104,12 +103,10 @@ public class DataTableWriter extends Data2DWriter {
             insert.executeBatch();
             conn.commit();
             insert.close();
-            targetTable.setRowsNumber(targetRowIndex);
-            if (operate != null) {
-                operate.handleTargetData(targetData);
-            }
-            Data2D.saveAttributes(conn, targetTable, targetTable.getColumns());
+
             targetData = targetTable;
+            saveTargetData(targetTable.isHasHeader(), targetTable.getColumns());
+
             showInfo(message("Generated") + ": " + targetTable.getSheet() + "  "
                     + message("RowsNumber") + ": " + targetRowIndex);
             status = targetRowIndex == 0 ? Status.NoData : Status.Created;

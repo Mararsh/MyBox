@@ -45,12 +45,14 @@ public abstract class Data2DWriter {
     protected ControlTargetFile targetFileController;
     protected List<String> headerNames, printRow;
     protected List<Data2DColumn> columns;
-    public boolean writeHeader, validateValue,
+    public boolean writeHeader, writeComments, validateValue,
             formatValues, recordTargetFile, recordTargetData;
-    protected String indent = "    ", dataName, fileSuffix, value;
+    protected String indent = "    ", dataName, fileSuffix, value, targetComments;
     protected long targetRowIndex;
     protected Connection conn;
     protected int rowSize;
+    protected short targetScale;
+    protected int targetMaxRandom;
     public InvalidAs invalidAs;
     public Status status;
 
@@ -63,7 +65,7 @@ public abstract class Data2DWriter {
         targetFileController = null;
         formatValues = false;
         validateValue = false;
-        writeHeader = recordTargetFile = recordTargetData = true;
+        writeHeader = writeComments = recordTargetFile = recordTargetData = true;
         invalidAs = null;
         targetData = null;
         status = Status.Unknown;
@@ -213,6 +215,28 @@ public abstract class Data2DWriter {
             c.recordFileWritten(conn(), file, type, type);
         }
         operate.addPrintedFile(file);
+    }
+
+    public void saveTargetData(boolean hasHeader, List<Data2DColumn> saveColumns) {
+        try {
+            if (targetData == null) {
+                return;
+            }
+            targetData.setTask(task())
+                    .setFile(printFile)
+                    .setHasHeader(writeHeader && headerNames != null)
+                    .setDataName(dataName)
+                    .setColsNumber(columns.size())
+                    .setRowsNumber(targetRowIndex)
+                    .setComments(targetComments)
+                    .setScale(targetScale)
+                    .setMaxRandom(targetMaxRandom);
+
+            Data2D.saveAttributes(conn(), targetData, saveColumns);
+
+        } catch (Exception e) {
+            showError(e.toString());
+        }
     }
 
     final public void showError(String error) {
@@ -381,6 +405,42 @@ public abstract class Data2DWriter {
 
     public Data2DWriter setWriteHeader(boolean writeHeader) {
         this.writeHeader = writeHeader;
+        return this;
+    }
+
+    public boolean isWriteComments() {
+        return writeComments;
+    }
+
+    public Data2DWriter setWriteComments(boolean writeComments) {
+        this.writeComments = writeComments;
+        return this;
+    }
+
+    public String getTargetComments() {
+        return targetComments;
+    }
+
+    public Data2DWriter setTargetComments(String targetComments) {
+        this.targetComments = targetComments;
+        return this;
+    }
+
+    public short getTargetScale() {
+        return targetScale;
+    }
+
+    public Data2DWriter setTargetScale(short targetScale) {
+        this.targetScale = targetScale;
+        return this;
+    }
+
+    public int getTargetMaxRandom() {
+        return targetMaxRandom;
+    }
+
+    public Data2DWriter setTargetMaxRandom(int targetMaxRandom) {
+        this.targetMaxRandom = targetMaxRandom;
         return this;
     }
 

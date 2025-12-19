@@ -160,17 +160,8 @@ public class DataFileExcelWriter extends Data2DWriter {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.Excel);
                 }
-                targetData.setTask(task())
-                        .setFile(printFile)
-                        .setSheet(sheetName)
-                        .setHasHeader(writeHeader)
-                        .setDataName(dataName)
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(targetRowIndex);
-                if (operate != null) {
-                    operate.handleTargetData(targetData);
-                }
-                Data2D.saveAttributes(conn(), targetData, columns);
+                targetData.setSheet(sheetName);
+                saveTargetData(writeHeader && headerNames != null, columns);
             }
             status = Status.Created;
         } catch (Exception e) {

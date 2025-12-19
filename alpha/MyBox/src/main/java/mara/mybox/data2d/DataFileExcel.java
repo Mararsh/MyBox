@@ -40,7 +40,7 @@ public class DataFileExcel extends DataFile {
             if (d == null) {
                 return;
             }
-            super.cloneData(d);
+            super.cloneDataFrom(d);
             sheetNames = d.sheetNames;
             currentSheetOnly = d.currentSheetOnly;
         } catch (Exception e) {

@@ -39,7 +39,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             CellTools.makeColumnComboBox(colSelector);
 
             if (targetController != null) {
-                targetController.setParameters(this, controller);
+                targetController.setParameters(this, controller, true);
             }
 
             sourceController.rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -91,7 +91,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
     public void sourceTypeChanged() {
         if (targetController != null) {
-            targetController.setNotInTable(isAllPages());
+            targetController.setCanInTable(!isAllPages());
         }
     }
 

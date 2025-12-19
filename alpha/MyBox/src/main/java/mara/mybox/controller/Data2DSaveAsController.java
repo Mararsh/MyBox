@@ -38,7 +38,7 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     public void setParameters(BaseData2DLoadController controller) {
         try {
-            targetController.setParameters(this, controller);
+            targetController.setParameters(this, controller, false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -46,7 +46,7 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     public void setParameters(BaseData2DLoadController controller, TargetType targetType) {
         try {
-            targetController.setParameters(this, controller);
+            targetController.setParameters(this, controller, false);
             targetController.setTarget(targetType);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -55,7 +55,7 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     public void saveTmp(BaseData2DLoadController controller) {
         try {
-            targetController.setParameters(this, controller);
+            targetController.setParameters(this, controller, false);
             TargetType ttype;
             switch (targetController.data2D.getType()) {
                 case CSV:

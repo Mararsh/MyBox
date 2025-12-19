@@ -77,7 +77,7 @@ public class Data2DConvertTools {
         File txtFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.getName(), null, "txt");
         if (FileCopyTools.copyFile(csvFile, txtFile)) {
             DataFileText targetData = new DataFileText();
-            targetData.cloneDataAttributes(csvData);
+            targetData.copyAttributesFrom(csvData);
             targetData.setFile(txtFile);
             if (targetName != null) {
                 targetData.setDataName(targetName);
@@ -133,7 +133,7 @@ public class Data2DConvertTools {
         File tcsvFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.getName(), null, "csv");
         if (FileCopyTools.copyFile(csvFile, tcsvFile)) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.cloneDataAttributes(csvData);
+            targetData.copyAttributesFrom(csvData);
             targetData.setFile(tcsvFile);
             if (targetName != null) {
                 targetData.setDataName(targetName);
@@ -216,7 +216,7 @@ public class Data2DConvertTools {
         }
         if (excelFile != null && excelFile.exists()) {
             DataFileExcel targetData = new DataFileExcel();
-            targetData.cloneDataAttributes(csvData);
+            targetData.copyAttributesFrom(csvData);
             if (targetFile != null) {
                 if (!FileCopyTools.copyFile(excelFile, targetFile)) {
                     return null;
@@ -271,7 +271,7 @@ public class Data2DConvertTools {
             DataTable dataTable = Data2DTableTools.createTable(task, conn,
                     TmpTable.tmpTableName(), referColumns, null, sourceData.getComments(), null, true);
             dataTable.setDataName(sourceData.getName());
-            dataTable.cloneValueAttributes(sourceData);
+            dataTable.copyDataAttributes(sourceData);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {

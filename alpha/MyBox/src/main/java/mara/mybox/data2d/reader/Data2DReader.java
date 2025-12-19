@@ -27,6 +27,7 @@ public abstract class Data2DReader {
     protected Data2DOperate operate;
     protected long sourceIndex; // 1-based
     protected long pageStartIndex, pageEndIndex; //  0-based
+    protected String dataComments;
     protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected Connection conn;
@@ -67,6 +68,7 @@ public abstract class Data2DReader {
         sourceIndex = 0;  // 1-based
         pageStartIndex = sourceData.getStartRowOfCurrentPage();
         pageEndIndex = pageStartIndex + sourceData.getPageSize();
+        dataComments = null;
         names = new ArrayList<>();
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
@@ -143,6 +145,9 @@ public abstract class Data2DReader {
                 }
             }
             sourceData.setHasHeader(readerHasHeader);
+            if (!sourceData.hasComments()) {
+                sourceData.setComments(dataComments);
+            }
             stop();
         } catch (Exception e) {
             showError(e.toString());
@@ -265,6 +270,15 @@ public abstract class Data2DReader {
 
     public Data2DReader setNames(List<String> names) {
         this.names = names;
+        return this;
+    }
+
+    public String getDataComments() {
+        return dataComments;
+    }
+
+    public Data2DReader setDataComments(String dataComments) {
+        this.dataComments = dataComments;
         return this;
     }
 

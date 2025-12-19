@@ -50,6 +50,7 @@ public class DataFileCSVReader extends Data2DReader {
                 return;
             }
             sourceRow = null;
+            dataComments = csvParser.getHeaderComment();
             if (readerHasHeader) {
                 try {
                     sourceRow = new ArrayList<>();

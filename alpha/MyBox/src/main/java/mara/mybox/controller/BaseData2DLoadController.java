@@ -107,7 +107,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return loadNull();
         }
         Data2D data = Data2D.create(def.getType());
-        data.cloneDef(def);
+        data.cloneFrom(def);
         data.setTableChanged(false);
         setData(data);
         readData(true);
@@ -312,7 +312,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                         fileData = Data2D.create(Data2DDefinition.type(file));
                     } else {
                         fileData = Data2D.create(def.dataType);
-                        fileData.cloneDef(def);
+                        fileData.cloneFrom(def);
                     }
                     fileData.initFile(file);
                     return true;

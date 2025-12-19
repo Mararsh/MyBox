@@ -69,7 +69,7 @@ public class Data2DSpliceController extends BaseTaskController {
                 }
             });
 
-            targetController.setParameters(this, null);
+            targetController.setParameters(this, null, false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

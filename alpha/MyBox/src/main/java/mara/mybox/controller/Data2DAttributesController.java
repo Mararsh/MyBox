@@ -153,7 +153,7 @@ public class Data2DAttributesController extends BaseChildController {
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             tableData = dataController.tableData;
-            data2D = dataController.data2D.cloneAll();
+            data2D = dataController.data2D.cloneTo();
             columnsController.setParameters(this);
 
             isSettingValues = true;
@@ -300,7 +300,7 @@ public class Data2DAttributesController extends BaseChildController {
         if (dataController.data2D == null) {
             dataController.data2D = attributes;
         } else {
-            dataController.data2D.cloneData(attributes);
+            dataController.data2D.cloneDataFrom(attributes);
         }
         dataController.makeColumns();
         dataController.updateTable(pageData);
@@ -315,7 +315,7 @@ public class Data2DAttributesController extends BaseChildController {
         if (!PopTools.askSure(getTitle(), message("SureChangeDataAttributes"))) {
             return;
         }
-        Data2D sourceData = dataController.data2D.cloneAll();
+        Data2D sourceData = dataController.data2D.cloneTo();
         sourceFile = sourceData.getFile();
         if (task != null) {
             task.cancel();

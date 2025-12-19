@@ -51,7 +51,7 @@ public class Data2DCreateController extends Data2DAttributesController {
     protected int rowsNumber;
 
     @FXML
-    protected ControlData2DNew attributesController;
+    protected ControlData2DTarget attributesController;
     @FXML
     protected ComboBox<String> rowsSelector;
     @FXML
@@ -85,12 +85,14 @@ public class Data2DCreateController extends Data2DAttributesController {
     protected void setCaller(BaseController controller) {
         try {
             caller = controller;
-            attributesController.setParameters(this);
+            attributesController.canInTable = false;
 
             rowsSelector.getItems().addAll(
                     Arrays.asList("3", "10", "0", "5", "1", "20", "50", "100", "300", "500")
             );
             rowsSelector.setValue("3");
+
+            attributesController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
