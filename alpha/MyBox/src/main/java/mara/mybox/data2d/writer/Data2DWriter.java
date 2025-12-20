@@ -78,6 +78,10 @@ public abstract class Data2DWriter {
             }
         }
         validateValue = AppVariables.rejectInvalidValueWhenSave;
+//        if ((targetComments == null || targetComments.isBlank())
+//                && operate != null && operate.getSourceData() != null) {
+//            targetComments = operate.getSourceData().getComments();
+//        }
         return true;
     }
 

@@ -174,16 +174,8 @@ public class DataFileText extends DataFile {
     @Override
     public Data2DWriter selfWriter() {
         DataFileTextWriter writer = new DataFileTextWriter();
-        writer.setCharset(charset)
-                .setDelimiter(delimiter)
-                .setWriteHeader(hasHeader)
-                .setTargetData(this)
-                .setDataName(dataName)
-                .setPrintFile(file)
-                .setColumns(columns)
-                .setHeaderNames(columnNames())
-                .setRecordTargetFile(true)
-                .setRecordTargetData(true);
+        initSelfWriter(writer);
+        writer.setCharset(charset).setDelimiter(delimiter).setTargetData(this);
         return writer;
     }
 

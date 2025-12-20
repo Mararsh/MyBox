@@ -393,11 +393,10 @@ public class DataTable extends Data2D {
     @Override
     public Data2DWriter selfWriter() {
         DataTableWriter writer = new DataTableWriter();
+        initSelfWriter(writer);
         writer.setTargetTable(this)
                 .setTargetData(this)
-                .setDataName(dataName)
-                .setRecordTargetFile(false)
-                .setRecordTargetData(true);
+                .setRecordTargetFile(false);
         return writer;
     }
 

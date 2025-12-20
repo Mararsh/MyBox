@@ -229,16 +229,10 @@ public class DataFileExcel extends DataFile {
     @Override
     public Data2DWriter selfWriter() {
         DataFileExcelWriter writer = new DataFileExcelWriter();
+        initSelfWriter(writer);
         writer.setBaseFile(file)
                 .setSheetName(sheet)
-                .setTargetData(this)
-                .setDataName(dataName)
-                .setPrintFile(file)
-                .setWriteHeader(hasHeader)
-                .setColumns(columns)
-                .setHeaderNames(columnNames())
-                .setRecordTargetFile(true)
-                .setRecordTargetData(true);
+                .setTargetData(this);
         return writer;
     }
 

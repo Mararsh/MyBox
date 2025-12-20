@@ -48,16 +48,10 @@ public class DataFileCSV extends DataFileText {
     @Override
     public Data2DWriter selfWriter() {
         DataFileCSVWriter writer = new DataFileCSVWriter();
+        initSelfWriter(writer);
         writer.setCharset(charset)
                 .setDelimiter(delimiter)
-                .setWriteHeader(hasHeader)
-                .setTargetData(this)
-                .setDataName(dataName)
-                .setPrintFile(file)
-                .setColumns(columns)
-                .setHeaderNames(columnNames())
-                .setRecordTargetFile(true)
-                .setRecordTargetData(true);
+                .setTargetData(this);
         return writer;
     }
 

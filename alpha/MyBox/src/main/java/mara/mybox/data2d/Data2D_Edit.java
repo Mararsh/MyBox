@@ -275,6 +275,23 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     /*
         modify
      */
+    public Data2DWriter initSelfWriter(Data2DWriter writer) {
+        if (writer != null) {
+            writer.setWriteHeader(hasHeader)
+                    .setDataName(dataName)
+                    .setPrintFile(file)
+                    .setColumns(columns)
+                    .setHeaderNames(columnNames())
+                    .setTargetScale(scale)
+                    .setTargetMaxRandom(maxRandom)
+                    .setWriteComments(true)
+                    .setTargetComments(comments)
+                    .setRecordTargetFile(true)
+                    .setRecordTargetData(true);
+        }
+        return writer;
+    }
+
     public long savePageData(FxTask task) {
         try {
             Data2DModify operate = Data2DSavePage.save(this);

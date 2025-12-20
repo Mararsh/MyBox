@@ -39,14 +39,11 @@ public class DataClipboard extends DataFileCSV {
     @Override
     public Data2DWriter selfWriter() {
         DataFileCSVWriter writer = new DataFileCSVWriter();
+        initSelfWriter(writer);
         writer.setCharset(charset)
                 .setDelimiter(delimiter)
-                .setWriteHeader(hasHeader)
-                .setPrintFile(file)
                 .setTargetData(this)
-                .setDataName(dataName)
-                .setRecordTargetFile(false)
-                .setRecordTargetData(true);
+                .setRecordTargetFile(false);
         return writer;
     }
 
