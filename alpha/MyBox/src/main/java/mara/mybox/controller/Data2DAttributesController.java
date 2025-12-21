@@ -300,7 +300,7 @@ public class Data2DAttributesController extends BaseChildController {
         if (dataController.data2D == null) {
             dataController.data2D = attributes;
         } else {
-            dataController.data2D.cloneDataFrom(attributes);
+            dataController.data2D.cloneAttributesFrom(attributes);
         }
         dataController.makeColumns();
         dataController.updateTable(pageData);

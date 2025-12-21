@@ -258,7 +258,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
             @Override
             protected void whenSucceeded() {
-                dataController.data2D.cloneDataFrom(data2D);
+                dataController.data2D.cloneAttributesFrom(data2D);
                 dataController.goPage();
                 dataController.requestMouse();
                 dataController.alertInformation(message("ChangedRowsNumber") + ": " + count);

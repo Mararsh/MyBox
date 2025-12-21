@@ -64,7 +64,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         initData();
     }
 
-    public void cloneDataFrom(Data2D_Attributes d) {
+    public void cloneAttributesFrom(Data2D_Attributes d) {
         try {
             dataID = d.getDataID();
             dataType = d.getType();

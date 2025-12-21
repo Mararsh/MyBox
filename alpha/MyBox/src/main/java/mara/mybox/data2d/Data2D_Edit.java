@@ -328,7 +328,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             attributes.pagination.rowsNumber = operate.rowsCount();
             attributes.tableChanged = false;
             attributes.pagination.currentPage = pagination.currentPage;
-            cloneDataFrom(attributes);
+            cloneAttributesFrom(attributes);
             return attributes.pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {

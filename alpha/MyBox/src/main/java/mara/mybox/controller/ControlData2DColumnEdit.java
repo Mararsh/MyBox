@@ -180,7 +180,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || longRadio.isSelected() || intRadio.isSelected()
                     || shortRadio.isSelected()) {
                 optionsBox.getChildren().addAll(formatBox, decimalPane);
-                formatInput.setText(message("GroupInThousands"));
+                formatInput.setText("");
 
             }
 
@@ -526,17 +526,17 @@ public class ControlData2DColumnEdit extends BaseChildController {
     public void showExamples(Event event) {
         if (doubleRadio.isSelected() || floatRadio.isSelected()) {
             List<String> values = new ArrayList<>();
+            values.add(message("None"));
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
             values.add(message("ScientificNotation"));
-            values.add(message("None"));
             popExamples(event, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
             List<String> values = new ArrayList<>();
+            values.add(message("None"));
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
-            values.add(message("None"));
             popExamples(event, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (datetimeRadio.isSelected()) {
