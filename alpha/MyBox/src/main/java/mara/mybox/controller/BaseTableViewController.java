@@ -1058,4 +1058,8 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         this.tableView = tableView;
     }
 
+    public SimpleBooleanProperty getLoadedNotify() {
+        return loadedNotify;
+    }
+
 }

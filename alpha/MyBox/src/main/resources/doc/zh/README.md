@@ -283,8 +283,15 @@ MyBox基于以下开放资源：
 | 汉字笔顺 | 数据 | <https://github.com/hamidun123/chinese-stroke>    |   
 | 汉字编码 | 数据 | <https://github.com/Hansha2011/TongYongGuiFanCharacterTable>    |   
 | 汉语词组 | 数据 | <https://github.com/amorphobia/opencc-tonggui>    |   
-
-
+| 汉语统计 | 数据 | <https://github.com/zispace/hanzi-freq>    |   
+|  |  | <http://bcc.blcu.edu.cn>    |   
+|  |  | <https://github.com/chinese-poetry/chinese-poetry>    |   
+|  |  | <https://github.com/forfudan/chinese-characters-frequency>    |   
+|  |  | <http://yong321.freeshell.org/misc/ChineseCharFrequency.html>    |   
+|  |  | <https://github.com/mahavivo/scripta-sinica>    |   
+|  |  | <https://forum.freemdict.com/t/topic/3748>    |   
+|  |  | <https://github.com/studyzy/imewlconverter>    |   
+                      
 
 # 特点
 ## 跨平台       

@@ -321,6 +321,7 @@ public class Data2DConvertTools {
                 }
                 table.add(htmlRow);
             }
+            table.setComments(data.getComments());
             return table.html();
         } catch (Exception e) {
             if (task != null) {

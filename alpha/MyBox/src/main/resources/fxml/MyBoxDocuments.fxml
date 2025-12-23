@@ -20,6 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+
 <ScrollPane fx:id="topScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxDocumentsController">
     <content>
         <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -74,7 +75,7 @@ License:    Apache License Version 2.0
                                                         <CheckBox fx:id="tipsCheck" layoutX="15.0" layoutY="58.0" mnemonicParsing="false" text="%InterfaceTips" wrapText="true" />
                                                         <CheckBox fx:id="shortcutsCheck" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" text="%Shortcuts" wrapText="true" />
                                                         <CheckBox fx:id="treeCheck" layoutX="15.0" layoutY="138.0" mnemonicParsing="false" text="%MakeTreeDocumentsComments" wrapText="true" />
-                                                        <CheckBox fx:id="testingCheck" layoutX="15.0" layoutY="168.0" mnemonicParsing="false" text="%SoftwareTesting" wrapText="true" />
+                                                        <CheckBox fx:id="dataCheck" layoutX="15.0" layoutY="168.0" mnemonicParsing="false" text="%Data" wrapText="true" />
                                                         <CheckBox fx:id="paletteCheck" layoutX="15.0" layoutY="20.0" mnemonicParsing="false" text="%ColorPalette" wrapText="true" />
                                                         <CheckBox fx:id="linksCheck" layoutX="15.0" layoutY="126.0" mnemonicParsing="false" text="%SomeLinks" wrapText="true" />
                                                         <CheckBox fx:id="imagesCheck" mnemonicParsing="false" text="%StoriesOfImages" wrapText="true" />

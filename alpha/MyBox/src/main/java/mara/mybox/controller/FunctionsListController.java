@@ -62,8 +62,10 @@ public class FunctionsListController extends ControlWebView {
                         return;
                     }
                     String name = ev.getData();
+                    MyBoxLog.console(name);
                     MenuItem menu = map.get(name);
                     if (menu != null) {
+                        MyBoxLog.console(menu.getText());
                         menu.fire();
                     }
                 }

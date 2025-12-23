@@ -44,6 +44,10 @@ public class NodeStyleTools {
         return "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
     }
 
+    public static String linkStyle() {
+        return "-fx-text-fill: blue;";
+    }
+
     public static String selectedDataStyle() {
         return "-fx-background-color:  #0096C9; -fx-text-background-color: white;";
     }

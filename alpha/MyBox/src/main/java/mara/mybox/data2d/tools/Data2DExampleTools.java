@@ -26,7 +26,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.HelpTools;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
+import static mara.mybox.fxml.style.NodeStyleTools.linkStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -284,7 +284,7 @@ public class Data2DExampleTools {
             chinaMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message(lang, "ChinaNationalBureauOfStatistics"));
-            menu.setStyle(attributeTextStyle());
+            menu.setStyle(linkStyle());
             menu.setOnAction((ActionEvent event) -> {
                 controller.browse("https://data.stats.gov.cn/");
             });
@@ -404,7 +404,7 @@ public class Data2DExampleTools {
             regressionMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message(lang, "AboutDataAnalysis"));
-            menu.setStyle(attributeTextStyle());
+            menu.setStyle(linkStyle());
             menu.setOnAction((ActionEvent event) -> {
                 controller.openHtml(HelpTools.aboutDataAnalysis());
             });
@@ -673,6 +673,78 @@ public class Data2DExampleTools {
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = ChineseFrequencyYahoo2009(lang);
                 if (makeExampleFile("ChineseFrequency-Yahoo-2009", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "知乎语料库" : "Chinese characters statistic of Zhihu");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencyZhihu(lang);
+                if (makeExampleFile("ChineseFrequency-Zhihu", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "古代汉语语料库字频表" : "Chinese characters statistic in ancient China");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencyCncorpusAncient(lang);
+                if (makeExampleFile("ChineseFrequency-cncorpus-ancient China", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "现代汉语语料库字频表" : "Chinese characters statistic in modern China");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencyCncorpusCharactersModern(lang);
+                if (makeExampleFile("ChineseFrequency-cncorpus-characters-modern China", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "现代汉语语料库词频表" : "Chinese words statistic in modern China");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencyCncorpusWordsModern(lang);
+                if (makeExampleFile("ChineseFrequency-cncorpus-words-modern China", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "现代汉语语料库分词类词频表" : "Chinese participles statistic in modern China");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencyCncorpusParticiplesModern(lang);
+                if (makeExampleFile("ChineseFrequency-cncorpus-participles-modern China", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "唐诗宋词元曲" : "Chinese characters statistic about traditional literature");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencyTraditionalLiterature(lang);
+                if (makeExampleFile("ChineseFrequency-traditional literature", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "文淵閣四庫全書" : "Chinese characters statistic of the Si Ku Quan Shu");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencySiKuQuanShu(lang);
+                if (makeExampleFile("ChineseFrequency-freemdict-SiKuQuanShu", data)) {
+                    controller.loadDef(data);
+                }
+            });
+            othersMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "殆知阁" : "Chinese characters statistic of the Yi Zhi Ge");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = ChineseFrequencyYiZhiGe(lang);
+                if (makeExampleFile("ChineseFrequency-mahavivo-YiZhiGe", data)) {
                     controller.loadDef(data);
                 }
             });
@@ -1917,6 +1989,105 @@ public class Data2DExampleTools {
         columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Long));
         data.setColumns(columns).setDataName(isChinese ? "Yahoo汉字字频表-2009" : "Chinese characters statistic from Yahoo in 2009");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencyTraditionalLiterature(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "排名" : "Rank", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Long));
+        data.setColumns(columns).setDataName(isChinese ? "唐诗宋词元曲" : "Chinese characters statistic about traditional literature");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencyCncorpusAncient(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "排名" : "Rank", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "频率" : "Frequency", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "累计频率" : "Cumulative frequency", ColumnType.Double));
+        data.setColumns(columns).setDataName(isChinese ? "古代汉语语料库字频表" : "Chinese characters statistic of ancient China");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencyCncorpusCharactersModern(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "排名" : "Rank", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "频率" : "Frequency", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "累计频率" : "Cumulative frequency", ColumnType.Double));
+        data.setColumns(columns).setDataName(isChinese ? "现代汉语语料库字频表" : "Chinese characters statistic in modern China");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencyCncorpusWordsModern(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "排名" : "Rank", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "频率" : "Frequency", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "累计频率" : "Cumulative frequency", ColumnType.Double));
+        data.setColumns(columns).setDataName(isChinese ? "现代汉语语料库词频表" : "Chinese words statistic in modern China");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencyCncorpusParticiplesModern(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "词语" : "Word", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "排名" : "Rank", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "词类标记" : "Token", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "词类名称" : "Catelog", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "频率" : "Frequency", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "累计频率" : "Cumulative frequency", ColumnType.Double));
+        data.setColumns(columns).setDataName(isChinese ? "现代汉语语料库分词类词频表" : "Chinese participles statistic in modern China");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencySiKuQuanShu(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "排名" : "Rank", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Long));
+        data.setColumns(columns).setDataName(isChinese ? "文淵閣四庫全書" : "Chinese characters statistic of the Si Ku Quan Shu");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencyYiZhiGe(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "排名" : "Rank", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Long));
+        data.setColumns(columns).setDataName(isChinese ? "殆知阁" : "Chinese characters statistic of the Yi Zhi Ge");
+        return data;
+    }
+
+    public static DataFileCSV ChineseFrequencyZhihu(String lang) {
+        boolean isChinese = Languages.isChinese(lang);
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "汉字" : "Character", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "频次" : "Count", ColumnType.Long));
+        columns.add(new Data2DColumn(isChinese ? "频率" : "Frequency", ColumnType.Double));
+        columns.add(new Data2DColumn(isChinese ? "累计频率" : "Cumulative frequency", ColumnType.Double));
+        data.setColumns(columns).setDataName(isChinese ? "知乎语料库" : "Chinese characters statistic of Zhihu");
         return data;
     }
 

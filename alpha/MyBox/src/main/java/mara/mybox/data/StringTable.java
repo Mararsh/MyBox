@@ -216,6 +216,11 @@ public class StringTable {
             }
             StringBuilder s = new StringBuilder();
             s.append(indent).append("<BODY>\n");
+            String comments = table.getComments();
+            if (comments != null && !comments.isBlank()) {
+                s.append(indent).append(indent)
+                        .append("<P>").append(comments).append("</P>\n");
+            }
             s.append(tableDiv(table));
             s.append(indent).append("</BODY>\n");
             return s.toString();

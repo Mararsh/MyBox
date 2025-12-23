@@ -12,9 +12,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DConvertTools;
+import mara.mybox.data2d.tools.Data2DExampleTools;
 import static mara.mybox.data2d.tools.Data2DExampleTools.CompatibilityTesting;
 import static mara.mybox.data2d.tools.Data2DExampleTools.DetailedTesting;
 import static mara.mybox.data2d.tools.Data2DExampleTools.TestEnvironment;
@@ -34,6 +39,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.tools.FileCopyTools;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
@@ -55,13 +61,14 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     protected File path;
     protected final SimpleBooleanProperty finishNotify;
-    protected int index;
-    protected String realLang;
+    protected int index, dataIndex;
+    protected String realLang, dataList;
     protected ResourceBundle realBoundle;
+    protected Data2DManufactureController dataController;
 
     @FXML
     protected CheckBox readmeCheck, functionsCheck, tipsCheck, shortcutsCheck,
-            testingCheck, treeCheck, paletteCheck, linksCheck, imagesCheck;
+            dataCheck, treeCheck, paletteCheck, linksCheck, imagesCheck;
 
     public MyBoxDocumentsController() {
         baseTitle = message("MakeDocuments");
@@ -119,8 +126,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 }
             });
 
-            testingCheck.setSelected(UserConfig.getBoolean(baseName + "Testing", true));
-            testingCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            dataCheck.setSelected(UserConfig.getBoolean(baseName + "Testing", true));
+            dataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setBoolean(baseName + "Testing", nv);
@@ -189,9 +196,14 @@ public class MyBoxDocumentsController extends BaseTaskController {
         if (task == null || !task.isWorking()) {
             return false;
         }
-        if (testingCheck.isSelected()) {
-            testing("zh");
-            testing("en");
+        if (dataCheck.isSelected()) {
+//            testing("zh");
+//            testing("en");
+            Platform.runLater(() -> {
+                dataList = "\n";
+                data("zh");
+            });
+            Platform.requestNextPulse();
         }
         if (task == null || !task.isWorking()) {
             return false;
@@ -266,6 +278,102 @@ public class MyBoxDocumentsController extends BaseTaskController {
             File file = imageStories(task, true, lang);
             FileTools.override(file, new File(path, file.getName()), true);
             showLogs(file.getAbsolutePath());
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
+    public class Data {
+
+        public String sourceName, tagetName;
+        public DataFileCSV definiton;
+
+        public Data(String sourceName, String tagetName, DataFileCSV definiton) {
+            this.sourceName = sourceName;
+            this.tagetName = tagetName;
+            this.definiton = definiton;
+            this.tagetName = tagetName;
+        }
+    }
+
+    protected void dataMenu(List<MenuItem> items, MenuItem menu) {
+        if (menu instanceof SeparatorMenuItem
+                || menu instanceof CheckMenuItem
+                || message("Matrix").equals(menu.getText())
+                || menu.getStyle() != null) {
+            return;
+        }
+        if (menu instanceof Menu) {
+            for (MenuItem mitem : ((Menu) menu).getItems()) {
+                dataMenu(items, mitem);
+            }
+        } else {
+            items.add(menu);
+        }
+    }
+
+    protected boolean data(String lang) {
+        try {
+            FileDeleteTools.clearDir(null, AppVariables.MyBoxTempPath);
+            CurrentLangName = lang;
+            CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
+
+            dataController = Data2DManufactureController.open();
+            dataController.setIconified(true);
+            browse(path);
+
+            List<MenuItem> items = new ArrayList<>();
+            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    try {
+                        if (dataController.data2D == null || !dataController.dataSizeLoaded) {
+                            return;
+                        }
+                        File file = dataController.data2D.getFile();
+                        if (file == null) {
+                            return;
+                        }
+                        String fname = file.getName();
+                        File htmlFile = new File(path, fname.substring(0, fname.length() - 4)
+                                + (fname.contains("_" + lang + "_") ? "" : ("_" + lang))
+                                + ".html");
+                        dataList += items.get(dataIndex).getText() + "," + htmlFile.getName() + "\n";
+
+                        Data2DConvertTools.toHtmlFile(null, (DataFileCSV) dataController.data2D, htmlFile);
+                        showLogs(htmlFile.getAbsolutePath());
+                        if (dataIndex < items.size() - 1) {
+//                            Thread.sleep(500);
+                            dataController.askedTmp = true;
+                            items.get(++dataIndex).fire();
+
+                        } else {
+                            if ("zh".equals(lang)) {
+                                dataController.close();
+                                data("en");
+                            } else {
+                                CurrentLangName = realLang;
+                                CurrentBundle = realBoundle;
+                                MyBoxLog.console(dataList);
+                                dataController.close();
+                                dataController = null;
+                            }
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                }
+            });
+
+            for (MenuItem menu : Data2DExampleTools.examplesMenu(dataController)) {
+                dataMenu(items, menu);
+            }
+            dataIndex = 0;
+            dataController.askedTmp = true;
+            items.get(dataIndex).fire();
+
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -665,7 +773,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
         functionsCheck.setSelected(select);
         tipsCheck.setSelected(select);
         shortcutsCheck.setSelected(select);
-        testingCheck.setSelected(select);
+        dataCheck.setSelected(select);
         paletteCheck.setSelected(select);
         linksCheck.setSelected(select);
         imagesCheck.setSelected(select);
