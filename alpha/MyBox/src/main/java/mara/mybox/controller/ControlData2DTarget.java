@@ -515,7 +515,10 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 }
             }
 
-            writeCommentsCheck.setVisible(csvRadio.isSelected() || textsRadio.isSelected());
+            writeCommentsCheck.setVisible(csvRadio.isSelected()
+                    || textsRadio.isSelected()
+                    || excelRadio.isSelected()
+                    || htmlRadio.isSelected());
 
             refreshStyle(thisPane);
 

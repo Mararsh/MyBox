@@ -103,8 +103,21 @@ public class DataFileTextReader extends Data2DReader {
     }
 
     public void skipHeader() {
-        if (readerHasHeader) {
-            readValidLine();
+        try {
+            if (!readerHasHeader || textReader == null) {
+                return;
+            }
+            String line;
+            while ((line = textReader.readLine()) != null && !isStopped()) {
+                sourceRow = parseFileLine(line);
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                return;
+            }
+        } catch (Exception e) {
+            showError(e.toString());
+            setFailed();
         }
     }
 

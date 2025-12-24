@@ -3,6 +3,7 @@ package mara.mybox.data2d.writer;
 import java.io.File;
 import java.io.FileOutputStream;
 import mara.mybox.data2d.Data2D;
+import static mara.mybox.data2d.DataFileExcel.CommentsMarker;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileCopyTools;
@@ -82,6 +83,14 @@ public class DataFileExcelWriter extends Data2DWriter {
             }
             xssfSheet.setDefaultColumnWidth(20);
             rowIndex = 0;
+            if (writeComments && targetComments != null && !targetComments.isBlank()) {
+                String[] rows = targetComments.split("\n");
+                for (String row : rows) {
+                    Row commentsRow = xssfSheet.createRow(rowIndex++);
+                    Cell cell = commentsRow.createCell(0, CellType.STRING);
+                    cell.setCellValue(CommentsMarker + " " + row);
+                }
+            }
             if (writeHeader && headerNames != null) {
                 Row titleRow = xssfSheet.createRow(rowIndex++);
                 CellStyle horizontalCenter = xssfBook.createCellStyle();

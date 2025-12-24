@@ -47,6 +47,8 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseData2DLoadController extends BaseData2DTableController {
 
+    protected boolean forConvert = false;
+
     /*
         status
      */
@@ -95,7 +97,13 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     public boolean loadDef(Data2DDefinition def) {
-        return loadDef(def, true);
+        if (forConvert && def != null && def instanceof DataFileCSV) {
+            data2D = (DataFileCSV) def;
+            notifyLoaded();
+            return true;
+        } else {
+            return loadDef(def, true);
+        }
     }
 
     public boolean loadDef(Data2DDefinition def, boolean checkUpdated) {

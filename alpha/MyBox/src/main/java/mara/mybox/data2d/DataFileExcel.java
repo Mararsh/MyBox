@@ -28,6 +28,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 public class DataFileExcel extends DataFile {
 
+    public static final String CommentsMarker = "#";
+
     protected List<String> sheetNames;
     protected boolean currentSheetOnly;
 

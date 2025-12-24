@@ -64,7 +64,6 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected int index, dataIndex;
     protected String realLang, dataList;
     protected ResourceBundle realBoundle;
-    protected Data2DManufactureController dataController;
 
     @FXML
     protected CheckBox readmeCheck, functionsCheck, tipsCheck, shortcutsCheck,
@@ -320,16 +319,22 @@ public class MyBoxDocumentsController extends BaseTaskController {
             CurrentLangName = lang;
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
 
-            dataController = Data2DManufactureController.open();
-            dataController.setIconified(true);
-            browse(path);
+            Data2DManufactureController dataController = Data2DManufactureController.open();
 
             List<MenuItem> items = new ArrayList<>();
+            for (MenuItem menu : Data2DExampleTools.examplesMenu(dataController)) {
+                dataMenu(items, menu);
+            }
+            dataController.setIconified(true);
+            dataController.forConvert = true;
+            browse(path);
+
+            dataIndex = 0;
             dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     try {
-                        if (dataController.data2D == null || !dataController.dataSizeLoaded) {
+                        if (dataController.data2D == null) {
                             return;
                         }
                         File file = dataController.data2D.getFile();
@@ -341,14 +346,10 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                 + (fname.contains("_" + lang + "_") ? "" : ("_" + lang))
                                 + ".html");
                         dataList += items.get(dataIndex).getText() + "," + htmlFile.getName() + "\n";
-
                         Data2DConvertTools.toHtmlFile(null, (DataFileCSV) dataController.data2D, htmlFile);
-                        showLogs(htmlFile.getAbsolutePath());
                         if (dataIndex < items.size() - 1) {
-//                            Thread.sleep(500);
-                            dataController.askedTmp = true;
                             items.get(++dataIndex).fire();
-
+                            showLogs(htmlFile.getAbsolutePath());
                         } else {
                             if ("zh".equals(lang)) {
                                 dataController.close();
@@ -358,7 +359,6 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                 CurrentBundle = realBoundle;
                                 MyBoxLog.console(dataList);
                                 dataController.close();
-                                dataController = null;
                             }
                         }
                     } catch (Exception e) {
@@ -367,11 +367,6 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 }
             });
 
-            for (MenuItem menu : Data2DExampleTools.examplesMenu(dataController)) {
-                dataMenu(items, menu);
-            }
-            dataIndex = 0;
-            dataController.askedTmp = true;
             items.get(dataIndex).fire();
 
             return true;
