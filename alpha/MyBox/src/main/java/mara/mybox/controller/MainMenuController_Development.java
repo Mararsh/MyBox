@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import com.sun.management.OperatingSystemMXBean;
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,14 +16,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.tools.Data2DExampleTools;
-import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.menu.DevelopmentMenu;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -56,6 +51,9 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
             devMenu.setOnShowing((Event e) -> {
                 checkDev();
+                if (devMenu.getItems().size() < 6) {
+                    devMenu.getItems().addAll(DevelopmentMenu.menusList(this));
+                }
             });
             checkDev();
 
@@ -277,82 +275,6 @@ public abstract class MainMenuController_Development extends MainMenuController_
     protected void popError() {
         AppVariables.popErrorLogs = popErrorCheck.isSelected();
         UserConfig.setBoolean("PopErrorLogs", AppVariables.popErrorLogs);
-    }
-
-    @FXML
-    protected void MyBoxProperties(ActionEvent event) {
-        openStage(Fxmls.MyBoxPropertiesFxml);
-    }
-
-    @FXML
-    protected void MyBoxLogs(ActionEvent event) {
-        openStage(Fxmls.MyBoxLogsFxml);
-    }
-
-    @FXML
-    protected void MyBoxTables(ActionEvent event) {
-        openScene(Fxmls.MyBoxTablesFxml);
-    }
-
-    @FXML
-    protected void runSystemCommand(ActionEvent event) {
-        openScene(Fxmls.RunSystemCommandFxml);
-    }
-
-    @FXML
-    protected void macroCommand(ActionEvent event) {
-        DataTreeController.macroCommands(parentController, false);
-    }
-
-    @FXML
-    protected void JConsole(ActionEvent event) {
-        try {
-            String cmd = System.getProperty("java.home") + File.separator + "bin" + File.separator + "jconsole";
-            if (SystemTools.isWindows()) {
-                cmd += ".exe";
-            }
-            new ProcessBuilder(cmd).start();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    protected void openTTC2TTF(ActionEvent event) {
-        openScene(Fxmls.FileTTC2TTFFxml);
-    }
-
-    // This is for developement to generate Icons automatically in different color style
-    @FXML
-    public void makeIcons() {
-        openScene(Fxmls.MyBoxIconsFxml);
-    }
-
-    @FXML
-    public void makeDocuments() {
-        MyBoxDocumentsController.open();
-    }
-
-    @FXML
-    public void autoTesting() {
-        openScene(Fxmls.AutoTestingCasesFxml);
-    }
-
-    @FXML
-    public void allTableNames() {
-        TextPopController.loadText(BaseTableTools.allTableNames());
-    }
-
-    @FXML
-    public void myBoxBaseVerificationList() {
-        DataFileCSV data = Data2DExampleTools.MyBoxBaseVerificationList(
-                parentController, Languages.getLangName(), false);
-        Data2DManufactureController.openDef(data);
-    }
-
-    @FXML
-    protected void messageAuthor(ActionEvent event) {
-        openStage(Fxmls.MessageAuthorFxml);
     }
 
     @FXML

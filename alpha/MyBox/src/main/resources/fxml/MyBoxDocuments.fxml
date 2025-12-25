@@ -76,6 +76,7 @@ License:    Apache License Version 2.0
                                                         <CheckBox fx:id="shortcutsCheck" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" text="%Shortcuts" wrapText="true" />
                                                         <CheckBox fx:id="treeCheck" layoutX="15.0" layoutY="138.0" mnemonicParsing="false" text="%MakeTreeDocumentsComments" wrapText="true" />
                                                         <CheckBox fx:id="dataCheck" layoutX="15.0" layoutY="168.0" mnemonicParsing="false" text="%Data" wrapText="true" />
+                                          <CheckBox fx:id="testCheck" layoutX="15.0" layoutY="160.0" mnemonicParsing="false" text="%Test" wrapText="true" />
                                                         <CheckBox fx:id="paletteCheck" layoutX="15.0" layoutY="20.0" mnemonicParsing="false" text="%ColorPalette" wrapText="true" />
                                                         <CheckBox fx:id="linksCheck" layoutX="15.0" layoutY="126.0" mnemonicParsing="false" text="%SomeLinks" wrapText="true" />
                                                         <CheckBox fx:id="imagesCheck" mnemonicParsing="false" text="%StoriesOfImages" wrapText="true" />

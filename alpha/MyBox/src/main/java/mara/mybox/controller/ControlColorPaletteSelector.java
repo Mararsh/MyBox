@@ -29,7 +29,7 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.style.StyleTools;

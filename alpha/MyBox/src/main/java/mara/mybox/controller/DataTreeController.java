@@ -30,7 +30,7 @@ import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;

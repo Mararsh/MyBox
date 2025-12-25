@@ -15,7 +15,7 @@ import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.toShape;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;

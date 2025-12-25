@@ -6,7 +6,8 @@ import javafx.scene.control.Menu;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.HelpMenu;
+import mara.mybox.fxml.menu.MenuTools;
 
 /**
  * @Author Mara
@@ -25,7 +26,7 @@ public class MainMenuController extends MainMenuController_Development {
 
             toolsMenu.setOnShowing((Event e) -> {
                 toolsMenu.getItems().clear();
-                toolsMenu.getItems().addAll(MenuTools.toolsMenu(this, e));
+                toolsMenu.getItems().addAll(MenuTools.toolsMenu(this));
             });
 
             recentMenu.setOnShowing((Event e) -> {
@@ -35,7 +36,7 @@ public class MainMenuController extends MainMenuController_Development {
 
             helpMenu.setOnShowing((Event e) -> {
                 helpMenu.getItems().clear();
-                helpMenu.getItems().addAll(MenuTools.helpMenu(this, e));
+                helpMenu.getItems().addAll(HelpMenu.menusList(this));
             });
 
         } catch (Exception e) {

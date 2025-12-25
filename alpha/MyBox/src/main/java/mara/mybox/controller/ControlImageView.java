@@ -9,7 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 

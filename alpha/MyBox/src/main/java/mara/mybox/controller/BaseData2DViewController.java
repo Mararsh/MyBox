@@ -26,7 +26,7 @@ import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;

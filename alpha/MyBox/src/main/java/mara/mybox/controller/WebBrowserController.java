@@ -25,7 +25,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;

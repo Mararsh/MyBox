@@ -47,7 +47,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;

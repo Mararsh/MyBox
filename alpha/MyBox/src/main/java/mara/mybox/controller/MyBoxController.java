@@ -18,7 +18,14 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.DataToolsMenu;
+import mara.mybox.fxml.menu.DocumentToolsMenu;
+import mara.mybox.fxml.menu.FileToolsMenu;
+import mara.mybox.fxml.menu.HelpMenu;
+import mara.mybox.fxml.menu.ImageToolsMenu;
+import mara.mybox.fxml.menu.MediaToolsMenu;
+import mara.mybox.fxml.menu.MenuTools;
+import mara.mybox.fxml.menu.NetworkToolsMenu;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
@@ -80,7 +87,7 @@ public class MyBoxController extends BaseController {
     @FXML
     protected void showDocumentMenu(Event event) {
         List<MenuItem> items = MenuTools.initMenu(message("Document"));
-        items.addAll(MenuTools.documentToolsMenu(this, event));
+        items.addAll(DocumentToolsMenu.menusList(this));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(documentBox, items);
@@ -96,7 +103,7 @@ public class MyBoxController extends BaseController {
     @FXML
     protected void showImageMenu(Event event) {
         List<MenuItem> items = MenuTools.initMenu(message("Image"));
-        items.addAll(MenuTools.imageToolsMenu(this, event));
+        items.addAll(ImageToolsMenu.menusList(this));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(imageBox, items);
@@ -112,7 +119,7 @@ public class MyBoxController extends BaseController {
     @FXML
     protected void showFileMenu(Event event) {
         List<MenuItem> items = MenuTools.initMenu(message("File"));
-        items.addAll(MenuTools.fileToolsMenu(this, event));
+        items.addAll(FileToolsMenu.menusList(this));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(fileBox, items);
@@ -128,7 +135,7 @@ public class MyBoxController extends BaseController {
     @FXML
     protected void showNetworkMenu(Event event) {
         List<MenuItem> items = MenuTools.initMenu(message("Network"));
-        items.addAll(MenuTools.networkToolsMenu(this, event));
+        items.addAll(NetworkToolsMenu.menusList(this));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(networkBox, items);
@@ -144,7 +151,7 @@ public class MyBoxController extends BaseController {
     @FXML
     protected void showDataMenu(Event event) {
         List<MenuItem> items = MenuTools.initMenu(message("Data"));
-        items.addAll(MenuTools.dataToolsMenu(this, event));
+        items.addAll(DataToolsMenu.menusList(this));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(dataBox, items);
@@ -160,7 +167,7 @@ public class MyBoxController extends BaseController {
     @FXML
     protected void showMediaMenu(Event event) {
         List<MenuItem> items = MenuTools.initMenu(message("Media"));
-        items.addAll(MenuTools.mediaToolsMenu(this, event));
+        items.addAll(MediaToolsMenu.menusList(this));
         items.add(new SeparatorMenuItem());
         items.add(MenuTools.popCheckMenu("MyBoxHome"));
         popCenterMenu(mediaBox, items);
@@ -311,7 +318,7 @@ public class MyBoxController extends BaseController {
     @FXML
     protected void showAboutMenu(Event event) {
         List<MenuItem> items = MenuTools.initMenu(message("Help"));
-        items.addAll(MenuTools.helpMenu(this, event));
+        items.addAll(HelpMenu.menusList(this));
 
         items.add(new SeparatorMenuItem());
 

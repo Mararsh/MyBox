@@ -37,7 +37,7 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;

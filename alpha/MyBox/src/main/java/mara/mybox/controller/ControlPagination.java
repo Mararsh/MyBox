@@ -24,7 +24,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.Pagination;
 import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;

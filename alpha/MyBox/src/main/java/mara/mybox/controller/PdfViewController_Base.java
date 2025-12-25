@@ -26,7 +26,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.value.Languages;

@@ -25,7 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.NodeStyleTools;

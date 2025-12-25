@@ -21,7 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;

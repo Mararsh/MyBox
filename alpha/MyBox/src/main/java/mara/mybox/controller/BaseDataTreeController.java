@@ -27,7 +27,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;

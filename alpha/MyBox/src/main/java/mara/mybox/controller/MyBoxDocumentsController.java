@@ -18,11 +18,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.example.Data2DExampleTools;
+import mara.mybox.data2d.example.SoftwareTesting;
 import mara.mybox.data2d.tools.Data2DConvertTools;
-import mara.mybox.data2d.tools.Data2DExampleTools;
-import static mara.mybox.data2d.tools.Data2DExampleTools.CompatibilityTesting;
-import static mara.mybox.data2d.tools.Data2DExampleTools.DetailedTesting;
-import static mara.mybox.data2d.tools.Data2DExampleTools.TestEnvironment;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
 import mara.mybox.db.data.DataNode;
@@ -62,12 +60,12 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected File path;
     protected final SimpleBooleanProperty finishNotify;
     protected int index, dataIndex;
-    protected String realLang, dataList;
+    protected String realLang;
     protected ResourceBundle realBoundle;
 
     @FXML
     protected CheckBox readmeCheck, functionsCheck, tipsCheck, shortcutsCheck,
-            dataCheck, treeCheck, paletteCheck, linksCheck, imagesCheck;
+            dataCheck, testCheck, treeCheck, paletteCheck, linksCheck, imagesCheck;
 
     public MyBoxDocumentsController() {
         baseTitle = message("MakeDocuments");
@@ -125,11 +123,19 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 }
             });
 
-            dataCheck.setSelected(UserConfig.getBoolean(baseName + "Testing", true));
+            dataCheck.setSelected(UserConfig.getBoolean(baseName + "Data", true));
             dataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "Testing", nv);
+                    UserConfig.setBoolean(baseName + "Data", nv);
+                }
+            });
+
+            testCheck.setSelected(UserConfig.getBoolean(baseName + "Test", true));
+            testCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "Test", nv);
                 }
             });
 
@@ -195,11 +201,15 @@ public class MyBoxDocumentsController extends BaseTaskController {
         if (task == null || !task.isWorking()) {
             return false;
         }
+        if (testCheck.isSelected()) {
+            testing("zh");
+            testing("en");
+        }
+        if (task == null || !task.isWorking()) {
+            return false;
+        }
         if (dataCheck.isSelected()) {
-//            testing("zh");
-//            testing("en");
             Platform.runLater(() -> {
-                dataList = "\n";
                 data("zh");
             });
             Platform.requestNextPulse();
@@ -319,17 +329,22 @@ public class MyBoxDocumentsController extends BaseTaskController {
             CurrentLangName = lang;
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
 
-            Data2DManufactureController dataController = Data2DManufactureController.open();
+            browse(path);
 
+            Data2DManufactureController dataController = Data2DManufactureController.open();
             List<MenuItem> items = new ArrayList<>();
-            for (MenuItem menu : Data2DExampleTools.examplesMenu(dataController)) {
+            for (MenuItem menu
+                    : Data2DExampleTools.examplesMenu(dataController, lang)) {
                 dataMenu(items, menu);
             }
             dataController.setIconified(true);
             dataController.forConvert = true;
-            browse(path);
 
             dataIndex = 0;
+            String linkPrefix = "\"<a hreft=\\\"https://mara-mybox.sourceforge.io/data/";
+            String csvSuffix = "csv " + ("zh".equals(lang) ? message("Chinese") : message("English"));
+            String htmlSuffix = "html " + ("zh".equals(lang) ? message("Chinese") : message("English"));
+            StringBuilder s = new StringBuilder();
             dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
@@ -345,21 +360,24 @@ public class MyBoxDocumentsController extends BaseTaskController {
                         File htmlFile = new File(path, fname.substring(0, fname.length() - 4)
                                 + (fname.contains("_" + lang + "_") ? "" : ("_" + lang))
                                 + ".html");
-                        dataList += items.get(dataIndex).getText() + "," + htmlFile.getName() + "\n";
+                        s.append(items.get(dataIndex).getText()).append(",")
+                                .append(fname).append(",")
+                                .append(csvSuffix).append(",")
+                                .append(htmlFile.getName()).append(",")
+                                .append(htmlSuffix).append("\n");
                         Data2DConvertTools.toHtmlFile(null, (DataFileCSV) dataController.data2D, htmlFile);
                         if (dataIndex < items.size() - 1) {
                             items.get(++dataIndex).fire();
-                            showLogs(htmlFile.getAbsolutePath());
+//                            updateLogs(htmlFile.getAbsolutePath());
                         } else {
                             if ("zh".equals(lang)) {
-                                dataController.close();
                                 data("en");
                             } else {
                                 CurrentLangName = realLang;
                                 CurrentBundle = realBoundle;
-                                MyBoxLog.console(dataList);
-                                dataController.close();
                             }
+                            dataController.close();
+                            TextFileTools.writeFile(new File(path, lang + "-list.csv"), s.toString());
                         }
                     } catch (Exception e) {
                         MyBoxLog.console(e);
@@ -378,21 +396,21 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     protected boolean testing(String lang) {
         try {
-            DataFileCSV data = TestEnvironment(lang);
+            DataFileCSV data = SoftwareTesting.TestEnvironment(lang);
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_TestEnvironment_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             File htmlFile = new File(path, "mybox_TestEnvironment_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
             showLogs(htmlFile.getAbsolutePath());
 
-            data = CompatibilityTesting(lang);
+            data = SoftwareTesting.CompatibilityTesting(lang);
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_CompatibilityTesting_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             htmlFile = new File(path, "mybox_CompatibilityTesting_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
             showLogs(htmlFile.getAbsolutePath());
 
-            data = DetailedTesting(lang);
+            data = SoftwareTesting.DetailedTesting(lang);
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_DetailedTesting_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             htmlFile = new File(path, "mybox_DetailedTesting_" + lang + ".html");
@@ -769,6 +787,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
         tipsCheck.setSelected(select);
         shortcutsCheck.setSelected(select);
         dataCheck.setSelected(select);
+        testCheck.setSelected(select);
         paletteCheck.setSelected(select);
         linksCheck.setSelected(select);
         imagesCheck.setSelected(select);

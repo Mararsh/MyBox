@@ -21,7 +21,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;

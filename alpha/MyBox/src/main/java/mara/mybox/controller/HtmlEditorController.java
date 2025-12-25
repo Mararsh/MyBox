@@ -12,7 +12,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;

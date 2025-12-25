@@ -20,7 +20,7 @@ import mara.mybox.controller.MatrixUnaryCalculationController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;

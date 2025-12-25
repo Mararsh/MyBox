@@ -19,7 +19,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.tools.FileCopyTools;

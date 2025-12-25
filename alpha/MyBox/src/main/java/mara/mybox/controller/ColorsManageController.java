@@ -38,7 +38,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;

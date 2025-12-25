@@ -25,7 +25,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.style.HtmlStyles;

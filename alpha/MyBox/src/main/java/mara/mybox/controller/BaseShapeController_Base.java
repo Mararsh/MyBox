@@ -47,7 +47,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;

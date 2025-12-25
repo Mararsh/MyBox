@@ -23,7 +23,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;

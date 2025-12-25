@@ -15,7 +15,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;

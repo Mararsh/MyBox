@@ -14,7 +14,7 @@ import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;

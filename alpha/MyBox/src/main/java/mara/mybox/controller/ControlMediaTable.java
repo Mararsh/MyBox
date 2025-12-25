@@ -25,7 +25,7 @@ import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.cell.TableDurationCell;
 import mara.mybox.tools.DateTools;

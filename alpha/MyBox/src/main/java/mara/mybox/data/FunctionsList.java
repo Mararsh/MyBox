@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.menu.DevelopmentMenu;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
@@ -24,24 +26,22 @@ import static mara.mybox.value.Languages.message;
 public class FunctionsList {
 
     public static final int MaxLevel = 4;
-    protected MenuBar menuBar;
+    protected BaseController controller;
+    protected List<MenuItem> menus;
     protected boolean withLink;
     protected int index;
     protected StringTable table;
     protected String goImageFile, lang;
     protected Map<String, MenuItem> map;
 
-    public FunctionsList(MenuBar menuBar, boolean withLink, String lang) {
-        this.menuBar = menuBar;
+    public FunctionsList(BaseController controller, boolean withLink, String lang) {
+        this.controller = controller;
         this.withLink = withLink;
         this.lang = lang;
     }
 
     public StringTable make() {
         try {
-            if (menuBar == null) {
-                return null;
-            }
             if (withLink) {
                 goImageFile = AppVariables.MyboxDataPath + "/icons/iconGo.png";
                 BufferedImage srcImage = SwingFXUtils.fromFXImage(StyleTools.getIconImage("iconGo.png"), null);
@@ -60,9 +60,12 @@ public class FunctionsList {
             }
             table = new StringTable(names, message(lang, "FunctionsList"));
             map = new HashMap<>();
-            List< Menu> menus = menuBar.getMenus();
+            menus = MenuTools.toolsMenu(controller);
+            Menu devMenu = new Menu(message("Development"));
+            devMenu.getItems().addAll(DevelopmentMenu.menusList(controller));
+            menus.add(devMenu);
             int number = 0;
-            for (Menu menu : menus) {
+            for (MenuItem menu : menus) {
                 menu(menu, 0, ++number + "");
             }
             return table;
@@ -72,18 +75,17 @@ public class FunctionsList {
         }
     }
 
-    public void menu(Menu menu, int level, String number) {
+    public void menu(MenuItem menu, int level, String number) {
         try {
             makeRow(menu, level, number);
-            int childIndex = 0;
-            for (MenuItem menuItem : menu.getItems()) {
-                String childNumber = number + "." + ++childIndex;
-                if (menuItem instanceof Menu) {
-                    menu((Menu) menuItem, level + 1, childNumber);
-                } else {
-                    makeRow(menuItem, level + 1, childNumber);
+            if (menu instanceof Menu) {
+                int childIndex = 0;
+                for (MenuItem menuItem : ((Menu) menu).getItems()) {
+                    String childNumber = number + "." + ++childIndex;
+                    menu(menuItem, level + 1, childNumber);
                 }
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -28,7 +28,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.MenuTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
