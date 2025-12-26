@@ -83,7 +83,8 @@ public class StringTable {
     }
 
     public void newLinkRow(String name, String link) {
-        newNameValueRow(name, "<a href=\"" + link + "\" target=_blank>" + link + "</a>");
+        newNameValueRow(name,
+                "<a href=\"" + link + "\" target=_blank>" + link + "</a>");
     }
 
     public void newNameValueRow(String name, String value) {
@@ -118,12 +119,14 @@ public class StringTable {
             }
             StringBuilder s = new StringBuilder();
             String title = table.getTitle();
-            if (title != null && !title.trim().isEmpty()) {
-                s.append(indent).append(indent).append("<H2 align=\"center\">").append(title).append("</H2>\n");
+            if (title != null && !title.isBlank()) {
+                s.append(indent).append(indent).append("<H2 align=\"center\">")
+                        .append(HtmlWriteTools.codeToHtml(title)).append("</H2>\n");
             }
             String comments = table.getComments();
             if (comments != null && !comments.trim().isEmpty()) {
-                s.append(indent).append(indent).append("<PRE>").append(comments).append("</PRE>\n");
+                s.append(indent).append(indent)
+                        .append(HtmlWriteTools.codeToHtml(comments)).append("\n");
             }
             s.append(indent).append(indent).append("<DIV align=\"center\">\n");
             s.append(indent).append(indent).append(indent).append("<TABLE>\n");
@@ -216,11 +219,6 @@ public class StringTable {
             }
             StringBuilder s = new StringBuilder();
             s.append(indent).append("<BODY>\n");
-            String comments = table.getComments();
-            if (comments != null && !comments.isBlank()) {
-                s.append(indent).append(indent)
-                        .append("<P>").append(comments).append("</P>\n");
-            }
             s.append(tableDiv(table));
             s.append(indent).append("</BODY>\n");
             return s.toString();

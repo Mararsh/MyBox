@@ -273,7 +273,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> fileMenus(Data2DManufactureController dataController) {
+    public static List<MenuItem> fileMenus(BaseData2DLoadController dataController) {
         try {
             Data2D data2D = dataController.getData2D();
             if (dataController.invalidData() || !data2D.isDataFile()) {

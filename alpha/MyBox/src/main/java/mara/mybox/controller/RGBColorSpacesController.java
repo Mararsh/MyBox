@@ -14,6 +14,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -156,7 +157,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
                     + "            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n"
                     + "            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n"
                     + (String) adapted.get("procedure");
-            webView.getEngine().loadContent("<pre>" + s + "</pre>");
+            webView.getEngine().loadContent(HtmlWriteTools.codeToHtml(s));
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

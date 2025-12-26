@@ -20,9 +20,9 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.example.Data2DExampleTools;
 import mara.mybox.data2d.operate.Data2DVerify;
 import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.data2d.example.Data2DExampleTools;
 import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -32,9 +32,9 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -536,6 +536,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     /*
         action
      */
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        return Data2DMenuTools.fileMenus(this);
+    }
+
     @FXML
     @Override
     public void saveAsAction() {

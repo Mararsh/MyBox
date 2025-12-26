@@ -6,6 +6,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -47,8 +48,7 @@ public class TableNodeJavaScript extends BaseNodeTable {
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
             String text = node.getStringValue("script");
-            return text == null || text.isBlank() ? null
-                    : ("<PRE><CODE>" + text + "</CODE></PRE>");
+            return text == null || text.isBlank() ? null : HtmlWriteTools.codeToHtml(text);
         } catch (Exception e) {
             return null;
         }

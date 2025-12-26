@@ -6,6 +6,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -48,8 +49,7 @@ public class TableNodeSQL extends BaseNodeTable {
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
             String sql = node.getStringValue("statement");
-            return sql == null || sql.isBlank() ? null
-                    : ("<CODE>" + sql + "</CODE>");
+            return sql == null || sql.isBlank() ? null : HtmlWriteTools.codeToHtml(sql);
         } catch (Exception e) {
             return null;
         }

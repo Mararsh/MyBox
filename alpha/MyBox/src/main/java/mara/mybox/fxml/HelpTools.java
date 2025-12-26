@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import mara.mybox.fxml.menu.MenuTools;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -15,6 +14,7 @@ import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -371,283 +371,283 @@ public class HelpTools {
             s.append("<H1>").append(message(lang, "DocumentTools")).append("</H1>\n");
 
             s.append("    <H3>").append(message(lang, "PdfView")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "PdfViewTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "PdfViewTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "MarkdownEditer")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "MarkdownEditerTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MarkdownEditerTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "HtmlEditor")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "HtmlFormatTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "HtmlFormatTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "HtmlSnap")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "HtmlSnapComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "HtmlSnapComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "JsonEditor")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "JsonEditorTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "JsonEditorTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "XmlEditor")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "XmlEditorTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "XmlEditorTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "TextEditer")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "TextEditerTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "TextEditerTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Charset")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "EncodeComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "EncodeComments"))).append("\n");
 
             s.append("    <H3>").append("BOM").append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "BOMcomments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "BOMcomments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "FindReplace")).append(" - ").append(message(lang, "Texts")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "FindReplaceTextsTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "FindReplaceTextsTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "FindReplace")).append(" - ").append(message(lang, "Bytes")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "FindReplaceBytesTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "FindReplaceBytesTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "FilterLines")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "FilterTypesComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "FilterTypesComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "TextFindBatch")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "TextFindBatchTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "TextFindBatchTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "TextReplaceBatch")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "TextReplaceBatchTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "TextReplaceBatchTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "TextToHtml")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "PasteTextAsHtml")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "PasteTextAsHtml"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "BytesFindBatch")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "BytesFindBatchTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "BytesFindBatchTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "TextInMyBoxClipboard")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "TextClipboardUseComments")).append("</PRE></BR>\n");
-            s.append("    <PRE>").append(message(lang, "TextInMyBoxClipboardTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "TextClipboardUseComments"))).append("</BR>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "TextInMyBoxClipboardTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "WordView")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "WordViewTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "WordViewTips"))).append("\n");
 
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "ImageTools")).append("</H1>\n");
 
             s.append("    <H3>").append(message(lang, "EditImage")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageEditTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageEditTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "SVGEditor")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "SVGEditorTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "SVGEditorTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImageQuantization")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageQuantizationComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageQuantizationComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Dithering")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DitherComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "DitherComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ColorMatching")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ColorMatchComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ColorMatchComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "PremultipliedAlpha")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "PremultipliedAlphaTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "PremultipliedAlphaTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Thresholding")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageThresholdingComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageThresholdingComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Contrast")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageContrastComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageContrastComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Shear")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageShearComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageShearComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImageRepeatTile")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageRepeatTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageRepeatTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImageSample")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageSampleTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageSampleTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImageSplit")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageSplitTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageSplitTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImagesEditor")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImagesEditorTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImagesEditorTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImagesPlay")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImagesPlayTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImagesPlayTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImageOCR")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageOCRComments")).append("</PRE></BR>\n");
-            s.append("    <PRE>").append(message(lang, "OCRPreprocessComment")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageOCRComments"))).append("</BR>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "OCRPreprocessComment"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImageAlphaExtract")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageAlphaExtractTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageAlphaExtractTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImageToSvg")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "SvgFromImageComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "SvgFromImageComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ImagesInSystemClipboard")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "RecordImagesTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "RecordImagesTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ManageColors")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ColorsManageTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ColorsManageTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "DrawChromaticityDiagram")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ChromaticityDiagramTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ChromaticityDiagramTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "IccProfileEditor")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "IccProfileTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "IccProfileTips"))).append("\n");
 
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "NetworkTools")).append("</H1>\n");
             s.append("    <H3>").append(message(lang, "DownloadHtmls")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DownloadFirstLevelLinksComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "DownloadFirstLevelLinksComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ConvertUrl")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ConvertUrlTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ConvertUrlTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "QueryDNSBatch")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "QueryDNSBatchTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "QueryDNSBatchTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "WeiboSnap")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "WeiboAddressComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "WeiboAddressComments"))).append("\n");
 
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "DataTools")).append("</H1>\n");
 
             s.append("    <H3>").append(message(lang, "Column")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ColumnComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ColumnComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ManageData")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataManageTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "DataManageTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "DatabaseTable")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataTableTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "DataTableTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "SqlIdentifier")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "SqlIdentifierComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "SqlIdentifierComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "XYChart")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataChartXYTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "DataChartXYTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "PieChart")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataChartPieTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "DataChartPieTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "BoxWhiskerChart")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "BoxWhiskerChartTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "BoxWhiskerChartTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ComparisonBarsChart")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ComparisonBarsChartTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ComparisonBarsChartTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "SelfComparisonBarsChart")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "SelfComparisonBarsChartTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "SelfComparisonBarsChartTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "XYZChart")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "WebglComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "WebglComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "SetStyles")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "SetStylesTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "SetStylesTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "SimpleLinearRegression")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "SimpleLinearRegressionTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "SimpleLinearRegressionTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "SimpleLinearRegressionCombination")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "SimpleLinearRegressionCombinationTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "SimpleLinearRegressionCombinationTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "MultipleLinearRegression")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "MultipleLinearRegressionTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MultipleLinearRegressionTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "MultipleLinearRegressionCombination")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "MultipleLinearRegressionCombinationTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MultipleLinearRegressionCombinationTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Matrix")).append("</H3>\n");
 
             s.append("    <H4>").append(message(lang, "Plus")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "MatricesPlusComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MatricesPlusComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "Minus")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "MatricesMinusComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MatricesMinusComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "Multiply")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "MatricesMultiplyComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MatricesMultiplyComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "HadamardProduct")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "HadamardProductComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "HadamardProductComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "KroneckerProduct")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "KroneckerProductComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "KroneckerProductComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "VerticalMerge")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "VerticalMergeComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "VerticalMergeComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "HorizontalMerge")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "HorizontalMergeComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "HorizontalMergeComments"))).append("\n");
 
             s.append("\n");
 
             s.append("    <H3>").append(message(lang, "JavaScript")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "JavaScriptTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "JavaScriptTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "JShell")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "JShellTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "JShellTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "JEXL")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "JEXLTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "JEXLTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "MathFunction")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "MathFunctionTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MathFunctionTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "MapOptions")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "MapComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MapComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ConvertCoordinate")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ConvertCoordinateTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ConvertCoordinateTips"))).append("\n");
 
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "MediaTools")).append("</H1>\n");
             s.append("    <H3>").append(message(lang, "MediaPlayer")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "MediaPlayerSupports")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MediaPlayerSupports"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "FFmpeg")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "FFmpegExeComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "FFmpegExeComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "FFmpegOptions")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "FFmpegOptionsTips")).append("</PRE></BR>\n");
-            s.append("    <PRE>").append(message(lang, "FFmpegArgumentsTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "FFmpegOptionsTips"))).append("</BR>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "FFmpegArgumentsTips"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "FFmpegScreenRecorder")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "FFmpegScreenRecorderComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "FFmpegScreenRecorderComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "CRF")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "CRFComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "CRFComments"))).append("\n");
 
             s.append("    <H4>").append(message(lang, "X264")).append("</H4>\n");
-            s.append("    <PRE>").append(message(lang, "X264PresetComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "X264PresetComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "GameElimniation")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "GameEliminationComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "GameEliminationComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "GameMine")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "GameMineTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "GameMineTips"))).append("\n");
 
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "Others")).append("</H1>\n");
             s.append("    <H3>").append(message(lang, "Table")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "TableTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "TableTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Play")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "PlayerComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "PlayerComments"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ManageLanguages")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "MyBoxLanguagesTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "MyBoxLanguagesTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "Shortcuts")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ShortcutsTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ShortcutsTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ChildWindow")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ChildWindowTips")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ChildWindowTips"))).append("\n");
 
             s.append("    <H3>").append(message(lang, "ClearExpiredData")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ClearExpiredDataComments")).append("</PRE>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ClearExpiredDataComments"))).append("\n");
 
             s.append("\n");
 

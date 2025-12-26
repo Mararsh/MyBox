@@ -17,6 +17,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.example.Data2DExampleTools;
 import mara.mybox.data2d.example.SoftwareTesting;
@@ -62,6 +63,9 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected int index, dataIndex;
     protected String realLang;
     protected ResourceBundle realBoundle;
+    protected List<Data> dataList, cnList, enList;
+    protected Data currentData;
+    protected final Object dataLock = new Object();
 
     @FXML
     protected CheckBox readmeCheck, functionsCheck, tipsCheck, shortcutsCheck,
@@ -209,10 +213,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
             return false;
         }
         if (dataCheck.isSelected()) {
-            Platform.runLater(() -> {
-                data("zh");
-            });
-            Platform.requestNextPulse();
+            data("zh");
         }
         if (task == null || !task.isWorking()) {
             return false;
@@ -296,18 +297,13 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     public class Data {
 
-        public String sourceName, tagetName;
-        public DataFileCSV definiton;
+        public String name, cvs, html;
+        public DataFileCSV data2D;
+        public MenuItem menu;
 
-        public Data(String sourceName, String tagetName, DataFileCSV definiton) {
-            this.sourceName = sourceName;
-            this.tagetName = tagetName;
-            this.definiton = definiton;
-            this.tagetName = tagetName;
-        }
     }
 
-    protected void dataMenu(List<MenuItem> items, MenuItem menu) {
+    protected void dataMenu(MenuItem menu) {
         if (menu instanceof SeparatorMenuItem
                 || menu instanceof CheckMenuItem
                 || message("Matrix").equals(menu.getText())
@@ -316,82 +312,160 @@ public class MyBoxDocumentsController extends BaseTaskController {
         }
         if (menu instanceof Menu) {
             for (MenuItem mitem : ((Menu) menu).getItems()) {
-                dataMenu(items, mitem);
+                dataMenu(mitem);
             }
         } else {
-            items.add(menu);
+            Data d = new Data();
+            d.menu = menu;
+            dataList.add(d);
         }
     }
 
     protected boolean data(String lang) {
-        try {
+        Platform.runLater(() -> {
             FileDeleteTools.clearDir(null, AppVariables.MyBoxTempPath);
             CurrentLangName = lang;
-            CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
+            if ("zh".equals(lang)) {
+                CurrentBundle = Languages.BundleZhCN;
+                cnList = new ArrayList<>();
+                dataList = cnList;
+            } else {
+                CurrentBundle = Languages.BundleEn;
+                enList = new ArrayList<>();
+                dataList = enList;
+            }
 
             browse(path);
 
             Data2DManufactureController dataController = Data2DManufactureController.open();
-            List<MenuItem> items = new ArrayList<>();
-            for (MenuItem menu
-                    : Data2DExampleTools.examplesMenu(dataController, lang)) {
-                dataMenu(items, menu);
-            }
             dataController.setIconified(true);
             dataController.forConvert = true;
 
-            dataIndex = 0;
-            String linkPrefix = "\"<a hreft=\\\"https://mara-mybox.sourceforge.io/data/";
-            String csvSuffix = "csv " + ("zh".equals(lang) ? message("Chinese") : message("English"));
-            String htmlSuffix = "html " + ("zh".equals(lang) ? message("Chinese") : message("English"));
-            StringBuilder s = new StringBuilder();
             dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    try {
-                        if (dataController.data2D == null) {
-                            return;
-                        }
-                        File file = dataController.data2D.getFile();
-                        if (file == null) {
-                            return;
-                        }
-                        String fname = file.getName();
-                        File htmlFile = new File(path, fname.substring(0, fname.length() - 4)
-                                + (fname.contains("_" + lang + "_") ? "" : ("_" + lang))
-                                + ".html");
-                        s.append(items.get(dataIndex).getText()).append(",")
-                                .append(fname).append(",")
-                                .append(csvSuffix).append(",")
-                                .append(htmlFile.getName()).append(",")
-                                .append(htmlSuffix).append("\n");
-                        Data2DConvertTools.toHtmlFile(null, (DataFileCSV) dataController.data2D, htmlFile);
-                        if (dataIndex < items.size() - 1) {
-                            items.get(++dataIndex).fire();
-//                            updateLogs(htmlFile.getAbsolutePath());
-                        } else {
-                            if ("zh".equals(lang)) {
-                                data("en");
-                            } else {
-                                CurrentLangName = realLang;
-                                CurrentBundle = realBoundle;
-                            }
-                            dataController.close();
-                            TextFileTools.writeFile(new File(path, lang + "-list.csv"), s.toString());
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.console(e);
-                    }
+                    handleData(dataController, lang, dataController.data2D);
                 }
             });
 
-            items.get(dataIndex).fire();
+            FxTask<Void> listTask = new FxTask<Void>() {
 
-            return true;
+                @Override
+                protected boolean handle() {
+                    for (MenuItem menu
+                            : Data2DExampleTools.examplesMenu(dataController, lang)) {
+                        dataMenu(menu);
+                    }
+                    dataIndex = 0;
+                    currentData = dataList.get(dataIndex);
+                    Platform.runLater(() -> {
+                        currentData.menu.fire();
+                    });
+                    Platform.requestNextPulse();
+                    return true;
+                }
+            };
+            new Thread(listTask).start();
+
+        });
+        Platform.requestNextPulse();
+
+        try {
+            synchronized (dataLock) {
+                dataLock.wait();
+            }
         } catch (Exception e) {
-            error = e.toString();
-            return false;
+            MyBoxLog.error(e);
         }
+        return true;
+
+    }
+
+    protected void handleData(Data2DManufactureController dataController,
+            String lang, Data2D data2d) {
+        if (data2d == null || currentData == null) {
+            return;
+        }
+        File csvFile = data2d.getFile();
+        if (csvFile == null) {
+            return;
+        }
+        FxTask<Void> dataTask = new FxTask<Void>() {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    currentData.data2D = (DataFileCSV) data2d;
+                    String csvName = csvFile.getName();
+                    File htmlFile = new File(path, csvName.substring(0, csvName.length() - 4)
+                            + (csvName.contains("_" + lang + "_") ? "" : ("_" + lang))
+                            + ".html");
+                    Data2DConvertTools.toHtmlFile(null, currentData.data2D, htmlFile);
+                    FileCopyTools.copyFile(csvFile, new File(path, csvName), true, false);
+                    currentData.name = currentData.menu.getText();
+                    currentData.cvs = csvName;
+                    currentData.html = htmlFile.getName();
+                    if (dataIndex < dataList.size() - 1) {
+                        currentData = dataList.get(++dataIndex);
+                        Platform.runLater(() -> {
+                            currentData.menu.fire();
+                            dataController.setIconified(true);
+                        });
+                        Platform.requestNextPulse();
+//                            updateLogs(htmlFile.getAbsolutePath());
+                    } else {
+                        if ("zh".equals(lang)) {
+                            data("en");
+                        } else {
+                            CurrentLangName = realLang;
+                            CurrentBundle = realBoundle;
+                            String linkPrefix = "<a  target=_blank href=\"https://mara-mybox.sourceforge.io/data2d/";
+                            String csvSuffix = "\">csv ";
+                            String htmlSuffix = "\">html ";
+                            StringTable cnTable = new StringTable().setTitle("吾匣数据示例");
+                            StringTable enTable = new StringTable().setTitle("MyBox Data Examples");
+                            List<String> row;
+                            for (int i = 0; i < dataList.size(); i++) {
+                                Data cndata = cnList.get(i);
+                                Data endata = enList.get(i);
+                                row = new ArrayList<>();
+                                row.add(cndata.name);
+                                row.add(linkPrefix + cndata.cvs + csvSuffix + message("cn", "Chinese"));
+                                row.add(linkPrefix + cndata.html + htmlSuffix + message("cn", "Chinese"));
+                                row.add(linkPrefix + endata.cvs + csvSuffix + message("cn", "English"));
+                                row.add(linkPrefix + endata.html + htmlSuffix + message("cn", "English"));
+                                cnTable.add(row);
+                                row = new ArrayList<>();
+                                row.add(endata.name);
+                                row.add(linkPrefix + endata.cvs + csvSuffix + " in English");
+                                row.add(linkPrefix + endata.html + htmlSuffix + " in English");
+                                row.add(linkPrefix + cndata.cvs + csvSuffix + " in Chinese");
+                                row.add(linkPrefix + cndata.html + htmlSuffix + " in Chinese");
+                                enTable.add(row);
+                            }
+                            TextFileTools.writeFile(new File(path, "cn-list.html"), cnTable.html());
+                            TextFileTools.writeFile(new File(path, "en-list.html"), enTable.html());
+                            try {
+                                synchronized (dataLock) {
+                                    dataLock.notifyAll();
+                                }
+                            } catch (Exception e) {
+                                MyBoxLog.error(e);
+                            }
+                        }
+                        Platform.runLater(() -> {
+                            dataController.close();
+                        });
+                        Platform.requestNextPulse();
+                    }
+                    return true;
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+            }
+        };
+        new Thread(dataTask).start();
     }
 
     protected boolean testing(String lang) {

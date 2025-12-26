@@ -28,6 +28,7 @@ import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.ImageScope.ShapeType;
 import static mara.mybox.image.data.ImageScope.ShapeType.Matting4;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
@@ -192,7 +193,7 @@ public class ImageScopeTools {
                 String v = scope.getName();
                 if (v != null && !v.isBlank()) {
                     row = new ArrayList<>();
-                    row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    row.addAll(Arrays.asList(message("Name"), HtmlWriteTools.codeToHtml(v)));
                     htmlTable.add(row);
                 }
                 row = new ArrayList<>();
@@ -201,13 +202,13 @@ public class ImageScopeTools {
                 v = scope.getBackground();
                 if (v != null && !v.isBlank()) {
                     row = new ArrayList<>();
-                    row.addAll(Arrays.asList(message("Background"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    row.addAll(Arrays.asList(message("Background"), HtmlWriteTools.codeToHtml(v)));
                     htmlTable.add(row);
                 }
                 v = scope.getOutlineName();
                 if (v != null && !v.isBlank()) {
                     row = new ArrayList<>();
-                    row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
+                    row.addAll(Arrays.asList(message("Outline"), HtmlWriteTools.codeToHtml(v)));
                     htmlTable.add(row);
                 }
                 row = new ArrayList<>();

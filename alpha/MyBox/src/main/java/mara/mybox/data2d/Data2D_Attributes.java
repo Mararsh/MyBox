@@ -163,6 +163,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return this;
     }
 
+    @Override
+    public long getColsNumber() {
+        colsNumber = columns != null ? columns.size() : -1;
+        return colsNumber;
+    }
+
     public String getError() {
         return error;
     }

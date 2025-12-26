@@ -23,6 +23,7 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -135,7 +136,7 @@ public class Data2DConvertTools {
                 }
                 List<String> htmlRow = new ArrayList<>();
                 for (String v : csvRecord) {
-                    htmlRow.add(v != null ? "<PRE><CODE>" + v + "</PRE></CODE>" : null);
+                    htmlRow.add(v != null ? HtmlWriteTools.codeToHtml(v) : null);
                 }
                 table.add(htmlRow);
             }

@@ -48,11 +48,11 @@ public class Data2DPageTools {
             } else {
                 names = null;
             }
-            String title = null;
+            StringTable table = new StringTable(names);
             if (showTitle) {
-                title = data2d.getTitle();
+                table.setTitle(data2d.getTitle())
+                        .setComments(data2d.getComments());
             }
-            StringTable table = new StringTable(names, title);
 
             for (int i = 0; i < rNumber; i++) {
                 List<String> pageRow = data2d.pageRow(i, true);
@@ -63,7 +63,7 @@ public class Data2DPageTools {
                 }
                 for (int col = 0; col < cNumber; col++) {
                     String value = pageRow.get(col + 1);
-                    value = value == null ? "" : "<PRE>" + value + "</PRE>";
+                    value = value == null ? "" : HtmlWriteTools.codeToHtml(value);
                     String style = data2d.cellStyle(styleFilter, i, data2d.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
@@ -93,7 +93,12 @@ public class Data2DPageTools {
             }
             StringBuilder s = new StringBuilder();
             if (showTitle) {
-                s.append("<H2>").append(data2d.getTitle()).append("</H2>\n");
+                if (data2d.getTitle() != null) {
+                    s.append("<H2>").append(HtmlWriteTools.codeToHtml(data2d.getTitle())).append("</H2>\n");
+                }
+                if (data2d.getComments() != null) {
+                    s.append("<P>").append(HtmlWriteTools.codeToHtml(data2d.getComments())).append("</P>\n");
+                }
             }
             for (int r = 0; r < rNumber; r++) {
                 StringTable table = new StringTable();
@@ -120,8 +125,7 @@ public class Data2DPageTools {
                         htmlRow.add(data2d.columnLabel(col));
                     }
                     String value = dataRow.get(col + 1);
-                    value = value == null ? ""
-                            : "<PRE>" + StringTools.replaceHtmlLineBreak(value) + "</PRE>";
+                    value = value == null ? "" : HtmlWriteTools.codeToHtml(value);
                     String style = data2d.cellStyle(styleFilter, r, data2d.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
@@ -156,19 +160,30 @@ public class Data2DPageTools {
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         String texts = data2d.encodeCSV(null, delimiterName,
                 showRowNumber, showColumns, true);
-        String title = showTitle ? data2d.getTitle() : null;
-        if (title != null && !title.isBlank()) {
-            return title + "\n\n" + texts;
-        } else {
-            return texts;
+        if (texts == null) {
+            texts = "";
         }
+        if (showTitle) {
+            if (data2d.getComments() != null) {
+                texts = data2d.getComments() + "\n\n" + texts;
+            }
+            if (data2d.getTitle() != null) {
+                texts = data2d.getTitle() + "\n\n" + texts;
+            }
+        }
+        return texts;
     }
 
     public static String pageToTextsForm(Data2D data2d,
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         StringBuilder s = new StringBuilder();
         if (showTitle) {
-            s.append(data2d.getTitle()).append("\n\n");
+            if (data2d.getTitle() != null) {
+                s.append(data2d.getTitle()).append("\n\n");
+            }
+            if (data2d.getComments() != null) {
+                s.append(data2d.getComments()).append("\n\n");
+            }
         }
         for (int r = 0; r < data2d.tableRowsNumber(); r++) {
             List<String> drow = data2d.pageRow(r, true);

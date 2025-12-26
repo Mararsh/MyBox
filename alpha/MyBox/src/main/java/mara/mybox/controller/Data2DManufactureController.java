@@ -31,8 +31,8 @@ import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
@@ -484,11 +484,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
     /*
         menus
      */
-    @Override
-    public List<MenuItem> fileMenuItems(Event fevent) {
-        return Data2DMenuTools.fileMenus(this);
-    }
-
     @Override
     public List<MenuItem> dataMenuItems(Event fevent) {
         return Data2DMenuTools.dataMenus(this);

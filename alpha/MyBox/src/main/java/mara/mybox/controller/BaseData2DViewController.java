@@ -282,7 +282,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showHtml() {
         try {
-            showHtmlButtons();
             pageBox.getChildren().add(htmlBox);
             VBox.setVgrow(htmlBox, Priority.ALWAYS);
 
@@ -292,7 +291,12 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showHtmlButtons() {
-        buttonsPane.getChildren().setAll(editHtmlButton, viewDataButton, dataManufactureButton);
+        if (fileMenuButton != null && data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+            buttonsPane.getChildren().setAll(fileMenuButton);
+        } else {
+            buttonsPane.getChildren().clear();
+        }
+        buttonsPane.getChildren().addAll(editHtmlButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadHtml(boolean pop) {
@@ -339,6 +343,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 } else {
                     webViewController.loadContent(html);
                 }
+                showHtmlButtons();
             }
 
         };
@@ -347,7 +352,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showTexts() {
         try {
-            showTextsButtons();
             pageBox.getChildren().add(textsArea);
             VBox.setVgrow(textsArea, Priority.ALWAYS);
 
@@ -363,7 +367,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showTextsButtons() {
-        buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
+        buttonsPane.getChildren().setAll(wrapCheck);
+        if (fileMenuButton != null && data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+            buttonsPane.getChildren().add(fileMenuButton);
+        }
+        buttonsPane.getChildren().addAll(delimiterButton,
                 menuButton, viewDataButton, dataManufactureButton);
     }
 
@@ -407,6 +415,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 } else {
                     textsArea.setText(texts);
                 }
+                showTextsButtons();
             }
 
         };
@@ -415,7 +424,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showTable() {
         try {
-            showTableButtons();
             pageBox.getChildren().add(tableBox);
             VBox.setVgrow(tableBox, Priority.ALWAYS);
         } catch (Exception e) {
@@ -424,7 +432,12 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showTableButtons() {
-        buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
+        if (fileMenuButton != null && data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+            buttonsPane.getChildren().setAll(fileMenuButton);
+        } else {
+            buttonsPane.getChildren().clear();
+        }
+        buttonsPane.getChildren().addAll(menuButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadTable() {
@@ -438,6 +451,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             makeColumns();
 
             setPageData(data);
+
+            showTableButtons();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

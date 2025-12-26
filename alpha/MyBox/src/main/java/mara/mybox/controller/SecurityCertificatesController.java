@@ -25,6 +25,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.CertificateTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -277,12 +278,12 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                             Certificate[] chain = keyStore.getCertificateChain(alias);
                             if (chain != null) {
                                 for (Certificate cert : chain) {
-                                    s.append("<pre>").append(cert).append("</pre>\n\n");
+                                    s.append(HtmlWriteTools.codeToHtml(cert.toString())).append("\n\n");
                                 }
                             } else {
                                 Certificate cert = keyStore.getCertificate(alias);
                                 if (cert != null) {
-                                    s.append("<pre>").append(cert).append("</pre>\n");
+                                    s.append(HtmlWriteTools.codeToHtml(cert.toString())).append("\n");
                                 }
                             }
                         }
