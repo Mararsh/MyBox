@@ -16,6 +16,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
@@ -346,8 +347,7 @@ public class ControlFileSelecter extends BaseController {
 
     @FXML
     public void pickRecentFiles(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectFile();
         } else {
             showRecentFilesMenu(event);
@@ -356,7 +356,7 @@ public class ControlFileSelecter extends BaseController {
 
     @FXML
     public void popRecentFiles(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showRecentFilesMenu(event);
         }
     }

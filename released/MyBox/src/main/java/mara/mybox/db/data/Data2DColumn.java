@@ -1,5 +1,6 @@
 package mara.mybox.db.data;
 
+import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.dev.MyBoxLog;
 
@@ -79,7 +80,7 @@ public class Data2DColumn extends ColumnDefinition {
     @Override
     public Data2DColumn cloneAll() {
         try {
-            Data2DColumn newColumn = (Data2DColumn) super.clone();
+            Data2DColumn newColumn = (Data2DColumn) super.cloneAll();
             newColumn.data2DDefinition = data2DDefinition;
             newColumn.columnID = columnID;
             newColumn.dataID = dataID;
@@ -147,6 +148,34 @@ public class Data2DColumn extends ColumnDefinition {
             MyBoxLog.debug(e);
         }
         return false;
+    }
+
+    public static boolean matchCheckBox(CheckBox cb, String name) {
+        if (cb == null || name == null) {
+            return false;
+        }
+        if (name.equals(cb.getText())) {
+            return true;
+        }
+        try {
+            Data2DColumn col = (Data2DColumn) cb.getUserData();
+            return name.equals(col.getColumnName())
+                    || name.equals(col.getLabel());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String getCheckBoxColumnName(CheckBox cb) {
+        if (cb == null) {
+            return null;
+        }
+        try {
+            Data2DColumn col = (Data2DColumn) cb.getUserData();
+            return col.getColumnName();
+        } catch (Exception e) {
+        }
+        return cb.getText();
     }
 
     /*

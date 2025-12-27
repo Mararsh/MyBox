@@ -20,6 +20,7 @@ import mara.mybox.controller.MatrixUnaryCalculationController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -40,7 +41,7 @@ public class Data2DMenuTools {
             if (dataController.invalidData()) {
                 return null;
             }
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Data"));
             boolean isTmpData = data2D.isTmpData();
             boolean notLoaded = !dataController.isDataSizeLoaded();
 
@@ -138,7 +139,7 @@ public class Data2DMenuTools {
                 return null;
             }
             Data2D data2D = dataController.getData2D();
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Operation"));
             boolean isTmp = data2D.isTmpData() || data2D.isTmpFile();
             boolean noneSelected = dataController.isNoneSelected();
             boolean isTableMode = dataController.isTableMode();
@@ -272,7 +273,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> fileMenus(Data2DManufactureController dataController) {
+    public static List<MenuItem> fileMenus(BaseData2DLoadController dataController) {
         try {
             Data2D data2D = dataController.getData2D();
             if (dataController.invalidData() || !data2D.isDataFile()) {
@@ -282,7 +283,7 @@ public class Data2DMenuTools {
             if (file == null) {
                 return null;
             }
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("File"));
             MenuItem menu;
 
             if (data2D.isExcel()) {
@@ -303,6 +304,13 @@ public class Data2DMenuTools {
                     } else if (data2D.isExcel()) {
                         DataFileExcelFormatController.open(dataController);
                     }
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("ClearDefinitionReloadFile"), StyleTools.getIconImageView("iconRefresh.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    data2D.deleteDataDefinition();
+                    dataController.loadDef(data2D);
                 });
                 items.add(menu);
             }
@@ -372,7 +380,7 @@ public class Data2DMenuTools {
             if (!dataController.hasColumns()) {
                 return null;
             }
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Verify"));
 
             MenuItem menu = new MenuItem(message("VerifyCurrentPage"));
             menu.setOnAction((ActionEvent event) -> {
@@ -425,7 +433,7 @@ public class Data2DMenuTools {
                 return null;
             }
             Data2D data2D = controller.getData2D();
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Trim"));
 
             MenuItem menu;
 
@@ -480,7 +488,7 @@ public class Data2DMenuTools {
                 return null;
             }
             Data2D data2D = controller.getData2D();
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Calculation"));
             MenuItem menu;
 
             if (data2D.isMatrix()) {
@@ -564,7 +572,7 @@ public class Data2DMenuTools {
                 return null;
             }
             Data2D data2D = controller.getData2D();
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Chart"));
             MenuItem menu;
 
             menu = new MenuItem(message("XYChart"), StyleTools.getIconImageView("iconXYChart.png"));
@@ -677,7 +685,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> helpMenus(BaseData2DLoadController controller) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Help"));
 
             MenuItem about2D = new MenuItem(message("AboutData2D"));
             about2D.setOnAction(new EventHandler<ActionEvent>() {

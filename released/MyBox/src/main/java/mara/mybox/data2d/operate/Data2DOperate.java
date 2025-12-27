@@ -97,7 +97,7 @@ public abstract class Data2DOperate {
             return true;
         }
         for (Data2DWriter writer : writers) {
-            setTargetFile(writer);
+            assignPrintFile(writer);
             if (!writer.openWriter()) {
                 failStop(null);
                 end();
@@ -107,7 +107,7 @@ public abstract class Data2DOperate {
         return true;
     }
 
-    public void setTargetFile(Data2DWriter writer) {
+    public void assignPrintFile(Data2DWriter writer) {
         if (writer != null && targetFile != null) {
             writer.setPrintFile(targetFile);
         }
@@ -133,23 +133,6 @@ public abstract class Data2DOperate {
         }
         return true;
     }
-
-    public void handleTargetData(Data2D targetData) {
-
-    }
-
-    public void copySourceAttriutes(Data2D data) {
-        if (data == null || sourceData == null) {
-            return;
-        }
-        if (data.getDataName() == null || data.getDataName().isBlank()) {
-            data.setDataName(sourceData.getDataName());
-        }
-        data.setScale(sourceData.getScale());
-        data.setMaxRandom(sourceData.getMaxRandom());
-        data.setComments(sourceData.getComments());
-    }
-
 
     /*
         run

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import javafx.collections.ObservableList;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -155,13 +157,42 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                 return -1;
             }
             for (int i = 0; i < columns.size(); i++) {
-                if (name.equals(columns.get(i).getColumnName())) {
+                Data2DColumn c = columns.get(i);
+                if (name.equals(c.getColumnName()) || name.equals(c.getLabel())) {
                     return i;
                 }
             }
         } catch (Exception e) {
         }
         return -1;
+    }
+
+    public int colOrderInTable(TableColumn tc) {
+        if (tc == null) {
+            return -1;
+        }
+        String name;
+        try {
+            Data2DColumn col = (Data2DColumn) tc.getUserData();
+            name = col.getColumnName();
+        } catch (Exception e) {
+            name = tc.getText();
+        }
+        return colOrder(name);
+    }
+
+    public int colOrderInCheckBox(CheckBox cb) {
+        if (cb == null) {
+            return -1;
+        }
+        String name;
+        try {
+            Data2DColumn col = (Data2DColumn) cb.getUserData();
+            name = col.getColumnName();
+        } catch (Exception e) {
+            name = cb.getText();
+        }
+        return colOrder(name);
     }
 
     public int idOrder() {
@@ -351,7 +382,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
-            StringTable stringTable = new StringTable(names, displayName());
+            StringTable stringTable = new StringTable(names, labelName());
             for (int r = 0; r < pageData.size(); r++) {
                 List<String> dataRow = pageData.get(r);
                 for (int c = 0; c < columns.size(); c++) {
@@ -450,6 +481,21 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public List<String> columnLabels() {
+        try {
+            if (!hasColumns()) {
+                return null;
+            }
+            List<String> names = new ArrayList<>();
+            for (Data2DColumn column : columns) {
+                names.add(column.getLabel());
+            }
+            return names;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public List<Data2DColumn> makeColumns(List<Integer> indices, boolean rowNumber) {
         return makeColumns(columns, indices, rowNumber);
     }
@@ -498,7 +544,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                 return null;
             }
             for (Data2DColumn c : columns) {
-                if (name.equals(c.getColumnName())) {
+                if (name.equals(c.getColumnName()) || name.equals(c.getLabel())) {
                     return c;
                 }
             }

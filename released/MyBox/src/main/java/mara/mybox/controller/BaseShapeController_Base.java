@@ -47,6 +47,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -73,7 +74,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     protected DoubleArc maskArcData;
     protected DoublePath maskPathData;
     protected boolean maskControlDragged, showAnchors, popItemMenu, popShapeMenu,
-            addPointWhenClick, shapeCanMove;
+            addPointWhenClick;
     protected AnchorShape anchorShape;
     protected Polyline currentLine;
     protected List<DoublePoint> currentLineData;
@@ -511,15 +512,8 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
     protected List<MenuItem> maskAnchorMenu(int index, String name, String title, DoublePoint p) {
         try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            menu = new MenuItem(title + "\n" + StringTools.menuPrefix(p.text(2)));
-            menu.setStyle(attributeTextStyle());
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("EditAnchor"), StyleTools.getIconImageView("iconEdit.png"));
+            List<MenuItem> items = MenuTools.initMenu(title + "\n" + StringTools.menuPrefix(p.text(2)), false);
+            MenuItem menu = new MenuItem(message("EditAnchor"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 PointInputController inputController = PointInputController.open(this, title, p);
                 inputController.getNotify().addListener(new ChangeListener<Boolean>() {
@@ -540,9 +534,9 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 items.add(menu);
             }
 
-            items.add(anchorShowItem());
-
             items.add(anchorMenuItem());
+
+            items.add(moveShapeMenu());
 
             if (isMaskPolygonShown() || isMaskPolylineShown()) {
                 items.add(addPointMenu());
@@ -620,7 +614,6 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                     shapeCanMoveCheck.setSelected(moveMenuItem.isSelected());
                 } else {
                     UserConfig.setBoolean(baseName + "ShapeCanMove", moveMenuItem.isSelected());
-                    shapeCanMove = moveMenuItem.isSelected();
                 }
             }
         });
@@ -1513,7 +1506,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                 @Override
                 public void handle(MouseEvent event) {
                     scrollPane.setPannable(true);
-                    if (isPickingColor) {
+                    if (isPickingColor || !UserConfig.getBoolean(baseName + "ShapeCanMove", true)) {
                         return;
                     }
                     double offsetX = imageOffsetX(event);

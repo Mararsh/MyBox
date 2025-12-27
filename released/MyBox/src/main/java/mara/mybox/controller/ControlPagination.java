@@ -24,6 +24,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.Pagination;
 import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
@@ -180,7 +181,8 @@ public class ControlPagination extends BaseController {
 
             List<String> pages = new ArrayList<>();
             for (long i = Math.max(1, pagination.currentPage - 3);
-                    i <= Math.min(pagination.pagesNumber, pagination.currentPage + 3); i++) {
+                    i <= Math.min(pagination.pagesNumber, pagination.currentPage + 3);
+                    i++) {
                 pages.add(i + "");
             }
             for (long i = 1; i <= Math.min(pagination.pagesNumber, 3); i++) {
@@ -189,7 +191,8 @@ public class ControlPagination extends BaseController {
                     pages.add(v);
                 }
             }
-            for (long i = pagination.pagesNumber; i >= Math.max(1, pagination.pagesNumber - 3); i--) {
+            for (long i = pagination.pagesNumber;
+                    i >= Math.max(1, pagination.pagesNumber - 3); i--) {
                 String v = i + "";
                 if (!pages.contains(v)) {
                     pages.add(v);
@@ -291,7 +294,7 @@ public class ControlPagination extends BaseController {
 
     @FXML
     public void popPagesMemu(Event event) {
-        if (UserConfig.getBoolean(baseName + "MenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Pages")) {
             showPagesMemu(event);
         }
     }
@@ -435,16 +438,7 @@ public class ControlPagination extends BaseController {
         });
         items.add(leftItem);
 
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
-                StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "MenuPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "MenuPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
+        items.add(MenuTools.popCheckMenu(baseName + "Pages"));
 
         popNodeMenu(pagesButton, items);
     }

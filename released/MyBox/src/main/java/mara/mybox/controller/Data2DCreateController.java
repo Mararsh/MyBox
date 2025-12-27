@@ -51,7 +51,7 @@ public class Data2DCreateController extends Data2DAttributesController {
     protected int rowsNumber;
 
     @FXML
-    protected ControlData2DNew attributesController;
+    protected ControlData2DTarget attributesController;
     @FXML
     protected ComboBox<String> rowsSelector;
     @FXML
@@ -85,12 +85,14 @@ public class Data2DCreateController extends Data2DAttributesController {
     protected void setCaller(BaseController controller) {
         try {
             caller = controller;
-            attributesController.setParameters(this);
+            attributesController.canInTable = false;
 
             rowsSelector.getItems().addAll(
                     Arrays.asList("3", "10", "0", "5", "1", "20", "50", "100", "300", "500")
             );
             rowsSelector.setValue("3");
+
+            attributesController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -152,7 +154,7 @@ public class Data2DCreateController extends Data2DAttributesController {
 
     @Override
     public void checkStatus() {
-        setTitle(baseTitle + " - " + data2D.displayName());
+        setTitle(baseTitle + " - " + data2D.labelName());
     }
 
     @FXML
@@ -336,18 +338,18 @@ public class Data2DCreateController extends Data2DAttributesController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == attributesTab) {
-            if (attributesController.keyEventsFilter(event)) {
+            if (attributesController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (tab == columnsTab) {
-            if (columnsController.keyEventsFilter(event)) {
+            if (columnsController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

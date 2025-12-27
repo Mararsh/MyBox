@@ -21,7 +21,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
@@ -40,6 +39,7 @@ import mara.mybox.data.HtmlNode;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -939,7 +939,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     @FXML
     @Override
     public void popViewMenu(Event event) {
-        if (UserConfig.getBoolean("HtmlFormatViewMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("HtmlFormatView")) {
             showViewMenu(event);
         }
     }
@@ -1022,15 +1022,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        hoverMenu.setSelected(UserConfig.getBoolean("HtmlFormatViewMenuPopWhenMouseHovering", true));
-        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("HtmlFormatViewMenuPopWhenMouseHovering", hoverMenu.isSelected());
-            }
-        });
-        items.add(hoverMenu);
+        items.add(MenuTools.popCheckMenu("HtmlFormatView"));
 
         popEventMenu(event, items);
     }

@@ -68,11 +68,11 @@ public class FindReplaceController extends BaseChildController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return findController.keyEventsFilter(event);
+        return findController.handleKeyEvent(event);
     }
 
 

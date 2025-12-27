@@ -21,6 +21,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
@@ -109,7 +110,7 @@ public class Data2DDefinitionTools {
             row = new ArrayList<>();
             String comments = data2d.getComments();
             if (comments != null && !comments.isBlank()) {
-                row.addAll(Arrays.asList(message("Description"), "<PRE><CODE>" + comments + "</CODE></PRE>"));
+                row.addAll(Arrays.asList(message("Description"), HtmlWriteTools.codeToHtml(comments)));
             }
             attrTable.add(row);
             String html = attrTable.div();
@@ -161,7 +162,7 @@ public class Data2DDefinitionTools {
                 row = new ArrayList<>();
                 row.add(message("DisplayFormat"));
                 String s = column.getFormatDisplay();
-                row.add(s == null || s.isBlank() ? null : "<PRE><CODE>" + s + "</CODE></PRE>\n");
+                row.add(s == null || s.isBlank() ? null : HtmlWriteTools.codeToHtml(s));
                 columnTable.add(row);
                 row = new ArrayList<>();
                 row.add(message("NotNull"));
@@ -182,7 +183,7 @@ public class Data2DDefinitionTools {
                 row = new ArrayList<>();
                 row.add(message("DefaultValue"));
                 s = column.getDefaultValue();
-                row.add(s == null || s.isBlank() ? null : "<PRE><CODE>" + s + "</CODE></PRE>\n");
+                row.add(s == null || s.isBlank() ? null : HtmlWriteTools.codeToHtml(s));
                 columnTable.add(row);
                 row = new ArrayList<>();
                 row.add(message("Color"));
@@ -558,7 +559,8 @@ public class Data2DDefinitionTools {
                     if (attrNodes == null) {
                         continue;
                     }
-                    for (int aIndex = 0; aIndex < attrNodes.getLength(); aIndex++) {
+                    for (int aIndex = 0; aIndex < attrNodes.getLength();
+                            aIndex++) {
                         Node attrNode = attrNodes.item(aIndex);
                         if (!(attrNode instanceof Element)) {
                             continue;
@@ -595,7 +597,8 @@ public class Data2DDefinitionTools {
                         continue;
                     }
                     List<Data2DColumn> columns = new ArrayList<>();
-                    for (int cIndex = 0; cIndex < columnNodes.getLength(); cIndex++) {
+                    for (int cIndex = 0; cIndex < columnNodes.getLength();
+                            cIndex++) {
                         Node columnNode = columnNodes.item(cIndex);
                         if (!(columnNode instanceof Element) || !XmlTools.matchXmlTag("Column", columnNode.getNodeName())) {
                             continue;
@@ -605,7 +608,8 @@ public class Data2DDefinitionTools {
                             continue;
                         }
                         Data2DColumn column = new Data2DColumn();
-                        for (int aIndex = 0; aIndex < columnAttributes.getLength(); aIndex++) {
+                        for (int aIndex = 0;
+                                aIndex < columnAttributes.getLength(); aIndex++) {
                             Node attrNode = columnAttributes.item(aIndex);
                             if (!(attrNode instanceof Element)) {
                                 continue;

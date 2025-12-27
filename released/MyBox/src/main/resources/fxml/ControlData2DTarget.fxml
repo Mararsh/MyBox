@@ -26,361 +26,347 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
     <children>
-        <FlowPane fx:id="invalidAsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+        <FlowPane fx:id="extFormatPane" alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="0.0" vgap="2.0">
             <children>
-                <Label text="%ToInvalidValue" />
-                <RadioButton fx:id="useInvalidRadio" mnemonicParsing="false" selected="true" text="%Use">
+            <Label text="%External" />
+                <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCSV.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                     <toggleGroup>
-                        <ToggleGroup fx:id="invalidAsGroup" />
+                        <ToggleGroup fx:id="targetGroup" />
                     </toggleGroup>
-                </RadioButton> 
-                <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$invalidAsGroup" />
-                <RadioButton fx:id="zeroInvalidRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$invalidAsGroup" />
-                <RadioButton fx:id="nullInvalidRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$invalidAsGroup" />
-                <RadioButton fx:id="emptyInvalidRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$invalidAsGroup" />
+                </RadioButton>
+                <RadioButton fx:id="excelRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconExcel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="textsRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconTxt.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="matrixRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMatrix.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="systemClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSystemClipboard.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="myBoxClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClipboard.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="databaseRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconDatabase.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="jsonRadio" layoutX="306.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconJSON.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton layoutX="10.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup" fx:id="xmlRadio">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconXML.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="htmlRadio" layoutX="51.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconHtml.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
+                <RadioButton fx:id="pdfRadio" layoutX="92.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconPDF.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </RadioButton>
             </children>
         </FlowPane>
-        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+      <FlowPane fx:id="internalFormatPane" hgap="2.0" prefWrapLength="300.0" vgap="2.0">
+         <children>
+            <Label text="%InTable" />
+            <RadioButton fx:id="insertRadio" minHeight="-Infinity" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$targetGroup" wrapText="true" />
+            <RadioButton fx:id="appendRadio" minHeight="-Infinity" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$targetGroup" wrapText="true" />
+            <RadioButton fx:id="replaceRadio" mnemonicParsing="false" text="%Replace" toggleGroup="$targetGroup" />
+         </children>
+      </FlowPane>
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab fx:id="fileTab" text="%File">
             <content>
-                <VBox fx:id="externalBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                    <children>
-                        <FlowPane fx:id="extFormatPane" alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="0.0" vgap="2.0">
+                        <VBox fx:id="fileBox" spacing="5.0">
                             <children>
-                                <Label text="%External" />
-                                <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconCSV.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="targetGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton fx:id="excelRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconExcel.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="textsRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconTxt.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="matrixRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconMatrix.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="systemClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconSystemClipboard.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="myBoxClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconClipboard.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="databaseRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconDatabase.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="jsonRadio" layoutX="306.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconJSON.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton layoutX="10.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup" fx:id="xmlRadio">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconXML.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="htmlRadio" layoutX="51.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconHtml.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="pdfRadio" layoutX="92.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconPDF.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
+                                <fx:include fx:id="targetFile" source="ControlTargetFile.fxml" />
                             </children>
-                        </FlowPane>
-                        <VBox fx:id="externalDefBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                    <children>
-                                        <Label text="%External" visible="false" />
-                                        <VBox fx:id="externalDefBox" spacing="2.0">
-                                            <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                    <children>
-                                                        <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
-                                                        <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                </HBox>
-                                                <VBox fx:id="fileBox">
-                                                    <children>
-                                                        <fx:include fx:id="targetFile" source="ControlTargetFile.fxml" />
-                                                    </children>
-                                                </VBox>
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="46.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
-                                    <children>
-                                        <Label text="%External" visible="false" />
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" HBox.hgrow="ALWAYS">
-                                            <content>
-                                                <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                    <children>
-                                                        <TabPane fx:id="optionsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                                            <tabs>
-                                                                <Tab fx:id="csvTab" text="CSV">
-                                                                    <content>
-                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                                                            <content>
-                                                                                <VBox fx:id="csvBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                                    <children>
-                                                                                        <fx:include fx:id="csvWrite" source="ControlTextWriteOptions.fxml" />
-                                                                                    </children>
-                                                                                    <padding>
-                                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                                    </padding>
-                                                                                </VBox>
-                                                                            </content>
-                                                                        </ScrollPane>
-                                                                    </content>
-                                                                </Tab>
-                                                                <Tab fx:id="excelTab" text="Excel">
-                                                                    <content>
-                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                                            <content>
-                                                                                <VBox fx:id="excelBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                                    <children>
-                                                                                        <CheckBox fx:id="excelWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
-                                                                                        <CheckBox fx:id="currentSheetOnlyCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
-                                                                                    </children>
-                                                                                    <padding>
-                                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                                    </padding>
-                                                                                </VBox>
-                                                                            </content>
-                                                                        </ScrollPane>
-                                                                    </content>
-                                                                </Tab>
-                                                                <Tab fx:id="textTab" text="%Texts">
-                                                                    <content>
-                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                                            <content>
-                                                                                <VBox fx:id="textBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                                    <children>
-                                                                                        <fx:include fx:id="textWriteOptions" source="ControlTextWriteOptions.fxml" />
-                                                                                    </children>
-                                                                                    <padding>
-                                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                                    </padding>
-                                                                                </VBox>
-                                                                            </content>
-                                                                        </ScrollPane>
-                                                                    </content>
-                                                                </Tab>
-                                                <Tab fx:id="matrixTab" text="%Matrix">
-                                                   <content>
-                                                      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                         <content>
-                                                            <VBox fx:id="matrixBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                               <children>
-                                                                  <fx:include fx:id="matrixOptions" source="ControlMatrixOptions.fxml" />
-                                                               </children>
-                                                               <padding>
-                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                               </padding>
-                                                            </VBox>
-                                                         </content>
-                                                      </ScrollPane>
-                                                   </content>
-                                                </Tab>
-                                                                <Tab fx:id="htmlTab" text="html">
-                                                                    <content>
-                                                                        <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                            <children>
-                                                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                                                    <children>
-                                                                                        <Label maxWidth="1.7976931348623157E308" text="%HtmlStyle" HBox.hgrow="ALWAYS" />
-                                                                                        <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
-                                                                                            <graphic>
-                                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                                    <image>
-                                                                                                        <Image url="@../buttons/iconClaw.png" />
-                                                                                                    </image>
-                                                                                                </ImageView>
-                                                                                            </graphic>
-                                                                                        </Button>
-                                                                                    </children>
-                                                                                </HBox>
-                                                                                <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                                            </children>
-                                                                            <padding>
-                                                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                            </padding>
-                                                                        </VBox>
-                                                                    </content>
-                                                                </Tab>
-                                                                <Tab fx:id="pdfTab" text="PDF">
-                                                                    <content>
-                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                                                            <content>
-                                                                                <VBox fx:id="pdfBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                                    <children>
-                                                                                        <Label minHeight="-Infinity" text="%PdfColumnsWidthPxList" wrapText="true" />
-                                                                                        <TextField fx:id="widthList" maxWidth="1.7976931348623157E308" />
-                                                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                                                                            <content>
-                                                                                                <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
-                                                                                            </content>
-                                                                                        </ScrollPane>
-                                                                                    </children>
-                                                                                    <padding>
-                                                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                                    </padding>
-                                                                                </VBox>
-                                                                            </content>
-                                                                        </ScrollPane>
-                                                                    </content>
-                                                                </Tab>
-                                                                <Tab fx:id="dbTab" text="%DatabaseTable">
-                                                                    <content>
-                                                                        <VBox fx:id="dbBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                            <children>
-                                                                                <fx:include fx:id="db" source="ControlNewDataTable.fxml" />
-                                                                            </children>
-                                                                            <padding>
-                                                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                                            </padding>
-                                                                        </VBox>
-                                                                    </content>
-                                                                </Tab>
-                                                                <Tab fx:id="logsTab" text="%Logs">
-                                                                    <content>
-                                                                        <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                                            <padding>
-                                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                                            </padding>
-                                                                            <children>
-                                                                                <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                                                                    <children>
-                                                                                        <Label text="%MaxCharacters" />
-                                                                                        <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
-                                                                                        <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                                                                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
-                                                                                            <graphic>
-                                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                    <image>
-                                                                                                        <Image url="@../buttons/Red/iconClear.png" />
-                                                                                                    </image>
-                                                                                                </ImageView>
-                                                                                            </graphic>
-                                                                                        </Button>
-                                                                                    </children>
-                                                                                </HBox>
-                                                                            </children>
-                                                                        </VBox>
-                                                                    </content>
-                                                                </Tab>
-                                                            </tabs>
-                                                        </TabPane>
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </ScrollPane>
-                                    </children>
-                                </HBox>
-                            </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
                         </VBox>
-                    </children>
-                </VBox>
             </content>
-        </ScrollPane>
-        <VBox fx:id="inTableBox" spacing="2.0">
-            <children>
-                <FlowPane fx:id="internalFormatPane" hgap="2.0" prefWrapLength="300.0" vgap="2.0">
-                    <children>
-                        <Label text="%InTable" />
-                        <RadioButton fx:id="insertRadio" minHeight="-Infinity" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$targetGroup" wrapText="true" />
-                        <RadioButton fx:id="appendRadio" minHeight="-Infinity" mnemonicParsing="false" text="%AppendBelow" toggleGroup="$targetGroup" wrapText="true" />
-                        <RadioButton fx:id="replaceRadio" mnemonicParsing="false" text="%Replace" toggleGroup="$targetGroup" />
-                    </children>
-                </FlowPane>
-                <HBox fx:id="locationBox" alignment="CENTER_LEFT" spacing="2.0">
-                    <children>
-                        <Label text="%InTable" visible="false" />
-                        <VBox maxWidth="1.7976931348623157E308" spacing="2.0" HBox.hgrow="ALWAYS">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                    <children>
-                                        <Label minWidth="-Infinity" text="%TableRow" wrapText="true" />
-                                        <ComboBox fx:id="rowSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="2.0">
-                                    <children>
-                                        <Label minWidth="-Infinity" text="%Column" />
-                                        <ComboBox fx:id="colSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                            </children>
+          </Tab>
+          <Tab fx:id="dataTab" text="%Data">
+            <content>
+                  <VBox fx:id="dataBox" spacing="5.0">
+                     <children>
+                          <FlowPane fx:id="invalidAsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                              <children>
+                                  <Label text="%ToInvalidValue" />
+                                  <RadioButton fx:id="useInvalidRadio" mnemonicParsing="false" selected="true" text="%Use">
+                                      <toggleGroup>
+                                          <ToggleGroup fx:id="invalidAsGroup" />
+                                      </toggleGroup>
+                                  </RadioButton> 
+                                  <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$invalidAsGroup" />
+                                  <RadioButton fx:id="zeroInvalidRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$invalidAsGroup" />
+                                  <RadioButton fx:id="nullInvalidRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$invalidAsGroup" />
+                                  <RadioButton fx:id="emptyInvalidRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$invalidAsGroup" />
+                              </children>
+                          </FlowPane>
+                        <VBox fx:id="attributesBox" spacing="5.0">
+                           <children>
+                                    <HBox fx:id="nameBox" alignment="CENTER_LEFT" spacing="2.0">
+                                        <children>
+                                            <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
+                                            <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        </children>
+                                    </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                    <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+                                    <Label minHeight="-Infinity" text="%MaxRandom" wrapText="true" />
+                                    <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
+                                 </children>
+                              </HBox>
+                              <CheckBox fx:id="displayedNameCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%UseDisplayedNameAsColumnName" wrapText="true" />
+                              <CheckBox fx:id="writeCommentsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%WriteCommentsInFileHeader" wrapText="true" />
+                              <Label text="%Description" />
+                              <TextArea fx:id="descInput" maxWidth="1.7976931348623157E308" minHeight="60.0" prefHeight="100.0" wrapText="true" />
+                           </children>
                         </VBox>
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
+                        <VBox fx:id="locationBox" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                 <children>
+                                    <Label minWidth="-Infinity" text="%TableRow" wrapText="true" />
+                                    <ComboBox fx:id="rowSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="2.0">
+                                 <children>
+                                    <Label minWidth="-Infinity" text="%Column" />
+                                    <ComboBox fx:id="colSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+            </content>
+          </Tab>
+            <Tab fx:id="optionsTab" text="%Options">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                <content>
+                                    <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                        <children>
+                                            <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                                <tabs>
+                                                    <Tab fx:id="csvTab" text="CSV">
+                                                        <content>
+                                                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                                <content>
+                                                                    <VBox fx:id="csvBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                        <children>
+                                                                            <fx:include fx:id="csvWrite" source="ControlTextWriteOptions.fxml" />
+                                                                        </children>
+                                                                        <padding>
+                                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                        </padding>
+                                                                    </VBox>
+                                                                </content>
+                                                            </ScrollPane>
+                                                        </content>
+                                                    </Tab>
+                                                    <Tab fx:id="excelTab" text="Excel">
+                                                        <content>
+                                                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                                <content>
+                                                                    <VBox fx:id="excelBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                        <children>
+                                                                            <CheckBox fx:id="excelWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
+                                                                            <CheckBox fx:id="currentSheetOnlyCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
+                                                                        </children>
+                                                                        <padding>
+                                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                        </padding>
+                                                                    </VBox>
+                                                                </content>
+                                                            </ScrollPane>
+                                                        </content>
+                                                    </Tab>
+                                                    <Tab fx:id="textTab" text="%Texts">
+                                                        <content>
+                                                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                                <content>
+                                                                    <VBox fx:id="textBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                        <children>
+                                                                            <fx:include fx:id="textWriteOptions" source="ControlTextWriteOptions.fxml" />
+                                                                        </children>
+                                                                        <padding>
+                                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                        </padding>
+                                                                    </VBox>
+                                                                </content>
+                                                            </ScrollPane>
+                                                        </content>
+                                                    </Tab>
+                                          <Tab fx:id="matrixTab" text="%Matrix">
+                                             <content>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                   <content>
+                                                      <VBox fx:id="matrixBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                         <children>
+                                                            <fx:include fx:id="matrixOptions" source="ControlMatrixOptions.fxml" />
+                                                         </children>
+                                                         <padding>
+                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                         </padding>
+                                                      </VBox>
+                                                   </content>
+                                                </ScrollPane>
+                                             </content>
+                                          </Tab>
+                                                    <Tab fx:id="htmlTab" text="html">
+                                                        <content>
+                                                            <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                <children>
+                                                                    <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                                        <children>
+                                                                            <Label maxWidth="1.7976931348623157E308" text="%HtmlStyle" HBox.hgrow="ALWAYS" />
+                                                                            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
+                                                                                <graphic>
+                                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                        <image>
+                                                                                            <Image url="@../buttons/iconClaw.png" />
+                                                                                        </image>
+                                                                                    </ImageView>
+                                                                                </graphic>
+                                                                            </Button>
+                                                                        </children>
+                                                                    </HBox>
+                                                                    <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                </children>
+                                                                <padding>
+                                                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                </padding>
+                                                            </VBox>
+                                                        </content>
+                                                    </Tab>
+                                                    <Tab fx:id="pdfTab" text="PDF">
+                                                        <content>
+                                                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                                <content>
+                                                                    <VBox fx:id="pdfBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                        <children>
+                                                                            <Label minHeight="-Infinity" text="%PdfColumnsWidthPxList" wrapText="true" />
+                                                                            <TextField fx:id="widthList" maxWidth="1.7976931348623157E308" />
+                                                                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                                                <content>
+                                                                                    <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
+                                                                                </content>
+                                                                            </ScrollPane>
+                                                                        </children>
+                                                                        <padding>
+                                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                        </padding>
+                                                                    </VBox>
+                                                                </content>
+                                                            </ScrollPane>
+                                                        </content>
+                                                    </Tab>
+                                                    <Tab fx:id="dbTab" text="%DatabaseTable">
+                                                        <content>
+                                                            <VBox fx:id="dbBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                                <children>
+                                                                    <fx:include fx:id="db" source="ControlNewDataTable.fxml" />
+                                                                </children>
+                                                                <padding>
+                                                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                                </padding>
+                                                            </VBox>
+                                                        </content>
+                                                    </Tab>
+                                                </tabs>
+                                            </TabPane>
+                                        </children>
+                                    </VBox>
+                                </content>
+                            </ScrollPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
     </children>
 </VBox>

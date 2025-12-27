@@ -64,7 +64,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return true;
     }
 
-    public long readDataDefinition(Connection conn) {
+    public long loadDataDefinition(Connection conn) {
         if (isTmpData()) {
             checkForLoad();
             return -1;
@@ -72,7 +72,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
-                cloneDef(definition);
+                cloneFrom(definition);
             }
             checkForLoad();
             if (definition == null) {
@@ -95,7 +95,22 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return dataID;
     }
 
-    public boolean readColumns(Connection conn) {
+    public boolean deleteDataDefinition() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (dataID < 0) {
+                return false;
+            }
+            return tableData2DDefinition.deleteDefinition(conn, dataID) > 0;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    public boolean loadColumns(Connection conn) {
         try {
             columns = null;
             List<String> colNames = readColumnNames();
@@ -147,7 +162,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             } else {
                 colsNumber = 0;
                 if (dataID >= 0 && conn != null) {
-                    tableData2DColumn.clear(conn, dataID);
+                    tableData2DColumn.clearColumns(conn, dataID);
                     tableData2DDefinition.updateData(conn, this);
                     tableData2DStyle.clear(conn, dataID);
                 }
@@ -180,7 +195,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         return pagination.rowsNumber;
     }
 
-    public List<List<String>> readPageData(Connection conn) {
+    public List<List<String>> loadPageData(Connection conn) {
         if (!hasColumns()) {
             pagination.startRowOfCurrentPage = pagination.endRowOfCurrentPage = 0;
             return null;
@@ -199,11 +214,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         if (rows != null) {
             pagination.endRowOfCurrentPage = pagination.startRowOfCurrentPage + rows.size();
         }
-        readPageStyles(conn);
+        loadPageStyles(conn);
         return rows;
     }
 
-    public void readPageStyles(Connection conn) {
+    public void loadPageStyles(Connection conn) {
         styles = new ArrayList<>();
         if (dataID < 0 || pagination.startRowOfCurrentPage >= pagination.endRowOfCurrentPage) {
             return;
@@ -260,6 +275,23 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     /*
         modify
      */
+    public Data2DWriter initSelfWriter(Data2DWriter writer) {
+        if (writer != null) {
+            writer.setWriteHeader(hasHeader)
+                    .setDataName(dataName)
+                    .setPrintFile(file)
+                    .setColumns(columns)
+                    .setHeaderNames(columnNames())
+                    .setTargetScale(scale)
+                    .setTargetMaxRandom(maxRandom)
+                    .setWriteComments(true)
+                    .setTargetComments(comments)
+                    .setRecordTargetFile(true)
+                    .setRecordTargetData(true);
+        }
+        return writer;
+    }
+
     public long savePageData(FxTask task) {
         try {
             Data2DModify operate = Data2DSavePage.save(this);
@@ -296,7 +328,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             attributes.pagination.rowsNumber = operate.rowsCount();
             attributes.tableChanged = false;
             attributes.pagination.currentPage = pagination.currentPage;
-            cloneData(attributes);
+            cloneAttributesFrom(attributes);
             return attributes.pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
@@ -555,7 +587,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (did < 0) {
                 return false;
             }
-            d.cloneDef(def);
+            d.cloneFrom(def);
             if (inColumns != null && !inColumns.isEmpty()) {
                 try {
                     List<Data2DColumn> targetColumns = new ArrayList<>();

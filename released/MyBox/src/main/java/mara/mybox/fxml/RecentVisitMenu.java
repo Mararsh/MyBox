@@ -1,12 +1,11 @@
 package mara.mybox.fxml;
 
+import mara.mybox.fxml.menu.MenuTools;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -16,12 +15,11 @@ import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 
 /**
  * @Author Mara
@@ -84,7 +82,7 @@ public abstract class RecentVisitMenu {
 
     public List<MenuItem> menu() {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("SelectFile"));
 
             MenuItem menu = new MenuItem(message("Select..."));
             menu.setOnAction((ActionEvent event1) -> {
@@ -188,15 +186,7 @@ public abstract class RecentVisitMenu {
                 items.add(new SeparatorMenuItem());
             }
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("RecentVisitMenuPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
+            items.add(MenuTools.popCheckMenu("RecentVisit"));
 
             return items;
 

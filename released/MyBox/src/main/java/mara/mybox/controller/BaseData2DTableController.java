@@ -205,9 +205,12 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             if (dataManufactureButton != null) {
                 dataManufactureButton.setDisable(invalidData());
             }
+            if (infoButton != null) {
+                infoButton.setDisable(invalidData());
+            }
 
             if (dataLabel != null) {
-                dataLabel.setText(data2D != null ? data2D.displayName() : "");
+                dataLabel.setText(data2D != null ? data2D.labelName() : "");
             }
             if (!refreshTitle) {
                 return;
@@ -222,7 +225,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 if (data2D.isTableChanged()) {
                     title += " * ";
                 }
-                title += data2D.displayName();
+                title += data2D.labelName();
 
             }
             myStage.setTitle(title);
@@ -306,7 +309,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 TableColumn tableColumn = new TableColumn<List<String>, String>(dataColumn.getLabel());
                 tableColumn.setPrefWidth(dataColumn.getWidth());
                 tableColumn.setEditable(!readOnly && dataColumn.isEditable() && !dataColumn.isId());
-                tableColumn.setUserData(dataColumn.getIndex());
+                tableColumn.setUserData(dataColumn);
                 int colIndex = i + 1;
 
                 tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>() {
@@ -412,7 +415,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     @Override
     public List<List<String>> readPageData(FxTask currentTask, Connection conn) {
         data2D.startFilter(null);
-        return data2D.readPageData(conn);
+        return data2D.loadPageData(conn);
     }
 
     @Override

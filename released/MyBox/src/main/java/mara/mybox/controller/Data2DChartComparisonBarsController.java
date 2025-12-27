@@ -170,7 +170,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
 
     @Override
     public String baseChartTitle() {
-        return data2D.displayName() + " - " + message("ComparisonBarsChart");
+        return data2D.labelName() + " - " + message("ComparisonBarsChart");
     }
 
     protected String writeHtml() {

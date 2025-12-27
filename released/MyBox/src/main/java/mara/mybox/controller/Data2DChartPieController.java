@@ -153,11 +153,11 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return chartController.keyEventsFilter(event);
+        return chartController.handleKeyEvent(event);
     }
 
     /*

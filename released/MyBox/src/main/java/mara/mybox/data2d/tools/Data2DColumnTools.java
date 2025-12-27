@@ -25,13 +25,17 @@ import static mara.mybox.value.Languages.message;
 public class Data2DColumnTools {
 
     public static List<String> toNames(List<Data2DColumn> cols) {
+        return toNames(cols, false);
+    }
+
+    public static List<String> toNames(List<Data2DColumn> cols, boolean asLabel) {
         try {
             if (cols == null) {
                 return null;
             }
             List<String> names = new ArrayList<>();
             for (Data2DColumn c : cols) {
-                names.add(c.getColumnName());
+                names.add(asLabel ? c.getLabel() : c.getColumnName());
             }
             return names;
         } catch (Exception e) {

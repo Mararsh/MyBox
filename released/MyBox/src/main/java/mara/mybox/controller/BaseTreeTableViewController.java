@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -26,10 +25,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.NodeStyleTools;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -506,26 +505,13 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (item == null) {
             return;
         }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(item));
 
         items.addAll(viewMenuItems(item));
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "TreeViewPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
+        items.add(MenuTools.popCheckMenu(baseName + "TreeView"));
 
         if (event == null) {
             popNodeMenu(treeView, items);
@@ -539,7 +525,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
             return null;
         }
 
-        List<MenuItem> items = new ArrayList<>();
+        List<MenuItem> items = MenuTools.initMenu(message("View"));
         if (!treeItem.isLeaf()) {
             items.addAll(foldMenuItems());
 
@@ -599,15 +585,8 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (items == null) {
             return;
         }
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeFunctionsPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "TreeFunctionsPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
+        items.add(MenuTools.popCheckMenu(baseName + "TreeFunctions"));
+
         if (event == null) {
             popNodeMenu(treeView, items);
         } else {
@@ -616,11 +595,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     public List<MenuItem> makeFunctionsMenu(TreeItem<NodeP> item) {
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(item));
 
         items.addAll(functionMenuItems(item));
 
@@ -747,26 +722,13 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (item == null) {
             return;
         }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(item));
 
         items.addAll(operationsMenuItems(item));
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeOperationsPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "TreeOperationsPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
+        items.add(MenuTools.popCheckMenu(baseName + "TreeOperations"));
 
         if (event == null) {
             popNodeMenu(treeView, items);

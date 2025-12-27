@@ -10,8 +10,6 @@ import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.data.ColumnDefinition.getValue;
-import static mara.mybox.db.data.ColumnDefinition.setValue;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.image.FxColorTools;
@@ -575,11 +573,11 @@ public class ColumnDefinition extends BaseData {
                 case Date:
                     return toDate(o + "");
                 case Clob:
-//                    MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
+                    //                    MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
                     Clob clob = (Clob) o;
                     return clob.getSubString(1, (int) clob.length());
                 case Blob:
-//                    MyBoxLog.console(tableName + " " + columnName + " " + type);
+                    //                    MyBoxLog.console(tableName + " " + columnName + " " + type);
                     Blob blob = (Blob) o;
                     return blob.getBinaryStream();
                 default:

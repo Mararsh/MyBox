@@ -9,7 +9,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
@@ -29,9 +28,9 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
@@ -181,7 +180,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || longRadio.isSelected() || intRadio.isSelected()
                     || shortRadio.isSelected()) {
                 optionsBox.getChildren().addAll(formatBox, decimalPane);
-                formatInput.setText(message("GroupInThousands"));
+                formatInput.setText("");
 
             }
 
@@ -527,17 +526,17 @@ public class ControlData2DColumnEdit extends BaseChildController {
     public void showExamples(Event event) {
         if (doubleRadio.isSelected() || floatRadio.isSelected()) {
             List<String> values = new ArrayList<>();
+            values.add(message("None"));
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
             values.add(message("ScientificNotation"));
-            values.add(message("None"));
             popExamples(event, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
             List<String> values = new ArrayList<>();
+            values.add(message("None"));
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
-            values.add(message("None"));
             popExamples(event, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (datetimeRadio.isSelected()) {
@@ -638,15 +637,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("Data2DColumnEditPopWhenMouseHovering", true));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("Data2DColumnEditPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
+            items.add(MenuTools.popCheckMenu("Data2DColumnEdit"));
 
             popEventMenu(event, items);
 

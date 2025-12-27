@@ -15,7 +15,7 @@ This is compute application to provide simple and easy functions. It's free and 
           - Comments in csv/excel/text/html file can be read and write. (Lines started with "#")                    
           - Refine the interfaces of data target.                    
           - New examples about Chinese characters.                    
-    - When edit image, option to allow movin the shape .                                                                                                                                 
+    - When edit image, option to allow moving the shape .                                                                                                                                 
     - When view or edit image, can navigate to next file or previous file.                                                                                                                                 
     - When sample image, correct values can be set automatically when inputs are beyond the image.                                                                                                                                 
     - When browse files, option about where and how to open files.                                                                                                                                 
@@ -57,7 +57,7 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size  | Launcher |        
 | --- | --- | ---  | ---  |
-| win11 x64 | [MyBox-win11-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win11-x64.zip)  | 360MB- | MyBox.exe |
+| win x64 | [MyBox-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-x64.zip)  | 360MB- | MyBox.exe |
 | Mint x64 | [MyBox-Mint-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-Mint-x64.tar.gz)  | 360MB-  | MyBox  |
 | mac | [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg)  | 360MB-  |  MyBox.app   |        
 

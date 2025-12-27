@@ -152,13 +152,13 @@ public class ColorQueryController extends BaseController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (colorTab.isSelected()) {
-            if (colorController.keyEventsFilter(event)) {
+            if (colorController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

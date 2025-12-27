@@ -30,7 +30,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
 
             rowEditController.addRow(controller, controller.selectedItem());
 
-            nameLabel.setText(message("Data") + ": " + dataController.data2D.displayName());
+            nameLabel.setText(message("Data") + ": " + dataController.data2D.labelName());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

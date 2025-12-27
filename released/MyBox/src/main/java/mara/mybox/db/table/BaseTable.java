@@ -2174,10 +2174,6 @@ public abstract class BaseTable<D> {
         return true;
     }
 
-    public String string(String value) {
-        return DerbyBase.stringValue(value);
-    }
-
     /*
         get/set
      */

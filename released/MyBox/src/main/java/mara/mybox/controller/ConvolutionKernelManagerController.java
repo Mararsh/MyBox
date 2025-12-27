@@ -41,6 +41,7 @@ import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -263,8 +264,9 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             }
             if (zeroEdgeRadio.isSelected()) {
                 edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
-            } else
+            } else {
                 edge_Op = ConvolutionKernel.Edge_Op.COPY;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -491,6 +493,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     public void deleteAction() {
         final List<ConvolutionKernel> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
+            popError(message("SelectToHandle"));
             return;
         }
         if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {

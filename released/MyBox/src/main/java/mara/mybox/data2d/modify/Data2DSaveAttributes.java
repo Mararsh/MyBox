@@ -34,7 +34,10 @@ public class Data2DSaveAttributes extends Data2DModify {
         writer.setDataName(attributes.getDataName())
                 .setTargetData(attributes)
                 .setColumns(attributes.getColumns())
-                .setHeaderNames(attributes.columnNames());
+                .setHeaderNames(attributes.columnNames())
+                .setTargetScale(attributes.getScale())
+                .setTargetMaxRandom(attributes.getMaxRandom())
+                .setTargetComments(attributes.getComments());
         addWriter(writer);
     }
 

@@ -324,7 +324,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             List<String> allName = new ArrayList<>();
             for (Node n : columnsDisplayPane.getChildren()) {
                 CheckBox cb = (CheckBox) n;
-                String name = cb.getText();
+                String name = Data2DColumn.getCheckBoxColumnName(cb);
                 if (cb.isSelected()) {
                     colNames.add(name);
                 }
@@ -342,7 +342,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             List<String> allTypes = new ArrayList<>();
             for (Node n : valuesDisplayPane.getChildren()) {
                 CheckBox cb = (CheckBox) n;
-                String tname = cb.getText();
+                String tname = Data2DColumn.getCheckBoxColumnName(cb);
                 if (cb.isSelected()) {
                     sTypes.add(tname);
                 }

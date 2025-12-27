@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -17,9 +15,8 @@ import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.toShape;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -218,26 +215,13 @@ public class ControlSvgTree extends ControlXmlTree {
             return;
         }
 
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(treeItem)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(treeItem));
 
         items.addAll(addShapeMenus(treeItem));
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "AddShapePopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "AddShapePopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
+        items.add(MenuTools.popCheckMenu(baseName + "AddShape"));
 
         if (event == null) {
             popNodeMenu(treeView, items);

@@ -533,23 +533,23 @@ public class ImagesSpliceController extends BaseController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (viewBox.isFocused() || viewBox.isFocusWithin()) {
-            if (viewController.keyEventsFilter(event)) {
+            if (viewController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
-            if (tableController.keyEventsFilter(event)) {
+            if (tableController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        if (viewController.keyEventsFilter(event)) {
+        if (viewController.handleKeyEvent(event)) {
             return true;
         }
-        return tableController.keyEventsFilter(event);
+        return tableController.handleKeyEvent(event);
     }
 
     /*

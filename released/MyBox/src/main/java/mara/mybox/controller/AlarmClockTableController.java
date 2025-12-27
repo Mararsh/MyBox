@@ -21,6 +21,7 @@ import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -131,6 +132,7 @@ public class AlarmClockTableController extends BaseController {
     public void deleteAction() {
         ObservableList<AlarmClock> selected = alarmClocksView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
+            popError(message("SelectToHandle"));
             return;
         }
         tableAlarmClock.deleteData(selected);
@@ -152,7 +154,7 @@ public class AlarmClockTableController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             for (AlarmClock alarm : selected) {
                 alarm.setIsActive(true);
                 alarm.calculateNextTime();
@@ -173,7 +175,7 @@ public class AlarmClockTableController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             for (AlarmClock alarm : selected) {
                 alarm.setIsActive(false);
                 alarm.setNextTime(null);
@@ -206,6 +208,8 @@ public class AlarmClockTableController extends BaseController {
 //            int i = AlarmClock.findAlarmIndex(tableData, alarm.getKey());
 //            if (i >= 0) {
 //                tableData.set(i, alarm);
+
+
 ////                alarmClocksView.refresh();
 //            } else {
 //                tableData.add(alarm);

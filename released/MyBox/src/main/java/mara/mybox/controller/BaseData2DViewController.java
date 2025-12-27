@@ -26,6 +26,7 @@ import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -281,7 +282,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showHtml() {
         try {
-            showHtmlButtons();
             pageBox.getChildren().add(htmlBox);
             VBox.setVgrow(htmlBox, Priority.ALWAYS);
 
@@ -291,7 +291,12 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showHtmlButtons() {
-        buttonsPane.getChildren().setAll(editHtmlButton, viewDataButton, dataManufactureButton);
+        if (fileMenuButton != null && data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+            buttonsPane.getChildren().setAll(fileMenuButton);
+        } else {
+            buttonsPane.getChildren().clear();
+        }
+        buttonsPane.getChildren().addAll(infoButton, editHtmlButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadHtml(boolean pop) {
@@ -338,6 +343,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 } else {
                     webViewController.loadContent(html);
                 }
+                showHtmlButtons();
             }
 
         };
@@ -346,7 +352,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showTexts() {
         try {
-            showTextsButtons();
             pageBox.getChildren().add(textsArea);
             VBox.setVgrow(textsArea, Priority.ALWAYS);
 
@@ -362,7 +367,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showTextsButtons() {
-        buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
+        buttonsPane.getChildren().setAll(wrapCheck);
+        if (fileMenuButton != null && data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+            buttonsPane.getChildren().add(fileMenuButton);
+        }
+        buttonsPane.getChildren().addAll(delimiterButton, infoButton,
                 menuButton, viewDataButton, dataManufactureButton);
     }
 
@@ -406,6 +415,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 } else {
                     textsArea.setText(texts);
                 }
+                showTextsButtons();
             }
 
         };
@@ -414,7 +424,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showTable() {
         try {
-            showTableButtons();
             pageBox.getChildren().add(tableBox);
             VBox.setVgrow(tableBox, Priority.ALWAYS);
         } catch (Exception e) {
@@ -423,7 +432,12 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showTableButtons() {
-        buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
+        if (fileMenuButton != null && data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+            buttonsPane.getChildren().setAll(fileMenuButton);
+        } else {
+            buttonsPane.getChildren().clear();
+        }
+        buttonsPane.getChildren().addAll(infoButton, menuButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadTable() {
@@ -438,6 +452,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             setPageData(data);
 
+            showTableButtons();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -448,6 +464,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void loadCsv() {
     }
+
 
     /*
         data
@@ -599,7 +616,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("View"));
 
             MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+I " + message("Or") + " Alt+I",
                     StyleTools.getIconImageView("iconInfo.png"));

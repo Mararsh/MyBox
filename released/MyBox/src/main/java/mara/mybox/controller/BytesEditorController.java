@@ -18,6 +18,7 @@ import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ByteTools;
@@ -262,7 +263,7 @@ public class BytesEditorController extends BaseTextController {
 
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
-        List<MenuItem> items = new ArrayList<>();
+        List<MenuItem> items = MenuTools.initMenu(message("File"));
         MenuItem menu;
 
         if (sourceFile != null) {

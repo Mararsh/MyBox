@@ -359,12 +359,12 @@ public abstract class BaseBatchController<T> extends BaseFileController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
         if (tableController != null) { // pass event to table pane
-            if (tableController.keyEventsFilter(event)) {
+            if (tableController.handleKeyEvent(event)) {
                 return true;
             }
         }

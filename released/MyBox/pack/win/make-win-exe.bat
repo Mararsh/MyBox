@@ -1,5 +1,5 @@
 rem Unzip source package. Edit this script to change directories as your env.
-set JAVA_HOME=D:\Programs\jdk-24
+set JAVA_HOME=D:\Programs\jdk-25
 set CLASSPATH=.;%JAVA_HOME%/lib;
 set PATH=%JAVA_HOME%/bin;%PATH%
 set jpackagePath=%JAVA_HOME%/bin

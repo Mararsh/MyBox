@@ -30,11 +30,10 @@ import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -386,12 +385,7 @@ public class DataTreeController extends BaseDataTreeController {
         if (node == null) {
             return null;
         }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(node)));
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+        List<MenuItem> items = MenuTools.initMenu(label(node));
 
         Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
         dataMenu.getItems().addAll(dataMenuItems(event, node, false));
@@ -418,16 +412,8 @@ public class DataTreeController extends BaseDataTreeController {
         if (node == null) {
             return null;
         }
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu;
-        if (withTitle) {
-            menu = new MenuItem(StringTools.menuPrefix(label(node)));
-            menu.setStyle(attributeTextStyle());
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-        }
-
-        menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
+        List<MenuItem> items = MenuTools.initMenu(withTitle ? label(node) : null);
+        MenuItem menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             DataTreeTagsController.manage(this);
         });
@@ -470,14 +456,7 @@ public class DataTreeController extends BaseDataTreeController {
         if (node == null) {
             return null;
         }
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu;
-        if (withTitle) {
-            menu = new MenuItem(StringTools.menuPrefix(label(node)));
-            menu.setStyle(attributeTextStyle());
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-        }
+        List<MenuItem> items = MenuTools.initMenu(withTitle ? label(node) : null);
 
         items.addAll(updateMenuItems(fevent, node));
 

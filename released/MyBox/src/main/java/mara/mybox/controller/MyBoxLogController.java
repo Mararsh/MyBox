@@ -25,11 +25,11 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -236,16 +236,7 @@ public class MyBoxLogController extends BaseSysTableController<MyBoxLog> {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
-                    StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "OptionsPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu(baseName + "Options"));
 
             popEventMenu(mevent, items);
         } catch (Exception e) {

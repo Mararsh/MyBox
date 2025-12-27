@@ -2,10 +2,14 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.operate.Data2DExport;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.SoundTools;
@@ -13,6 +17,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -32,6 +37,8 @@ public class Data2DExportController extends BaseData2DTaskController {
     protected ControlDataExport convertController;
     @FXML
     protected Tab targetTab;
+    @FXML
+    protected CheckBox displayedNameCheck;
 
     public Data2DExportController() {
         baseTitle = message("Export");
@@ -57,6 +64,17 @@ public class Data2DExportController extends BaseData2DTaskController {
             super.setParameters(controller);
 
             convertController.setParameters(this);
+
+            displayedNameCheck.setSelected(UserConfig.getBoolean(baseName + "ExportLabelAsColumn", true));
+            displayedNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "ExportLabelAsColumn", displayedNameCheck.isSelected());
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -82,9 +100,13 @@ public class Data2DExportController extends BaseData2DTaskController {
                 filePrefix = DateTools.nowFileString();
             }
             export = convertController.pickParameters(data2D);
-            export.setInvalidAs(invalidAs);
-            export.setController(this);
-            return export.setColumns(targetPathController, checkedColumns, filePrefix);
+            export.setPathController(targetPathController)
+                    .setColumns(checkedColumns)
+                    .setColumnNames(Data2DColumnTools.toNames(checkedColumns,
+                            displayedNameCheck.isSelected()))
+                    .setInvalidAs(invalidAs)
+                    .setController(this);
+            return export.initExport(filePrefix);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

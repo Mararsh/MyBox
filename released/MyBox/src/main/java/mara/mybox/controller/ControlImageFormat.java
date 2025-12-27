@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
@@ -511,8 +512,7 @@ public class ControlImageFormat extends BaseFileController {
 
     @FXML
     public void pickIccFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectIccAction();
         } else {
             showIccFileMenu(event);
@@ -521,7 +521,7 @@ public class ControlImageFormat extends BaseFileController {
 
     @FXML
     public void popIccFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showIccFileMenu(event);
         }
     }

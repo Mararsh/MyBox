@@ -1,13 +1,10 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
@@ -19,9 +16,9 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -133,8 +130,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     public void pickJarFiles(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectJar();
         } else {
             showJarFilesMenu(event);
@@ -143,7 +139,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     public void popJarFiles(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showJarFilesMenu(event);
         }
     }
@@ -204,8 +200,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     public void pickJarPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectPath();
         } else {
             showJarPathMenu(event);
@@ -214,7 +209,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     public void popJarPath(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showJarPathMenu(event);
         }
     }
@@ -222,7 +217,7 @@ public class JShellPaths extends BaseController {
     @FXML
     protected void showExamplesMenu(Event event) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Examples"));
 
             MenuItem menu = new MenuItem(message("MyBoxClassPaths"));
             menu.setOnAction((ActionEvent e) -> {
@@ -232,15 +227,7 @@ public class JShellPaths extends BaseController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("JShellPathsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("JShellPathsPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
+            items.add(MenuTools.popCheckMenu("JShellPaths"));
 
             popEventMenu(event, items);
         } catch (Exception e) {

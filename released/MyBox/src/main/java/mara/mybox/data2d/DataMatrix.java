@@ -160,17 +160,12 @@ public class DataMatrix extends DataFileText {
     @Override
     public Data2DWriter selfWriter() {
         DataMatrixWriter writer = new DataMatrixWriter();
+        initSelfWriter(writer);
         writer.setDataType(sheet)
                 .setCharset(Charset.forName("utf-8"))
                 .setDelimiter(DataMatrix.MatrixDelimiter)
                 .setWriteHeader(false)
-                .setTargetData(this)
-                .setDataName(dataName)
-                .setPrintFile(file)
-                .setColumns(columns)
-                .setHeaderNames(columnNames())
-                .setRecordTargetFile(true)
-                .setRecordTargetData(true);
+                .setTargetData(this);
         return writer;
     }
 

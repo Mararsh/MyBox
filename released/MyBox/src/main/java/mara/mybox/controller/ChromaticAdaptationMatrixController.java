@@ -14,6 +14,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -131,7 +132,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
                 + "            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n"
                 + "            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n"
                 + (String) run.get("procedure");
-        webView.getEngine().loadContent("<pre>" + s + "</pre>");
+        webView.getEngine().loadContent(HtmlWriteTools.codeToHtml(s));
     }
 
     @FXML

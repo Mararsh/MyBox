@@ -14,7 +14,6 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -28,6 +27,7 @@ public abstract class Data2DReader {
     protected Data2DOperate operate;
     protected long sourceIndex; // 1-based
     protected long pageStartIndex, pageEndIndex; //  0-based
+    protected String dataComments;
     protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected Connection conn;
@@ -68,6 +68,7 @@ public abstract class Data2DReader {
         sourceIndex = 0;  // 1-based
         pageStartIndex = sourceData.getStartRowOfCurrentPage();
         pageEndIndex = pageStartIndex + sourceData.getPageSize();
+        dataComments = null;
         names = new ArrayList<>();
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
@@ -117,11 +118,26 @@ public abstract class Data2DReader {
 
     public void makeHeader() {
         try {
-            names = new ArrayList<>();
-            if (readerHasHeader && StringTools.noDuplicated(sourceRow, true)) {
-                names.addAll(sourceRow);
-            } else {
+            if (sourceRow == null || sourceRow.isEmpty()) {
                 readerHasHeader = false;
+            }
+            names = new ArrayList<>();
+            if (readerHasHeader) {
+                for (int i = 0; i < sourceRow.size(); i++) {
+                    String name = sourceRow.get(i);
+                    if (name == null || name.isBlank()) {
+                        names.add(sourceData.colPrefix() + i);
+                    } else if (names.contains(name)) {
+                        int index = 2;
+                        while (names.contains(name + index)) {
+                            index++;
+                        }
+                        names.add(name + index);
+                    } else {
+                        names.add(name);
+                    }
+                }
+            } else {
                 if (sourceRow != null) {
                     for (int i = 1; i <= sourceRow.size(); i++) {
                         names.add(sourceData.colPrefix() + i);
@@ -129,6 +145,9 @@ public abstract class Data2DReader {
                 }
             }
             sourceData.setHasHeader(readerHasHeader);
+            if (!sourceData.hasComments()) {
+                sourceData.setComments(dataComments);
+            }
             stop();
         } catch (Exception e) {
             showError(e.toString());
@@ -137,7 +156,8 @@ public abstract class Data2DReader {
 
     public void makePageRow() {
         List<String> row = new ArrayList<>();
-        for (int i = 0; i < Math.min(sourceRow.size(), sourceData.columnsNumber()); i++) {
+        for (int i = 0;
+                i < Math.min(sourceRow.size(), sourceData.columnsNumber()); i++) {
             row.add(sourceRow.get(i));
         }
         for (int col = row.size(); col < sourceData.columnsNumber(); col++) {
@@ -250,6 +270,15 @@ public abstract class Data2DReader {
 
     public Data2DReader setNames(List<String> names) {
         this.names = names;
+        return this;
+    }
+
+    public String getDataComments() {
+        return dataComments;
+    }
+
+    public Data2DReader setDataComments(String dataComments) {
+        this.dataComments = dataComments;
         return this;
     }
 

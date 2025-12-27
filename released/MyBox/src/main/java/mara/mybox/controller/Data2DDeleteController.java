@@ -129,7 +129,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             protected void whenSucceeded() {
                 sourceController.selectedRowsIndices = null;
                 tabPane.getSelectionModel().select(sourceTab);
-                editor.data2D.cloneData(data2D);
+                editor.data2D.cloneAttributesFrom(data2D);
                 editor.data2D.setTableChanged(false);
                 editor.dataSizeLoaded = false;
                 editor.goPage();

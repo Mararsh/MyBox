@@ -72,6 +72,8 @@ public abstract class BaseController_Attributes {
     }
 
     @FXML
+    protected ScrollPane topScrollPane;
+    @FXML
     protected Pane thisPane, mainMenu, operationBar;
     @FXML
     protected MainMenuController mainMenuController;
@@ -398,6 +400,10 @@ public abstract class BaseController_Attributes {
 
     public boolean isIsSettingValues() {
         return isSettingValues;
+    }
+
+    public void setIsSettingValues(boolean isSettingValues) {
+        this.isSettingValues = isSettingValues;
     }
 
     public String getInterfaceName() {

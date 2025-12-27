@@ -13,7 +13,7 @@ import javafx.scene.web.WebEvent;
 import mara.mybox.data.FunctionsList;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.tools.Data2DExampleTools;
+import mara.mybox.data2d.example.SoftwareTesting;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -62,8 +62,10 @@ public class FunctionsListController extends ControlWebView {
                         return;
                     }
                     String name = ev.getData();
+                    MyBoxLog.console(name);
                     MenuItem menu = map.get(name);
                     if (menu != null) {
+                        MyBoxLog.console(menu.getText());
                         menu.fire();
                     }
                 }
@@ -81,7 +83,7 @@ public class FunctionsListController extends ControlWebView {
                 return false;
             }
 
-            FunctionsList list = new FunctionsList(getMainMenu(), true, Languages.getLangName());
+            FunctionsList list = new FunctionsList(this, true, Languages.getLangName());
             table = list.make();
             map = list.getMap();
             if (table != null) {
@@ -101,7 +103,7 @@ public class FunctionsListController extends ControlWebView {
             @Override
             protected boolean handle() {
                 try {
-                    FunctionsList list = new FunctionsList(getMainMenu(), true, lang);
+                    FunctionsList list = new FunctionsList(maker, true, lang);
                     StringTable table = list.make();
                     File file = new File(path, "mybox_functions_" + lang + ".html");
                     TextFileTools.writeFile(file, table.html());
@@ -131,7 +133,7 @@ public class FunctionsListController extends ControlWebView {
             protected boolean handle() {
                 try {
                     boolean isChinese = Languages.isChinese(lang);
-                    DataFileCSV data = Data2DExampleTools.MyBoxBaseVerificationList(myController, lang, false);
+                    DataFileCSV data = SoftwareTesting.MyBoxBaseVerificationList(myController, lang, false);
                     StringTable table = new StringTable(data.getDataName());
                     File file = data.getFile();
                     try (CSVParser parser = CSVParser.parse(file, data.getCharset(),

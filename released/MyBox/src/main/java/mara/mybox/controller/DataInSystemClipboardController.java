@@ -47,11 +47,11 @@ public class DataInSystemClipboardController extends BaseController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return boardController.keyEventsFilter(event);
+        return boardController.handleKeyEvent(event);
     }
 
     /*

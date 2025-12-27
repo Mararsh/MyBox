@@ -286,23 +286,23 @@ public class ImageRepeatController extends BaseController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (targetBox.isFocused() || targetBox.isFocusWithin()) {
-            if (targetController.keyEventsFilter(event)) {
+            if (targetController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (sourceBox.isFocused() || sourceBox.isFocusWithin()) {
-            if (sourceController.keyEventsFilter(event)) {
+            if (sourceController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        if (targetController.keyEventsFilter(event)) {
+        if (targetController.handleKeyEvent(event)) {
             return true;
         }
-        return sourceController.keyEventsFilter(event);
+        return sourceController.handleKeyEvent(event);
     }
 
     @FXML

@@ -13,6 +13,7 @@ import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.CertificateTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -171,7 +172,7 @@ public class SecurityCertificatesAddController extends BaseChildController {
                     s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
                     for (Certificate cert : certs) {
                         s.append("<hr>\n");
-                        s.append("<pre>").append(cert).append("</pre>\n\n");
+                        s.append(HtmlWriteTools.codeToHtml(cert.toString())).append("\n\n");
                     }
                     result = s.toString();
                 } catch (Exception e) {

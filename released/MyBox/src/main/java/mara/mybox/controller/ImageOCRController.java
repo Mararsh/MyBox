@@ -226,15 +226,15 @@ public class ImageOCRController extends BaseController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (optionsBox.isFocused() || optionsBox.isFocusWithin()) {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                if (sourceController.keyEventsFilter(event)) {
+                if (sourceController.handleKeyEvent(event)) {
                     return true;
                 }
             } else if (tab == processTab) {
-                if (preprocessController.keyEventsFilter(event)) {
+                if (preprocessController.handleKeyEvent(event)) {
                     return true;
                 }
             }
@@ -242,22 +242,22 @@ public class ImageOCRController extends BaseController {
 
         Tab tab = resultsTabPane.getSelectionModel().getSelectedItem();
         if (tab == htmlTab) {
-            if (htmlController.keyEventsFilter(event)) {
+            if (htmlController.handleKeyEvent(event)) {
                 return true;
             }
 
         } else if (regionsTab.isSelected()) {
-            if (regionsTableController.keyEventsFilter(event)) {
+            if (regionsTableController.handleKeyEvent(event)) {
                 return true;
             }
 
         } else if (wordsTab.isSelected()) {
-            if (wordsTableController.keyEventsFilter(event)) {
+            if (wordsTableController.handleKeyEvent(event)) {
                 return true;
             }
         }
 
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

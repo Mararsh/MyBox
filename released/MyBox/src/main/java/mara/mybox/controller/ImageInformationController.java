@@ -7,14 +7,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import mara.mybox.image.data.ImageColorSpace;
-import mara.mybox.image.data.ImageFileInformation;
-import mara.mybox.image.data.ImageInformation;
-import mara.mybox.image.data.ImageInformationPng;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.image.data.ImageColorSpace;
+import mara.mybox.image.data.ImageFileInformation;
+import mara.mybox.image.data.ImageInformation;
+import mara.mybox.image.data.ImageInformationPng;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -123,7 +123,7 @@ public class ImageInformationController extends HtmlTableController {
             table.add(Arrays.asList(message("Scaled"), "scaleX: " + info.getXscale() + " scaleY:" + info.getYscale()));
         }
         if (info.isIsSampled()) {
-            table.add(Arrays.asList(message("Sample"),
+            table.add(Arrays.asList(message("ImageSample"),
                     info.sampleInformation(null, image).replaceAll("\n", "<br>")));
         }
         return StringTable.tableDiv(table);

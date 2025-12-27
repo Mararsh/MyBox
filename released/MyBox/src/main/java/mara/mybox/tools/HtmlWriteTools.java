@@ -80,8 +80,9 @@ public class HtmlWriteTools {
         s.append(Indent).append(Indent)
                 .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")
                 .append(charset).append("\" />\n");
-        if (title != null && !title.trim().isEmpty()) {
-            s.append(Indent).append(Indent).append("<TITLE>").append(title).append("</TITLE>\n");
+        if (title != null && !title.isBlank()) {
+            s.append(Indent).append(Indent).append("<TITLE>")
+                    .append(title).append("</TITLE>\n");
         }
         if (styleValue != null && !styleValue.isBlank()) {
             s.append(Indent).append(Indent).append("<style type=\"text/css\">\n");
@@ -157,18 +158,26 @@ public class HtmlWriteTools {
     /*
         convert html
      */
+    public static String escapeHtml(String string) {
+        if (string == null) {
+            return null;
+        }
+        return string.replace("&", "&amp;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\\x20", "&nbsp;")
+                .replace("©", "&copy;")
+                .replace("®", "&reg;")
+                .replace("™", "&trade;");
+    }
+
     public static String stringToHtml(String string) {
         if (string == null) {
             return null;
         }
-        return string.replaceAll("&", "&amp;")
-                .replaceAll("\"", "&quot;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll("\\x20", "&nbsp;")
-                .replaceAll("©", "&copy;")
-                .replaceAll("®", "&reg;")
-                .replaceAll("™", "&trade;")
+        return escapeHtml(string)
                 .replaceAll("\r\n|\n|\r", "<BR>\n");
     }
 
@@ -178,6 +187,13 @@ public class HtmlWriteTools {
         }
         String body = stringToHtml(text);
         return html(null, "<BODY>\n<DIV>\n" + body + "\n</DIV>\n</BODY>");
+    }
+
+    public static String codeToHtml(String text) {
+        if (text == null) {
+            return null;
+        }
+        return "<PRE><CODE>" + escapeHtml(text) + "</CODE></PRE>";
     }
 
     public static String htmlToText(String html) {

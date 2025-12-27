@@ -65,7 +65,7 @@ public class Data2DTableCreateController extends BaseChildController {
 
     public void sourceChanged() {
         try {
-            data2D = editor.data2D.cloneAll().setController(this);
+            data2D = editor.data2D.cloneTo().setController(this);
 
             attributesController.setData(data2D);
         } catch (Exception e) {

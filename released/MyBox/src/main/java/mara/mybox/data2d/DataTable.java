@@ -50,7 +50,7 @@ public class DataTable extends Data2D {
             if (d == null) {
                 return;
             }
-            super.cloneData(d);
+            super.cloneAttributesFrom(d);
             tableData2D = d.tableData2D;
             if (tableData2D == null) {
                 tableData2D = new TableData2D();
@@ -144,7 +144,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean readColumns(Connection conn) {
+    public boolean loadColumns(Connection conn) {
         try {
             columns = null;
             if (conn == null || dataID < 0 || sheet == null) {
@@ -378,7 +378,7 @@ public class DataTable extends Data2D {
             attributes.pagination.rowsNumber = pagination.rowsNumber;
             attributes.tableChanged = false;
             attributes.pagination.currentPage = pagination.currentPage;
-            cloneData(attributes);
+            cloneAttributesFrom(attributes);
             return pagination.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
@@ -393,11 +393,10 @@ public class DataTable extends Data2D {
     @Override
     public Data2DWriter selfWriter() {
         DataTableWriter writer = new DataTableWriter();
+        initSelfWriter(writer);
         writer.setTargetTable(this)
                 .setTargetData(this)
-                .setDataName(dataName)
-                .setRecordTargetFile(false)
-                .setRecordTargetData(true);
+                .setRecordTargetFile(false);
         return writer;
     }
 

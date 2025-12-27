@@ -64,27 +64,27 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         initData();
     }
 
-    public void cloneData(Data2D_Attributes d) {
+    public void cloneAttributesFrom(Data2D_Attributes d) {
         try {
-            super.cloneDefBase(d);
-            cloneTaskAttributes(d);
-            clonePageAttributes(d);
+            dataID = d.getDataID();
+            dataType = d.getType();
+            copyAttributesFrom(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneDataAttributes(Data2D_Attributes d) {
+    public void copyAttributesFrom(Data2D_Attributes d) {
         try {
-            super.cloneDefAttributes(d);
-            cloneTaskAttributes(d);
-            clonePageAttributes(d);
+            super.copyAllAttributes(d);
+            copyTaskAttributes(d);
+            copyPageAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneTaskAttributes(Data2D_Attributes d) {
+    public void copyTaskAttributes(Data2D_Attributes d) {
         try {
             if (d == null) {
                 return;
@@ -97,12 +97,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         }
     }
 
-    public void clonePageAttributes(Data2D_Attributes d) {
+    public void copyPageAttributes(Data2D_Attributes d) {
         try {
             if (d == null) {
                 return;
             }
-            cloneValueAttributes(d);
+            copyDataAttributes(d);
             pageData = d.pageData;
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;
@@ -161,6 +161,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public Data2D_Attributes setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
         return this;
+    }
+
+    @Override
+    public long getColsNumber() {
+        colsNumber = columns != null ? columns.size() : -1;
+        return colsNumber;
     }
 
     public String getError() {

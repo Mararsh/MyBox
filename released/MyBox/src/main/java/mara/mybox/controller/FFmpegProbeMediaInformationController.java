@@ -29,6 +29,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.tools.FileTmpTools;
@@ -292,8 +293,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
 
     @FXML
     public void pickMedia(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectSourceFile();
         } else {
             showMediaMenu(event);
@@ -302,7 +302,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
 
     @FXML
     public void popMedia(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showMediaMenu(event);
         }
     }

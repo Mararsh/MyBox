@@ -97,7 +97,7 @@ public class TableStringValue extends BaseTable<StringValue> {
         }
         try (PreparedStatement statement = conn.prepareStatement(Query)) {
             statement.setMaxRows(1);
-            statement.setString(1, stringValue(name));
+            statement.setString(1, name);
             conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
@@ -189,7 +189,8 @@ public class TableStringValue extends BaseTable<StringValue> {
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
-        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(Delete)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(Delete)) {
             statement.setString(1, name);
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
@@ -217,7 +218,8 @@ public class TableStringValue extends BaseTable<StringValue> {
         }
         String sql = " SELECT key_name, string_value  FROM String_Value WHERE key_name like '"
                 + stringValue(prefix) + "%' ";
-        try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 keyValues.put(results.getString("key_name"), results.getString("string_value"));
             }
@@ -232,7 +234,8 @@ public class TableStringValue extends BaseTable<StringValue> {
         if (prefix == null || prefix.trim().isEmpty()) {
             return false;
         }
-        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Value WHERE  key_name like '"
                     + stringValue(prefix) + "%' ";
             statement.executeUpdate(sql);

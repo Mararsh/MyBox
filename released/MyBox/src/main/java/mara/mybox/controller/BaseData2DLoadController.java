@@ -8,11 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
@@ -23,9 +20,9 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.example.Data2DExampleTools;
 import mara.mybox.data2d.operate.Data2DVerify;
 import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.data2d.tools.Data2DExampleTools;
 import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -37,7 +34,7 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -49,6 +46,8 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class BaseData2DLoadController extends BaseData2DTableController {
+
+    protected boolean forConvert = false;
 
     /*
         status
@@ -98,7 +97,13 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     public boolean loadDef(Data2DDefinition def) {
-        return loadDef(def, true);
+        if (forConvert && def != null && def instanceof DataFileCSV) {
+            data2D = (DataFileCSV) def;
+            notifyLoaded();
+            return true;
+        } else {
+            return loadDef(def, true);
+        }
     }
 
     public boolean loadDef(Data2DDefinition def, boolean checkUpdated) {
@@ -110,7 +115,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return loadNull();
         }
         Data2D data = Data2D.create(def.getType());
-        data.cloneDef(def);
+        data.cloneFrom(def);
         data.setTableChanged(false);
         setData(data);
         readData(true);
@@ -133,11 +138,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(this, null);
-                    data2D.readDataDefinition(conn);
+                    data2D.loadDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
                     }
-                    return data2D.readColumns(conn);
+                    return data2D.loadColumns(conn);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -315,7 +320,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                         fileData = Data2D.create(Data2DDefinition.type(file));
                     } else {
                         fileData = Data2D.create(def.dataType);
-                        fileData.cloneDef(def);
+                        fileData.cloneFrom(def);
                     }
                     fileData.initFile(file);
                     return true;
@@ -344,6 +349,19 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     public void beforeOpenFile() {
+    }
+
+    public void resetCSVFile(File file, Charset charset, boolean withNames, String delimiter) {
+        try {
+            if (file == null || !checkBeforeNextAction()) {
+                return;
+            }
+            DataFileCSV data = new DataFileCSV();
+            data.setFile(file).setCharset(charset).setHasHeader(withNames).setDelimiter(delimiter);
+            applyOptions(data);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void loadCSVFile(File file, Charset charset, boolean withNames, String delimiter) {
@@ -518,6 +536,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     /*
         action
      */
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        return Data2DMenuTools.fileMenus(this);
+    }
+
     @FXML
     @Override
     public void saveAsAction() {
@@ -926,7 +949,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     public StringTable verifyTableData() {
         try {
-            StringTable stringTable = new StringTable(Data2DVerify.columnNames(), data2D.displayName());
+            StringTable stringTable = new StringTable(Data2DVerify.columnNames(), data2D.labelName());
             for (int r = 0; r < tableData.size(); r++) {
                 List<String> row = data2D.dataRow(r);
                 List<List<String>> invalids = Data2DVerify.verify(data2D, r, row);
@@ -986,20 +1009,13 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     protected void showExamplesMenu(Event event) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("Examples"));
+
             items.addAll(Data2DExampleTools.examplesMenu(this));
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            pMenu.setSelected(UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", true));
-            pMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ExamplesPopWhenMouseHovering", pMenu.isSelected());
-                }
-            });
-            items.add(pMenu);
+            items.add(MenuTools.popCheckMenu(baseName + "Examples"));
 
             popEventMenu(event, items);
         } catch (Exception e) {
@@ -1013,15 +1029,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        hoverMenu.setSelected(UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", true));
-        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("Data2DHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-            }
-        });
-        items.add(hoverMenu);
+        items.add(MenuTools.popCheckMenu("Data2DHelps"));
 
         popEventMenu(event, items);
     }

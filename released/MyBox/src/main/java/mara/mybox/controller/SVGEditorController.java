@@ -9,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -20,9 +19,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
@@ -240,15 +239,7 @@ public class SvgEditorController extends XmlEditorController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            pMenu.setSelected(UserConfig.getBoolean("SVGExamplesPopWhenMouseHovering", true));
-            pMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("SVGExamplesPopWhenMouseHovering", pMenu.isSelected());
-                }
-            });
-            items.add(pMenu);
+            items.add(MenuTools.popCheckMenu("SVGExamples"));
 
             popEventMenu(event, items);
         } catch (Exception e) {
@@ -285,16 +276,16 @@ public class SvgEditorController extends XmlEditorController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (htmlBox.isFocused() || htmlBox.isFocusWithin()) {
-            if (htmlController.keyEventsFilter(event)) {
+            if (htmlController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return htmlController.keyEventsFilter(event);
+        return htmlController.handleKeyEvent(event);
     }
 
 

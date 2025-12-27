@@ -49,21 +49,22 @@ public class DataFileExcelConvertController extends BaseDataFileConvertControlle
                         continue;
                     }
                     List<String> rowData = new ArrayList<>();
-                    for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+                    for (int c = row.getFirstCellNum(); c < row.getLastCellNum();
+                            c++) {
                         rowData.add(MicrosoftDocumentTools.cellString(row.getCell(c)));
                     }
                     if (names == null) {
                         names = new ArrayList<>();
                         if (withNamesCheck.isSelected()) {
                             names.addAll(rowData);
-                            export.setNames(targetPathController, names, filePrefix(srcFile));
+                            export.initExport(targetPathController, names, filePrefix(srcFile));
                             export.openWriters();
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {
                                 names.add(message("Column") + c);
                             }
-                            export.setNames(targetPathController, names, filePrefix(srcFile));
+                            export.initExport(targetPathController, names, filePrefix(srcFile));
                         }
                         export.openWriters();
                     }

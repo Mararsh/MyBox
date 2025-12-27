@@ -76,11 +76,11 @@ public abstract class BasePixelsController extends BaseImageEditController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return scopeHandler.keyEventsFilter(event);
+        return scopeHandler.handleKeyEvent(event);
     }
 
     @Override

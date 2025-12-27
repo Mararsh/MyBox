@@ -292,18 +292,18 @@ public class MatricesBinaryCalculationController extends MatrixUnaryCalculationC
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == dataATab) {
-            if (dataAController.keyEventsFilter(event)) {
+            if (dataAController.handleKeyEvent(event)) {
                 return true;
             }
         } else if (tab == dataBTab) {
-            if (dataBController.keyEventsFilter(event)) {
+            if (dataBController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

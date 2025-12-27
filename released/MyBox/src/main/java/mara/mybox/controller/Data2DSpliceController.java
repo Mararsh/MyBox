@@ -69,7 +69,7 @@ public class Data2DSpliceController extends BaseTaskController {
                 }
             });
 
-            targetController.setParameters(this, null);
+            targetController.setParameters(this, null, false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -116,7 +116,7 @@ public class Data2DSpliceController extends BaseTaskController {
                 return false;
             }
             if (dataAController.isAllPages()) {
-                csvA = dataAController.data2D.copy(currentTask,
+                csvA = dataAController.data2D.copyTmp(currentTask,
                         dataAController.checkedColsIndices, false, true, false);
             } else {
                 csvA = DataFileCSV.save(task, null, null, ",",
@@ -134,7 +134,7 @@ public class Data2DSpliceController extends BaseTaskController {
                 return false;
             }
             if (dataBController.isAllPages()) {
-                csvB = dataBController.data2D.copy(currentTask,
+                csvB = dataBController.data2D.copyTmp(currentTask,
                         dataBController.checkedColsIndices, false, true, false);
             } else {
                 csvB = DataFileCSV.save(task, null, null, ",",

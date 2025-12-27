@@ -67,7 +67,7 @@ License:    Apache License Version 2.0
         </FlowPane>
       <HBox fx:id="labelBox" alignment="CENTER_LEFT" layoutX="15.0" layoutY="333.0" spacing="2.0">
          <children>
-            <Label text="%Label" />
+            <Label text="%DisplayedName" />
             <TextField fx:id="labelInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>

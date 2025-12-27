@@ -101,7 +101,7 @@ public class TmpTable extends DataTable {
             }
             List<Data2DColumn> sourceColumns = sourceData.getColumns();
             if (sourceColumns == null || sourceColumns.isEmpty()) {
-                sourceData.readColumns(conn);
+                sourceData.loadColumns(conn);
             }
             if (sourceColumns == null || sourceColumns.isEmpty()) {
                 showError(task, message("InvalidData"));

@@ -47,6 +47,9 @@ public class DataFileCSVWriter extends Data2DWriter {
             }
             printer = new CSVPrinter(new FileWriter(tmpFile, charset),
                     CsvTools.csvFormat(delimiter));
+            if (writeComments && targetComments != null && !targetComments.isBlank()) {
+                printer.printComment(targetComments);
+            }
             if (writeHeader && headerNames != null) {
                 printer.printRecord(headerNames);
             }
@@ -109,18 +112,8 @@ public class DataFileCSVWriter extends Data2DWriter {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.CSV);
                 }
-                targetData.setTask(task())
-                        .setFile(printFile)
-                        .setCharset(charset)
-                        .setDelimiter(delimiter)
-                        .setHasHeader(writeHeader)
-                        .setDataName(dataName)
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(targetRowIndex);
-                if (operate != null) {
-                    operate.handleTargetData(targetData);
-                }
-                Data2D.saveAttributes(conn(), targetData, columns);
+                targetData.setCharset(charset).setDelimiter(delimiter);
+                saveTargetData(writeHeader && headerNames != null, columns);
             }
             status = Status.Created;
         } catch (Exception e) {

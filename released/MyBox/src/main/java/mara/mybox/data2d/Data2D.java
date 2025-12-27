@@ -21,10 +21,10 @@ import static mara.mybox.value.Languages.message;
 public abstract class Data2D extends Data2D_Operations {
 
     @Override
-    public Data2D cloneAll() {
+    public Data2D cloneTo() {
         try {
             Data2D newData = (Data2D) super.clone();
-            newData.cloneData(this);
+            newData.cloneAttributesFrom(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -60,7 +60,7 @@ public abstract class Data2D extends Data2D_Operations {
                 infoTable.add(row);
             } else {
                 row = new ArrayList<>();
-                row.addAll(Arrays.asList(message("Charset"), charset.name()));
+                row.addAll(Arrays.asList(message("Charset"), charset != null ? charset.name() : message("Unknown")));
                 infoTable.add(row);
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Delimiter"), TextTools.delimiterMessage(delimiter)));

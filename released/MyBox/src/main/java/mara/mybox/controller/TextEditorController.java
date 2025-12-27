@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -12,6 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ByteTools;
@@ -154,7 +154,7 @@ public class TextEditorController extends BaseTextController {
 
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
-        List<MenuItem> items = new ArrayList<>();
+        List<MenuItem> items = MenuTools.initMenu(message("File"));
         MenuItem menu;
 
         if (sourceFile != null) {

@@ -4,31 +4,38 @@
 This is compute application to provide simple and easy functions. It's free and open sources.
 
 ## What's New                       
-2025-10-2 v6.9.1               
+2025-12-29 v6.9.2               
                                                                                                                           
-* Add:                                      
-     - "Macro command" is a line with complete operation and parameters to be executed. (Not complete)               
-        Two ways to execute macro:                                                                                                                                            
-          - Run the operation and output results in command window of system without GUI of MyBox.                    
-          - Run the operation and display results In GUI of MyBox.                                                                                                                              
-     - Manage macro commands in tree.                                                                                                                                 
-     - Provide examples of macro commands.                                                                                                                                 
+* Chinese name of MyBox is "吾匣". Icon is updated.                                      
 * Improve:                                      
-     - Pagination. Option to display navigation bar: show, hide, or adaptive.                                                                                                                                           
-     - Image Convolution: Option to make colors: keep, grey, black white.                                                                                                                                
+    - Shorten main menu.                                                                                                                                 
+    - Data manufacture:                                                                                                                                 
+          - Option to clear data definition and reload file.                    
+          - Permit to load csv file with duplicated header names.                    
+          - Comments in csv/excel/text/html file can be read and write. (Lines started with "#")                    
+          - Refine the interfaces of data target.                    
+          - New examples about Chinese characters.                    
+    - When edit image, option to allow moving the shape .                                                                                                                                 
+    - When view or edit image, can navigate to next file or previous file.                                                                                                                                 
+    - When sample image, correct values can be set automatically when inputs are beyond the image.                                                                                                                                 
+    - When browse files, option about where and how to open files.                                                                                                                                 
+* Upgrade to java 25.                                
 * Solved problems:                                
-     - Match Color: Weights are not picked for algorithms "CMC" and "HSB Euclidean".                                                                                                                                                   
-     - Javascript Tree: Fail to edit and execute script.                                                                                                                            
-     - OCR fails.                                                                                                                                
-     - Sharp images in batch: Fail or output wrong results.                                                                                                                    
-     - Data tree: Nodes should be refreshed after add/delete nodes.                                                                                                                                
-     - Pagination: Shortcuts do not work sometime.                                                                                                                               
-     - Make documents: Interface may be blocked.                                                                                                                               
+     - Shortcuts do not work when the focus is not in top pane.                                                                                                                                                   
+     - Data manufacture:                                                                                                                                 
+          - Error popped when open file.                    
+          - Fail to splice data.                    
+          - Interface should be updated after data are cleared.                   
+          - Fail to open interface "Export".                    
+          - New examples about Chinese characters.                    
+          - Fail to select columns when their names are different from their labels(displayed names).                    
+          - Attributes of column may be missed when copy and cause wrong definition.                    
+          - Data definition is always created and never updated when single quote is in name of file or table.                    
+          - File menu should be provided in interfaces of loading data file.                    
+     - Html: Special characters should be escaped in tag CODE.                                                                                                                               
 
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.1)         
-
-Happy Birthday to you, China!               
-             
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.2)         
+            
 ## Notice         
 Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
  
@@ -50,7 +57,7 @@ Self-contain packages include all files and need not java env nor installation.
 
 | Platform | Link | Size  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip)  | 360MB- | MyBox.exe |
+| win x64 | [MyBox-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-x64.zip)  | 360MB- | MyBox.exe |
 | Mint x64 | [MyBox-Mint-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-Mint-x64.tar.gz)  | 360MB-  | MyBox  |
 | mac | [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg)  | 360MB-  |  MyBox.app   |        
 
@@ -62,9 +69,9 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
 
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 280MB- | Java 24 or higher |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 24 or higher |
-| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  280MB-  | Java 24 or higher |        
+| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 280MB- | Java 25 or higher |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 280MB-  | Java 25 or higher |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  280MB-  | Java 25 or higher |        
 
 
 Run following command to launch this program with Jar package:        
@@ -148,12 +155,12 @@ In MyBox:
 # Documents        
 |              Name              | Version |   Time     |                                                                                                                                            English                                                                                                                                            |                                                                                                                                            Chinese                                                                                                                                            |
 |--------------------------------|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Development Logs               | 6.9.1   | 2025-10-2  | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html)                                                                                                                                                                                                                                    |
+| Development Logs               | 6.9.2   | 2025-12-29  | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html)                                                                                                                                                                                                                                    |
 | Shortcuts and Icons            | 6.8.5   | 2025-3-5   | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html)                                                                                                                                                                                                                                  |
-| Functions List                 | 6.8.2   | 2024-12-24 | [html](https://mara-mybox.sourceforge.io/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_functions_zh.html)                                                                                                                                                                                                                                  |
+| Functions List                 | 6.9.2   | 2025-12-29 | [html](https://mara-mybox.sourceforge.io/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_functions_zh.html)                                                                                                                                                                                                                                  |
 | Packing Steps                  | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mara-mybox.sourceforge.io/pack_steps.html)                                                                                                                                                                                                                                       |
 | Development Guide              | 2.1     | 2020-8-27  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.odt)                                                                                                                                                                                  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf)  [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.odt)                                                                                                                                                                                                                |
-| User Guide - Overview          | 6.9.1   | 2025-10-2  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt)                     |
+| User Guide - Overview          | 6.9.2   | 2025-12-29  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt)                     |
 | User Guide - Data Tools        | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DataTools-en/MyBox-DataTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.odt)                 | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DataTools-zh/MyBox-DataTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.odt)                 |
 | User Guide - Document Tools    | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DocumentTools-en/MyBox-DocumentTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.odt) | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DocumentTools-zh/MyBox-DocumentTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.odt) |
 | User Guide - Image Tools       | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-ImageTools-en/MyBox-ImageTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-ImageTools-zh/MyBox-ImageTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.odt)             |
@@ -178,6 +185,7 @@ In MyBox:
 | About - Media                  | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_about_media_en.html)                                                                                                                                                                                                                             | [html](https://mara-mybox.sourceforge.io/mybox_about_media_zh.html)                                                                                                                                                                                                                                    |              
 | About - Items in One Sentence About Java        | 6.7.3   | 2023-5-22 | [html](https://mara-mybox.sourceforge.io/mybox_about_java_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_java.html)                                                                                                                                                                                                                                    |
 | About - Items in One Sentence About Javafx      | 6.7.3   | 2023-5-22 | [html](https://mara-mybox.sourceforge.io/mybox_about_javafx_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_javafx.html)                                                                                                                                                                                                                                    |
+| Examples - Data in Two-dimensional Storage Structure      | 6.9.2   | 2025-12-29 | [html](https://mara-mybox.sourceforge.io/mybox_examples_data2d_en.html)                                                                                                                                                                                                                          | [html](https://mara-mybox.sourceforge.io/mybox_examples_data2d_cn.html)                                                                                                                                                                                                                                    |
 | Examples - Html Tree           | 6.8.2   | 2024-12-24 | [html](https://mara-mybox.sourceforge.io/mybox_examples_Node_Html_en.html)                                                                                                                                                                                                                          | [html](https://mara-mybox.sourceforge.io/mybox_examples_Node_Html_zh.html)                                                                                                                                                                                                                                    |
 | Examples - Text Tree           | 6.8.2   | 2024-12-24 | [html](https://mara-mybox.sourceforge.io/mybox_examples_Node_Text_en.html)                                                                                                                                                                                                                           | [html](https://mara-mybox.sourceforge.io/mybox_examples_Node_Text_zh.html)                                                                                                                                                                                                                                    |
 | Examples - Favorite Address    | 6.8.2   | 2024-12-24 | [html](https://mara-mybox.sourceforge.io/mybox_examples_Node_Web_Favorite_en.html)                                                                                                                                                                                                                   | [html](https://mara-mybox.sourceforge.io/mybox_examples_Node_Web_Favorite_zh.html)                                                                                                                                                                                                                                    |
@@ -216,14 +224,14 @@ MyBox is based on following open sources:
 | --- | --- | --- |
 | JDK                                 | Java                            | <http://jdk.java.net/>                                                                                                                                                                                                              |
 |                                     |                                 | <https://www.oracle.com/technetwork/java/javase/downloads/index.html>                                                                                                                                                               |
-|                                     |                                 | <https://docs.oracle.com/en/java/javase/24/docs/api/index.html>                                                                                                                                                                     |
+|                                     |                                 | <https://docs.oracle.com/en/java/javase/25/docs/api/index.html>                                                                                                                                                                     |
 | JavaFx                              | GUI                             | <https://gluonhq.com/products/javafx/>                                                                                                                                                                                              |
 |                                     |                                 | <https://docs.oracle.com/javafx/2/>                                                                                                                                                                                                 |
 |                                     |                                 | <https://gluonhq.com/products/scene-builder/>                                                                                                                                                                                       |
 |                                     |                                 | <https://openjfx.io/javadoc/24/>                                                                                                                                                                                                    |
 | Derby                               | Database                        | <http://db.apache.org/derby/>                                                                                                                                                                                                       |
 | NetBeans                            | IDE                             | <https://netbeans.org/>                                                                                                                                                                                                             |
-| jpackage                            | pack                            | <https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html>                                                                                                                                                            |
+| jpackage                            | pack                            | <https://docs.oracle.com/en/java/javase/25/docs/specs/man/jpackage.html>                                                                                                                                                            |
 | maven                               | build                           | <https://maven.apache.org/>                                                                                                                                                                                                         |
 | jai-imageio                         | Image manufacture               | <https://github.com/jai-imageio/jai-imageio-core>                                                                                                                                                                                   |
 | PDFBox                              | PDF manufacture                 | <https://pdfbox.apache.org/>                                                                                                                                                                                                        |
@@ -282,12 +290,25 @@ MyBox is based on following open sources:
 | DeepSeek | Knowledge | <https://www.deepseek.com/>     |
 | LibreOffice                         | Document                        | <https://www.libreoffice.org/>                                                                                                                                                                                                        |
 | doubao                         | Knowledge                        | <https://www.doubao.com/>                                                                                                                                                                                                        |
+| Chinese characters | data | <https://github.com/iDvel/The-Table-of-General-Standard-Chinese-Characters>    |   
+| Chinese Pinyin | data | <https://github.com/amorphobia/opencc-tonggui>    |   
+| Chinese strokes | data | <https://github.com/hamidun123/chinese-stroke>    |   
+| Chinese codes | data | <https://github.com/Hansha2011/TongYongGuiFanCharacterTable>    |   
+| Chinese words | data | <https://github.com/amorphobia/opencc-tonggui>    |   
+| Chinese statistic | data | <https://github.com/zispace/hanzi-freq>    |   
+|  |  | <http://bcc.blcu.edu.cn>    |   
+|  |  | <https://github.com/chinese-poetry/chinese-poetry>    |   
+|  |  | <https://github.com/forfudan/chinese-characters-frequency>    |   
+|  |  | <http://yong321.freeshell.org/misc/ChineseCharFrequency.html>    |   
+|  |  | <https://github.com/mahavivo/scripta-sinica>    |   
+|  |  | <https://forum.freemdict.com/t/topic/3748>    |   
+|  |  | <https://github.com/studyzy/imewlconverter>    |   
 
 
 # Features        
 ## Cross Platforms        
 
-MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 24.        
+MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 25.        
 Versions before v5.3 are based on Java 8.        
 
 ## Internationalized       

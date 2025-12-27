@@ -173,7 +173,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     public void deleteAction() {
         List<Integer> indice = tableView.getSelectionModel().getSelectedIndices();
         if (indice == null || indice.isEmpty()) {
-            clearAction();
+            popError(message("SelectToHandle"));
             return;
         }
         if (task != null && !task.isQuit()) {

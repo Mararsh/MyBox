@@ -9,37 +9,45 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2025-10-2 v6.9.1</p>
+  <p>2025-12-29 v6.9.2</p>
   <ul>
-   <li>Add: 
-    <ul>
-     <li>“Macro command” is a line with complete operation and parameters to be executed. (Not complete)<br>
-       Two ways to execute macro: 
-      <ul>
-       <li>Run the operation and output results in command window of system without GUI of MyBox.</li>
-       <li>Run the operation and display results In GUI of MyBox.</li>
-      </ul></li>
-     <li>Manage macro commands in tree.</li>
-     <li>Provide examples of macro commands.</li>
-    </ul></li>
+   <li>Chinese name of MyBox is “吾匣”. Icon is updated.</li>
    <li>Improve: 
     <ul>
-     <li>Pagination. Option to display navigation bar: show, hide, or adaptive.</li>
-     <li>Image Convolution: Option to make colors: keep, grey, black white.</li>
+     <li>Shorten main menu.</li>
+     <li>Data manufacture: 
+      <ul>
+       <li>Option to clear data definition and reload file.</li>
+       <li>Permit to load csv file with duplicated header names.</li>
+       <li>Comments in csv/excel/text/html file can be read and write. (Lines started with “#”)</li>
+       <li>Refine the interfaces of data target.</li>
+       <li>New examples about Chinese characters.</li>
+      </ul></li>
+     <li>When edit image, option to allow moving the shape .</li>
+     <li>When view or edit image, can navigate to next file or previous file.</li>
+     <li>When sample image, correct values can be set automatically when inputs are beyond the image.</li>
+     <li>When browse files, option about where and how to open files.</li>
     </ul></li>
+   <li>Upgrade to java 25.</li>
    <li>Solved problems: 
     <ul>
-     <li>Match Color: Weights are not picked for algorithms “CMC” and “HSB Euclidean”.</li>
-     <li>Javascript Tree: Fail to edit and execute script.</li>
-     <li>OCR fails.</li>
-     <li>Sharp images in batch: Fail or output wrong results.</li>
-     <li>Data tree: Nodes should be refreshed after add/delete nodes.</li>
-     <li>Pagination: Shortcuts do not work sometime.</li>
-     <li>Make documents: Interface may be blocked.</li>
+     <li>Shortcuts do not work when the focus is not in top pane.</li>
+     <li>Data manufacture: 
+      <ul>
+       <li>Error popped when open file.</li>
+       <li>Fail to splice data.</li>
+       <li>Interface should be updated after data are cleared.</li>
+       <li>Fail to open interface “Export”.</li>
+       <li>New examples about Chinese characters.</li>
+       <li>Fail to select columns when their names are different from their labels(displayed names).</li>
+       <li>Attributes of column may be missed when copy and cause wrong definition.</li>
+       <li>Data definition is always created and never updated when single quote is in name of file or table.</li>
+       <li>File menu should be provided in interfaces of loading data file.</li>
+      </ul></li>
+     <li>Html: Special characters should be escaped in tag CODE.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.1">Closed requirements/bugs in this version</a></p>
-  <p>Happy Birthday to you, China!</p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.9.2">Closed requirements/bugs in this version</a></p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -81,8 +89,8 @@
    </thead>
    <tbody>
     <tr>
-     <td>win10 x64</td>
-     <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip">MyBox-win-x64.zip</a></td>
+     <td>win x64</td>
+     <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-x64.zip">MyBox-win-x64.zip</a></td>
      <td>360MB-</td>
      <td>MyBox.exe</td>
     </tr>
@@ -117,19 +125,19 @@
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
      <td>280MB-</td>
-     <td>Java 24 or higher</td>
+     <td>Java 25 or higher</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
      <td>280MB-</td>
-     <td>Java 24 or higher</td>
+     <td>Java 25 or higher</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz">MyBox-mac.jar.gz</a></td>
      <td>280MB-</td>
-     <td>Java 24 or higher</td>
+     <td>Java 25 or higher</td>
     </tr>
    </tbody>
   </table>
@@ -445,8 +453,8 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.9.1</td>
-     <td>2025-10-2</td>
+     <td>6.9.2</td>
+     <td>2025-12-29</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -459,8 +467,8 @@
     </tr>
     <tr>
      <td>Functions List</td>
-     <td>6.8.2</td>
-     <td>2024-12-24</td>
+     <td>6.9.2</td>
+     <td>2025-12-29</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -480,8 +488,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.9.1</td>
-     <td>2025-10-2</td>
+     <td>6.9.2</td>
+     <td>2025-12-29</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -652,6 +660,13 @@
      <td>2023-5-22</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_javafx_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_javafx.html">html</a></td>
+    </tr>
+    <tr>
+     <td>Examples - Data in Two-dimensional Storage Structure</td>
+     <td>6.9.2</td>
+     <td>2025-12-29</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_data2d_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_data2d_cn.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - Html Tree</td>
@@ -882,7 +897,7 @@
     <tr>
      <td></td>
      <td></td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/24/docs/api/index.html">https://docs.oracle.com/en/java/javase/24/docs/api/index.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/25/docs/api/index.html">https://docs.oracle.com/en/java/javase/25/docs/api/index.html</a></td>
     </tr>
     <tr>
      <td>JavaFx</td>
@@ -917,7 +932,7 @@
     <tr>
      <td>jpackage</td>
      <td>pack</td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/24/docs/specs/man/jpackage.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/25/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/25/docs/specs/man/jpackage.html</a></td>
     </tr>
     <tr>
      <td>maven</td>
@@ -1209,11 +1224,76 @@
      <td>Knowledge</td>
      <td><a target=_blank href="https://www.doubao.com/">https://www.doubao.com/</a></td>
     </tr>
+    <tr>
+     <td>Chinese characters</td>
+     <td>data</td>
+     <td><a target=_blank href="https://github.com/iDvel/The-Table-of-General-Standard-Chinese-Characters">https://github.com/iDvel/The-Table-of-General-Standard-Chinese-Characters</a></td>
+    </tr>
+    <tr>
+     <td>Chinese Pinyin</td>
+     <td>data</td>
+     <td><a target=_blank href="https://github.com/amorphobia/opencc-tonggui">https://github.com/amorphobia/opencc-tonggui</a></td>
+    </tr>
+    <tr>
+     <td>Chinese strokes</td>
+     <td>data</td>
+     <td><a target=_blank href="https://github.com/hamidun123/chinese-stroke">https://github.com/hamidun123/chinese-stroke</a></td>
+    </tr>
+    <tr>
+     <td>Chinese codes</td>
+     <td>data</td>
+     <td><a target=_blank href="https://github.com/Hansha2011/TongYongGuiFanCharacterTable">https://github.com/Hansha2011/TongYongGuiFanCharacterTable</a></td>
+    </tr>
+    <tr>
+     <td>Chinese words</td>
+     <td>data</td>
+     <td><a target=_blank href="https://github.com/amorphobia/opencc-tonggui">https://github.com/amorphobia/opencc-tonggui</a></td>
+    </tr>
+    <tr>
+     <td>Chinese statistic</td>
+     <td>data</td>
+     <td><a target=_blank href="https://github.com/zispace/hanzi-freq">https://github.com/zispace/hanzi-freq</a></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+     <td><a target=_blank href="http://bcc.blcu.edu.cn">http://bcc.blcu.edu.cn</a></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+     <td><a target=_blank href="https://github.com/chinese-poetry/chinese-poetry">https://github.com/chinese-poetry/chinese-poetry</a></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+     <td><a target=_blank href="https://github.com/forfudan/chinese-characters-frequency">https://github.com/forfudan/chinese-characters-frequency</a></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+     <td><a target=_blank href="http://yong321.freeshell.org/misc/ChineseCharFrequency.html">http://yong321.freeshell.org/misc/ChineseCharFrequency.html</a></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+     <td><a target=_blank href="https://github.com/mahavivo/scripta-sinica">https://github.com/mahavivo/scripta-sinica</a></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+     <td><a target=_blank href="https://forum.freemdict.com/t/topic/3748">https://forum.freemdict.com/t/topic/3748</a></td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+     <td><a target=_blank href="https://github.com/studyzy/imewlconverter">https://github.com/studyzy/imewlconverter</a></td>
+    </tr>
    </tbody>
   </table>
   <h1>Features</h1>
   <h2>Cross Platforms</h2>
-  <p>MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 24.<br>
+  <p>MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 25.<br>
     Versions before v5.3 are based on Java 8.</p>
   <h2>Internationalized</h2>
   <ol>

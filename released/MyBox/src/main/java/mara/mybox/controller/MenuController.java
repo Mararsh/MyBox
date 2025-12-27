@@ -271,14 +271,14 @@ public class MenuController extends BaseChildController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
         if (parentController == null) {
             return false;
         }
-        return parentController.keyEventsFilter(event);
+        return parentController.handleKeyEvent(event);
     }
 
     /*

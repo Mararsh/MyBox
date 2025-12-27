@@ -186,7 +186,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
             if (isTmpData()) {
                 sData = ((Data2D) this).statisticByColumnsForCurrentPage(colIndices, calculation);
             } else {
-                Data2D filter2D = ((Data2D) this).cloneAll();
+                Data2D filter2D = ((Data2D) this).cloneTo();
                 filter2D.resetStatistic();
                 filter2D.startTask(task, null);
                 if (calculation.needNonStored()) {

@@ -48,13 +48,13 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import static mara.mybox.fxml.style.NodeStyleTools.attributeTextStyle;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
@@ -825,7 +825,6 @@ public class ControlWebView extends BaseController {
         String finalAddress = htmlElement.getDecodedAddress();
         String tag = htmlElement.getTag();
         String name = htmlElement.getName();
-        List<MenuItem> items = new ArrayList<>();
         boolean showName = name != null && !name.isBlank() && !name.equalsIgnoreCase(href);
         String title = "";
         if (showName) {
@@ -835,16 +834,14 @@ public class ControlWebView extends BaseController {
         if (!linkAddress.equalsIgnoreCase(href)) {
             title += "\n" + message("Address") + ": " + StringTools.menuPrefix(finalAddress);
         }
-        MenuItem menu = new MenuItem(title);
-        menu.setStyle(attributeTextStyle());
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
+
+        List<MenuItem> items = MenuTools.initMenu(title, false);
 
         if (!linkInNewTab) {
             items.add(clickedMenu());
         }
 
-        menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImageView("iconQuery.png"));
+        MenuItem menu = new MenuItem(message("QueryNetworkAddress"), StyleTools.getIconImageView("iconQuery.png"));
         menu.setOnAction((ActionEvent event) -> {
             NetworkQueryAddressController controller
                     = (NetworkQueryAddressController) WindowTools.openStage(Fxmls.NetworkQueryAddressFxml);
@@ -1073,29 +1070,13 @@ public class ControlWebView extends BaseController {
     @Override
     public void showOperationsMenu(Event event) {
         try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            if (address != null && !address.isBlank()) {
-                menu = new MenuItem(StringTools.menuPrefix(address));
-                menu.setStyle(attributeTextStyle());
-                items.add(menu);
-                items.add(new SeparatorMenuItem());
-            }
+            List<MenuItem> items = MenuTools.initMenu(address);
 
             items.addAll(operationsMenu());
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("WebviewOperationsPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu("WebviewOperations"));
 
             popEventMenu(event, items);
 
@@ -1265,15 +1246,7 @@ public class ControlWebView extends BaseController {
         try {
             List<MenuItem> items = functionsMenu(fevent);
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("WebviewFunctionsPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
+            items.add(MenuTools.popCheckMenu("WebviewFunctions"));
 
             popEventMenu(fevent, items);
 
@@ -1287,18 +1260,10 @@ public class ControlWebView extends BaseController {
             String html = loadedHtml();
             Document doc = webEngine.getDocument();
             boolean isFrameset = framesDoc != null && !framesDoc.isEmpty();
-            boolean hasAddress = address != null && !address.isBlank();
             boolean hasHtml = html != null && !html.isBlank();
 
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(address);
             MenuItem menu;
-
-            if (hasAddress) {
-                menu = new MenuItem(StringTools.menuPrefix(address));
-                menu.setStyle(attributeTextStyle());
-                items.add(menu);
-                items.add(new SeparatorMenuItem());
-            }
 
             Menu operationsMenu = new Menu(message("Operations"), StyleTools.getIconImageView("iconOperation.png"));
             operationsMenu.getItems().setAll(operationsMenu());

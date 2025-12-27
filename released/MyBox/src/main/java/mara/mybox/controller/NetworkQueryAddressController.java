@@ -19,6 +19,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.TextClipboardTools;
@@ -291,8 +292,7 @@ public class NetworkQueryAddressController extends BaseController {
 
     @FXML
     public void pickSaveCert(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             saveCert();
         } else {
             showSaveCertMenu(event);
@@ -301,7 +301,7 @@ public class NetworkQueryAddressController extends BaseController {
 
     @FXML
     public void popSaveCert(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showSaveCertMenu(event);
         }
     }

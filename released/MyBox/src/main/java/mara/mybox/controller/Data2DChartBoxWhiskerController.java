@@ -595,7 +595,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     @Override
     public String baseChartTitle() {
-        return data2D.displayName() + " - " + message("BoxWhiskerChart");
+        return data2D.labelName() + " - " + message("BoxWhiskerChart");
     }
 
     public void setLinesStyle() {

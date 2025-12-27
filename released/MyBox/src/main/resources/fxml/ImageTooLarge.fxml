@@ -30,7 +30,7 @@ License:    Apache License Version 2.0
       </FlowPane>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Button mnemonicParsing="false" onAction="#sample" text="%ImageSubsample" />
+                <Button mnemonicParsing="false" onAction="#sample" text="%ImageSample" />
                 <Button mnemonicParsing="false" onAction="#split" text="%ImageSplit" />
                 <Button mnemonicParsing="false" onAction="#edit" text="%EditImage" />
                 <Button mnemonicParsing="false" onAction="#mem" text="%ExtendMemory" />

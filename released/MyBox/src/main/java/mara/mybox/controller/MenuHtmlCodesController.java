@@ -241,7 +241,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             codes.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("\n<PRE><CODE> \n" + message("Codes") + "\n</CODE></PRE>\n");
+                    insertText(HtmlWriteTools.codeToHtml(message("Codes")));
                 }
             });
             codeNodes.add(codes);

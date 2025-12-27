@@ -28,6 +28,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 public class DataFileExcel extends DataFile {
 
+    public static final String CommentsMarker = "#";
+
     protected List<String> sheetNames;
     protected boolean currentSheetOnly;
 
@@ -40,7 +42,7 @@ public class DataFileExcel extends DataFile {
             if (d == null) {
                 return;
             }
-            super.cloneData(d);
+            super.cloneAttributesFrom(d);
             sheetNames = d.sheetNames;
             currentSheetOnly = d.currentSheetOnly;
         } catch (Exception e) {
@@ -93,14 +95,14 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public long readDataDefinition(Connection conn) {
+    public long loadDataDefinition(Connection conn) {
         Data2DReadDefinition reader = Data2DReadDefinition.create(this);
         if (reader == null) {
             hasHeader = false;
             return -2;
         }
         reader.setTask(task).start();
-        return super.readDataDefinition(conn);
+        return super.loadDataDefinition(conn);
     }
 
     public boolean newSheet(String sheetName) {
@@ -229,16 +231,10 @@ public class DataFileExcel extends DataFile {
     @Override
     public Data2DWriter selfWriter() {
         DataFileExcelWriter writer = new DataFileExcelWriter();
+        initSelfWriter(writer);
         writer.setBaseFile(file)
                 .setSheetName(sheet)
-                .setTargetData(this)
-                .setDataName(dataName)
-                .setPrintFile(file)
-                .setWriteHeader(hasHeader)
-                .setColumns(columns)
-                .setHeaderNames(columnNames())
-                .setRecordTargetFile(true)
-                .setRecordTargetData(true);
+                .setTargetData(this);
         return writer;
     }
 

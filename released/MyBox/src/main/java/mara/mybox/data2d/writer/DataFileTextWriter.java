@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import mara.mybox.data2d.Data2D;
+import static mara.mybox.data2d.DataFileText.CommentsMarker;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileDeleteTools;
@@ -46,7 +47,12 @@ public class DataFileTextWriter extends Data2DWriter {
                 delimiter = ",";
             }
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, charset));
-            if (writeHeader) {
+            if (writeComments && targetComments != null && !targetComments.isBlank()) {
+                for (String line : targetComments.split("\n")) {
+                    fileWriter.write(CommentsMarker + " " + line + "\n");
+                }
+            }
+            if (writeHeader && headerNames != null) {
                 TextFileTools.writeLine(task(), fileWriter, headerNames, delimiter);
             }
             status = Status.Openned;
@@ -104,7 +110,9 @@ public class DataFileTextWriter extends Data2DWriter {
                 return;
             }
             recordFileGenerated(printFile, VisitHistory.FileType.Text);
-            recordTargetData();
+            if (recordTargetData) {
+                recordTargetData();
+            }
             status = Status.Created;
         } catch (Exception e) {
             showError(e.toString());
@@ -113,23 +121,11 @@ public class DataFileTextWriter extends Data2DWriter {
 
     public void recordTargetData() {
         try {
-            if (recordTargetData) {
-                if (targetData == null) {
-                    targetData = Data2D.create(Data2DDefinition.DataType.Texts);
-                }
-                targetData.setTask(task())
-                        .setFile(printFile)
-                        .setCharset(charset)
-                        .setDelimiter(delimiter)
-                        .setHasHeader(writeHeader)
-                        .setDataName(dataName)
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(targetRowIndex);
-                if (operate != null) {
-                    operate.handleTargetData(targetData);
-                }
-                Data2D.saveAttributes(conn(), targetData, columns);
+            if (targetData == null) {
+                targetData = Data2D.create(Data2DDefinition.DataType.Texts);
             }
+            targetData.setCharset(charset).setDelimiter(delimiter);
+            saveTargetData(writeHeader && headerNames != null, columns);
         } catch (Exception e) {
             showError(e.toString());
         }

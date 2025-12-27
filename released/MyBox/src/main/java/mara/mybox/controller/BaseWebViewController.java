@@ -386,14 +386,14 @@ public class BaseWebViewController extends BaseFileController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
         if (webViewController == null) {
             return false;
         }
-        return webViewController.keyEventsFilter(event);
+        return webViewController.handleKeyEvent(event);
     }
 
     @Override

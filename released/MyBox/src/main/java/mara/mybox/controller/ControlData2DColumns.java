@@ -37,6 +37,7 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
@@ -637,7 +638,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     public void deleteRowsAction() {
         List<Data2DColumn> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
-            clearWithSure();
+            popError(message("SelectToHandle"));
             return;
         }
         for (Data2DColumn column : selected) {
@@ -915,7 +916,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
      */
     @FXML
     public void popExportMenu(Event event) {
-        if (UserConfig.getBoolean("Data2DDefinitionExportMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("Data2DDefinitionExport")) {
             showExportMenu(event);
         }
     }
@@ -923,7 +924,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     protected void showExportMenu(Event mevent) {
         try {
-            Data2D currentData = data2D != null ? data2D.cloneAll() : new DataFileCSV();
+            Data2D currentData = data2D != null ? data2D.cloneTo() : new DataFileCSV();
             currentData.setColumns(tableData);
 
             List<MenuItem> items = exportMenu(mevent, currentData);
@@ -979,15 +980,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
             });
             items.add(attrMenu);
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("Data2DDefinitionExportMenuPopWhenMouseHovering", true));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("Data2DDefinitionExportMenuPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
+            items.add(MenuTools.popCheckMenu("Data2DDefinitionExport"));
 
             return items;
 

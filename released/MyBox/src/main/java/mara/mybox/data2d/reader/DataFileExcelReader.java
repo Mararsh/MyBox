@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.DataFileExcel;
+import static mara.mybox.data2d.DataFileExcel.CommentsMarker;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import org.apache.poi.ss.usermodel.Row;
@@ -96,7 +97,12 @@ public class DataFileExcelReader extends Data2DReader {
         if (!readerHasHeader || iterator == null) {
             return;
         }
-        while (iterator.hasNext() && (iterator.next() == null) && !isStopped()) {
+        while (iterator.hasNext() && !isStopped()) {
+            readRecord();
+            if (sourceRow == null || sourceRow.isEmpty()) {
+                continue;
+            }
+            return;
         }
     }
 
@@ -168,9 +174,22 @@ public class DataFileExcelReader extends Data2DReader {
                 return;
             }
             sourceRow = new ArrayList<>();
-            for (int cellIndex = readerFileRow.getFirstCellNum(); cellIndex < readerFileRow.getLastCellNum(); cellIndex++) {
+            String firstValue = null;
+            for (int cellIndex = readerFileRow.getFirstCellNum();
+                    cellIndex < readerFileRow.getLastCellNum(); cellIndex++) {
                 String v = MicrosoftDocumentTools.cellString(readerFileRow.getCell(cellIndex));
                 sourceRow.add(v);
+                if (v != null && !v.isBlank()) {
+                    firstValue = v;
+                }
+            }
+            if (firstValue != null && firstValue.startsWith(CommentsMarker)) {
+                if (dataComments == null) {
+                    dataComments = firstValue;
+                } else {
+                    dataComments += "\n" + firstValue;
+                }
+                sourceRow = null;
             }
         } catch (Exception e) {
             showError(e.toString());

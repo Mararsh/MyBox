@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -13,6 +12,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
@@ -131,7 +131,7 @@ public class HtmlEditorController extends WebAddressController {
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {
         try {
-            List<MenuItem> items = new ArrayList<>();
+            List<MenuItem> items = MenuTools.initMenu(message("File"));
             MenuItem menu;
 
             if (sourceFile != null) {
@@ -228,11 +228,11 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return editController.keyEventsFilter(event);
+        return editController.handleKeyEvent(event);
     }
 
     @Override

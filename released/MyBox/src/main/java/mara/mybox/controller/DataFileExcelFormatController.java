@@ -20,6 +20,8 @@ public class DataFileExcelFormatController extends BaseChildController {
 
     @FXML
     protected CheckBox sourceWithNamesCheck;
+    @FXML
+    protected CheckBox clearCheck;
 
     public boolean isInvalid() {
         return dataController == null
@@ -58,6 +60,9 @@ public class DataFileExcelFormatController extends BaseChildController {
         if (file == null || !file.exists()) {
             close();
             return;
+        }
+        if (clearCheck.isSelected()) {
+            dataController.data2D.deleteDataDefinition();
         }
         dataController.loadExcelFile(file,
                 dataController.data2D.getSheet(),

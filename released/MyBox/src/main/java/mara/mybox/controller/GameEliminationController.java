@@ -63,6 +63,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SoundTools;
@@ -901,8 +902,7 @@ public class GameEliminationController extends BaseController {
 
     @FXML
     public void pickSoundFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
-                || AppVariables.fileRecentNumber <= 0) {
+        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
             selectSoundFile();
         } else {
             showSoundFileMenu(event);
@@ -911,7 +911,7 @@ public class GameEliminationController extends BaseController {
 
     @FXML
     public void popSoundFile(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("RecentVisit")) {
             showSoundFileMenu(event);
         }
     }

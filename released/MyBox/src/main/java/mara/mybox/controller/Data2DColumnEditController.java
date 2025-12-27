@@ -34,7 +34,7 @@ public class Data2DColumnEditController extends BaseChildController {
 
             columnEditController.setParameters(columnsController, index);
             nameLabel.setText((columnsController.data2D == null ? ""
-                    : (message("Data") + ": " + columnsController.data2D.displayName() + " "))
+                    : (message("Data") + ": " + columnsController.data2D.labelName() + " "))
                     + message("Column") + ": " + (index + 1));
             selectButton.setDisable(columnEditController.isTableExistedColumn);
 

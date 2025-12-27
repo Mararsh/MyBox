@@ -81,7 +81,7 @@ public class DataFileCSVConvertController extends BaseDataFileConvertController 
                 CsvTools.csvFormat(csvReadController.getDelimiterName(), true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
-            export.setNames(targetPathController, names, filePrefix(srcFile));
+            export.initExport(targetPathController, names, filePrefix(srcFile));
             export.openWriters();
             for (CSVRecord record : parser) {
                 if (currentTask == null || currentTask.isCancelled()) {
@@ -125,7 +125,7 @@ public class DataFileCSVConvertController extends BaseDataFileConvertController 
                     for (int i = 1; i <= record.size(); i++) {
                         names.add(message("Column") + i);
                     }
-                    export.setNames(targetPathController, names, filePrefix(srcFile));
+                    export.initExport(targetPathController, names, filePrefix(srcFile));
                     export.openWriters();
                 }
                 List<String> rowData = new ArrayList<>();

@@ -32,7 +32,7 @@ public class Data2DColumnCreateController extends BaseBranchController {
         try {
             this.columnsController = columnsController;
 
-            nameLabel.setText(columnsController.data2D == null ? "" : columnsController.data2D.displayName());
+            nameLabel.setText(columnsController.data2D == null ? "" : columnsController.data2D.labelName());
 
             buttomLabel.setVisible(columnsController.data2D != null
                     && columnsController.data2D.isTable() && columnsController.data2D.getSheet() != null);

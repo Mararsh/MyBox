@@ -1,7 +1,6 @@
 package mara.mybox.data2d.tools;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -10,10 +9,7 @@ import java.util.List;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes;
-import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.operate.Data2DOperate;
@@ -25,19 +21,12 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
-import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
-import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @Author Mara
@@ -66,176 +55,6 @@ public class Data2DConvertTools {
         return FileTmpTools.generateFile(prefix, ext);
     }
 
-    public static DataFileText toText(FxTask task, DataFileCSV csvData, String targetName, File targetFile) {
-        if (csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File txtFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.getName(), null, "txt");
-        if (FileCopyTools.copyFile(csvFile, txtFile)) {
-            DataFileText targetData = new DataFileText();
-            targetData.cloneDataAttributes(csvData);
-            targetData.setFile(txtFile);
-            if (targetName != null) {
-                targetData.setDataName(targetName);
-            }
-            targetData.saveAttributes();
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public static DataClipboard toClip(FxTask task, DataFileCSV csvData, String targetName) {
-        if (task == null || csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        List<Data2DColumn> cols = csvData.getColumns();
-        if (cols == null || cols.isEmpty()) {
-            try (Connection conn = DerbyBase.getConnection()) {
-                csvData.readColumns(conn);
-                cols = csvData.getColumns();
-                if (cols == null || cols.isEmpty()) {
-                    return null;
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                } else {
-                    MyBoxLog.error(e);
-                }
-                return null;
-            }
-        }
-        File clipFile = DataClipboard.newFile();
-        if (FileCopyTools.copyFile(csvFile, clipFile, true, true)) {
-            return DataClipboard.create(task, csvData, targetName, clipFile);
-        } else {
-            return null;
-        }
-    }
-
-    public static DataFileCSV toCSV(FxTask task, DataFileCSV csvData, String targetName, File targetFile) {
-        if (csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File tcsvFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.getName(), null, "csv");
-        if (FileCopyTools.copyFile(csvFile, tcsvFile)) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.cloneDataAttributes(csvData);
-            targetData.setFile(tcsvFile);
-            if (targetName != null) {
-                targetData.setDataName(targetName);
-            }
-            targetData.saveAttributes();
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public static DataFileExcel toExcel(FxTask task, DataFileCSV csvData, String targetName, File targetFile) {
-        if (task == null || csvData == null) {
-            return null;
-        }
-        File csvFile = csvData.getFile();
-        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
-            return null;
-        }
-        File excelFile = csvData.tmpFile(csvData.getName(), null, "xlsx");
-        boolean targetHasHeader = false;
-        int tcolsNumber = 0;
-        int trowsNumber = 0;
-        String targetSheetName = message("Sheet") + "1";
-        File validFile = FileTools.removeBOM(task, csvFile);
-        if (validFile == null || (task != null && !task.isWorking())) {
-            return null;
-        }
-        try (CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat());
-                Workbook targetBook = new XSSFWorkbook()) {
-            Sheet targetSheet = targetBook.createSheet(targetSheetName);
-            int targetRowIndex = 0;
-            Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator != null) {
-                if (csvData.isHasHeader()) {
-                    try {
-                        List<String> names = parser.getHeaderNames();
-                        if (names != null) {
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            for (int col = 0; col < names.size(); col++) {
-                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                                targetCell.setCellValue(names.get(col));
-                            }
-                            tcolsNumber = names.size();
-                            targetHasHeader = true;
-                        }
-                    } catch (Exception e) {
-                        // skip  bad lines
-                        MyBoxLog.error(e);
-                    }
-                }
-                while (iterator.hasNext() && task != null && !task.isCancelled()) {
-                    try {
-                        CSVRecord record = iterator.next();
-                        if (record != null) {
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            for (int col = 0; col < record.size(); col++) {
-                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                                targetCell.setCellValue(record.get(col));
-                            }
-                            trowsNumber++;
-                        }
-                    } catch (Exception e) {
-                        // skip  bad lines
-                        MyBoxLog.error(e);
-                    }
-                }
-                try (FileOutputStream fileOut = new FileOutputStream(excelFile)) {
-                    targetBook.write(fileOut);
-                }
-                targetBook.close();
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return null;
-        }
-        if (excelFile != null && excelFile.exists()) {
-            DataFileExcel targetData = new DataFileExcel();
-            targetData.cloneDataAttributes(csvData);
-            if (targetFile != null) {
-                if (!FileCopyTools.copyFile(excelFile, targetFile)) {
-                    return null;
-                }
-            } else {
-                targetData.setFile(excelFile);
-            }
-            targetData.setColumns(csvData.getColumns()).setSheet(targetSheetName).setHasHeader(targetHasHeader);
-            if (targetName != null) {
-                targetData.setDataName(targetName);
-            }
-            targetData.setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
-            targetData.saveAttributes();
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
     public static DataFileCSV write(FxTask task, ResultSet results) {
         try {
             DataFileCSVWriter writer = new DataFileCSVWriter();
@@ -261,7 +80,7 @@ public class Data2DConvertTools {
         try (Connection conn = DerbyBase.getConnection()) {
             List<Data2DColumn> columns = sourceData.getColumns();
             if (columns == null || columns.isEmpty()) {
-                sourceData.readColumns(conn);
+                sourceData.loadColumns(conn);
             }
             if (columns == null || columns.isEmpty()) {
                 return null;
@@ -271,7 +90,7 @@ public class Data2DConvertTools {
             DataTable dataTable = Data2DTableTools.createTable(task, conn,
                     TmpTable.tmpTableName(), referColumns, null, sourceData.getComments(), null, true);
             dataTable.setDataName(sourceData.getName());
-            dataTable.cloneValueAttributes(sourceData);
+            dataTable.copyDataAttributes(sourceData);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
@@ -317,10 +136,11 @@ public class Data2DConvertTools {
                 }
                 List<String> htmlRow = new ArrayList<>();
                 for (String v : csvRecord) {
-                    htmlRow.add(v != null ? "<PRE><CODE>" + v + "</PRE></CODE>" : null);
+                    htmlRow.add(v != null ? HtmlWriteTools.codeToHtml(v) : null);
                 }
                 table.add(htmlRow);
             }
+            table.setComments(data.getComments());
             return table.html();
         } catch (Exception e) {
             if (task != null) {

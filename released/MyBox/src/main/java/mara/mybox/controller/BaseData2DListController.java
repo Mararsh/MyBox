@@ -329,7 +329,8 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                     try {
                         delete.executeUpdate("DROP TABLE " + tname);
                     } catch (Exception e) {
-                        MyBoxLog.debug(e, tname);
+                        MyBoxLog.error(e, tname);
+                        return -1;
                     }
                 }
             }

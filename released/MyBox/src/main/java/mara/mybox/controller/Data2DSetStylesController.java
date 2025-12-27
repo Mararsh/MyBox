@@ -126,14 +126,16 @@ public class Data2DSetStylesController extends BaseController {
             if (tableController == null) {
                 return;
             }
-            getMyStage().setTitle(baseTitle + " - " + tableController.data2D.displayName());
+            getMyStage().setTitle(baseTitle + " - " + tableController.data2D.labelName());
 
             listController.sourceChanged();
-            filterController.updateData(tableController.data2D.cloneAll().setController(this));
+            filterController.updateData(tableController.data2D.cloneTo().setController(this));
 
             columnsPane.getChildren().clear();
             for (Data2DColumn column : tableController.data2D.getColumns()) {
-                columnsPane.getChildren().add(new CheckBox(column.getColumnName()));
+                CheckBox cb = new CheckBox(column.getLabel());
+                cb.setUserData(column);
+                columnsPane.getChildren().add(cb);
             }
             loadStyle(currentStyle);
 
@@ -236,7 +238,7 @@ public class Data2DSetStylesController extends BaseController {
             for (String s : ns) {
                 for (Node node : columnsPane.getChildren()) {
                     CheckBox cb = (CheckBox) node;
-                    if (cb.getText().equals(s)) {
+                    if (Data2DColumn.matchCheckBox(cb, s)) {
                         cb.setSelected(true);
                         break;
                     }
@@ -327,15 +329,16 @@ public class Data2DSetStylesController extends BaseController {
             }
             checkStyle();
             updatedStyle.setDataID(tableController.data2D.getDataID());
-            String columns = "";
+            String columns = "", name;
             boolean allColumns = true;
             for (Node node : columnsPane.getChildren()) {
                 CheckBox cb = (CheckBox) node;
                 if (cb.isSelected()) {
+                    name = Data2DColumn.getCheckBoxColumnName(cb);
                     if (columns.isBlank()) {
-                        columns = cb.getText();
+                        columns = name;
                     } else {
-                        columns += Data2DStyle.ColumnSeparator + cb.getText();
+                        columns += Data2DStyle.ColumnSeparator + name;
                     }
                 } else {
                     allColumns = false;

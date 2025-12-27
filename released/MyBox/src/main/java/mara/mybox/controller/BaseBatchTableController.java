@@ -33,6 +33,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableNumberCell;
@@ -963,34 +964,8 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    @Override
-    public void deleteAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(tableView.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            clearFilesAction();
-            return;
-        }
-        isSettingValues = true;
-        for (int i = selected.size() - 1; i >= 0; --i) {
-            int index = selected.get(i);
-            if (index < 0 || index > tableData.size() - 1) {
-                continue;
-            }
-            tableData.remove(index);
-        }
-        tableView.refresh();
-        isSettingValues = false;
-        tableChanged();
-    }
-
-    @FXML
     public void clearFilesAction() {
-        isSettingValues = true;
-        tableData.clear();
-        tableView.refresh();
-        isSettingValues = false;
-        tableChanged();
+        clear();
     }
 
     public void listAction() {
@@ -1082,15 +1057,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        hoverMenu.setSelected(UserConfig.getBoolean("FilesTablePopWhenMouseHovering", true));
-        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("FilesTablePopWhenMouseHovering", hoverMenu.isSelected());
-            }
-        });
-        items.add(hoverMenu);
+        items.add(MenuTools.popCheckMenu("FilesTable"));
 
         popEventMenu(event, items);
     }

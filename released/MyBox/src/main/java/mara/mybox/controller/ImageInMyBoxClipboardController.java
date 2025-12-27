@@ -155,16 +155,16 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         if (viewBox.isFocused() || viewBox.isFocusWithin()) {
-            if (imageController.keyEventsFilter(event)) {
+            if (imageController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        if (super.keyEventsFilter(event)) {
+        if (super.handleKeyEvent(event)) {
             return true;
         }
-        return imageController.keyEventsFilter(event);
+        return imageController.handleKeyEvent(event);
     }
 
     /*

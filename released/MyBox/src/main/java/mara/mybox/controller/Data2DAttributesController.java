@@ -153,7 +153,7 @@ public class Data2DAttributesController extends BaseChildController {
             tableData2DDefinition = dataController.tableData2DDefinition;
             tableData2DColumn = dataController.tableData2DColumn;
             tableData = dataController.tableData;
-            data2D = dataController.data2D.cloneAll();
+            data2D = dataController.data2D.cloneTo();
             columnsController.setParameters(this);
 
             isSettingValues = true;
@@ -206,7 +206,7 @@ public class Data2DAttributesController extends BaseChildController {
         } else {
             columnsTab.setText(message("Columns"));
         }
-        String title = baseTitle + " - " + data2D.displayName();
+        String title = baseTitle + " - " + data2D.labelName();
         if (columnsChanged || attributesChanged) {
             title += " *";
         }
@@ -300,7 +300,7 @@ public class Data2DAttributesController extends BaseChildController {
         if (dataController.data2D == null) {
             dataController.data2D = attributes;
         } else {
-            dataController.data2D.cloneData(attributes);
+            dataController.data2D.cloneAttributesFrom(attributes);
         }
         dataController.makeColumns();
         dataController.updateTable(pageData);
@@ -315,7 +315,7 @@ public class Data2DAttributesController extends BaseChildController {
         if (!PopTools.askSure(getTitle(), message("SureChangeDataAttributes"))) {
             return;
         }
-        Data2D sourceData = dataController.data2D.cloneAll();
+        Data2D sourceData = dataController.data2D.cloneTo();
         sourceFile = sourceData.getFile();
         if (task != null) {
             task.cancel();
@@ -375,14 +375,14 @@ public class Data2DAttributesController extends BaseChildController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == columnsTab) {
-            if (columnsController.keyEventsFilter(event)) {
+            if (columnsController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
     /*

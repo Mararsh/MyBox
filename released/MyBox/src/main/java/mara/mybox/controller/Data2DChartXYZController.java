@@ -12,6 +12,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -132,17 +133,19 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
             isSettingValues = true;
             columnsPane.getChildren().clear();
             isSettingValues = false;
-            List<String> names = data2D.columnNames();
-            if (names == null) {
+            if (data2D.getColumns() == null) {
                 return;
             }
+            List<String> names = data2D.columnNames();
             String xName = xSelector.getValue();
             String yName = ySelector.getValue();
             names.remove(xName);
             names.remove(yName);
             isSettingValues = true;
-            for (String name : names) {
-                columnsPane.getChildren().add(new CheckBox(name));
+            for (Data2DColumn col : data2D.getColumns()) {
+                CheckBox cb = new CheckBox(col.getLabel());
+                cb.setUserData(col);
+                columnsPane.getChildren().add(cb);
             }
             String zCol = zSelector.getSelectionModel().getSelectedItem();
             zSelector.getItems().setAll(names);

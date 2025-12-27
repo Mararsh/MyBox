@@ -50,8 +50,15 @@ public class HtmlWriter extends Data2DWriter {
                 s.append(indent).append(indent).append(indent).append(css).append("\n");
                 s.append(indent).append(indent).append("</style>\n");
             }
+
             s.append(indent).append("</HEAD>\n").append(indent).append("<BODY>\n");
-            s.append(StringTable.tablePrefix(new StringTable(headerNames)));
+
+            StringTable table = new StringTable(writeHeader ? headerNames : null);
+            if (writeComments && targetComments != null && !targetComments.isBlank()) {
+                table.setComments(targetComments);
+            }
+            s.append(StringTable.tablePrefix(table));
+
             fileWriter.write(s.toString());
             status = Status.Openned;
             return true;

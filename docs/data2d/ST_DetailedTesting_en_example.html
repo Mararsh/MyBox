@@ -1,0 +1,147 @@
+<HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <TITLE>Detailed testing</TITLE>
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2 align="center"><PRE><CODE>Detailed testing</CODE></PRE></H2>
+        <DIV align="center">
+            <TABLE>
+                <TR  style="font-weight:bold; "><TH>Test environment</TH><TH>Version</TH><TH>Type</TH><TH>Object</TH><TH>Title</TH><TH>Steps</TH><TH>Status</TH><TH>Modify time</TH><TH>Description</TH></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.7</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Data Tree</CODE></PRE></TD><TD><PRE><CODE>switch view mode automatically</CODE></PRE></TD><TD><PRE><CODE>1. Make children number of root is less than or equal to 100.
+2. Open interface of data tree, verity that tree mode is switched automatically.
+3. Make children number of root is larger than 100.
+4. Open interface of data tree, verity that table mode is switched automatically.</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-05-23 09:18:20</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.7</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Data Tree</CODE></PRE></TD><TD><PRE><CODE>switch tree mode to table mode</CODE></PRE></TD><TD><PRE><CODE>1. In tree mode, select one node.
+2. Switch to table mode, verify that children of selected node are shown in paginated table.</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-05-23 09:18:33</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.7</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Data Tree</CODE></PRE></TD><TD><PRE><CODE>switch table mode to tree mode</CODE></PRE></TD><TD><PRE><CODE>1. In table mode, expaned one node.
+2. Switch to tree mode, verify that the node is selected in the tree.</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-05-23 09:18:38</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.7</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Automatical  Testing</CODE></PRE></TD><TD><PRE><CODE>import data of trees</CODE></PRE></TD><TD><PRE><CODE>1. Select items about data trees.
+2. Execute testings, verify that data are imported automatically for trees.
+3. Test &quot;Geography Code&quot; separately.</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-05-23 09:19:02</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.7</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Automatical  Testing</CODE></PRE></TD><TD><PRE><CODE>trigger test cases</CODE></PRE></TD><TD><PRE><CODE>1. All interfaces, except for data trees, are closed after they are opened automatically.
+2. Next test case is triggerred when current interface is closed.</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-05-23 09:19:07</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.7</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>edit data in table mode</CODE></PRE></TD><TD><PRE><CODE>1. Switch to table mode.
+2. Modify data, and click Save. Verify that updates are saved correctly.
+3. Modify data, and switch to other modes. Verify that updates are synchronized to other modes.</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-05-23 09:19:10</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.7</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>edit data in csv mode</CODE></PRE></TD><TD><PRE><CODE>1. Switch to csv mode.
+2. Modify data, and click Save. Verify that updates are saved correctly.
+3. Modify data, and switch to other modes. Verify that updates are synchronized to other modes.</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-05-23 09:19:15</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>Invalid</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>row expression - invalid values and operators</CODE></PRE></TD><TD><PRE><CODE>1. Use function of &#39;Set Values&#39; to check caluculation of row experssion
+2. To &#39;String&#39; column, input null value and use operator: + - * /
+3. To &#39;Integer&#39; column, input null value and use operator: + - * /
+4. To &#39;Double&#39; column, input null value and use operator: + - * /</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 10:10:21</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>row expression - column types and operators</CODE></PRE></TD><TD><PRE><CODE>1. Use function of &#39;Set Values&#39; to check caluculation of row experssion
+2. To &#39;String&#39; column, input valid value and use operator: + - * /
+3. To &#39;Integer&#39; column, input valid value and use operator: + - * /
+4. To &#39;Double&#39; column, input valid value and use operator: + - * /</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 10:10:21</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>Enumerated Short</CODE></PRE></TD><TD><PRE><CODE>1. Open a CSV file
+2. Add column with type of Enumerated Short
+3. Add rows and select values of Enumerated Short
+4. Save new column and rows
+5. Values of Enumerated Short can be edited/saved/displayed/exported correctly</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 10:10:21</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Image</CODE></PRE></TD><TD><PRE><CODE>read/write WebP file</CODE></PRE></TD><TD><PRE><CODE>1. Open WebP and save it as other formats
+2. Read jpg/png file and save it as WebP file</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 10:10:21</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>Set Values - row expression</CODE></PRE></TD><TD><PRE><CODE>1. To current page of csv file, use function &#39;Set Values&#39;, input valid row expression, and execute
+2. To all data of csv file, use function &#39;Set Values&#39;, input valid row expression, and execute
+3. To current page of database table, use function &#39;Set Values&#39;, input valid row expression, and execute
+4. To all data of database table, use function &#39;Set Values&#39;, input valid row expression, and execute</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 10:10:21</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>Invalid</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>Set Values - row expression</CODE></PRE></TD><TD><PRE><CODE>1. To current page of csv file, use function &#39;Set Values&#39;, input invalid row expression, and execute
+2. To all data of csv file, use function &#39;Set Values&#39;, input invalid row expression, and execute
+3. To current page of database table, use function &#39;Set Values&#39;, input invalid row expression, and execute
+4. To all data of database table, use function &#39;Set Values&#39;, input invalid row expression, and execute</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 10:10:16</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Geography Code</CODE></PRE></TD><TD><PRE><CODE>predefined geography codes</CODE></PRE></TD><TD><PRE><CODE>1. Set data path of v6.8.3 as new path, then start v6.8.3
+2. Import predefined geography codes
+3. Geography codes should be displayed in the tree correctly
+4. Geography codes should be displayed in map correctly
+5. Geography codes can be edited and saved correctly
+6. Other functions of the tree work correctly
+7. Geography codes can be handled as internal table correctly</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 10:03:32</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.3</CODE></PRE></TD><TD><PRE><CODE>兼容性</CODE></PRE></TD><TD><PRE><CODE>Geography Code</CODE></PRE></TD><TD><PRE><CODE>Upgrade from v6.8</CODE></PRE></TD><TD><PRE><CODE>1. View geography codes in v6.8
+2. Set data path of v6.8.3 as the data path of v6.8, then start v6.8.3
+3. View geography codes in v6.8.3
+4. Geography codes of v6.8 should be displayed in the tree of v6.8.3 correctly
+5. Geography codes of v6.8 should be displayed in map of v6.8.3 correctly
+6. Geography codes can be edited and saved correctly
+7. Other functions of the tree work correctly
+8. Geography codes can be handled as internal table correctly</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2025-01-24 09:54:33</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>switch mode - null - permit</CODE></PRE></TD><TD><PRE><CODE>1.html to table 
+2.table to html 
+3.html to csv 
+4.csv to texts 
+5.texts to html</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Invalid</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>switch mode - null - not permit</CODE></PRE></TD><TD><PRE><CODE>1.html to table 
+2.table to html 
+3.html to csv 
+4.csv to texts 
+5.texts to html</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Invalid</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>switch mode - invalid values</CODE></PRE></TD><TD><PRE><CODE>1.html to table 
+2.table to html 
+3.html to csv 
+4.csv to texts 
+5.texts to html</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>interface</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>switch mode - interfaces</CODE></PRE></TD><TD><PRE><CODE>1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>modify data - temporary data</CODE></PRE></TD><TD><PRE><CODE>1.add/delete/change rows 
+2.move rows 
+3.clear rows</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>modify data - one page</CODE></PRE></TD><TD><PRE><CODE>1.add/delete/change rows 
+2.move rows 
+3.clear rows</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>modify data - multiple pages</CODE></PRE></TD><TD><PRE><CODE>1.add/delete/change rows 
+2.move rows 
+3.clear rows</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>interface</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>interfaces</CODE></PRE></TD><TD><PRE><CODE>1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - add/delete/change columns</CODE></PRE></TD><TD><PRE><CODE>1.all types 
+2.all formats 
+3.invalid</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - move columns</CODE></PRE></TD><TD></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Invalid</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - clear columns</CODE></PRE></TD><TD></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - modify attributes - temporary data</CODE></PRE></TD><TD></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - modify attributes - save data</CODE></PRE></TD><TD></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - modify attributes - cancel data</CODE></PRE></TD><TD></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - modify attributes - one page</CODE></PRE></TD><TD></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - modify attributes - multiple pages</CODE></PRE></TD><TD></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>interface</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>define data - interfaces</CODE></PRE></TD><TD><PRE><CODE>1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>save data - temporary data</CODE></PRE></TD><TD><PRE><CODE>1.save 
+2.cancel</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>save data - one page</CODE></PRE></TD><TD><PRE><CODE>1.save 
+2.cancel</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>save data - multiple pages</CODE></PRE></TD><TD><PRE><CODE>1.save 
+2.cancel</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>save as - source data types</CODE></PRE></TD><TD><PRE><CODE>CSV/Excel/texts/database table/clipboard/matrix</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>save as - target formats</CODE></PRE></TD><TD><PRE><CODE>CSV/Excel/texts/database table/MyBox clipboard/matrix/System clipboard/JSON/XML/HTML/PDF</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>Function</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>save as - data status</CODE></PRE></TD><TD><PRE><CODE>1.temporary data 
+2.one page 
+3.multiple pages</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR><TD><PRE><CODE>win</CODE></PRE></TD><TD><PRE><CODE>MyBox v6.8.1</CODE></PRE></TD><TD><PRE><CODE>interface</CODE></PRE></TD><TD><PRE><CODE>Manufacture Data</CODE></PRE></TD><TD><PRE><CODE>save as - interfaces</CODE></PRE></TD><TD><PRE><CODE>1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus</CODE></PRE></TD><TD><PRE><CODE>pass</CODE></PRE></TD><TD><PRE><CODE>2024-5-18</CODE></PRE></TD><TD></TD></TR>
+                <TR  style="font-weight:bold; "><TH>Test environment</TH><TH>Version</TH><TH>Type</TH><TH>Object</TH><TH>Title</TH><TH>Steps</TH><TH>Status</TH><TH>Modify time</TH><TH>Description</TH></TR>
+            </TABLE>
+        </DIV>
+    </BODY>
+</HTML>

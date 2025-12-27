@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javafx.stage.FileChooser;
 import mara.mybox.data.FileInformation;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 
 /**
@@ -23,11 +26,101 @@ public class FileSortTools {
 
     public static FileSortMode sortMode(String mode) {
         for (FileSortMode v : FileSortMode.values()) {
-            if (v.name().equals(mode) || Languages.message(v.name()).equals(mode)) {
+            if (Languages.matchIgnoreCase(v.name(), mode)) {
                 return v;
             }
         }
         return null;
+    }
+
+    public static boolean hasNextFile(File file, int fileType, FileSortMode sortMode) {
+        try {
+            List<File> files = siblingFiles(file, fileType, sortMode);
+            if (files == null) {
+                return false;
+            }
+            int index = files.indexOf(file);
+            return index >= 0 && index < files.size() - 1;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean hasPreviousFile(File file, int fileType, FileSortMode sortMode) {
+        try {
+            List<File> files = siblingFiles(file, fileType, sortMode);
+            if (files == null) {
+                return false;
+            }
+            int index = files.indexOf(file);
+            return index > 0 && index <= files.size() - 1;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static File nextFile(File file, int fileType, FileSortMode sortMode) {
+        try {
+            List<File> files = siblingFiles(file, fileType, sortMode);
+            if (files == null) {
+                return null;
+            }
+            int index = files.indexOf(file);
+            if (index < 0 || index >= files.size() - 1) {
+                return null;
+            }
+            return files.get(index + 1);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static File previousFile(File file, int fileType, FileSortMode sortMode) {
+        try {
+            List<File> files = siblingFiles(file, fileType, sortMode);
+            if (files == null) {
+                return null;
+            }
+            int index = files.indexOf(file);
+            if (index <= 0 || index > files.size() - 1) {
+                return null;
+            }
+            return files.get(index - 1);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<File> siblingFiles(File file, int fileType, FileSortMode sortMode) {
+        if (file == null) {
+            return null;
+        }
+        List<File> files = validFiles(file.getParentFile(), fileType);
+        sortFiles(files, sortMode);
+        return files;
+    }
+
+    public static List<File> validFiles(File path, int fileType) {
+        try {
+            if (path == null || !path.isDirectory()) {
+                return null;
+            }
+            File[] pathFiles = path.listFiles();
+            if (pathFiles == null || pathFiles.length == 0) {
+                return null;
+            }
+            List<FileChooser.ExtensionFilter> filter = VisitHistoryTools.getExtensionFilter(fileType);
+            List<File> files = new ArrayList<>();
+            for (File file : pathFiles) {
+                if (file.isFile() && FileFilters.accept(filter, file)) {
+                    files.add(file);
+                }
+            }
+            return files;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     public static void sortFiles(List<File> files, FileSortMode sortMode) {
@@ -166,27 +259,6 @@ public class FileSortTools {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-    }
-
-    public static List<File> sortFiles(File path, FileSortMode sortMode) {
-        if (path == null || !path.isDirectory()) {
-            return null;
-        }
-        File[] pathFiles = path.listFiles();
-        if (pathFiles == null || pathFiles.length == 0) {
-            return null;
-        }
-        List<File> files = new ArrayList<>();
-        for (File file : pathFiles) {
-            if (file.isFile()) {
-                files.add(file);
-            }
-        }
-        if (files.isEmpty()) {
-            return null;
-        }
-        sortFiles(files, sortMode);
-        return files;
     }
 
     public static void sortFileInformations(List<FileInformation> files, FileSortMode sortMode) {

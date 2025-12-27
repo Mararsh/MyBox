@@ -97,6 +97,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 }
             });
 
+            numberTypeRadio.setSelected(true);
             compareGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -282,11 +283,11 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
                 if (!setBox.getChildren().contains(comparePane)) {
                     setBox.getChildren().add(1, comparePane);
                 }
-                if (objectColumn.isDBNumberType()) {
-                    numberTypeRadio.setSelected(true);
-                } else {
-                    stringTypeRadio.setSelected(true);
-                }
+//                if (objectColumn.isDBNumberType()) {
+//                    numberTypeRadio.setSelected(true);
+//                } else {
+//                    stringTypeRadio.setSelected(true);
+//                }
             } else if (containRadio.isSelected()
                     || containInsensitiveRadio.isSelected()
                     || containRadio.isSelected()

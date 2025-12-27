@@ -150,7 +150,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         try (PreparedStatement statement = conn.prepareStatement(Query_File)) {
-            statement.setString(1, DerbyBase.stringValue(file.getAbsolutePath()));
+            statement.setString(1, file.getAbsolutePath());
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -176,7 +176,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
         try (PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
+            statement.setString(2, file.getAbsolutePath());
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -201,8 +201,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
         try (PreparedStatement statement = conn.prepareStatement(Query_TypeFileSheet)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
-            statement.setString(3, DerbyBase.stringValue(sheet));
+            statement.setString(2, file.getAbsolutePath());
+            statement.setString(3, sheet);
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -216,7 +216,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
         try (PreparedStatement statement = conn.prepareStatement(Query_Table)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(tname));
+            statement.setString(2, tname);
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -229,7 +229,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         try (PreparedStatement statement = conn.prepareStatement(Query_UserTable)) {
-            statement.setString(1, DerbyBase.stringValue(tname));
+            statement.setString(1, tname);
             return query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -256,13 +256,26 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteFile(Connection conn, DataType type, File file) {
+    public int deleteDefinition(Connection conn, long id) {
+        if (conn == null || id < 0) {
+            return -1;
+        }
+        try (PreparedStatement statement = conn.prepareStatement(DeleteID)) {
+            statement.setLong(1, id);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -2;
+        }
+    }
+
+    public int deleteFileDefinition(Connection conn, DataType type, File file) {
         if (conn == null || file == null) {
             return -1;
         }
         try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
+            statement.setString(2, file.getAbsolutePath());
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -270,13 +283,13 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteName(Connection conn, DataType type, String name) {
+    public int deleteNameDefinition(Connection conn, DataType type, String name) {
         if (conn == null || name == null || name.isBlank()) {
             return -1;
         }
         try (PreparedStatement statement = conn.prepareStatement(Delete_TypeName)) {
             statement.setShort(1, Data2DDefinition.type(type));
-            statement.setString(2, DerbyBase.stringValue(name));
+            statement.setString(2, name);
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -298,7 +311,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -3;
         }
         try (PreparedStatement statement = conn.prepareStatement(Delete_UserTable)) {
-            statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(fixedName)));
+            statement.setString(1, DerbyBase.savedName(fixedName));
             return statement.executeUpdate();
         } catch (Exception e) {
 //            MyBoxLog.error(e);
@@ -307,7 +320,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     }
 
     public int deleteClipboard(Connection conn, File file) {
-        return deleteFile(conn, DataType.MyBoxClipboard, file);
+        return deleteFileDefinition(conn, DataType.MyBoxClipboard, file);
     }
 
     public int clearInvalid(BaseTaskController taskController, Connection conn, boolean clearTmpTables) {

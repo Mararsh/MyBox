@@ -1,12 +1,12 @@
 # [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mara-mybox.sourceforge.io/iconGo.png)
 
-# MyBox：简易工具集
+# 吾匣：简易工具集
 这是图形化计算机应用，目标是提供简单易用的功能。免费开源。           
 
 ## 新内容
 2025-12-29 版本6.9.2                    
                   
-*  MyBox的中文名是“吾匣”，更新图标。                    
+* MyBox的中文名是“吾匣”，更新图标。                    
 * 改进：                    
      - 缩短主菜单。                    
      - 数据处理：                    
@@ -37,7 +37,7 @@
            
 
 ## 注意       
-MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：                                                            
+吾匣未经足够测试，可靠性低、稳定性差。使用吾匣，可能出现以下情况：                                                            
  
 * 毁坏文件/数据。       
 * 输出错误的结果。       
@@ -57,11 +57,11 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 
 | 平台 | 链接 | 大小 | 启动文件 |
 | --- | --- | --- |  --- |
-| win11 x64 | [MyBox-win11-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win11-x64.zip)  | 360MB- | MyBox.exe |
+| win x64 | [MyBox-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-x64.zip)  | 360MB- | MyBox.exe |
 | Mint x64 | [MyBox-Mint-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-Mint-x64.tar.gz)  | 360MB-  | MyBox  |
 | mac x64| [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg)  | 360MB-  |  MyBox.app   |
 
-双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
+双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到吾匣，这样双击文件名就直接是用吾匣打开了。        
   
 
 ## Jar包
@@ -77,7 +77,7 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 执行以下命令来启动程序：       
 `    java   -jar   MyBox.jar `     
 
-程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
+程序可以跟一个文件名作为参数、以用吾匣直接打开此文件。例如以下命令是打开此图片：       
 `     java   -jar   MyBox.jar   /tmp/a1.jpg`      
 
      
@@ -95,7 +95,7 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 ## 配置
 配置文件在"用户目录"下:       
 
-| 平台 | MyBox配置文件的目录 |
+| 平台 | 吾匣配置文件的目录 |
 | --- | --- |
 | win | `C:\用户\用户名\mybox\MyBox_v版本号.ini`  |
 | linux | `/home/用户名/mybox/MyBox_v版本号.ini` |
@@ -107,10 +107,10 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 ## 迁移
 1. 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
 2. 每个版本处理的所有数据都在它指向的“数据目录”下。多个版本可以指向同一数据目录。
-3. MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。    
+3. 吾匣向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。    
 
 ## 备份与恢复        
-在MyBox中：       
+在吾匣中：       
 1. 将目录复制到别处，即为备份。       
 2. 将备份的目录覆盖当前目录，即为恢复。        
 3. 不必备份数据目录的每个子目录。    
@@ -211,13 +211,13 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 | 调色盘-光学色相环(RGB)24色    | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_rgb24_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_rgb24_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_rgb24_all_zh.html)                                                                                                                                                                                                                                   |
 | 调色盘-光学色相环(RGB)360色   | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_rgb360_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_rgb360_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_rgb360_all_zh.html)                                                                                                                                                                                                                                   |
 | 调色盘-美术颜料               | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_zh.html)                                                                                                                                                                                                                                   |
-| 调色盘-MyBox的颜色            | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_zh.html)                                                                                                                                                                                                                                   |
+| 调色盘-吾匣的颜色            | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_zh.html)                                                                                                                                                                                                                                   |
 | 调色盘-灰阶                   | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_zh.html)                                                                                                                                                                                                                                   |
-| 图片的故事                    | 6.8.5   | 2025-3-5  | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt)                     |   
+| 图片的故事                    | 6.8.5   | 2025-3-5  | [html](https://mara-mybox.sourceforge.io/guide/吾匣-StoriesOfImages-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt)                     |   
 | 有用的链接         | 6.8.6   | 2025-3-30 | [html](https://mara-mybox.sourceforge.io/mybox_useful_link_en.html)                                                                                                                                                                                                                             | [html](https://mara-mybox.sourceforge.io/mybox_useful_link_zh.html)                                                                                                                                                                                                                                    |
 
 # 实现基础       
-MyBox基于以下开放资源：       
+吾匣基于以下开放资源：       
 
 | 名字 | 角色 | 链接 |
 | --- | --- | --- |
@@ -307,8 +307,8 @@ MyBox基于以下开放资源：
 # 特点
 ## 跨平台       
 
-MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 25的平台。             
-MyBox v5.3以前的版本均基于Java 8。       
+吾匣用纯Java实现且只基于开放资源，吾匣可运行于支持Java 25的平台。             
+吾匣 v5.3以前的版本均基于Java 8。       
 
 ## 国际化        
 
@@ -316,7 +316,7 @@ MyBox v5.3以前的版本均基于Java 8。
 2. 每种语言对应一个资源文件："Messages_语言名.properties"。
 3. 支持在线添加语言。提供表格，对照英语翻译。新语言可实时生效。       
    例如，新语言名字为“aa”，则它的资源文件是“Messages_aa.properties”。       
-4. 新语言可共享给别人：把资源文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。       
+4. 新语言可共享给别人：把资源文件复制到数据目录的子目录"mybox_languages"下，则吾匣可即时感知到新语言。       
 5. 内置中文和英文， 在目录`MyBox/src/main/resources/bundles/`中：       
 
 | 语言 | 界面的资源文件 |      
@@ -354,21 +354,21 @@ MyBox v5.3以前的版本均基于Java 8。
 ## 内置数据库系统            
 
 1. 数据库系统derby免费开源：
-    - 首次启动MyBox时，需要消耗一些时间以创建内部数据库并写入初始数据。        
+    - 首次启动吾匣时，需要消耗一些时间以创建内部数据库并写入初始数据。        
     - 所有数据库文件均在数据目录下，因此可以通过切换数据目录来处理不同的数据目标集。         
-    - 通过访问同一数据目录，多个MyBox实例可以共享数据。         
-    - 当数据目录下未发现数据库文件（如文件损毁或意外删除），MyBox会自动创建数据库。         
+    - 通过访问同一数据目录，多个吾匣实例可以共享数据。         
+    - 当数据目录下未发现数据库文件（如文件损毁或意外删除），吾匣会自动创建数据库。         
 2. Derby缺省以内置模式运行：         
     - 外部进程无法访问数据库。         
-    - 同时只能有一个MyBox实例访问数据库。         
+    - 同时只能有一个吾匣实例访问数据库。         
 3. Derby还可以网络运行：         
-    - 首个访问数据库的MyBox实例成为服务器。         
+    - 首个访问数据库的吾匣实例成为服务器。         
     - 本机进程可通过端口1527来访问数据库、即为客户端。                
     - 非本机进程不能直接访问数据库。                
-4. MyBox内部数据表存放各个功能所需的数据。 用户可以在线访问和修改内部数据。               
+4. 吾匣内部数据表存放各个功能所需的数据。 用户可以在线访问和修改内部数据。               
 5. 用户可以自定义数据库表。         
 6. 用户可以通过分页表格的来查看和编辑数据库表的定义和数据，也可以执行SQL语句。                
-7. 为了实现数据的排序、转置、统计、和分组，MyBox会生成临时数据库表、并负责及时清除它们。                
+7. 为了实现数据的排序、转置、统计、和分组，吾匣会生成临时数据库表、并负责及时清除它们。                
     
 
 ## 辅助自身编码            

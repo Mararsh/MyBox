@@ -1,6 +1,6 @@
 # Unzip source package. Edit this script to change JAVA_HOME as your env.
 # In terminal window, enter path "MyBox/pack/mac", and run this script.
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-24.jdk/Contents/Home"
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-25.jdk/Contents/Home"
 
 rm -rf app/*
 rm -rf jar/*

@@ -25,6 +25,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.CertificateTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -199,7 +200,8 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                                 s.append("#### ").append(Languages.message("Alias")).append(": ").append(entry.getAlias()).append("\n");
                                 s.append("----------------------------\n");
                                 if (entry.getCertificateChain() != null) {
-                                    for (Certificate cert : entry.getCertificateChain()) {
+                                    for (Certificate cert
+                                            : entry.getCertificateChain()) {
                                         s.append(cert).append("\n\n");
                                     }
                                 }
@@ -276,12 +278,12 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                             Certificate[] chain = keyStore.getCertificateChain(alias);
                             if (chain != null) {
                                 for (Certificate cert : chain) {
-                                    s.append("<pre>").append(cert).append("</pre>\n\n");
+                                    s.append(HtmlWriteTools.codeToHtml(cert.toString())).append("\n\n");
                                 }
                             } else {
                                 Certificate cert = keyStore.getCertificate(alias);
                                 if (cert != null) {
-                                    s.append("<pre>").append(cert).append("</pre>\n");
+                                    s.append(HtmlWriteTools.codeToHtml(cert.toString())).append("\n");
                                 }
                             }
                         }
@@ -331,6 +333,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         }
         List<CertificateEntry> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
+            popError(message("SelectToHandle"));
             return;
         }
         if (task != null) {
@@ -364,7 +367,6 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
 
             @Override
             protected void whenSucceeded() {
-
                 if (error == null) {
                     loadAll(null);
                     if (needBackup) {

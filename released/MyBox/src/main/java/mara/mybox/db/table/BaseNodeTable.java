@@ -24,6 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.JsonTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
@@ -325,7 +326,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return createRoot() != null ? 1 : -3;
         }
         String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
-        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -340,7 +342,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
         String sql = "DELETE FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid";
-        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -769,7 +772,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             }
             List<String> row = new ArrayList<>();
             row.add(column.getLabel());
-            row.add("<PRE><CODE>" + value + "</CODE></PRE>");
+            row.add(HtmlWriteTools.codeToHtml(value));
             table.add(row);
         }
         if (table.isEmpty()) {

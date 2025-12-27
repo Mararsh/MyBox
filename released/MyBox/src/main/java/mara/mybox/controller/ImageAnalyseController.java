@@ -906,14 +906,14 @@ public class ImageAnalyseController extends BaseController {
     }
 
     @Override
-    public boolean keyEventsFilter(KeyEvent event) {
+    public boolean handleKeyEvent(KeyEvent event) {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == imageTab) {
-            if (imageController.keyEventsFilter(event)) {
+            if (imageController.handleKeyEvent(event)) {
                 return true;
             }
         }
-        return super.keyEventsFilter(event);
+        return super.handleKeyEvent(event);
     }
 
 }

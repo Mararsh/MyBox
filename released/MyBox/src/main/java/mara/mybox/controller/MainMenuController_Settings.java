@@ -30,7 +30,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-29
  * @License Apache License Version 2.0
  */
-public abstract class MainMenuController_Settings extends MainMenuController_Media {
+public abstract class MainMenuController_Settings extends MainMenuController_Window {
 
     @FXML
     protected Menu settingsMenu, languagesMenu;

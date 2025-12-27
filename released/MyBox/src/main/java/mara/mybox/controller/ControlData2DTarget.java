@@ -2,20 +2,21 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
@@ -43,6 +44,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.cell.CellTools;
 import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -55,12 +57,15 @@ import mara.mybox.value.UserConfig;
 public class ControlData2DTarget extends BaseDataConvertController {
 
     protected BaseData2DLoadController tableController;
+    protected Data2DCreateController createController;
     protected TargetType format;
-    protected boolean notInTable;
+    protected boolean canInTable = false;
     protected ChangeListener<Boolean> tableStatusListener;
     protected Data2D data2D;
     protected String targetName;
 
+    @FXML
+    protected Tab fileTab, dataTab, optionsTab;
     @FXML
     protected ToggleGroup targetGroup;
     @FXML
@@ -68,26 +73,29 @@ public class ControlData2DTarget extends BaseDataConvertController {
             jsonRadio, xmlRadio, htmlRadio, pdfRadio,
             systemClipboardRadio, myBoxClipboardRadio, replaceRadio, insertRadio, appendRadio;
     @FXML
-    protected ComboBox<String> rowSelector, colSelector;
+    protected ComboBox<String> rowSelector;
     @FXML
-    protected VBox externalBox, externalDefBox, fileBox, inTableBox;
-    @FXML
-    protected HBox dataNameBox, locationBox;
+    protected ComboBox<Data2DColumn> colSelector;
     @FXML
     protected TextField nameInput;
-    @FXML
-    protected TabPane optionsPane;
     @FXML
     protected Tab csvTab, excelTab, textTab, matrixTab, htmlTab, pdfTab, dbTab;
     @FXML
     protected RadioButton useInvalidRadio, zeroInvalidRadio,
             emptyInvalidRadio, skipInvalidRadio, nullInvalidRadio;
     @FXML
-    protected VBox optionsBox, csvBox, excelBox, textBox, matrixBox, htmlBox, pdfBox, dbBox;
+    protected VBox dataBox, attributesBox, locationBox,
+            optionsBox, csvBox, excelBox, textBox, matrixBox, htmlBox, pdfBox, dbBox;
     @FXML
     protected ControlNewDataTable dbController;
     @FXML
     protected FlowPane invalidAsPane, extFormatPane, internalFormatPane;
+    @FXML
+    protected CheckBox displayedNameCheck, writeCommentsCheck;
+    @FXML
+    protected ComboBox<String> scaleSelector, randomSelector;
+    @FXML
+    protected TextArea descInput;
 
     public boolean isInvalid() {
         if (tableController == null) {
@@ -98,20 +106,20 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 || (data2D != null && tableController.data2D.getDataID() != data2D.getDataID());
     }
 
-    public void setParameters(BaseController parent, BaseData2DLoadController controller) {
+    public void setParameters(BaseController parent, BaseData2DLoadController controller, boolean canInTable) {
         try {
             tableController = controller;
+            createController = null;
             if (isInvalid()) {
                 close();
                 return;
             }
 
+            this.canInTable = canInTable;
             baseName = parent.baseName + "_" + baseName;
 
-            initControls(baseName);
-
             if (tableController != null) {
-                data2D = tableController.data2D.cloneAll().setController(parent);
+                data2D = tableController.data2D.cloneTo().setController(parent);
                 dbController.setParameters(this, data2D);
                 if (matrixOptionsController != null) {
                     matrixOptionsController.setType(data2D.getSheet());
@@ -121,16 +129,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 databaseRadio.setDisable(true);
             }
 
-            optionsPane.getTabs().clear();
-            optionsBox.getChildren().clear();
+            initPanes();
 
-            initTarget(TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV")));
-            targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkTarget();
-                }
-            });
             checkTarget();
 
             if (tableController != null) {
@@ -143,6 +143,85 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 };
                 tableController.statusNotify.addListener(tableStatusListener);
             }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setParameters(Data2DCreateController controller) {
+        try {
+            canInTable = false;
+            tableController = null;
+            createController = controller;
+            baseName = createController.baseName + "_" + baseName;
+            data2D = null;
+
+            initPanes();
+
+            matrixOptionsController.typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (matrixRadio.isSelected()) {
+                        createController.loadValues();
+                    }
+                }
+            });
+
+            checkTarget();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initPanes() {
+        try {
+            initControls(baseName);
+
+            if (createController != null) {
+                extFormatPane.getChildren().removeAll(systemClipboardRadio, jsonRadio, htmlRadio, xmlRadio, pdfRadio);
+            }
+
+            scaleSelector.getItems().addAll(
+                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
+            );
+
+            randomSelector.getItems().addAll(
+                    Arrays.asList("1", "100", "10", "1000", "10000", "1000000", "10000000"));
+
+            if (data2D != null) {
+                nameInput.setText(data2D.getDataName());
+                scaleSelector.setValue(data2D.getScale() + "");
+                randomSelector.setValue(data2D.getMaxRandom() + "");
+                descInput.setText(data2D.getComments());
+            } else {
+                randomSelector.setValue("100000");
+                scaleSelector.setValue("2");
+            }
+
+            displayedNameCheck.setSelected(UserConfig.getBoolean(baseName + "DataTargetLabelAsColumn", true));
+            displayedNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setBoolean(baseName + "DataTargetLabelAsColumn", displayedNameCheck.isSelected());
+                }
+            });
+
+            CellTools.makeColumnComboBox(colSelector);
+
+            optionsBox.getChildren().clear();
+
+            initTarget(TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV")));
+            targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkTarget();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -197,21 +276,21 @@ public class ControlData2DTarget extends BaseDataConvertController {
                         pdfRadio.setSelected(true);
                         break;
                     case Append:
-                        if (notInTable && inTableBox != null) {
+                        if (canInTable) {
                             appendRadio.setSelected(true);
                         } else {
                             csvRadio.setSelected(true);
                         }
                         break;
                     case Insert:
-                        if (notInTable && inTableBox != null) {
+                        if (canInTable) {
                             insertRadio.setSelected(true);
                         } else {
                             csvRadio.setSelected(true);
                         }
                         break;
                     case Replace:
-                        if (notInTable && inTableBox != null) {
+                        if (canInTable) {
                             replaceRadio.setSelected(true);
                         } else {
                             csvRadio.setSelected(true);
@@ -229,6 +308,15 @@ public class ControlData2DTarget extends BaseDataConvertController {
 
     public TargetType checkTarget() {
         try {
+            if (canInTable) {
+                if (!thisPane.getChildren().contains(internalFormatPane)) {
+                    thisPane.getChildren().add(1, internalFormatPane);
+                }
+            } else {
+                if (thisPane.getChildren().contains(internalFormatPane)) {
+                    thisPane.getChildren().remove(internalFormatPane);
+                }
+            }
             format = TargetType.CSV;
             optionsBox.getChildren().clear();
             if (isSettingValues) {
@@ -283,115 +371,162 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 optionsBox.getChildren().add(dbBox);
 
             } else if (systemClipboardRadio != null && systemClipboardRadio.isSelected()) {
-                format = TargetType.SystemClipboard;
+                if (createController == null) {
+                    format = TargetType.SystemClipboard;
+                } else {
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
+                }
 
             } else if (jsonRadio != null && jsonRadio.isSelected()) {
-                format = TargetType.JSON;
-                targetFileController.setFile(FileType.JSON,
-                        baseName + "TargetType" + FileType.JSON, dataName, "json");
+                if (createController == null) {
+                    format = TargetType.JSON;
+                    targetFileController.setFile(FileType.JSON,
+                            baseName + "TargetType" + FileType.JSON, dataName, "json");
+                } else {
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
+                }
 
             } else if (xmlRadio != null && xmlRadio.isSelected()) {
-                format = TargetType.XML;
-                targetFileController.setFile(FileType.XML,
-                        baseName + "TargetType" + FileType.XML, dataName, "xml");
+                if (createController == null) {
+                    format = TargetType.XML;
+                    targetFileController.setFile(FileType.XML,
+                            baseName + "TargetType" + FileType.XML, dataName, "xml");
+                } else {
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
+                }
 
             } else if (htmlRadio != null && htmlRadio.isSelected()) {
-                format = TargetType.HTML;
-                targetFileController.setFile(FileType.Html,
-                        baseName + "TargetType" + FileType.Html, dataName, "html");
-                optionsBox.getChildren().add(htmlBox);
+                if (createController == null) {
+                    format = TargetType.HTML;
+                    targetFileController.setFile(FileType.Html,
+                            baseName + "TargetType" + FileType.Html, dataName, "html");
+                    optionsBox.getChildren().add(htmlBox);
+                } else {
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
+                }
 
             } else if (pdfRadio != null && pdfRadio.isSelected()) {
-                format = TargetType.PDF;
-                targetFileController.setFile(FileType.PDF,
-                        baseName + "TargetType" + FileType.PDF, dataName, "pdf");
-                optionsBox.getChildren().add(pdfBox);
-
-            } else if (inTableBox != null) {
-                if (replaceRadio.isSelected()) {
-                    if (!notInTable) {
-                        format = TargetType.Replace;
-                    } else {
-                        format = TargetType.CSV;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                csvRadio.setSelected(true);
-                            }
-                        });
-                    }
-                } else if (insertRadio.isSelected()) {
-                    if (!notInTable) {
-                        format = TargetType.Insert;
-                    } else {
-                        format = TargetType.CSV;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                csvRadio.setSelected(true);
-                            }
-                        });
-                    }
-                } else if (appendRadio.isSelected()) {
-                    if (!notInTable) {
-                        format = TargetType.Append;
-                    } else {
-                        format = TargetType.CSV;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                csvRadio.setSelected(true);
-                            }
-                        });
-                    }
-                }
-            }
-
-            if (inTableBox != null) {
-                if (notInTable) {
-                    if (thisPane.getChildren().contains(inTableBox)) {
-                        thisPane.getChildren().remove(inTableBox);
-                    }
+                if (createController == null) {
+                    format = TargetType.PDF;
+                    targetFileController.setFile(FileType.PDF,
+                            baseName + "TargetType" + FileType.PDF, dataName, "pdf");
+                    optionsBox.getChildren().add(pdfBox);
                 } else {
-                    if (!thisPane.getChildren().contains(inTableBox)) {
-                        thisPane.getChildren().add(2, inTableBox);
-                    }
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
+                }
+
+            } else if (replaceRadio.isSelected()) {
+                if (canInTable) {
+                    format = TargetType.Replace;
+                } else {
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
+                }
+            } else if (insertRadio.isSelected()) {
+                if (canInTable) {
+                    format = TargetType.Insert;
+                } else {
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
+                }
+            } else if (appendRadio.isSelected()) {
+                if (canInTable) {
+                    format = TargetType.Append;
+                } else {
+                    format = TargetType.CSV;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            csvRadio.setSelected(true);
+                        }
+                    });
                 }
             }
+
             if (inTable()) {
-                if (!inTableBox.getChildren().contains(locationBox)) {
-                    inTableBox.getChildren().add(locationBox);
-                }
-                if (externalBox != null) {
-                    if (externalBox.getChildren().contains(externalDefBox)) {
-                        externalBox.getChildren().remove(externalDefBox);
-                    }
-                }
+                tabPane.getTabs().removeAll(fileTab, optionsTab);
+                dataBox.getChildren().clear();
+                dataBox.getChildren().addAll(invalidAsPane, locationBox);
             } else {
-                if (inTableBox != null && inTableBox.getChildren().contains(locationBox)) {
-                    inTableBox.getChildren().remove(locationBox);
-                }
-                if (externalBox != null) {
-                    if (externalBox.getChildren().contains(externalDefBox)) {
-                        externalBox.getChildren().remove(externalDefBox);
-                    }
-                }
                 if ((systemClipboardRadio != null && systemClipboardRadio.isSelected())
                         || myBoxClipboardRadio.isSelected()
                         || databaseRadio.isSelected()) {
-                    if (externalDefBox.getChildren().contains(fileBox)) {
-                        externalDefBox.getChildren().remove(fileBox);
+                    if (tabPane.getTabs().contains(fileTab)) {
+                        tabPane.getTabs().remove(fileTab);
                     }
                 } else {
-                    if (!externalDefBox.getChildren().contains(fileBox)) {
-                        externalDefBox.getChildren().add(fileBox);
+                    if (!tabPane.getTabs().contains(fileTab)) {
+                        tabPane.getTabs().addFirst(fileTab);
                     }
                 }
+                if (optionsBox.getChildren().isEmpty()) {
+                    if (tabPane.getTabs().contains(optionsTab)) {
+                        tabPane.getTabs().remove(optionsTab);
+                    }
+                } else if (!tabPane.getTabs().contains(optionsTab)) {
+                    tabPane.getTabs().addLast(optionsTab);
+                }
+                if (createController != null) {
+                    dataBox.getChildren().clear();
+                    dataBox.getChildren().add(attributesBox);
+                } else {
+                    dataBox.getChildren().clear();
+                    dataBox.getChildren().addAll(invalidAsPane, attributesBox);
+                }
             }
+
+            writeCommentsCheck.setVisible(csvRadio.isSelected()
+                    || textsRadio.isSelected()
+                    || excelRadio.isSelected()
+                    || htmlRadio.isSelected());
 
             refreshStyle(thisPane);
 
             UserConfig.setString(baseName + "DataTarget", format.name());
+
+            if (createController != null) {
+                createController.loadValues();
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -435,15 +570,15 @@ public class ControlData2DTarget extends BaseDataConvertController {
             rowSelector.getItems().setAll(rows);
             rowSelector.getSelectionModel().select(thisSelect >= 0 ? thisSelect : 0);
 
-            String selectedCol = colSelector.getSelectionModel().getSelectedItem();
+            Data2DColumn selectedCol = colSelector.getSelectionModel().getSelectedItem();
             if (tableController.data2D.getColumns() != null) {
-                List<String> names = tableController.data2D.columnNames();
+                List<Data2DColumn> cols = new ArrayList<>();
                 for (Data2DColumn column : tableController.data2D.getColumns()) {
                     if (!column.isId()) {
-                        names.add(column.getColumnName());
+                        cols.add(column);
                     }
                 }
-                colSelector.getItems().setAll(names);
+                colSelector.getItems().setAll(cols);
                 if (selectedCol != null) {
                     colSelector.setValue(selectedCol);
                 } else {
@@ -460,18 +595,13 @@ public class ControlData2DTarget extends BaseDataConvertController {
         }
     }
 
-    public void setNotInTable(boolean notInTable) {
-        this.notInTable = notInTable;
+    public void setCanInTable(boolean canInTable) {
+        this.canInTable = canInTable;
         checkTarget();
     }
 
-    public void setNoFormat() {
-        thisPane.getChildren().clear();
-        thisPane.getChildren().add(invalidAsPane);
-    }
-
     public boolean inTable() {
-        return !notInTable && inTableBox != null
+        return canInTable
                 && (insertRadio.isSelected() || appendRadio.isSelected() || replaceRadio.isSelected());
     }
 
@@ -532,7 +662,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
         if (!inTable() || tableController == null) {
             return -1;
         }
-        return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
+        return tableController.data2D.colOrder(
+                colSelector.getSelectionModel().getSelectedItem().getColumnName());
     }
 
     public InvalidAs invalidAs() {
@@ -594,11 +725,36 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (writer == null) {
                 return null;
             }
+
+            short scale = -1;
+            try {
+                scale = Short.parseShort(scaleSelector.getValue());
+            } catch (Exception e) {
+            }
+            if (scale < 0 || scale > 15) {
+                popError(message("InvalidParameter") + ": " + message("DecimalScale"));
+                return null;
+            }
+
+            int maxRandom = -1;
+            try {
+                maxRandom = Integer.parseInt(randomSelector.getValue());
+            } catch (Exception e) {
+            }
+            if (maxRandom <= 0) {
+                popError(message("InvalidParameter") + ": " + message("MaxRandom"));
+                return null;
+            }
             if (data2D != null) {
                 writer.setColumns(data2D.getColumns())
-                        .setHeaderNames(data2D.columnNames());
+                        .setHeaderNames(displayedNameCheck.isSelected()
+                                ? data2D.columnLabels() : data2D.columnNames());
             }
             writer.setDataName(targetName)
+                    .setTargetComments(descInput.getText())
+                    .setWriteComments(writeCommentsCheck.isSelected())
+                    .setTargetScale(scale)
+                    .setTargetMaxRandom(maxRandom)
                     .setPrintFile(targetFile)
                     .setRecordTargetFile(true)
                     .setRecordTargetData(true)
