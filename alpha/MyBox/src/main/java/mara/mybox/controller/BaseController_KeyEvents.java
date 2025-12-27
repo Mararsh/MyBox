@@ -487,13 +487,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltI() {
-        if (infoButton != null) {
-            if (!infoButton.isDisabled() && infoButton.isVisible()) {
-                infoAction();
-            }
-            return true;
-        }
-        return false;
+//        if (infoButton != null) {
+//            if (!infoButton.isDisabled() && infoButton.isVisible()) {
+//                infoAction();
+//            }
+//            return true;
+//        }
+        return infoAction();
     }
 
     public boolean controlAltD() {

@@ -382,7 +382,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
-            StringTable stringTable = new StringTable(names, displayName());
+            StringTable stringTable = new StringTable(names, labelName());
             for (int r = 0; r < pageData.size(); r++) {
                 List<String> dataRow = pageData.get(r);
                 for (int c = 0; c < columns.size(); c++) {

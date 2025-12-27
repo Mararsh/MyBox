@@ -34,7 +34,7 @@ public class Data2DRowEditController extends BaseBranchController {
 
             rowEditController.editRow(dataController, index);
 
-            nameLabel.setText(message("Data") + ": " + dataController.data2D.displayName());
+            nameLabel.setText(message("Data") + ": " + dataController.data2D.labelName());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

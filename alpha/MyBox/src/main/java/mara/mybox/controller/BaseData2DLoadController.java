@@ -949,7 +949,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     public StringTable verifyTableData() {
         try {
-            StringTable stringTable = new StringTable(Data2DVerify.columnNames(), data2D.displayName());
+            StringTable stringTable = new StringTable(Data2DVerify.columnNames(), data2D.labelName());
             for (int r = 0; r < tableData.size(); r++) {
                 List<String> row = data2D.dataRow(r);
                 List<List<String>> invalids = Data2DVerify.verify(data2D, r, row);

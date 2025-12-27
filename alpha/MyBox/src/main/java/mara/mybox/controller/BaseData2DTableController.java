@@ -205,9 +205,12 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             if (dataManufactureButton != null) {
                 dataManufactureButton.setDisable(invalidData());
             }
+            if (infoButton != null) {
+                infoButton.setDisable(invalidData());
+            }
 
             if (dataLabel != null) {
-                dataLabel.setText(data2D != null ? data2D.displayName() : "");
+                dataLabel.setText(data2D != null ? data2D.labelName() : "");
             }
             if (!refreshTitle) {
                 return;
@@ -222,7 +225,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 if (data2D.isTableChanged()) {
                     title += " * ";
                 }
-                title += data2D.displayName();
+                title += data2D.labelName();
 
             }
             myStage.setTitle(title);

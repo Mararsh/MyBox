@@ -206,7 +206,7 @@ public class Data2DAttributesController extends BaseChildController {
         } else {
             columnsTab.setText(message("Columns"));
         }
-        String title = baseTitle + " - " + data2D.displayName();
+        String title = baseTitle + " - " + data2D.labelName();
         if (columnsChanged || attributesChanged) {
             title += " *";
         }

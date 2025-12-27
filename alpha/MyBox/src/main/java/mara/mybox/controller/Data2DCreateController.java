@@ -154,7 +154,7 @@ public class Data2DCreateController extends Data2DAttributesController {
 
     @Override
     public void checkStatus() {
-        setTitle(baseTitle + " - " + data2D.displayName());
+        setTitle(baseTitle + " - " + data2D.labelName());
     }
 
     @FXML

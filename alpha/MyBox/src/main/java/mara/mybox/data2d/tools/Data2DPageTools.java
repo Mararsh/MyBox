@@ -50,7 +50,7 @@ public class Data2DPageTools {
             }
             StringTable table = new StringTable(names);
             if (showTitle) {
-                table.setTitle(data2d.getTitle())
+                table.setTitle(data2d.printName())
                         .setComments(data2d.getComments());
             }
 
@@ -93,9 +93,7 @@ public class Data2DPageTools {
             }
             StringBuilder s = new StringBuilder();
             if (showTitle) {
-                if (data2d.getTitle() != null) {
-                    s.append("<H2>").append(HtmlWriteTools.codeToHtml(data2d.getTitle())).append("</H2>\n");
-                }
+                s.append("<H2>").append(HtmlWriteTools.codeToHtml(data2d.printName())).append("</H2>\n");
                 if (data2d.getComments() != null) {
                     s.append("<P>").append(HtmlWriteTools.codeToHtml(data2d.getComments())).append("</P>\n");
                 }
@@ -167,9 +165,7 @@ public class Data2DPageTools {
             if (data2d.getComments() != null) {
                 texts = data2d.getComments() + "\n\n" + texts;
             }
-            if (data2d.getTitle() != null) {
-                texts = data2d.getTitle() + "\n\n" + texts;
-            }
+            texts = data2d.printName() + "\n\n" + texts;
         }
         return texts;
     }
@@ -178,9 +174,7 @@ public class Data2DPageTools {
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         StringBuilder s = new StringBuilder();
         if (showTitle) {
-            if (data2d.getTitle() != null) {
-                s.append(data2d.getTitle()).append("\n\n");
-            }
+            s.append(data2d.printName()).append("\n\n");
             if (data2d.getComments() != null) {
                 s.append(data2d.getComments()).append("\n\n");
             }

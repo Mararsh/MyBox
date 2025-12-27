@@ -160,7 +160,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
 
     @Override
     public String baseChartTitle() {
-        return data2D.displayName() + " - " + message("SelfComparisonBarsChart");
+        return data2D.labelName() + " - " + message("SelfComparisonBarsChart");
     }
 
     protected String writeHtml() {

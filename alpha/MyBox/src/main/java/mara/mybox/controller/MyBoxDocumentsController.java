@@ -397,13 +397,13 @@ public class MyBoxDocumentsController extends BaseTaskController {
                 try {
                     currentData.data2D = (DataFileCSV) data2d;
                     String csvName = csvFile.getName();
-                    File htmlFile = new File(path, csvName.substring(0, csvName.length() - 4)
-                            + (csvName.contains("_" + lang + "_") ? "" : ("_" + lang))
-                            + ".html");
+                    csvName = csvName.substring(0, csvName.length() - 4)
+                            + (csvName.contains("_" + lang) ? "" : ("_" + lang));
+                    File htmlFile = new File(path, csvName + ".html");
                     Data2DConvertTools.toHtmlFile(null, currentData.data2D, htmlFile);
-                    FileCopyTools.copyFile(csvFile, new File(path, csvName), true, false);
+                    currentData.cvs = csvName + ".csv";
+                    FileCopyTools.copyFile(csvFile, new File(path, currentData.cvs), true, false);
                     currentData.name = currentData.menu.getText();
-                    currentData.cvs = csvName;
                     currentData.html = htmlFile.getName();
                     if (dataIndex < dataList.size() - 1) {
                         currentData = dataList.get(++dataIndex);
@@ -443,8 +443,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                 row.add(linkPrefix + cndata.html + htmlSuffix + " in Chinese");
                                 enTable.add(row);
                             }
-                            TextFileTools.writeFile(new File(path, "cn-list.html"), cnTable.html());
-                            TextFileTools.writeFile(new File(path, "en-list.html"), enTable.html());
+                            TextFileTools.writeFile(new File(path, "mybox_examples_data2d_cn.html"), cnTable.html());
+                            TextFileTools.writeFile(new File(path, "mybox_examples_data2d_en.html"), enTable.html());
                             try {
                                 synchronized (dataLock) {
                                     dataLock.notifyAll();

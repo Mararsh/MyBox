@@ -126,7 +126,7 @@ public class Data2DSetStylesController extends BaseController {
             if (tableController == null) {
                 return;
             }
-            getMyStage().setTitle(baseTitle + " - " + tableController.data2D.displayName());
+            getMyStage().setTitle(baseTitle + " - " + tableController.data2D.labelName());
 
             listController.sourceChanged();
             filterController.updateData(tableController.data2D.cloneTo().setController(this));

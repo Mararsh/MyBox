@@ -281,10 +281,19 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public String displayName() {
+    public String labelName() {
         String name = getTitle();
         name = getTypeName() + (dataID >= 0 ? " - " + dataID : "") + (name != null ? " - " + name : "");
         return name;
+    }
+
+    public String printName() {
+        String title = getTitle();
+        if (dataName != null && !dataName.isBlank() && !title.equals(dataName)) {
+            return title + "\n" + dataName;
+        } else {
+            return title;
+        }
     }
 
     public boolean validValue(String value) {

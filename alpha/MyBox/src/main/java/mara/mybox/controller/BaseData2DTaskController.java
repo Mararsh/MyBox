@@ -236,7 +236,7 @@ public abstract class BaseData2DTaskController extends BaseFileController {
     public void setBaseTitle(String title) {
         baseTitle = title;
         getMyStage().setTitle(baseTitle
-                + (data2D == null ? "" : " - " + data2D.displayName()));
+                + (data2D == null ? "" : " - " + data2D.labelName()));
     }
 
     public boolean isAllPages() {

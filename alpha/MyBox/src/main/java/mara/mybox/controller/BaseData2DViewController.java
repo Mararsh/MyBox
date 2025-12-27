@@ -296,7 +296,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         } else {
             buttonsPane.getChildren().clear();
         }
-        buttonsPane.getChildren().addAll(editHtmlButton, viewDataButton, dataManufactureButton);
+        buttonsPane.getChildren().addAll(infoButton, editHtmlButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadHtml(boolean pop) {
@@ -371,7 +371,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         if (fileMenuButton != null && data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
             buttonsPane.getChildren().add(fileMenuButton);
         }
-        buttonsPane.getChildren().addAll(delimiterButton,
+        buttonsPane.getChildren().addAll(delimiterButton, infoButton,
                 menuButton, viewDataButton, dataManufactureButton);
     }
 
@@ -437,7 +437,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         } else {
             buttonsPane.getChildren().clear();
         }
-        buttonsPane.getChildren().addAll(menuButton, viewDataButton, dataManufactureButton);
+        buttonsPane.getChildren().addAll(infoButton, menuButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadTable() {
