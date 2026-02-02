@@ -74,20 +74,6 @@ public class ImageOptionsController extends BaseChildController {
         baseTitle = message("ImageOptions");
     }
 
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-            baseName = "ImageOptions";
-
-            initViewOptions();
-            initRenderOptions();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void setParameters(BaseImageController parent) {
         try {
             if (parent == null) {
@@ -95,11 +81,15 @@ public class ImageOptionsController extends BaseChildController {
                 return;
             }
             imageController = parent;
+            baseName = imageController.baseName;
+
+            initViewOptions();
+            initRenderOptions();
 
             if (!viewBox.getChildren().contains(stepPane)) {
                 viewBox.getChildren().add(0, stepPane);
             }
-            imageController.zoomStep = UserConfig.getInt(imageController.baseName + "ZoomStep", 40);
+            imageController.zoomStep = UserConfig.getInt(baseName + "ZoomStep", 40);
             imageController.zoomStep = imageController.zoomStep <= 0 ? 40 : imageController.zoomStep;
             imageController.xZoomStep = imageController.zoomStep;
             imageController.yZoomStep = imageController.zoomStep;
@@ -117,7 +107,7 @@ public class ImageOptionsController extends BaseChildController {
                         int v = Integer.parseInt(newVal);
                         if (v > 0) {
                             imageController.zoomStep = v;
-                            UserConfig.setInt(imageController.baseName + "ZoomStep", imageController.zoomStep);
+                            UserConfig.setInt(baseName + "ZoomStep", imageController.zoomStep);
                             zoomStepSelector.getEditor().setStyle(null);
                             imageController.zoomStepChanged();
                         } else {

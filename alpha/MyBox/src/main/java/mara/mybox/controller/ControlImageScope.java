@@ -387,6 +387,8 @@ public class ControlImageScope extends ControlImageScope_Load {
                 case Matting8:
                 case Polygon:
                     pointsController.clear();
+                    indicateScope();
+                    changedNotify.set(!changedNotify.get());
                     break;
 
                 case Whole:
