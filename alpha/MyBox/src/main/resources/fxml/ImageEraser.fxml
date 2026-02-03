@@ -188,6 +188,14 @@ License:    Apache License Version 2.0
                                         <ComboBox fx:id="widthSelector" editable="true" prefWidth="100.0" />
                                     </children>
                                 </FlowPane>
+                        <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+                           <children>
+                              <Label text="%Show" />
+                              <fx:include fx:id="showColor" source="ControlColorSet.fxml" />
+                              <Label text="%StrokeColor" />
+                              <fx:include fx:id="eraserColor" source="ControlColorSet.fxml" />
+                           </children>
+                        </FlowPane>
                                 <fx:include fx:id="lines" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlLines.fxml" VBox.vgrow="ALWAYS" />
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>

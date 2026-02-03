@@ -7,11 +7,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.ScaleTools;
+import mara.mybox.image.data.ImageScope;
 
 /**
  * @Author Mara
@@ -35,6 +35,8 @@ public class BaseImageEditController extends BaseShapeController {
             }
             imageController = parent;
             needFixSize = true;
+
+            initEditor();
 
             if (imageController != this) {
                 imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
@@ -74,6 +76,9 @@ public class BaseImageEditController extends BaseShapeController {
     }
 
     protected void initMore() {
+    }
+
+    protected void initEditor() {
     }
 
     protected void loadImage() {

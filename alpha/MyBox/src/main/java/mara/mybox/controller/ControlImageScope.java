@@ -5,7 +5,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.ListCell;
@@ -116,7 +115,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         indicateScope();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
                     }
                 }
             });
@@ -126,7 +125,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         indicateScope();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
                     }
                 }
             });
@@ -196,7 +195,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     if (!isSettingValues) {
                         pickScope();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
                     }
                 }
             });
@@ -206,21 +205,21 @@ public class ControlImageScope extends ControlImageScope_Load {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         indicateScope();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
                     }
                 }
             });
 
-            pointsController.tableData.addListener(new ListChangeListener<DoublePoint>() {
+            pointsController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void onChanged(ListChangeListener.Change<? extends DoublePoint> c) {
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (isSettingValues
                             || pointsController.isSettingValues
                             || pointsController.isSettingTable) {
                         return;
                     }
                     indicateScope();
-                    changedNotify.set(!changedNotify.get());
+                    notifyChanged();
                 }
             });
 
@@ -229,7 +228,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     indicateOutline(true);
-                    changedNotify.set(!changedNotify.get());
+                    notifyChanged();
                 }
             });
 
@@ -256,7 +255,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     addColor((Color) colorController.rect.getFill());
-                    changedNotify.set(!changedNotify.get());
+                    notifyChanged();
                 }
             });
 
@@ -265,7 +264,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         indicateScope();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
                     }
                 }
             });
@@ -282,7 +281,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         indicateScope();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
                     }
                 }
             });
@@ -315,6 +314,10 @@ public class ControlImageScope extends ControlImageScope_Load {
         } else {
             return false;
         }
+    }
+
+    public void notifyChanged() {
+        changedNotify.set(!changedNotify.get());;
     }
 
     @Override
@@ -388,7 +391,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                 case Polygon:
                     pointsController.clear();
                     indicateScope();
-                    changedNotify.set(!changedNotify.get());
+                    notifyChanged();
                     break;
 
                 case Whole:
@@ -409,7 +412,7 @@ public class ControlImageScope extends ControlImageScope_Load {
             Color color = ImageViewTools.imagePixel(p, srcImage());
             if (color != null) {
                 addColor(color);
-                changedNotify.set(!changedNotify.get());
+                notifyChanged();
             }
         } else if (event.getClickCount() == 1) {
             if (event.getButton() == MouseButton.PRIMARY) {
@@ -422,13 +425,13 @@ public class ControlImageScope extends ControlImageScope_Load {
                         pointsController.addPoint(x, y);
                         isSettingValues = false;
                         indicateScope();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
 
                     } else if (scope.getShapeType() == ShapeType.Polygon
                             && !maskControlDragged) {
                         maskPolygonData.add(p.getX(), p.getY());
                         maskShapeDataChanged();
-                        changedNotify.set(!changedNotify.get());
+                        notifyChanged();
                     }
                 }
 
@@ -474,7 +477,7 @@ public class ControlImageScope extends ControlImageScope_Load {
                     scope.setRectangle(maskRectangleData.copy());
             }
             indicateScope();
-            changedNotify.set(!changedNotify.get());
+            notifyChanged();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
