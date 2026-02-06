@@ -14,7 +14,7 @@ public class AppValues {
     public static final String AppVersionDate = "2026-2-13";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
-    public static final int AppYear = 2025;
+    public static final int AppYear = 2026;
     public static final Image AppIcon = new Image("img/MyBox.png");
     public static final String JavaVersion = "25";
 

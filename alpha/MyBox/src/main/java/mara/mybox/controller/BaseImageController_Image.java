@@ -2,12 +2,13 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.scene.image.Image;
-import mara.mybox.image.data.ImageInformation;
-import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ScaleTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.ScaleTools;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.image.data.ImageInformation;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -299,6 +300,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             }
             checkPickingColor();
 
+            setLoadButton();
+
             notifyLoad();
             return true;
         } catch (Exception e) {
@@ -309,6 +312,15 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             alertInformation(message("NotSupported"));
             return false;
         }
+    }
+
+    public void setLoadButton() {
+        if (loadButton == null) {
+            return;
+        }
+        StyleTools.setIconTooltips(loadButton, "iconImageSystem.png",
+                message("BatchPreviewComments")
+                + (imageView != null && imageView.getImage() != null ? "" : ("    Ctrl+V " + message("Or") + " Alt+V")));
     }
 
     public void fitView() {
