@@ -80,13 +80,7 @@ public abstract class BasePixelsController extends BaseImageEditController {
         if (super.handleKeyEvent(event)) {
             return true;
         }
-        return scopeHandler.handleKeyEvent(event);
-    }
-
-    @Override
-    public boolean controlAltT() {
-        scopeController.selectAction();
-        return true;
+        return scopeController.handleKeyEvent(event);
     }
 
 }

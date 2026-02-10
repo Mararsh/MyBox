@@ -48,12 +48,12 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileReaders;
@@ -1936,7 +1936,7 @@ public class ControlWebView extends BaseController {
     }
 
     @Override
-    public boolean controlAltH() {
+    public boolean controlAltW() {
         copyHtmlToSystemClipboard();
         return true;
     }

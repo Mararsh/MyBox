@@ -41,10 +41,15 @@ public class ImageShapeOptionsController extends ImageOptionsController {
     @FXML
     protected RadioButton anchorRectRadio, anchorCircleRadio, anchorNameRadio;
 
-    @Override
-    public void initControls() {
+    public void setParameters(BaseShapeController parent, boolean withStroke) {
         try {
-            super.initControls();
+            super.setParameters(parent);
+
+            shapeController = parent;
+
+            if (!withStroke) {
+                shapeBox.getChildren().remove(strokePane);
+            }
 
             strokeWidthSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
             strokeWidthSelector.setValue(UserConfig.getFloat(baseName + "StrokeWidth", 2) + "");
@@ -156,7 +161,7 @@ public class ImageShapeOptionsController extends ImageOptionsController {
                         return;
                     }
                     if (anchorCircleRadio.isSelected()) {
-                        UserConfig.setString(baseName + "AnchorShape", "Rectangle");
+                        UserConfig.setString(baseName + "AnchorShape", "Circle");
                         if (shapeController != null) {
                             shapeController.anchorShape = AnchorShape.Circle;
                         }
@@ -181,22 +186,6 @@ public class ImageShapeOptionsController extends ImageOptionsController {
             MyBoxLog.error(e);
         }
     }
-
-    public void setParameters(BaseShapeController parent, boolean withStroke) {
-        try {
-            super.setParameters(parent);
-
-            shapeController = parent;
-
-            if (!withStroke) {
-                shapeBox.getChildren().remove(strokePane);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
 
     /*
         static methods

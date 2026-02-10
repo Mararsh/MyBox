@@ -694,6 +694,14 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
+    public void loadAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        loadContentInSystemClipboard();
+    }
+
+    @FXML
     public void exampleAction() {
         if (!checkBeforeNextAction()) {
             return;

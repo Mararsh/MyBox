@@ -9,9 +9,9 @@ import javafx.scene.image.Image;
  */
 public class AppValues {
 
-    public static final boolean Alpha = true;
+    public static final boolean Alpha = false;
     public static final String AppVersion = "6.9.3";
-    public static final String AppVersionDate = "2026-2-13";
+    public static final String AppVersionDate = "2026-2-10";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
     public static final int AppYear = 2026;

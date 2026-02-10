@@ -14,12 +14,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import mara.mybox.image.data.ImageAttributes;
-import mara.mybox.image.data.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.image.ImageViewTools;
+import mara.mybox.image.data.ImageAttributes;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
@@ -59,7 +59,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
     @FXML
     protected Label imageLabel;
     @FXML
-    protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, selectPixelsButton;
+    protected Button loadButton, imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, selectPixelsButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML

@@ -125,12 +125,14 @@ public class MenuWebviewController extends MenuController {
                 }
                 if (TextClipboardTools.isMonitoringCopy()) {
                     NodeStyleTools.setTooltip(copyToSystemClipboardTextButton,
-                            new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+                            new Tooltip(message("CopyToClipboards") + "\nCTRL+C / ALT+C / CTRL+T / ALT+T"));
                     NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton,
-                            new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
+                            new Tooltip(message("CopyToClipboards") + "\nCTRL+W / ALT+W"));
                 } else {
-                    NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
-                    NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+h / ALT+h"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardTextButton,
+                            new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+C / ALT+C / CTRL+T / ALT+T"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton,
+                            new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+W / ALT+W"));
                 }
                 NodeStyleTools.setTooltip(selectButton, new Tooltip(message("SelectNode") + "\nCTRL+u / ALT+u"));
                 selectButton.setDisable(element == null);
@@ -219,7 +221,7 @@ public class MenuWebviewController extends MenuController {
     }
 
     @Override
-    public boolean controlAltH() {
+    public boolean controlAltW() {
         copyHtmlToSystemClipboard();
         return true;
     }

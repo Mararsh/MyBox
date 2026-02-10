@@ -63,6 +63,12 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
         }
     }
 
+    @Override
+    public void updateStatus() {
+        super.updateStatus();
+        notifyLoaded();
+    }
+
     public void loadList(List<List<DoublePoint>> list) {
         isSettingValues = true;
         if (list == null || list.isEmpty()) {
@@ -93,6 +99,7 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
     }
 
     @FXML
+    @Override
     public void insertAction() {
         int index = selectedIndix();
         if (index < 0) {

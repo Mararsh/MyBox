@@ -233,18 +233,18 @@ public class ImageSizeController extends BaseImageEditController {
             return false;
         }
         try {
-            int v = Integer.parseInt(widthInput.getText());
+            int v = Integer.parseInt(heightInput.getText());
             if (v > 0) {
-                width = v;
-                widthInput.setStyle(null);
+                height = v;
+                heightInput.setStyle(null);
             } else {
-                widthInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Width"));
+                heightInput.setStyle(UserConfig.badStyle());
+                popError(message("InvalidParameter") + ": " + message("Height"));
                 return false;
             }
         } catch (Exception e) {
-            widthInput.setStyle(UserConfig.badStyle());
-            popError(message("InvalidParameter") + ": " + message("Width"));
+            heightInput.setStyle(UserConfig.badStyle());
+            popError(message("InvalidParameter") + ": " + message("Height"));
             return false;
         }
         return true;

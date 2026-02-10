@@ -39,6 +39,12 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         }
     }
 
+    @Override
+    public void updateStatus() {
+        super.updateStatus();
+        notifyLoaded();
+    }
+
     public void loadText(String values) {
         loadList(DoublePoint.parseImageCoordinates(values));
     }

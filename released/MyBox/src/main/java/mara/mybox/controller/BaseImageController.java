@@ -23,8 +23,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
@@ -109,6 +109,7 @@ public class BaseImageController extends BaseImageController_Actions {
             if (loadWidthSelector != null) {
                 NodeStyleTools.setTooltip(loadWidthSelector, new Tooltip(message("ImageLoadWidthCommnets")));
             }
+            setLoadButton();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -359,7 +360,7 @@ public class BaseImageController extends BaseImageController_Actions {
                     + (imageShown ? "" : ("    Ctrl+V " + message("Or") + " Alt+V")),
                     StyleTools.getIconImageView("iconImageSystem.png"));
             menu.setOnAction((ActionEvent event) -> {
-                loadContentInSystemClipboard();
+                loadAction();
             });
             items.add(menu);
 
