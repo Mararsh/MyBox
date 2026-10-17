@@ -6,7 +6,6 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -16,7 +15,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPagination">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPagination">
     <children>
         <FlowPane fx:id="menuPane" alignment="CENTER_LEFT" hgap="2.0" nodeOrientation="LEFT_TO_RIGHT" vgap="2.0">
             <children>
@@ -34,7 +33,7 @@ License:    Apache License Version 2.0
             <Label fx:id="menuSelectionLabel" layoutX="48.0" layoutY="17.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true" />
             </children>
         </FlowPane>
-      <HBox fx:id="navigatorBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+      <FlowPane fx:id="navigatorPane" hgap="2.0" vgap="2.0" VBox.vgrow="SOMETIMES">
          <children>
             <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
                <graphic>
@@ -95,13 +94,9 @@ License:    Apache License Version 2.0
                </children>
             </HBox>
             <Label fx:id="rowsLabel" minHeight="-Infinity" minWidth="-Infinity" text="rows" wrapText="true" />
-            <Label fx:id="selectionLabel" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Label>
+            <Label fx:id="selectionLabel" minHeight="-Infinity" minWidth="-Infinity" text="selection" wrapText="true" />
          </children>
-      </HBox>
+      </FlowPane>
 
     </children>
 </VBox>

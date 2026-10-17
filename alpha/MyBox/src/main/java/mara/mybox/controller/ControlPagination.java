@@ -20,7 +20,6 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import mara.mybox.data.Pagination;
 import mara.mybox.data.Pagination.ObjectType;
 import mara.mybox.dev.MyBoxLog;
@@ -39,9 +38,7 @@ import mara.mybox.value.UserConfig;
 public class ControlPagination extends BaseController {
 
     @FXML
-    protected FlowPane menuPane;
-    @FXML
-    protected HBox navigatorBox;
+    protected FlowPane menuPane, navigatorPane;
     @FXML
     protected ComboBox<String> pageSelector, pageSizeSelector;
     @FXML
@@ -132,12 +129,12 @@ public class ControlPagination extends BaseController {
             }
         }
         if (show) {
-            if (!thisPane.getChildren().contains(navigatorBox)) {
-                thisPane.getChildren().add(0, navigatorBox);
+            if (!thisPane.getChildren().contains(navigatorPane)) {
+                thisPane.getChildren().add(0, navigatorPane);
             }
         } else {
-            if (thisPane.getChildren().contains(navigatorBox)) {
-                thisPane.getChildren().remove(navigatorBox);
+            if (thisPane.getChildren().contains(navigatorPane)) {
+                thisPane.getChildren().remove(navigatorPane);
             }
         }
     }
@@ -226,10 +223,10 @@ public class ControlPagination extends BaseController {
         }
         if (isLeft) {
             menuPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-            navigatorBox.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+            navigatorPane.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
         } else {
             menuPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-            navigatorBox.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+            navigatorPane.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         }
     }
 

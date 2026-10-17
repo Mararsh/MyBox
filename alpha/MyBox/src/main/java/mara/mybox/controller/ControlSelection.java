@@ -30,7 +30,7 @@ public class ControlSelection extends BaseTableViewController<List<String>> {
                 @Override
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<List<String>, String> param) {
                     try {
-                        List<String> row = (List<String>) param.getValue();
+                        List<String> row = param.getValue();
                         String value = row.get(0);
                         if (value == null) {
                             return null;

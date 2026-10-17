@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeQueryByConditionsController">
+<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeQueryByConditionsController">
     <children>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
@@ -76,8 +76,8 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <HBox fx:id="operatorBox" spacing="5.0">
                                                             <children>
-                                                                <Label text="%Operator" />
-                                                                <FlowPane fx:id="operatorPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                                                                <Label minWidth="-Infinity" text="%Operator" wrapText="true" />
+                                                                <FlowPane fx:id="operatorPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" HBox.hgrow="ALWAYS">
                                                                     <children>
                                                                         <RadioButton fx:id="equalRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Equals">
                                                                             <toggleGroup>

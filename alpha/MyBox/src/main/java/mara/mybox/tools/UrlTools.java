@@ -17,7 +17,7 @@ public class UrlTools {
 
     public static URL url(String address) {
         try {
-            // some address may pop syntax error when run new URI(address).toURL() 
+            // some address may pop syntax error when run new URI(address).toURL()
             // So still use the deprecated api
             return new URL(address);
         } catch (Exception e) {

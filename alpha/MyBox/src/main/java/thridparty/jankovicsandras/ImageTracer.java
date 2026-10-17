@@ -90,7 +90,7 @@ public class ImageTracer {
                         } else {
                             f = parsenext(args, j);
                             if (f > -1) {
-                                options.put(parametername, new Float(f));
+                                options.put(parametername, Float.valueOf(f));
                             }
                         }
                     }

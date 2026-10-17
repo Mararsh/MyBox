@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageScope">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageScope">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
@@ -64,7 +64,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
                         <Label minHeight="-Infinity" text="%Mask" wrapText="true" />
                         <fx:include fx:id="maskColor" source="ControlColorSet.fxml" />
@@ -126,7 +126,7 @@ License:    Apache License Version 2.0
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                     <children>
                                                                         <CheckBox fx:id="shapeExcludedCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ShapeExcluded" wrapText="true" />
-                                                          <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0">
+                                                          <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0">
                                                               <children>
                                                                   <RadioButton fx:id="wholeRadio" layoutX="585.0" layoutY="10.0" mnemonicParsing="false" selected="true">
                                                                       <graphic>
@@ -426,7 +426,7 @@ License:    Apache License Version 2.0
                                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                     </image>
                                 </ImageView>
-                                <FlowPane fx:id="shapeOperationsPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                                <FlowPane fx:id="shapeOperationsPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="300.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Button fx:id="shapeButton" mnemonicParsing="false" onAction="#showShapeMenu">
                                             <graphic>

@@ -18,11 +18,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="600.0" minHeight="200.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
+<VBox fx:id="thisPane" maxHeight="600.0" minHeight="200.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
             <children>
-            <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+            <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="300.0" vgap="2.0" HBox.hgrow="ALWAYS">
                <children>
                       <Button fx:id="closePop2Button" mnemonicParsing="false" onAction="#closeAction">
                           <graphic>
