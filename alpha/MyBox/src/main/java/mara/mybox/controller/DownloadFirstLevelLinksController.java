@@ -61,6 +61,7 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -1564,7 +1565,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
 
     @FXML
     protected void popAddressHistories(Event event) {
-        if (UserConfig.getBoolean("DownloadHtmlsHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("DownloadHtmlsHistories", false)) {
             showAddressHistories(event);
         }
     }

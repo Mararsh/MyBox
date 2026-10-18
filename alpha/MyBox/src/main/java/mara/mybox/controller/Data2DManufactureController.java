@@ -491,7 +491,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @FXML
     public void popVerifyMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "VerifyPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Verify", true)) {
             showVerifyMenu(event);
         }
     }
@@ -521,7 +521,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @FXML
     public void popTrimMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TrimPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Trim", true)) {
             showTrimMenu(event);
         }
     }
@@ -546,7 +546,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @FXML
     public void popCalculateMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "CalculatePopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Calculate", true)) {
             showCalculateMenu(event);
         }
     }
@@ -571,7 +571,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @FXML
     public void popChartsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "ChartsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Charts", true)) {
             showChartsMenu(event);
         }
     }

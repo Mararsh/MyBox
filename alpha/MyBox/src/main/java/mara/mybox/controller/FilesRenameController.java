@@ -23,6 +23,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileSortTools.FileSortMode;
@@ -58,7 +59,8 @@ public class FilesRenameController extends BaseBatchFileController {
     protected RadioButton replaceAllRadio;
 
     public static enum RenameType {
-        ReplaceSubString, AppendSuffix, AddPrefix, AddSequenceNumber, ChangeExtension
+        ReplaceSubString, AppendSuffix, AddPrefix, AddSequenceNumber,
+        ChangeExtension
     }
 
     public FilesRenameController() {
@@ -370,7 +372,7 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @FXML
     protected void popRegexExample(Event event) {
-        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RegexExamples", false)) {
             showRegexExample(event);
         }
     }

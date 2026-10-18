@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextTools;
@@ -133,7 +134,7 @@ public class RunSystemCommandController extends RunCommandController {
 
     @FXML
     protected void popCmdHistories(Event event) {
-        if (UserConfig.getBoolean("RunSystemCommandHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RunSystemCommandHistories", false)) {
             showCmdHistories(event);
         }
     }

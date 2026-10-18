@@ -31,6 +31,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.fxml.PopTools.javaScriptExamples;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -433,7 +434,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     @FXML
     protected void popScriptExamples(MouseEvent event) {
-        if (UserConfig.getBoolean("FunctionScriptExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("FunctionScriptExamples", false)) {
             showScriptExamples(event);
         }
     }
@@ -445,7 +446,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     @FXML
     protected void popDomainExamples(MouseEvent event) {
-        if (UserConfig.getBoolean("FunctionDomainExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("FunctionDomainExamples", false)) {
             domainExamples(event);
         }
     }
@@ -473,7 +474,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     @FXML
     protected void popDomainHistories(Event event) {
-        if (UserConfig.getBoolean("FunctionDomainHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("FunctionDomainHistories", false)) {
             showDomainHistories(event);
         }
     }
@@ -485,7 +486,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     @FXML
     public void popMathFunctionHelps(Event event) {
-        if (UserConfig.getBoolean("JavaScriptHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("JavaScriptHelps", false)) {
             showMathFunctionHelps(event);
         }
     }
@@ -505,7 +506,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     @FXML
     protected void popHtmlStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("HtmlStyles", false)) {
             showHtmlStyle(event);
         }
     }

@@ -20,6 +20,7 @@ import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.IconTools;
@@ -196,7 +197,7 @@ public class WebAddressController extends BaseWebViewController {
 
     @FXML
     protected void popAddressHistories(Event event) {
-        if (UserConfig.getBoolean("WebAddressHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("WebAddressHistories", false)) {
             showAddressHistories(event);
         }
     }

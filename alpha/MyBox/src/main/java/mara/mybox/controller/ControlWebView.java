@@ -1057,7 +1057,7 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public void popOperationsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("WebviewOperations", true)) {
             showOperationsMenu(event);
         }
     }
@@ -1231,7 +1231,7 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("WebviewFunctions", true)) {
             showFunctionsMenu(event);
         }
     }
@@ -1556,7 +1556,7 @@ public class ControlWebView extends BaseController {
 
     @FXML
     public void popHtmlStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("HtmlStyles", false)) {
             showHtmlStyle(event);
         }
     }

@@ -13,6 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -286,7 +287,7 @@ public class ControlTextDelimiter extends BaseController {
 
     @FXML
     protected void popRegexExample(Event event) {
-        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RegexExamples", false)) {
             showRegexExample(event);
         }
     }

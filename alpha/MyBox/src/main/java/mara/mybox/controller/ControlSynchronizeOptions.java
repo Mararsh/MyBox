@@ -18,6 +18,7 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
@@ -269,7 +270,7 @@ public class ControlSynchronizeOptions extends BaseController {
 
     @FXML
     protected void popNameHistories(Event event) {
-        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(interfaceName + "Histories", false)) {
             showNameHistories(event);
         }
     }
@@ -281,7 +282,7 @@ public class ControlSynchronizeOptions extends BaseController {
 
     @FXML
     protected void popModifyHistories(Event event) {
-        if (UserConfig.getBoolean(interfaceName + "ModifyPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(interfaceName + "Modify", false)) {
             showModifyHistories(event);
         }
     }

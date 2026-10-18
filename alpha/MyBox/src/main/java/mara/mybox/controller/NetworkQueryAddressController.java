@@ -81,7 +81,7 @@ public class NetworkQueryAddressController extends BaseController {
 
     @FXML
     protected void popAddressHistories(Event event) {
-        if (UserConfig.getBoolean("NetworkQueryURLHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("NetworkQueryURLHistories", false)) {
             showAddressHistories(event);
         }
     }

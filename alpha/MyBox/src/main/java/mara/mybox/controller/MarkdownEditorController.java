@@ -20,6 +20,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.Fxmls;
@@ -334,7 +335,7 @@ public class MarkdownEditorController extends TextEditorController {
 
     @FXML
     public void popHtmlFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("WebviewFunctions", true)) {
             showHtmlFunctionsMenu(event);
         }
     }

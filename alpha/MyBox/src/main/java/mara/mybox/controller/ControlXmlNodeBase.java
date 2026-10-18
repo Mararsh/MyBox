@@ -12,7 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
-import mara.mybox.value.UserConfig;
+import mara.mybox.fxml.menu.MenuTools;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
@@ -112,7 +112,7 @@ public class ControlXmlNodeBase extends BaseTableViewController<Node> {
      */
     @FXML
     protected void popValueHistories(Event event) {
-        if (UserConfig.getBoolean("XmlNodeValueHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("XmlNodeValueHistories", false)) {
             showValueHistories(event);
         }
     }

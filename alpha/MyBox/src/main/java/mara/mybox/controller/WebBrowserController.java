@@ -120,7 +120,7 @@ public class WebBrowserController extends BaseController {
     }
 
     public void popFunctionsMenu(Event event, Tab tab, String title) {
-        if (UserConfig.getBoolean("WebBrowserFunctionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("WebBrowserFunctions", true)) {
             showFunctionsMenu(event, tab, title);
         }
     }

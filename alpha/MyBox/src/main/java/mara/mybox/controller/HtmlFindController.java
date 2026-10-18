@@ -21,6 +21,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
@@ -415,7 +416,7 @@ public class HtmlFindController extends WebAddressController {
 
     @FXML
     protected void popFindExample(Event event) {
-        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RegexExamples", false)) {
             showFindExample(event);
         }
     }
@@ -434,7 +435,7 @@ public class HtmlFindController extends WebAddressController {
 
     @FXML
     public void popFindHistories(Event event) {
-        if (UserConfig.getBoolean("HtmlFindHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("HtmlFindHistories", false)) {
             showFindHistories(event);
         }
     }

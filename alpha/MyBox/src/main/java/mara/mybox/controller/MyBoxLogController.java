@@ -191,7 +191,7 @@ public class MyBoxLogController extends BaseSysTableController<MyBoxLog> {
 
     @FXML
     public void popOptionsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Options", true)) {
             showOptionsMenu(event);
         }
     }

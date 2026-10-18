@@ -843,7 +843,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean(typeName + "HelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(typeName + "Helps", false)) {
             showHelps(event);
         }
     }

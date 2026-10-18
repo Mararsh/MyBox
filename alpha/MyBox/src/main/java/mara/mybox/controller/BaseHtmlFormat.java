@@ -938,14 +938,6 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
 
     @FXML
     @Override
-    public void popViewMenu(Event event) {
-        if (MenuTools.isPopMenu("HtmlFormatView")) {
-            showViewMenu(event);
-        }
-    }
-
-    @FXML
-    @Override
     public void showViewMenu(Event event) {
         List<MenuItem> items = new ArrayList<>();
         String html = currentHtml();
@@ -1022,7 +1014,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
 
         items.add(new SeparatorMenuItem());
 
-        items.add(MenuTools.popCheckMenu("HtmlFormatView"));
+        items.add(MenuTools.popCheckMenu(baseName + "View"));
 
         popEventMenu(event, items);
     }

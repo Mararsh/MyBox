@@ -131,7 +131,7 @@ public abstract class BaseTextController_Pair extends BaseTextController_Base {
 
     @FXML
     public void popOptionsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "Options", false)) {
             showOptionsMenu(event);
         }
     }

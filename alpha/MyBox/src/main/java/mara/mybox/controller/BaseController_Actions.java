@@ -30,9 +30,9 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -710,7 +710,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     protected void popHtmlHelps(Event event) {
-        if (UserConfig.getBoolean("HtmlHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("HtmlHelps", false)) {
             showHtmlHelps(event);
         }
     }

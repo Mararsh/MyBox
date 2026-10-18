@@ -15,10 +15,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.FxColorTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -179,7 +179,7 @@ public class ControlColorInput extends BaseController {
 
     @FXML
     public void popExamples(Event event) {
-        if (UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("ColorExamples", false)) {
             showExamples(event);
         }
     }
@@ -191,7 +191,7 @@ public class ControlColorInput extends BaseController {
 
     @FXML
     protected void popColorHistories(Event event) {
-        if (UserConfig.getBoolean("ColorHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("ColorHistories", false)) {
             showHistories(event);
         }
     }

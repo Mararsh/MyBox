@@ -144,7 +144,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
      */
     @FXML
     public void popExamplesStyleMenu(Event event) {
-        if (UserConfig.getBoolean("SvgStyleExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SvgStyleExamples", false)) {
             showExamplesStyleMenu(event);
         }
     }
@@ -156,7 +156,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     protected void popStyleHistories(Event event) {
-        if (UserConfig.getBoolean("SvgStyleHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SvgStyleHistories", false)) {
             showStyleHistories(event);
         }
     }

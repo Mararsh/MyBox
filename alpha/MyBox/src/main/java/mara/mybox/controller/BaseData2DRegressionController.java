@@ -10,6 +10,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -93,7 +94,7 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
 
     @FXML
     public void popModelMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("WebviewFunctions")) {
             showModelMenu(event);
         }
     }

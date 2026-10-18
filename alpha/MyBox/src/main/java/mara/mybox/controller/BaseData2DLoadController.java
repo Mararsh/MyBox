@@ -38,7 +38,6 @@ import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -1001,7 +1000,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     @FXML
     protected void popExamplesMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "Examples")) {
             showExamplesMenu(event);
         }
     }
@@ -1036,7 +1035,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     @FXML
     public void popHelps(Event event) {
-        if (UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("Data2DHelps")) {
             showHelps(event);
         }
     }

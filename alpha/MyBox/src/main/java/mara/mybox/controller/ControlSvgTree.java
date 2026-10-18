@@ -199,7 +199,7 @@ public class ControlSvgTree extends ControlXmlTree {
 
     @FXML
     public void popAddShapeMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "AddShapePopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "AddShape", true)) {
             showAddShapeMenu(event);
         }
     }

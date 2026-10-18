@@ -20,6 +20,7 @@ import mara.mybox.data.FileEditInformation.StringFilterType;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
@@ -211,7 +212,7 @@ public class ControlTextFilter extends BaseController {
 
     @FXML
     protected void popFilterExample(Event event) {
-        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RegexExamples", false)) {
             showFilterExample(event);
         }
     }
@@ -223,7 +224,7 @@ public class ControlTextFilter extends BaseController {
 
     @FXML
     protected void popHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "FilterStringPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "FilterString", false)) {
             showHistories(event);
         }
     }

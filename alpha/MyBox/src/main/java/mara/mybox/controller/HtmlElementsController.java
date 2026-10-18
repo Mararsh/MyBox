@@ -24,6 +24,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -221,11 +222,11 @@ public class HtmlElementsController extends WebAddressController {
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean("HtmlElementsPopWhenMouseHovering", true));
+            popCheck.setSelected(UserConfig.getBoolean("HtmlElements", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("HtmlElementsPopWhenMouseHovering", popCheck.isSelected());
+                    UserConfig.setBoolean("HtmlElements", popCheck.isSelected());
                 }
             });
             controller.addNode(popCheck);
@@ -239,7 +240,7 @@ public class HtmlElementsController extends WebAddressController {
 
     @FXML
     public void popExamples(Event event) {
-        if (UserConfig.getBoolean("HtmlElementsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("HtmlElements", true)) {
             showExamples(event);
         }
     }
@@ -251,7 +252,7 @@ public class HtmlElementsController extends WebAddressController {
 
     @FXML
     public void popElementHistories(Event event) {
-        if (UserConfig.getBoolean(key + "PopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(key + "", false)) {
             showElementHistories(event);
         }
     }

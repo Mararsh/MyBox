@@ -29,6 +29,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -486,7 +487,7 @@ public class ShapePathSegmentEditController extends BaseInputController {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SVGHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SVGHelps", false)) {
             showHelps(event);
         }
     }

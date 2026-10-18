@@ -17,6 +17,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -209,7 +210,7 @@ public abstract class BaseDataValuesController extends BaseFileController {
 
     @FXML
     protected void popHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "HistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "Histories", false)) {
             showHistories(event);
         }
     }

@@ -16,13 +16,13 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.JShellTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -216,7 +216,7 @@ public class ControlDataJShell extends BaseDataValuesController {
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults
     @FXML
     protected void popSyntaxMenu(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(interfaceName + "Syntax", false)) {
             showSyntaxMenu(event);
         }
     }
@@ -267,7 +267,7 @@ public class ControlDataJShell extends BaseDataValuesController {
 
     @FXML
     public void popJavaHelps(Event event) {
-        if (UserConfig.getBoolean("JavaHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("JavaHelps", false)) {
             showJavaHelps(event);
         }
     }
@@ -287,7 +287,7 @@ public class ControlDataJShell extends BaseDataValuesController {
 
     @FXML
     protected void popHtmlStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("HtmlStyles", false)) {
             showHtmlStyle(event);
         }
     }

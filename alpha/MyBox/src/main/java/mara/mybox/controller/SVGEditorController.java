@@ -153,7 +153,7 @@ public class SvgEditorController extends XmlEditorController {
 
     @FXML
     protected void popExamplesMenu(Event event) {
-        if (UserConfig.getBoolean("SVGExamplesPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("SVGExamples", true)) {
             showExamplesMenu(event);
         }
     }

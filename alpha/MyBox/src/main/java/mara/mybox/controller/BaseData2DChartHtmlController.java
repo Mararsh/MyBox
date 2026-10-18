@@ -12,6 +12,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
@@ -295,7 +296,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     @FXML
     @Override
     public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("WebviewFunctions")) {
             showFunctionsMenu(event);
         }
     }

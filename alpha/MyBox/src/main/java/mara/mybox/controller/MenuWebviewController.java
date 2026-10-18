@@ -24,6 +24,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
@@ -243,7 +244,7 @@ public class MenuWebviewController extends MenuController {
     @FXML
     @Override
     public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("WebviewFunctions", true)) {
             showFunctionsMenu(event);
         }
     }
@@ -281,7 +282,7 @@ public class MenuWebviewController extends MenuController {
 
     @FXML
     protected void popHtmlStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("HtmlStyles", false)) {
             showHtmlStyle(event);
         }
     }

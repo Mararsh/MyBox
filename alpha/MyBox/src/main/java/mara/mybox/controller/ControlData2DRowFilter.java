@@ -19,9 +19,9 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -641,7 +641,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     @FXML
     public void popOperandHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "OperandHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "OperandHistories", false)) {
             showOperandHistories(event);
         }
     }

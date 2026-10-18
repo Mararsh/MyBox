@@ -33,11 +33,11 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.fxml.cell.TableTimeCell;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ByteTools;
@@ -1001,7 +1001,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     @FXML
     protected void popRegexExample(Event event) {
-        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RegexExamples", false)) {
             showRegexExample(event);
         }
     }
@@ -1057,14 +1057,14 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
         items.add(new SeparatorMenuItem());
 
-        items.add(MenuTools.popCheckMenu("FilesTable"));
+        items.add(MenuTools.popCheckMenu("TableOptions"));
 
         popEventMenu(event, items);
     }
 
     @FXML
     protected void popOptionsMenu(Event event) {
-        if (UserConfig.getBoolean("FilesTablePopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("TableOptions")) {
             showOptionsMenu(event);
         }
     }

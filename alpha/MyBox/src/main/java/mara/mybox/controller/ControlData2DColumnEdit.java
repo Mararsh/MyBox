@@ -33,7 +33,6 @@ import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -591,7 +590,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
     @FXML
     public void popExamples(Event event) {
-        if (UserConfig.getBoolean("Data2DColumnEditPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu("Data2DColumnEdit")) {
             showExamples(event);
         }
     }

@@ -12,8 +12,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -83,7 +83,7 @@ public class ControlDataMacro extends BaseDataValuesController {
 
     @FXML
     public void popMacroHelps(Event event) {
-        if (UserConfig.getBoolean("MacroHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("MacroHelps", false)) {
             showMacroHelps(event);
         }
     }
@@ -95,7 +95,7 @@ public class ControlDataMacro extends BaseDataValuesController {
 
     @FXML
     protected void popExamplesMenu(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(interfaceName + "Examples", false)) {
             showExamplesMenu(event);
         }
     }

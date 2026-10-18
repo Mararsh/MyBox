@@ -15,6 +15,7 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -204,7 +205,7 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
 
     @FXML
     protected void popNameHistories(Event event) {
-        if (UserConfig.getBoolean(interfaceName + "NameHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(interfaceName + "NameHistories", false)) {
             showNameHistories(event);
         }
     }

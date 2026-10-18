@@ -8,11 +8,11 @@ import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -73,7 +73,7 @@ public class Data2DTableQueryController extends ControlDataSQL {
 
     @FXML
     protected void popColumnNames(Event event) {
-        if (UserConfig.getBoolean("ColumnNamesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("ColumnNames", false)) {
             showColumnNames(event);
         }
     }

@@ -9,6 +9,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -87,7 +88,7 @@ public class ControlData2DRowExpression extends ControlDataRowExpression {
 
     @FXML
     public void popPlaceholders(Event event) {
-        if (UserConfig.getBoolean(baseName + "PlaceholdersPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "Placeholders", false)) {
             showPlaceholders(event);
         }
     }

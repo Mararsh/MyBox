@@ -21,6 +21,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.JShellTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -199,7 +200,7 @@ public class ControlDataJEXL extends ControlDataJShell {
 
     @FXML
     protected void popScriptExamples(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(interfaceName + "ScriptExamples", false)) {
             jexlScriptExamples(event);
         }
     }
@@ -412,7 +413,7 @@ public class ControlDataJEXL extends ControlDataJShell {
 
     @FXML
     protected void popContextExamples(MouseEvent event) {
-        if (UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(interfaceName + "ContextExamples", false)) {
             jexlContextExamples(event);
         }
     }
@@ -447,7 +448,7 @@ public class ControlDataJEXL extends ControlDataJShell {
 
     @FXML
     protected void popContextHistories(Event event) {
-        if (UserConfig.getBoolean("JexlContextHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("JexlContextHistories", false)) {
             showContextHistories(event);
         }
     }
@@ -464,7 +465,7 @@ public class ControlDataJEXL extends ControlDataJShell {
 
     @FXML
     protected void popParametersHistories(Event event) {
-        if (UserConfig.getBoolean("JexlParamtersHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("JexlParamtersHistories", false)) {
             showParametersHistories(event);
         }
     }
@@ -476,7 +477,7 @@ public class ControlDataJEXL extends ControlDataJShell {
 
     @FXML
     public void popJexlHelps(Event event) {
-        if (UserConfig.getBoolean("JexlHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("JexlHelps", false)) {
             showJexlHelps(event);
         }
     }

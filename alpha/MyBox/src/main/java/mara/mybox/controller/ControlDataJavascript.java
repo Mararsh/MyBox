@@ -7,11 +7,11 @@ import javafx.scene.control.Tab;
 import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -85,7 +85,7 @@ public class ControlDataJavascript extends BaseJavaScriptController {
 
     @FXML
     protected void popHtmlStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("HtmlStyles", false)) {
             showHtmlStyle(event);
         }
     }

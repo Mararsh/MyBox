@@ -81,7 +81,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("JarPathHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("JarPathHistories", false)) {
             showHistories(event);
         }
     }
@@ -237,7 +237,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     public void popExamplesMenu(Event event) {
-        if (UserConfig.getBoolean("JShellPathsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("JShellPaths", false)) {
             showExamplesMenu(event);
         }
     }

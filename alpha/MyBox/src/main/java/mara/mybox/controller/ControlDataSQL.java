@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
@@ -173,7 +174,7 @@ public class ControlDataSQL extends BaseDataValuesController {
 
     @FXML
     protected void popExamplesMenu(Event event) {
-        if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SqlExamples", false)) {
             showExamplesMenu(event);
         }
     }
@@ -185,7 +186,7 @@ public class ControlDataSQL extends BaseDataValuesController {
 
     @FXML
     protected void popTableNames(Event event) {
-        if (UserConfig.getBoolean("TableNamesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("TableNames", false)) {
             showTableNames(event);
         }
     }

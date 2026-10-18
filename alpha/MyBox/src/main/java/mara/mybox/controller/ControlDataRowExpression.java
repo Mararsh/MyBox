@@ -10,7 +10,7 @@ import mara.mybox.db.table.TableNodeRowExpression;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.value.UserConfig;
+import mara.mybox.fxml.menu.MenuTools;
 
 /**
  * @Author Mara
@@ -61,7 +61,7 @@ public class ControlDataRowExpression extends BaseDataValuesController {
 
     @FXML
     protected void popExamples(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "Examples", false)) {
             showExamples(mouseEvent);
         }
     }
@@ -73,7 +73,7 @@ public class ControlDataRowExpression extends BaseDataValuesController {
 
     @FXML
     public void popHelps(Event event) {
-        if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RowExpressionsHelps", false)) {
             showHelps(event);
         }
     }

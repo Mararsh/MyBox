@@ -22,6 +22,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableRowIndexCell;
+import mara.mybox.fxml.menu.MenuTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -213,7 +214,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     public void popExamplesPathMenu(Event event) {
-        if (UserConfig.getBoolean("SvgPathExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SvgPathExamples", false)) {
             showExamplesPathMenu(event);
         }
     }
@@ -225,7 +226,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     protected void popPathHistories(Event event) {
-        if (UserConfig.getBoolean("SvgPathHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SvgPathHistories", false)) {
             showPathHistories(event);
         }
     }
@@ -237,7 +238,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SvgPathHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SvgPathHelps", false)) {
             showHelps(event);
         }
     }

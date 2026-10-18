@@ -27,6 +27,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -145,14 +146,14 @@ public class MenuController extends BaseChildController {
             }
 
             if (popMenuCheck != null) {
-                popMenuCheck.setSelected(UserConfig.getBoolean(conn, this.baseName + "PopWhenMouseHovering", false));
+                popMenuCheck.setSelected(UserConfig.getBoolean(conn, baseName + "MenuPopWhenMouseHovering", false));
                 popMenuCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent aevent) {
                         if (isSettingValues) {
                             return;
                         }
-                        UserConfig.setBoolean(baseName + "PopWhenMouseHovering", popMenuCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "MenuPopWhenMouseHovering", popMenuCheck.isSelected());
                     }
                 });
             }
@@ -265,7 +266,7 @@ public class MenuController extends BaseChildController {
 
     @FXML
     protected void popStyles(Event event) {
-        if (UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("WindowStyles", false)) {
             showStyles(event);
         }
     }

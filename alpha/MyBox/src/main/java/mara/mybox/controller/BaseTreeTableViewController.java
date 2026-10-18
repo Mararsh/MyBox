@@ -25,15 +25,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -493,7 +492,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     @FXML
     @Override
     public void popViewMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "TreeView")) {
             showViewMenu(event);
         }
     }
@@ -569,7 +568,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     @FXML
     @Override
     public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TreeFunctionsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "TreeFunctions")) {
             showFunctionsMenu(event);
         }
     }
@@ -710,7 +709,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     @FXML
     @Override
     public void popOperationsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TreeOperationsPopWhenMouseHovering", true)) {
+        if (MenuTools.isPopMenu(baseName + "TreeOperations")) {
             showOperationsMenu(event);
         }
     }

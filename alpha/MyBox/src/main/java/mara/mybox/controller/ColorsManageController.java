@@ -49,7 +49,6 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -846,7 +845,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("ColorHelps", false)) {
             showHelps(event);
         }
     }

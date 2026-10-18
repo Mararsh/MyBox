@@ -21,11 +21,11 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileNameCell;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -203,7 +203,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
 
     @FXML
     public void popFindHistories(Event event) {
-        if (UserConfig.getBoolean("WebHistoriesFindHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("WebHistoriesFindHistories", false)) {
             showFindHistories(event);
         }
     }

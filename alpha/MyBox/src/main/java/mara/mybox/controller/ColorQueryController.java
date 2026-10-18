@@ -16,6 +16,7 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -141,7 +142,7 @@ public class ColorQueryController extends BaseController {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("ColorHelps", false)) {
             showHelps(event);
         }
     }

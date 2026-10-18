@@ -24,12 +24,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import mara.mybox.image.data.PixelsBlend;
 import mara.mybox.data.ShapeStyle;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
+import mara.mybox.image.data.PixelsBlend;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -531,7 +532,7 @@ public class ControlImageText extends BaseController {
 
     @FXML
     public void popTextHistories(Event event) {
-        if (UserConfig.getBoolean("ImageTextHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("ImageTextHistories", false)) {
             showTextHistories(event);
         }
     }

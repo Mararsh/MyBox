@@ -34,6 +34,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
@@ -725,7 +726,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     protected void popFindExample(Event event) {
-        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("RegexExamples", false)) {
             showFindExample(event);
         }
     }
@@ -737,7 +738,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     public void popFindHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "FindStringPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "FindString", false)) {
             showFindHistories(event);
         }
     }
@@ -749,7 +750,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     public void popReplaceHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "ReplaceStringPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu(baseName + "ReplaceString", false)) {
             showReplaceHistories(event);
         }
     }

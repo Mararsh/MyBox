@@ -18,10 +18,11 @@ import mara.mybox.data.ShapeStyle;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.StringTools;
@@ -472,7 +473,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
     @FXML
     public void popExamplesStyleMenu(Event event) {
-        if (UserConfig.getBoolean("SvgStyleExamplesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SvgStyleExamples", false)) {
             showExamplesStyleMenu(event);
         }
     }
@@ -484,7 +485,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
     @FXML
     protected void popStyleHistories(Event event) {
-        if (UserConfig.getBoolean("SvgStyleHistoriesPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SvgStyleHistories", false)) {
             showStyleHistories(event);
         }
     }
@@ -594,7 +595,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SVGHelpsPopWhenMouseHovering", false)) {
+        if (MenuTools.isPopMenu("SVGHelps", false)) {
             showHelps(event);
         }
     }
