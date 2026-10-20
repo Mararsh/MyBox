@@ -319,7 +319,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         StyleTools.setIconTooltips(loadButton, "iconImageSystem.png",
-                message("BatchPreviewComments")
+                message("LoadContentInSystemClipboard")
                 + (imageView != null && imageView.getImage() != null ? "" : ("    Ctrl+V " + message("Or") + " Alt+V")));
     }
 

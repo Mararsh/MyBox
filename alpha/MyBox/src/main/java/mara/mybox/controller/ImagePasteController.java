@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -306,6 +307,27 @@ public class ImagePasteController extends BaseImageEditController {
             return;
         }
         setSourceClip(clip);
+    }
+
+    @FXML
+    @Override
+    public void exampleAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        ImageExampleSelectController controller = ImageExampleSelectController.open(this, false);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                ImageItem item = controller.selectedItem();
+                if (item == null) {
+                    popError(message("SelectToHandle"));
+                    return;
+                }
+                controller.close();
+                setSourceClip(item.readImage());
+            }
+        });
     }
 
     @FXML
