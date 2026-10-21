@@ -505,11 +505,11 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         tableView.refresh();
     }
 
-    public void markFileHandling(FileInformation file) {
-        if (file == null) {
+    public void markFileHandling(FileInformation finfo) {
+        if (finfo == null) {
             return;
         }
-        int index = (int) file.getTableIndex();
+        int index = tableData.indexOf(finfo);
         if (index < 0 || index >= tableData.size()) {
             return;
         }
@@ -518,7 +518,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             public void run() {
                 isSettingValues = true;
                 currentTableIndex = index;
-                file.setHandled(null);
+                finfo.setHandled(null);
                 tableData.set(index, tableData.get(index));
                 isSettingValues = false;
                 tableView.scrollTo(index - 5);
@@ -526,11 +526,11 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         });
     }
 
-    public void markFileHandled(FileInformation file, String message) {
-        if (file == null) {
+    public void markFileHandled(FileInformation finfo, String message) {
+        if (finfo == null) {
             return;
         }
-        int index = (int) file.getTableIndex();
+        int index = tableData.indexOf(finfo);
         if (index < 0 || index >= tableData.size()) {
             return;
         }
@@ -539,7 +539,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             public void run() {
                 isSettingValues = true;
                 currentTableIndex = -1;
-                file.setHandled(message);
+                finfo.setHandled(message);
                 tableData.set(index, tableData.get(index));
                 isSettingValues = false;
                 tableView.scrollTo(index - 5);

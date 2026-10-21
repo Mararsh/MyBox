@@ -17,7 +17,7 @@ import mara.mybox.tools.FileTools;
 public class FileInformation {
 
     protected File file;
-    protected long tableIndex, fileSize = -1, createTime, modifyTime, filesNumber = 0;
+    protected long fileSize = -1, createTime, modifyTime, filesNumber = 0;
     protected String data, handled;
     protected FileType fileType;
     protected final BooleanProperty selected = new SimpleBooleanProperty(false);
@@ -25,7 +25,8 @@ public class FileInformation {
     protected long duration;  // milliseconds
 
     public enum FileType {
-        File, Directory, Link, Socket, Block, Character, FIFO, Root, Digest, NotExist
+        File, Directory, Link, Socket, Block, Character, FIFO, Root, Digest,
+        NotExist
     }
 
     public enum FileSelectorType {
@@ -43,7 +44,7 @@ public class FileInformation {
 
     public final void init() {
         file = null;
-        filesNumber = tableIndex = fileSize = createTime = modifyTime = -1;
+        filesNumber = fileSize = createTime = modifyTime = -1;
         fileType = FileType.NotExist;
         handled = null;
         data = null;
@@ -144,7 +145,6 @@ public class FileInformation {
             return null;
         }
         targetInfo.file = sourceInfo.file;
-        targetInfo.tableIndex = sourceInfo.tableIndex;
         targetInfo.fileSize = sourceInfo.fileSize;
         targetInfo.createTime = sourceInfo.createTime;
         targetInfo.modifyTime = sourceInfo.modifyTime;
@@ -303,14 +303,6 @@ public class FileInformation {
 
     public void setSelected(boolean select) {
         selected.set(select);
-    }
-
-    public long getTableIndex() {
-        return tableIndex;
-    }
-
-    public void setTableIndex(long tableIndex) {
-        this.tableIndex = tableIndex;
     }
 
     public long getDuration() {

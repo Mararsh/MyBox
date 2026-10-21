@@ -508,7 +508,6 @@ public abstract class BaseBatchController<T> extends BaseFileController {
                     if (d == null) {
                         continue;
                     }
-                    d.setTableIndex(i);
                     if (reset) {
                         d.setHandled("");
                     }
