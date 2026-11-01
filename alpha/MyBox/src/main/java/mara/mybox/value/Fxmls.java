@@ -138,6 +138,7 @@ public class Fxmls {
     public static final String ImageRotateFxml = "/fxml/ImageRotate.fxml";
     public static final String ImageMirrorFxml = "/fxml/ImageMirror.fxml";
     public static final String ImageShearFxml = "/fxml/ImageShear.fxml";
+    public static final String ImageLiquifyFxml = "/fxml/ImageLiquify.fxml";
     public static final String ImageRoundFxml = "/fxml/ImageRound.fxml";
     public static final String ImageShadowFxml = "/fxml/ImageShadow.fxml";
     public static final String ImageEraserFxml = "/fxml/ImageEraser.fxml";

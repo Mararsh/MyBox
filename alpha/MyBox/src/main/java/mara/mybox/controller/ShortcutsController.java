@@ -204,6 +204,7 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
             tableData.add(new ShortCut("", "", message(lang, "Repeat"), "", "iconRepeat.png"));
             tableData.add(new ShortCut("", "", message(lang, "Sample"), "", "iconSample.png"));
             tableData.add(new ShortCut("", "", message(lang, "Shear"), "", "iconShear.png"));
+            tableData.add(new ShortCut("", "", message(lang, "Liquify"), "", "iconLiquify.png"));
             tableData.add(new ShortCut("", "", message(lang, "SnapshotWindow"), "", "iconSnapshot.png"));
             tableData.add(new ShortCut("", "", message(lang, "Sort"), "", "iconSort.png"));
             tableData.add(new ShortCut("", "", message(lang, "Statistic"), "", "iconStatistic.png"));

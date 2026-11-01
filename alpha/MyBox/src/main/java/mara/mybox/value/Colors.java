@@ -38,7 +38,7 @@ public class Colors {
                     color = dark ? "4C8DAE" : "D6ECF0";
                     break;
                 case Pink:
-                    color = dark ? "9E004F" : "FFFFFF";
+                    color = dark ? "F00056" : "F0F0F4";
                     break;
                 case Orange:
                     color = dark ? "622A1D" : "FFF8D8";

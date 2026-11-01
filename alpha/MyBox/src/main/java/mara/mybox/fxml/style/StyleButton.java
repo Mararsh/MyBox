@@ -847,6 +847,8 @@ public class StyleButton {
                 return new StyleData("mirrorVButton", message("MirrorVertical"), "", "iconVertical.png");
             case "shearButton":
                 return new StyleData("shearButton", message("Shear"), "", "iconShear.png");
+            case "liquifyButton":
+                return new StyleData("liquifyButton", message("Liquify"), "", "iconLiquify.png");
             case "testButton":
                 return new StyleData("testButton", message("Test"), "", "iconGo.png");
             case "newTabButton":

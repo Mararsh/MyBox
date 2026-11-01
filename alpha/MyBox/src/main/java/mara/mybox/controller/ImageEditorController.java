@@ -29,9 +29,9 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.FxImageTools;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.data.ImageInformation;
@@ -474,6 +474,12 @@ public class ImageEditorController extends BaseImageController {
             menu = new MenuItem(message("Shear"), StyleTools.getIconImageView("iconShear.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageShearController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Liquify"), StyleTools.getIconImageView("iconLiquify.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageLiquifyController.open(this);
             });
             items.add(menu);
 
