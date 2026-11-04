@@ -46,6 +46,22 @@ public class ColorConvertTools {
                 + color.getTransparency() + ")";
     }
 
+    public static int getRed(int rgba) {
+        return (rgba >> 16) & 0xff;
+    }
+
+    public static int getGreen(int rgba) {
+        return (rgba >> 8) & 0xff;
+    }
+
+    public static int getBlue(int rgba) {
+        return rgba & 0xff;
+    }
+
+    public static int getAlpha(int rgba) {
+        return (rgba >> 24) & 0xff;
+    }
+
     /*
         rgb
      */

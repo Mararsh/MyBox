@@ -1606,7 +1606,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
         if (lastPoint != null && !DoubleShape.changed(lastPoint, p)) {
             return false;
         }
-        if (currentLineData == null) {
+        if (currentLineData == null || currentLine == null) {
             currentLineData = new ArrayList<>();
             currentLine = new Polyline();
         } else if (currentLineData.size() > 1

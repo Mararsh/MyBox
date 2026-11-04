@@ -15,7 +15,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.image.data.CropTools;
+import mara.mybox.image.tools.CropTools;
 import mara.mybox.image.data.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.Languages.message;

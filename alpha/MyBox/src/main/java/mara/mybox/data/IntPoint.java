@@ -36,6 +36,10 @@ public class IntPoint {
         return (int) Math.sqrt(distance2(A, B));
     }
 
+    public String text() {
+        return x + "," + y;
+    }
+
     public int getX() {
         return x;
     }

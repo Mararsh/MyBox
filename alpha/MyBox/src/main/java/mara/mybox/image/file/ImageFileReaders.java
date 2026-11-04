@@ -403,10 +403,10 @@ public class ImageFileReaders {
                 }
             } else {
                 if (xscale != 1 || yscale != 1) {
-                    bufferedImage = mara.mybox.image.data.CropTools.sample(task, bufferedImage,
+                    bufferedImage = mara.mybox.image.tools.CropTools.sample(task, bufferedImage,
                             imageInfo.getRegion(), xscale, yscale);
                 } else {
-                    bufferedImage = mara.mybox.image.data.CropTools.sample(task, bufferedImage,
+                    bufferedImage = mara.mybox.image.tools.CropTools.sample(task, bufferedImage,
                             imageInfo.getRegion(), requiredWidth);
                 }
             }

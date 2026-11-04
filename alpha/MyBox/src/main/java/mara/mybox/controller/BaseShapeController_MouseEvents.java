@@ -569,7 +569,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             return;
         }
         addPointToCurrentLine(p);
-        if (maskPolylines.contains(currentLine)) {
+        if (currentLine != null && maskPolylines.contains(currentLine)) {
             maskShapeDataChanged();
         }
         currentLineData = null;

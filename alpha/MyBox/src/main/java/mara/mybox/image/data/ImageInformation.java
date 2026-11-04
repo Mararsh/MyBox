@@ -374,7 +374,7 @@ public class ImageInformation extends ImageFileInformation {
             imageInfo.setImageType(bufferedImage.getType());
             DoubleRectangle region = imageInfo.getRegion();
             if (region != null) {
-                bufferedImage = mara.mybox.image.data.CropTools.cropOutside(task, inImage, region);
+                bufferedImage = mara.mybox.image.tools.CropTools.cropOutside(task, inImage, region);
                 if (task != null && task.isCancelled()) {
                     return null;
                 }

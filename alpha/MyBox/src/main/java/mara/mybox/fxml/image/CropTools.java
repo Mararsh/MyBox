@@ -21,7 +21,7 @@ public class CropTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.image.data.CropTools.cropInside(task,
+        BufferedImage target = mara.mybox.image.tools.CropTools.cropInside(task,
                 source, rect, ColorConvertTools.converColor(bgColor));
         if (target == null || (task != null && !task.isWorking())) {
             return null;
@@ -39,7 +39,7 @@ public class CropTools {
             if (source == null) {
                 return image;
             }
-            BufferedImage target = mara.mybox.image.data.CropTools.cropOutside(task,
+            BufferedImage target = mara.mybox.image.tools.CropTools.cropOutside(task,
                     source, rect, ColorConvertTools.converColor(bgColor));
             if (target == null || (task != null && !task.isWorking())) {
                 return null;

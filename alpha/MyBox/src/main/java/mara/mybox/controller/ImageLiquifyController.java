@@ -4,11 +4,15 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import mara.mybox.data.DoublePoint;
+import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.ImageDemos;
-import mara.mybox.fxml.image.TransformTools;
+import mara.mybox.fxml.image.ImageViewTools;
+import mara.mybox.fxml.image.LiquifyTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -18,6 +22,11 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class ImageLiquifyController extends BaseImageEditController {
+
+    protected IntPoint startPoint, endPoint;
+    protected int radius = 50, step = 20;
+    protected float strength = 1.0f;
+    protected boolean isGauss = false;
 
     @FXML
     protected ControlImageLiquify liquifyController;
@@ -37,21 +46,54 @@ public class ImageLiquifyController extends BaseImageEditController {
         }
     }
 
+    @FXML
+    @Override
+    public void mousePressed(MouseEvent event) {
+        if (imageView == null || imageView.getImage() == null
+                || isPickingColor) {
+            return;
+        }
+        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
+        if (p == null) {
+            return;
+        }
+        scrollPane.setPannable(false);
+        lastPoint = p;
+    }
+
+    @FXML
+    @Override
+    public void mouseReleased(MouseEvent event) {
+        scrollPane.setPannable(true);
+        if (imageView == null || imageView.getImage() == null
+                || isPickingColor || lastPoint == null) {
+            return;
+        }
+        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
+        if (p == null) {
+            return;
+        }
+        startPoint = new IntPoint((int) lastPoint.getX(), (int) lastPoint.getY());
+        endPoint = new IntPoint((int) p.getX(), (int) p.getY());
+        okAction();
+        lastPoint = null;
+    }
+
     @Override
     public boolean checkOptions() {
         if (!super.checkOptions()) {
             return false;
         }
-        return liquifyController.pickValues();
+        return true;
     }
 
     @Override
     protected void handleImage(FxTask currentTask) {
-        opInfo = message("XRatio") + ":" + liquifyController.shearX + " "
-                + message("YRatio") + ":" + liquifyController.shearY;
-        handledImage = TransformTools.shearImage(currentTask, imageView.getImage(),
-                liquifyController.shearX, liquifyController.shearY,
-                liquifyController.cutCheck.isSelected());
+        opInfo = message("StartPoint") + ":" + startPoint.text() + " "
+                + message("EndPoint") + ":" + endPoint.text();
+        handledImage = LiquifyTools.forwardWarp(currentTask, imageView.getImage(),
+                startPoint, endPoint,
+                radius, step, strength, isGauss);
     }
 
     @Override

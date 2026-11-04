@@ -1,4 +1,4 @@
-package mara.mybox.image.data;
+package mara.mybox.image.tools;
 
 import mara.mybox.image.tools.ScaleTools;
 import java.awt.Color;
