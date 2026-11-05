@@ -13,6 +13,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.ImageDemos;
 import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.image.LiquifyTools;
+import mara.mybox.image.data.PixelSampler.SampleMode;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -25,7 +26,7 @@ public class ImageLiquifyController extends BaseImageEditController {
 
     protected IntPoint startPoint, endPoint;
     protected int radius = 50, step = 20;
-    protected float strength = 1.0f;
+    protected float strengthMax = 1.0f, strengthThreshold = 0.05f;
     protected boolean isGauss = false;
 
     @FXML
@@ -92,8 +93,8 @@ public class ImageLiquifyController extends BaseImageEditController {
         opInfo = message("StartPoint") + ":" + startPoint.text() + " "
                 + message("EndPoint") + ":" + endPoint.text();
         handledImage = LiquifyTools.forwardWarp(currentTask, imageView.getImage(),
-                startPoint, endPoint,
-                radius, step, strength, isGauss);
+                startPoint, endPoint, SampleMode.BILINEAR,
+                radius, step, strengthMax, strengthThreshold, isGauss);
     }
 
     @Override
