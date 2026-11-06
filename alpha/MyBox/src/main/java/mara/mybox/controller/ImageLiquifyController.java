@@ -13,7 +13,11 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.ImageDemos;
 import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.image.LiquifyTools;
+import mara.mybox.image.data.LiquifyConfig;
+import mara.mybox.image.data.PixelSampler.EdgeMode;
 import mara.mybox.image.data.PixelSampler.SampleMode;
+import mara.mybox.image.tools.LiquifyTools.BrushKernel;
+import mara.mybox.image.tools.LiquifyTools.LiquifyType;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -26,8 +30,12 @@ public class ImageLiquifyController extends BaseImageEditController {
 
     protected IntPoint startPoint, endPoint;
     protected int radius = 50, step = 20;
-    protected float strengthMax = 1.0f, strengthThreshold = 0.05f;
-    protected boolean isGauss = false;
+    protected float strengthMax = 1.0f, strengthThreshold = 0.05f, hardness = 0.5f;
+    protected LiquifyType liquifyType = LiquifyType.PUSH;
+    protected BrushKernel brushKernel = BrushKernel.SMOOTH_QUADRATIC;
+    protected LiquifyConfig liquifyConfig;
+    protected SampleMode sampleMode = SampleMode.BilinearInterpolation;
+    protected EdgeMode edgeMode = EdgeMode.CLAMP_EDGE;
 
     @FXML
     protected ControlImageLiquify liquifyController;
@@ -85,6 +93,18 @@ public class ImageLiquifyController extends BaseImageEditController {
         if (!super.checkOptions()) {
             return false;
         }
+        liquifyConfig = LiquifyConfig.defaultConfig()
+                .setStartPoint(startPoint)
+                .setEndPoint(endPoint)
+                .setLiquifyType(LiquifyType.PUSH)
+                .setKernel(BrushKernel.SMOOTH_QUADRATIC)
+                .setSampler(sampleMode, edgeMode)
+                .setRadius(radius)
+                .setStep(step)
+                .setSafeMargin(8)
+                .setStrengthMax(strengthMax)
+                .setStrengthThreshold(strengthThreshold)
+                .setHardness(hardness);
         return true;
     }
 
@@ -92,9 +112,7 @@ public class ImageLiquifyController extends BaseImageEditController {
     protected void handleImage(FxTask currentTask) {
         opInfo = message("StartPoint") + ":" + startPoint.text() + " "
                 + message("EndPoint") + ":" + endPoint.text();
-        handledImage = LiquifyTools.forwardWarp(currentTask, imageView.getImage(),
-                startPoint, endPoint, SampleMode.BILINEAR,
-                radius, step, strengthMax, strengthThreshold, isGauss);
+        handledImage = LiquifyTools.liquify(imageView.getImage(), liquifyConfig.setTask(currentTask));
     }
 
     @Override

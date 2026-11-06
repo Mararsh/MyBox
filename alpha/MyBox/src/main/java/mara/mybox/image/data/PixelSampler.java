@@ -9,184 +9,216 @@ import java.awt.image.BufferedImage;
 public class PixelSampler {
 
     public enum SampleMode {
-        NEAREST(new NearestSampler()),
-        BILINEAR(new BilinearSampler()),
-        MITCHELL(new MitchellSampler()),
-        CATMULL_ROM(new CatmullRomSampler()),
-        LANCZOS2(new Lanczos2Sampler()),
-        LANCZOS3(new Lanczos3Sampler());
+        /**
+         * Nearest‑Neighbor Sampling 最近邻采样：最快，锯齿明显，不做平滑
+         */
+        NearestNeighbor {
+            @Override
+            public Sampler create() {
+                return new NearestSampler();
+            }
+        },
+        /**
+         * Bilinear Interpolation 双线性插值：速度快，基础平滑，适合实时预览
+         */
+        BilinearInterpolation {
+            @Override
+            public Sampler create() {
+                return new BilinearSampler();
+            }
+        },
+        /**
+         * Mitchell‑Netravali 米切尔改良双三次采样：平衡锐度与振铃，缩放常用
+         */
+        MITCHELL {
+            @Override
+            public Sampler create() {
+                return new MitchellSampler();
+            }
+        },
+        /**
+         * Catmull‑Rom Spline 卡特莫尔‑罗姆样条（非标准双三次）：画面偏锐利
+         */
+        CATMULL_ROM {
+            @Override
+            public Sampler create() {
+                return new CatmullRomSampler();
+            }
+        },
+        /**
+         * Lanczos‑2‑Lobe 兰索斯2阶：画质优秀，锐度高，计算量中等
+         */
+        LANCZOS2 {
+            @Override
+            public Sampler create() {
+                return new Lanczos2Sampler();
+            }
+        },
+        /**
+         * Lanczos‑3‑Lobe 兰索斯3阶：最高画质，抑制振铃更好，开销最大
+         */
+        LANCZOS3 {
+            @Override
+            public Sampler create() {
+                return new Lanczos3Sampler();
+            }
+        };
 
-        public final Sampler sampler;
+        public abstract Sampler create();
+    }
 
-        SampleMode(Sampler s) {
-            sampler = s;
-        }
+    public enum EdgeMode {
+        ZERO, // 越界返回透明黑色0，超出图像范围取黑色像素
+        CLAMP_EDGE, // 边缘延展，复制图像边缘像素向外延伸；人像照片液化首选，消除黑边
+        MIRROR, // 镜像模式，超出边界镜像翻转图像内容
+        REPEAT        // 平铺重复，图像瓷砖式循环拼接；多用于纹理，人像极少使用
     }
 
     public abstract static class Sampler {
 
-        protected static final float PI = (float) Math.PI;
+        private int i0 = -1;
+        private int i1 = 2;
+        private int j0 = -1;
+        private int j1 = 2;
+        private EdgeMode edgeMode = EdgeMode.CLAMP_EDGE;
 
-        protected final int iMin;
-        protected final int iMax;
-        protected final int jMin;
-        protected final int jMax;
-
-        protected Sampler(int iMin, int iMax, int jMin, int jMax) {
-            this.iMin = iMin;
-            this.iMax = iMax;
-            this.jMin = jMin;
-            this.jMax = jMax;
+        protected Sampler() {
         }
 
-        protected abstract float weight(float t);
+        public Sampler setWindow(int i0, int i1, int j0, int j1) {
+            this.i0 = i0;
+            this.i1 = i1;
+            this.j0 = j0;
+            this.j1 = j1;
+            return this;
+        }
 
-        public int sample(BufferedImage image, float x, float y) {
-            final int imgW = image.getWidth();
-            final int imgH = image.getHeight();
+        public Sampler setEdgeMode(EdgeMode edgeMode) {
+            this.edgeMode = edgeMode;
+            return this;
+        }
+
+        public EdgeMode getEdgeMode() {
+            return edgeMode;
+        }
+
+        protected abstract float kernel(float offset);
+
+        private int getPixel(BufferedImage img, int x, int y) {
+            Integer[] pt = wrapCoord(x, y, img.getWidth(), img.getHeight(), edgeMode);
+            if (pt == null) {
+                return 0;
+            }
+            return img.getRGB(pt[0], pt[1]);
+        }
+
+        public boolean isReady() {
+            return edgeMode != null;
+        }
+
+        public int sample(BufferedImage img, float x, float y) {
+            if (!isReady()) {
+                throw new IllegalStateException("Sampler not configured");
+            }
             int xi = (int) Math.floor(x);
             int yi = (int) Math.floor(y);
             float fx = x - xi;
             float fy = y - yi;
 
-            float sumW = 0f;
-            float sumR = 0f;
-            float sumG = 0f;
-            float sumB = 0f;
-            float sumA = 0f;
+            float totalW = 0f;
+            float r = 0f, g = 0f, b = 0f, a = 0f;
 
-            for (int j = jMin; j <= jMax; j++) {
-                float wy = weight(fy - j);
-                if (Math.abs(wy) < 1e-8f) {
-                    continue;
-                }
-                for (int i = iMin; i <= iMax; i++) {
-                    float wx = weight(fx - i);
-                    if (Math.abs(wx) < 1e-8f) {
-                        continue;
-                    }
+            for (int j = j0; j <= j1; j++) {
+                float wy = kernel(fy - j);
+                for (int i = i0; i <= i1; i++) {
+                    float wx = kernel(fx - i);
                     float w = wx * wy;
-                    int px = xi + i;
-                    int py = yi + j;
-                    if (px < 0 || py < 0 || px >= imgW || py >= imgH) {
+                    if (Math.abs(w) < 1e-6f) {
                         continue;
                     }
 
-                    int p = image.getRGB(px, py);
-                    int a = (p >>> 24) & 0xff;
-                    if (a == 0) {
-                        continue;
-                    }
-                    int r = (p >> 16) & 0xff;
-                    int g = (p >> 8) & 0xff;
-                    int b = p & 0xff;
+                    int p = getPixel(img, xi + i, yi + j);
+                    int ca = (p >>> 24) & 0xff;
+                    int cr = (p >>> 16) & 0xff;
+                    int cg = (p >>> 8) & 0xff;
+                    int cb = p & 0xff;
 
-                    sumW += w;
-                    sumR += r * w;
-                    sumG += g * w;
-                    sumB += b * w;
-                    sumA += a * w;
+                    a += ca * w;
+                    r += cr * w;
+                    g += cg * w;
+                    b += cb * w;
+                    totalW += w;
                 }
             }
-
-            if (sumW < 1e-6f) {
+            if (totalW <= 1e-6f) {
                 return 0;
             }
-            float invW = 1.0f / sumW;
-            int outA = Math.clamp((int) (sumA * invW + 0.5f), 0, 255);
-            int outR = Math.clamp((int) (sumR * invW + 0.5f), 0, 255);
-            int outG = Math.clamp((int) (sumG * invW + 0.5f), 0, 255);
-            int outB = Math.clamp((int) (sumB * invW + 0.5f), 0, 255);
+            a /= totalW;
+            r /= totalW;
+            g /= totalW;
+            b /= totalW;
 
-            return (outA << 24) | (outR << 16) | (outG << 8) | outB;
-        }
-
-        protected int getPixel(BufferedImage img, int x, int y) {
-            x = Math.clamp(x, 0, img.getWidth() - 1);
-            y = Math.clamp(y, 0, img.getHeight() - 1);
-            return img.getRGB(x, y);
-        }
-
-        protected boolean isTransparent(int p) {
-            int ca = (p >>> 24);
-            int cr = (p >> 16) & 0xff;
-            int cg = (p >> 8) & 0xff;
-            int cb = p & 0xff;
-            return cr == 0 && cg == 0 && cb == 0 && ca == 0;
-        }
-
-        protected int pack(float a, float r, float g, float b, float totalW) {
-            if (totalW < 1e-6f) {
-                return 0;
-            }
-            float inv = 1.0f / totalW;
-            int ia = Math.clamp((int) (a * inv), 0, 255);
-            int ir = Math.clamp((int) (r * inv), 0, 255);
-            int ig = Math.clamp((int) (g * inv), 0, 255);
-            int ib = Math.clamp((int) (b * inv), 0, 255);
-            return (ia << 24) | (ir << 16) | (ig << 8) | ib;
-        }
-
-        protected float sinc(float x) {
-            if (Math.abs(x) < 1e-6f) {
-                return 1f;
-            }
-            return (float) (Math.sin(PI * x) / (PI * x));
+            a = Math.clamp(a, 0, 255);
+            r = Math.clamp(r, 0, 255);
+            g = Math.clamp(g, 0, 255);
+            b = Math.clamp(b, 0, 255);
+            return ((int) a << 24) | ((int) r << 16) | ((int) g << 8) | (int) b;
         }
     }
 
     public static class NearestSampler extends Sampler {
 
         public NearestSampler() {
-            super(0, 0, 0, 0);
+            super();
+            setWindow(0, 0, 0, 0);
         }
 
         @Override
-        public int sample(BufferedImage target, float x, float y) {
+        protected float kernel(float offset) {
+            return 1f;
+        }
+
+        @Override
+        public int sample(BufferedImage img, float x, float y) {
+            if (!isReady()) {
+                throw new IllegalStateException("Sampler not configured");
+            }
             int ix = Math.round(x);
             int iy = Math.round(y);
-            int w = target.getWidth();
-            int h = target.getHeight();
-            if (ix < 0 || iy < 0 || ix >= w || iy >= h) {
-                return 0;
-            }
-            return getPixel(target, ix, iy);
-        }
-
-        @Override
-        protected float weight(float t) {
-            return 0;
+            Integer[] pt = wrapCoord(ix, iy, img.getWidth(), img.getHeight(), getEdgeMode());
+            return pt == null ? 0 : img.getRGB(pt[0], pt[1]);
         }
     }
 
     public static class BilinearSampler extends Sampler {
 
         public BilinearSampler() {
-            super(0, 1, 0, 1);
+            super();
+            setWindow(0, 1, 0, 1);
         }
 
         @Override
-        protected float weight(float t) {
-            if (t >= 0 && t <= 1) {
-                return 1 - t;
-            }
-            return 0;
+        protected float kernel(float offset) {
+            float d = Math.abs(offset);
+            return d < 1f ? 1f - d : 0f;
         }
     }
 
     public static class MitchellSampler extends Sampler {
 
         public MitchellSampler() {
-            super(-1, 2, -1, 2);
+            super();
+            setWindow(-1, 2, -1, 2);
         }
 
         @Override
-        protected float weight(float t) {
-            t = Math.abs(t);
-            if (t < 1f) {
-                return (float) (0.5 * (2 + t * t * (-5 + 3 * t)));
-            } else if (t < 2f) {
-                return (float) (0.5 * (4 + t * (-8 + t * (5 - t))));
+        protected float kernel(float t) {
+            float x = Math.abs(t);
+            if (x < 1) {
+                return (float) ((16 + x * x * (-12 + x * 6)) / 18.0);
+            }
+            if (x < 2) {
+                return (float) ((32 + x * (-48 + x * (24 - x * 4))) / 18.0);
             }
             return 0f;
         }
@@ -195,16 +227,18 @@ public class PixelSampler {
     public static class CatmullRomSampler extends Sampler {
 
         public CatmullRomSampler() {
-            super(-1, 2, -1, 2);
+            super();
+            setWindow(-1, 2, -1, 2);
         }
 
         @Override
-        protected float weight(float t) {
-            t = Math.abs(t);
-            if (t < 1f) {
-                return (float) (1.5 * t * t * t - 2.5 * t * t + 1);
-            } else if (t < 2f) {
-                return (float) (-0.5 * t * t * t + 2.5 * t * t - 4 * t + 2);
+        protected float kernel(float t) {
+            float x = Math.abs(t);
+            if (x < 1f) {
+                return 0.5f * (2 + x * x * x - 3 * x * x);
+            }
+            if (x < 2f) {
+                return 0.5f * (4 - 8 * x + 5 * x * x - x * x * x);
             }
             return 0f;
         }
@@ -213,33 +247,78 @@ public class PixelSampler {
     public static class Lanczos2Sampler extends Sampler {
 
         public Lanczos2Sampler() {
-            super(-2, 2, -2, 2);
+            super();
+            setWindow(-2, 2, -2, 2);
         }
 
         @Override
-        protected float weight(float t) {
-            t = Math.abs(t);
-            if (t >= 2f) {
+        protected float kernel(float x) {
+            x = Math.abs(x);
+            if (x < 1e-6f) {
+                return 1f;
+            }
+            if (x >= 2f) {
                 return 0f;
             }
-            return sinc(t) * sinc(t / 2f);
+            return (float) (Math.sin(Math.PI * x) / (Math.PI * x) * Math.sin(Math.PI * x / 2.0) / (Math.PI * x / 2.0));
         }
     }
 
     public static class Lanczos3Sampler extends Sampler {
 
         public Lanczos3Sampler() {
-            super(-3, 3, -3, 3);
+            super();
+            setWindow(-3, 3, -3, 3);
         }
 
         @Override
-        protected float weight(float t) {
-            t = Math.abs(t);
-            if (t >= 3f) {
+        protected float kernel(float x) {
+            x = Math.abs(x);
+            if (x < 1e-6f) {
+                return 1f;
+            }
+            if (x >= 3f) {
                 return 0f;
             }
-            return sinc(t) * sinc(t / 3f);
+            return (float) (Math.sin(Math.PI * x) / (Math.PI * x) * Math.sin(Math.PI * x / 3.0) / (Math.PI * x / 3.0));
         }
+    }
+
+    private static Integer[] wrapCoord(int x, int y, int w, int h, EdgeMode mode) {
+        switch (mode) {
+            case ZERO:
+                if (x >= 0 && x < w && y >= 0 && y < h) {
+                    return new Integer[]{x, y};
+                }
+                return null;
+            case CLAMP_EDGE:
+                int nx = Math.clamp(x, 0, w - 1);
+                int ny = Math.clamp(y, 0, h - 1);
+                return new Integer[]{nx, ny};
+            case MIRROR:
+                return mirrorWrap(x, y, w, h);
+            case REPEAT:
+                int rx = (x % w + w) % w;
+                int ry = (y % h + h) % h;
+                return new Integer[]{rx, ry};
+            default:
+                return null;
+        }
+    }
+
+    private static Integer[] mirrorWrap(int x, int y, int w, int h) {
+        int mx = mirrorOne(x, w);
+        int my = mirrorOne(y, h);
+        return new Integer[]{mx, my};
+    }
+
+    private static int mirrorOne(int p, int len) {
+        if (len <= 1) {
+            return 0;
+        }
+        int cycle = (len - 1) * 2;
+        int mod = (p % cycle + cycle) % cycle;
+        return mod < len ? mod : cycle - mod;
     }
 
 }
