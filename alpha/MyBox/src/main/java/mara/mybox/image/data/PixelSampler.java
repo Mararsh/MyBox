@@ -1,14 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package mara.mybox.image.data;
 
 import java.awt.image.BufferedImage;
 
 public class PixelSampler {
 
-    public enum SampleMode {
+    public enum SamplingAlgorithm {
         /**
          * Nearest‑Neighbor Sampling 最近邻采样：最快，锯齿明显，不做平滑
          */
@@ -85,7 +81,7 @@ public class PixelSampler {
         protected Sampler() {
         }
 
-        public Sampler setWindow(int i0, int i1, int j0, int j1) {
+        public final Sampler setWindow(int i0, int i1, int j0, int j1) {
             this.i0 = i0;
             this.i1 = i1;
             this.j0 = j0;

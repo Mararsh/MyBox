@@ -41,7 +41,7 @@ public class LiquifyConfig {
     public static LiquifyConfig defaultConfig() {
         LiquifyConfig c = new LiquifyConfig();
         // 默认：LANCZOS2 + CLAMP_EDGE
-        c.sampler = PixelSampler.SampleMode.LANCZOS2.create()
+        c.sampler = PixelSampler.SamplingAlgorithm.LANCZOS2.create()
                 .setEdgeMode(PixelSampler.EdgeMode.CLAMP_EDGE);
         return c;
     }
@@ -116,7 +116,7 @@ public class LiquifyConfig {
     /**
      * 快捷：通过SampleMode + EdgeMode内部create全新Sampler实例
      */
-    public LiquifyConfig setSampler(PixelSampler.SampleMode mode, PixelSampler.EdgeMode edgeMode) {
+    public LiquifyConfig setSampler(PixelSampler.SamplingAlgorithm mode, PixelSampler.EdgeMode edgeMode) {
         this.sampler = mode.create().setEdgeMode(edgeMode);
         return this;
     }

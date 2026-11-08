@@ -12,12 +12,11 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.ImageDemos;
 import mara.mybox.fxml.image.ImageViewTools;
-import mara.mybox.fxml.image.LiquifyTools;
-import mara.mybox.image.data.LiquifyConfig;
+import mara.mybox.image.data.ImageLiquify;
+import mara.mybox.image.data.ImageLiquify.FalloffAlgorithm;
+import mara.mybox.image.data.ImageLiquify.LiquifyOperation;
 import mara.mybox.image.data.PixelSampler.EdgeMode;
-import mara.mybox.image.data.PixelSampler.SampleMode;
-import mara.mybox.image.tools.LiquifyTools.BrushKernel;
-import mara.mybox.image.tools.LiquifyTools.LiquifyType;
+import mara.mybox.image.data.PixelSampler.SamplingAlgorithm;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -29,12 +28,11 @@ import static mara.mybox.value.Languages.message;
 public class ImageLiquifyController extends BaseImageEditController {
 
     protected IntPoint startPoint, endPoint;
-    protected int radius = 50, step = 20;
     protected float strengthMax = 1.0f, strengthThreshold = 0.05f, hardness = 0.5f;
-    protected LiquifyType liquifyType = LiquifyType.PUSH;
-    protected BrushKernel brushKernel = BrushKernel.SMOOTH_QUADRATIC;
-    protected LiquifyConfig liquifyConfig;
-    protected SampleMode sampleMode = SampleMode.BilinearInterpolation;
+    protected LiquifyOperation liquifyOperation = LiquifyOperation.ROTATE_CLOCKWISE;
+    protected FalloffAlgorithm brushKernel = FalloffAlgorithm.SMOOTH_QUADRATIC;
+    protected ImageLiquify liquify;
+    protected SamplingAlgorithm sampleMode = SamplingAlgorithm.BilinearInterpolation;
     protected EdgeMode edgeMode = EdgeMode.CLAMP_EDGE;
 
     @FXML
@@ -90,29 +88,54 @@ public class ImageLiquifyController extends BaseImageEditController {
 
     @Override
     public boolean checkOptions() {
-        if (!super.checkOptions()) {
+        try {
+            if (!super.checkOptions() || !liquifyController.pickValues()) {
+                return false;
+            }
+            if (liquifyController.pushRadio.isSelected()) {
+                liquifyOperation = LiquifyOperation.PUSH;
+            } else if (liquifyController.expandRadio.isSelected()) {
+                liquifyOperation = LiquifyOperation.EXPAND;
+            } else if (liquifyController.shrinkRadio.isSelected()) {
+                liquifyOperation = LiquifyOperation.SHRINK;
+            } else if (liquifyController.rotateRadio.isSelected()) {
+                liquifyOperation = LiquifyOperation.ROTATE_CLOCKWISE;
+            } else if (liquifyController.rotateCounterRadio.isSelected()) {
+                liquifyOperation = LiquifyOperation.ROTATE_COUNTER_CLOCKWISE;
+            } else if (liquifyController.turbulenceRadio.isSelected()) {
+                liquifyOperation = LiquifyOperation.TURBULENCE;
+            } else {
+                liquifyOperation = LiquifyOperation.PUSH;
+            }
+            liquify = new ImageLiquify()
+                    .setStartPoint(startPoint)
+                    .setEndPoint(endPoint)
+                    .setOperation(liquifyOperation)
+                    .setFallOff(FalloffAlgorithm.SMOOTH_QUADRATIC)
+                    .setSampler(sampleMode, edgeMode)
+                    .setRadius(liquifyController.radius)
+                    .setStep(liquifyController.step)
+                    .setSafeMargin(liquifyController.safeMargin)
+                    .setStrengthMax(strengthMax)
+                    .setStrengthThreshold(strengthThreshold)
+                    .setHardness(hardness)
+                    .setTurbulenceSeed(System.currentTimeMillis())
+                    .setTurbulencePower(0.12f)
+                    .setTurbulenceFreq(0.028f)
+                    .setTurbulenceOctaves(3);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        liquifyConfig = LiquifyConfig.defaultConfig()
-                .setStartPoint(startPoint)
-                .setEndPoint(endPoint)
-                .setLiquifyType(LiquifyType.PUSH)
-                .setKernel(BrushKernel.SMOOTH_QUADRATIC)
-                .setSampler(sampleMode, edgeMode)
-                .setRadius(radius)
-                .setStep(step)
-                .setSafeMargin(8)
-                .setStrengthMax(strengthMax)
-                .setStrengthThreshold(strengthThreshold)
-                .setHardness(hardness);
-        return true;
     }
 
     @Override
     protected void handleImage(FxTask currentTask) {
         opInfo = message("StartPoint") + ":" + startPoint.text() + " "
                 + message("EndPoint") + ":" + endPoint.text();
-        handledImage = LiquifyTools.liquify(imageView.getImage(), liquifyConfig.setTask(currentTask));
+        handledImage = liquify.render(imageView.getImage(), currentTask);
+        liquify = null;
     }
 
     @Override

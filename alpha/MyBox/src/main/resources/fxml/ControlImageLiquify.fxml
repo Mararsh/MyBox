@@ -6,8 +6,14 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -15,34 +21,108 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageLiquify">
     <children>
-        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../buttons/Red/iconTips.png" />
-            </image>
-        </ImageView>
-      <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="35.0" prefWrapLength="0.0" vgap="5.0">
+      <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="212.0" prefWrapLength="0.0" vgap="5.0">
          <children>
-            <Label text="%Brush" />
-            <ComboBox editable="true" prefWidth="150.0" fx:id="xSelector1" />
+              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                      <Image url="@../buttons/Red/iconTips.png" />
+                  </image>
+              </ImageView>
+            <Label text="%Operation" />
+            <RadioButton fx:id="pushRadio" mnemonicParsing="false" selected="true" text="%Push">
+               <toggleGroup>
+                  <ToggleGroup fx:id="operationGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="expandRadio" mnemonicParsing="false" text="%Expand" toggleGroup="$operationGroup" />
+            <RadioButton fx:id="shrinkRadio" mnemonicParsing="false" text="%Shrink" toggleGroup="$operationGroup" />
+            <RadioButton fx:id="rotateRadio" mnemonicParsing="false" text="%RotateClockwise" toggleGroup="$operationGroup" />
+            <RadioButton fx:id="rotateCounterRadio" mnemonicParsing="false" text="%RotateCounterClockwise" toggleGroup="$operationGroup" />
+            <RadioButton fx:id="turbulenceRadio" mnemonicParsing="false" text="%Turbulence" toggleGroup="$operationGroup" />
          </children>
       </FlowPane>
-        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-            <children>
-                <Label text="%Radius" />
-                <ComboBox editable="true" prefWidth="100.0" fx:id="xSelector" />
-            </children>
-        </FlowPane>
-        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-            <children>
-                <Label text="%Interval" />
-                <ComboBox fx:id="ySelector" editable="true" prefWidth="100.0" />
-            </children>
-        </FlowPane>
-      <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="83.0" prefWrapLength="0.0" vgap="5.0">
+      <Separator layoutX="10.0" layoutY="266.0" prefWidth="200.0" />
+      <VBox spacing="2.0">
          <children>
-            <Label text="%Strength" />
-            <ComboBox fx:id="ySelector1" editable="true" prefWidth="100.0" />
+            <Label minHeight="-Infinity" text="%StartPoint" wrapText="true" />
+            <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <Label text="x1">
+                     <FlowPane.margin>
+                        <Insets />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextField prefWidth="100.0" fx:id="x1Input" />
+               </children>
+            </FlowPane>
+            <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <Label text="y1" />
+                  <TextField fx:id="y1Input" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+            <Label minHeight="-Infinity" text="%EndPoint" wrapText="true" />
+            <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <Label text="x2">
+                     <FlowPane.margin>
+                        <Insets />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextField prefWidth="100.0" fx:id="x2Input" />
+               </children>
+            </FlowPane>
+            <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <Label text="y2" />
+                  <TextField fx:id="y2Input" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+            <Button fx:id="goPointButton" mnemonicParsing="false" onAction="#goPointAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconGo.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
-      </FlowPane>
+      </VBox>
+      <Separator prefWidth="200.0" />
+      <VBox spacing="2.0">
+         <children>
+            <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+               <children>
+                  <Label text="%FalloffAlgorithm" />
+                  <ComboBox fx:id="fallOffSelector" prefWidth="150.0" />
+               </children>
+            </FlowPane>
+            <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+               <children>
+                  <Label text="%SamplingAlgorithm" />
+                  <ComboBox fx:id="samplerSelector" prefWidth="150.0" />
+               </children>
+            </FlowPane>
+              <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                  <children>
+                      <Label text="%BrushRadius" />
+                      <ComboBox fx:id="radiusSelector" editable="true" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                  <children>
+                      <Label text="%Interval" />
+                      <ComboBox fx:id="ySelector" editable="true" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+            <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+               <children>
+                  <Label text="%Strength" />
+                  <ComboBox fx:id="ySelector1" editable="true" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
     </children>
 </VBox>

@@ -1,13 +1,11 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -18,15 +16,17 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageLiquify extends BaseController {
 
-    protected float shearX, shearY;
+    protected int radius = 50, step = 20, safeMargin = 12;
 
     @FXML
-    protected ComboBox<String> xSelector, ySelector;
+    protected ComboBox<String> fallOffSelector, samplerSelector, radiusSelector;
     @FXML
-    protected CheckBox cutCheck;
+    protected ToggleGroup operationGroup;
+    @FXML
+    protected RadioButton pushRadio, expandRadio, shrinkRadio, rotateRadio, rotateCounterRadio, turbulenceRadio;
 
     public ControlImageLiquify() {
-        TipsLabelKey = "ImageShearComments";
+        TipsLabelKey = "ImageLiquifyComments";
     }
 
     @Override
@@ -34,33 +34,11 @@ public class ControlImageLiquify extends BaseController {
         try {
             super.initControls();
 
-            shearX = UserConfig.getFloat(baseName + "ShearX", 1f);
-            xSelector.getItems().addAll(Arrays.asList(
-                    "1", "-1", "1.5", "-1.5", "2", "-2", "3", "-3", "4", "-4", "5", "-5", "0",
-                    "0.5", "-0.5", "0.4", "-0.4", "0.3", "-0.3", "0.2", "-0.2", "0.1", "-0.1",
-                    "0.7", "-0.7", "0.8", "-0.8", "0.9", "-0.9")
+            radius = UserConfig.getInt(baseName + "Radius", 80);
+            radiusSelector.getItems().addAll(Arrays.asList(
+                    "80", "100", "50", "200", "20", "400", "10", "5", "150", "30")
             );
-            xSelector.setValue(shearX + "");
-            xSelector.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkX();
-                }
-            });
-
-            shearY = UserConfig.getFloat(baseName + "ShearY", 0f);
-            ySelector.getItems().addAll(Arrays.asList(
-                    "1", "-1", "1.5", "-1.5", "2", "-2", "3", "-3", "4", "-4", "5", "-5", "0",
-                    "0.5", "-0.5", "0.4", "-0.4", "0.3", "-0.3", "0.2", "-0.2", "0.1", "-0.1",
-                    "0.7", "-0.7", "0.8", "-0.8", "0.9", "-0.9")
-            );
-            ySelector.setValue(shearY + "");
-            ySelector.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkY();
-                }
-            });
+            radiusSelector.setValue(radius + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -68,37 +46,32 @@ public class ControlImageLiquify extends BaseController {
 
     }
 
-    private boolean checkX() {
+    private boolean checkRadius() {
+        int v = -1;
         try {
-            shearX = Float.parseFloat(xSelector.getValue());
-            ValidationTools.setEditorNormal(xSelector);
-            return true;
+            v = Integer.parseInt(radiusSelector.getValue());
         } catch (Exception e) {
-            popError(message("InvalidParameter") + ": " + message("XRatio"));
-            ValidationTools.setEditorBadStyle(xSelector);
-            return false;
         }
-    }
-
-    private boolean checkY() {
-        try {
-            shearY = Float.parseFloat(ySelector.getValue());
-            ValidationTools.setEditorNormal(ySelector);
+        if (v > 0) {
+            radius = v;
+            UserConfig.setInt(baseName + "Radius", radius);
             return true;
-        } catch (Exception e) {
-            popError(message("InvalidParameter") + ": " + message("YRatio"));
-            ValidationTools.setEditorBadStyle(ySelector);
+        } else {
+            popError(message("InvalidParameter") + ": " + message("BrushRadius"));
             return false;
         }
     }
 
     public boolean pickValues() {
-        if (!checkX() || !checkY()) {
+        if (!checkRadius()) {
             return false;
         }
-        UserConfig.setFloat(baseName + "ShearX", shearX);
-        UserConfig.setFloat(baseName + "ShearY", shearY);
         return true;
+    }
+
+    @FXML
+    public void goPointAction() {
+
     }
 
 }

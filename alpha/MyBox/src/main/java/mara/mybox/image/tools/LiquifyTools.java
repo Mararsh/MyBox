@@ -45,8 +45,6 @@ public class LiquifyTools {
                 return null;
             }
 
-            MyBoxLog.console(cfg.getSampler().getEdgeMode());
-
             FxTask task = cfg.getTask();
             BufferedImage source = cfg.getSource();
             IntPoint startPoint = cfg.getStartPoint();
