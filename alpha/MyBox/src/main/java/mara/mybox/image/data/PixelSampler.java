@@ -2,11 +2,18 @@ package mara.mybox.image.data;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * @Author Mara
+ * @CreateDate 2026-11-5
+ * @License Apache License Version 2.0
+ *
+ * Assisted by Doubao and DeepSeek
+ */
 public class PixelSampler {
 
     public enum SamplingAlgorithm {
         /**
-         * Nearest‑Neighbor Sampling 最近邻采样：最快，锯齿明显，不做平滑
+         * Nearest‑Neighbor Sampling: Fastest, obvious aliasing, no smoothing
          */
         NearestNeighbor {
             @Override
@@ -15,7 +22,8 @@ public class PixelSampler {
             }
         },
         /**
-         * Bilinear Interpolation 双线性插值：速度快，基础平滑，适合实时预览
+         * Bilinear Interpolation: Fast, basic smoothing, suitable for real-time
+         * preview
          */
         BilinearInterpolation {
             @Override
@@ -24,7 +32,8 @@ public class PixelSampler {
             }
         },
         /**
-         * Mitchell‑Netravali 米切尔改良双三次采样：平衡锐度与振铃，缩放常用
+         * Mitchell‑Netravali: Balanced sharpness and ringing suppression,
+         * commonly used for scaling
          */
         MITCHELL {
             @Override
@@ -33,7 +42,8 @@ public class PixelSampler {
             }
         },
         /**
-         * Catmull‑Rom Spline 卡特莫尔‑罗姆样条（非标准双三次）：画面偏锐利
+         * Catmull‑Rom Spline (non-standard bicubic): Produces relatively sharp
+         * results
          */
         CATMULL_ROM {
             @Override
@@ -42,7 +52,8 @@ public class PixelSampler {
             }
         },
         /**
-         * Lanczos‑2‑Lobe 兰索斯2阶：画质优秀，锐度高，计算量中等
+         * Lanczos‑2‑Lobe: Excellent image quality, high sharpness, moderate
+         * computation cost
          */
         LANCZOS2 {
             @Override
@@ -51,7 +62,8 @@ public class PixelSampler {
             }
         },
         /**
-         * Lanczos‑3‑Lobe 兰索斯3阶：最高画质，抑制振铃更好，开销最大
+         * Lanczos‑3‑Lobe: Highest quality, better ringing suppression, highest
+         * computation cost
          */
         LANCZOS3 {
             @Override
@@ -64,10 +76,10 @@ public class PixelSampler {
     }
 
     public enum EdgeMode {
-        ZERO, // 越界返回透明黑色0，超出图像范围取黑色像素
-        CLAMP_EDGE, // 边缘延展，复制图像边缘像素向外延伸；人像照片液化首选，消除黑边
-        MIRROR, // 镜像模式，超出边界镜像翻转图像内容
-        REPEAT        // 平铺重复，图像瓷砖式循环拼接；多用于纹理，人像极少使用
+        CLAMP, // Clamp: Repeats edge pixels when out of bounds
+        WRAP, // Wrap: Tile repeat for out-of-bounds coordinates
+        MIRROR, // Mirror: Flip reflection across image boundary
+        TRANSPARENT // Transparent: Treat out-of-bounds as fully transparent black
     }
 
     public abstract static class Sampler {
@@ -76,7 +88,7 @@ public class PixelSampler {
         private int i1 = 2;
         private int j0 = -1;
         private int j1 = 2;
-        private EdgeMode edgeMode = EdgeMode.CLAMP_EDGE;
+        private EdgeMode edgeMode = EdgeMode.CLAMP;
 
         protected Sampler() {
         }
@@ -282,18 +294,18 @@ public class PixelSampler {
 
     private static Integer[] wrapCoord(int x, int y, int w, int h, EdgeMode mode) {
         switch (mode) {
-            case ZERO:
+            case TRANSPARENT:
                 if (x >= 0 && x < w && y >= 0 && y < h) {
                     return new Integer[]{x, y};
                 }
                 return null;
-            case CLAMP_EDGE:
+            case CLAMP:
                 int nx = Math.clamp(x, 0, w - 1);
                 int ny = Math.clamp(y, 0, h - 1);
                 return new Integer[]{nx, ny};
             case MIRROR:
                 return mirrorWrap(x, y, w, h);
-            case REPEAT:
+            case WRAP:
                 int rx = (x % w + w) % w;
                 int ry = (y % h + h) % h;
                 return new Integer[]{rx, ry};

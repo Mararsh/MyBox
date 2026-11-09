@@ -456,6 +456,9 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "Shear")).append("</H3>\n");
             s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageShearComments"))).append("\n");
 
+            s.append("    <H3>").append(message(lang, "Liquify")).append("</H3>\n");
+            s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageLiquifyComments"))).append("\n");
+
             s.append("    <H3>").append(message(lang, "ImageRepeatTile")).append("</H3>\n");
             s.append(HtmlWriteTools.codeToHtml(message(lang, "ImageRepeatTips"))).append("\n");
 

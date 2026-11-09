@@ -274,12 +274,19 @@ public abstract class BaseController_Attributes {
 
     @FXML
     public void popTips() {
-        String tips = null;
+        ImageView view;
         if (tipsView != null) {
-            tips = NodeStyleTools.getTips(tipsView);
+            view = tipsView;
         } else if (rightTipsView != null) {
-            tips = NodeStyleTools.getTips(rightTipsView);
+            view = rightTipsView;
+        } else {
+            return;
         }
+        if (view.getUserData() != null) {
+            HtmlPopController.showHtml(null, (String) view.getUserData());
+            return;
+        }
+        String tips = NodeStyleTools.getTips(view);
         if (tips != null && !tips.isBlank()) {
             TextPopController.loadText(tips);
         }

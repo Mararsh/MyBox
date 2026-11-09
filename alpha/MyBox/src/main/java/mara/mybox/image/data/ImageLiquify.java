@@ -9,50 +9,59 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 
+/**
+ * @Author Mara
+ * @CreateDate 2026-11-5
+ * @License Apache License Version 2.0
+ *
+ * Assisted by Doubao and DeepSeek
+ */
 public class ImageLiquify {
 
     public enum LiquifyOperation {
-        PUSH, // Push，拖拽推移
-        EXPAND, // Expand，膨胀：向外扩张
-        SHRINK, // Shrink，收缩：向内挤压
-        ROTATE_CLOCKWISE, // Rotate‑Clockwise，顺时针旋转
-        ROTATE_COUNTER_CLOCKWISE,// Rotate‑Counter‑Clockwise，逆时针旋转
-        TURBULENCE              // Turbulence，褶皱/湍流，小幅度扰动
+        PUSH, // Push, drag and shift pixels
+        EXPAND, // Expand, push pixels outward
+        SHRINK, // Shrink, squeeze pixels inward
+        ROTATE_CLOCKWISE, // Rotate-Clockwise, clockwise pixel rotation
+        ROTATE_COUNTER_CLOCKWISE, // Rotate-Counter-Clockwise, counter-clockwise pixel rotation
+        TURBULENCE // Turbulence, small chaotic pixel perturbation
     }
 
     public enum FalloffAlgorithm {
-        SMOOTH_QUADRATIC, // Smooth‑Quadratic，二次平方衰减，(1‑t)²
-        GAUSSIAN, // Gaussian，高斯衰减，exp(-4t²)
-        SMOOTH_STEP, // Smooth‑Step，标准平滑阶跃，3t²−2t³
-        SMOOTH_QUARTIC, // Smooth‑Quartic，四次方衰减，(1‑t)^4
-        PS_LIKE, // Photoshop‑Like，PS风格画笔（依赖hardness参数）
-        HARD_CIRCLE         // Hard‑Circle，硬圆形画笔，调试用
+        SMOOTH_QUADRATIC, // Smooth-Quadratic, quadratic falloff: (1‑t)²
+        GAUSSIAN, // Gaussian, gaussian falloff: exp(-4t²)
+        SMOOTH_STEP, // Smooth-Step, standard smoothstep: 3t²−2t³
+        SMOOTH_QUARTIC, // Smooth-Quartic, quartic falloff: (1‑t)^4
+        PS_LIKE, // Photoshop-Like, PS-style brush; hardness controls the size of solid center
+        HARD_CIRCLE // Hard-Circle, hard edged circle brush, for debugging
     }
 
     private FxTask task;
     private BufferedImage source, target;
     private LiquifyOperation operation = LiquifyOperation.PUSH;
-    private IntPoint startPoint;
-    private IntPoint endPoint;
-    private FalloffAlgorithm fallOff = FalloffAlgorithm.SMOOTH_QUADRATIC;
-    private PixelSampler.Sampler sampler;
-    private PerlinNoise perlin;
 
-    private int radius = 80;
-    private int step = 20;
-    private float strengthMax = 0.6f;
-    private float strengthThreshold = 0.05f;
-    private float hardness = 0.5f;
+    private IntPoint startPoint; // Start coordinate point
+    private IntPoint endPoint; // End coordinate point
+    private FalloffAlgorithm fallOff = FalloffAlgorithm.SMOOTH_QUADRATIC; // Brush falloff algorithm
+    private PixelSampler.Sampler sampler; // Pixel sampler
+    private PerlinNoise perlin; // Perlin noise instance for turbulence
 
-    private float expandShrinkPower = 0.35f;
-    private float rotatePower = 0.45f;
-    private long turbulenceSeed = 12345L;
-    private float turbulencePower = 0.22f;
-    private float turbulenceFreq = 0.055f;
-    private int turbulenceOctaves = 3;
-    private int safeMargin = 12;
+    private int radius = 80; // Brush radius; range: >0; recommended: 20～200
+    private int step = 20; // Stroke sampling step; range: ≥1; recommended: 5～40, smaller for smoother drag
+    private float strengthMax = 0.6f; // Maximum distortion strength; range: 0～1; recommended: 0.3～0.8
+    private float strengthThreshold = 0.05f; // Strength threshold, skip distortion below this value; range: 0～0.2; recommended: 0.02～0.08
+    private float hardness = 0.5f; // Brush hardness; range: 0～1; recommended: 0.2～0.7; 0 = fully feathered, 1 = solid hard core, only works for PS_LIKE
 
-    private float[][] localDxArray, localDyArray, localStrengthArray;
+    private float expandShrinkPower = 0.35f; // Expand / shrink power factor; range: 0～1; recommended: 0.2～0.6
+    private float rotatePower = 0.45f; // Rotation power factor; range: 0～1; recommended: 0.3～0.7
+    private long turbulenceSeed = 12345L; // Turbulence noise seed; range: any long; recommended: arbitrary fixed long value for different pattern
+    private float turbulencePower = 0.22f; // Overall turbulence strength; range: 0～1; recommended: 0.1～0.35
+    private float turbulenceFreq = 0.055f; // Turbulence frequency, higher for finer details; range: >0; recommended: 0.02～0.1
+    private int turbulenceOctaves = 3; // Noise octaves; stacked noise layers for fine details; range: ≥1; recommended: 2～4
+    private int safeMargin = 12; // Border safe margin to avoid out-of-bounds; range: ≥0; recommended: 8～20
+
+    private float[][] localDxArray, localDyArray, localStrengthArray; // Local warp field: x offset, y offset, weight strength
+
     private int imageWidth, imageHeight;
     private int boxX, boxY, boxW, boxH;
 
@@ -317,19 +326,21 @@ public class ImageLiquify {
         return switch (fallOff) {
             case SMOOTH_QUADRATIC -> (1 - t) * (1 - t);
             case GAUSSIAN -> (float) Math.exp(-4.0f * t * t);
-            case SMOOTH_STEP -> 3 * t * t - 2 * t * t * t;
+            case SMOOTH_STEP -> 1f - (3 * t * t - 2 * t * t * t);
             case SMOOTH_QUARTIC -> {
                 float v = 1 - t;
                 yield v * v * v * v;
             }
             case HARD_CIRCLE -> 1f;
             case PS_LIKE -> {
-                float inner = 1f - hardness;
-                if (t <= inner) {
-                    yield 1f;
+                float inner = hardness;
+                float w = 1.0f - inner;
+                if (w <= 1e-6f) {
+                    yield 1.0f;
                 }
-                float u = (t - inner) / hardness;
-                yield 1f - (3 * u * u - 2 * u * u * u);
+                float s = (t - inner) / w;
+                s = Math.clamp(s, 0, 1);
+                yield 1f - (3 * s * s - 2 * s * s * s);
             }
         };
     }

@@ -586,13 +586,16 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 if (tipsLabel != null) {
                     NodeStyleTools.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));
                 }
-
                 if (tipsView != null) {
-                    NodeStyleTools.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
+                    NodeStyleTools.setTooltip(tipsView, new Tooltip(
+                            message("ClickTipsIconToPop") + "\n---------\n"
+                            + message(TipsLabelKey)));
                 }
 
                 if (rightTipsView != null) {
-                    NodeStyleTools.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
+                    NodeStyleTools.setTooltip(rightTipsView, new Tooltip(
+                            message("ClickTipsIconToPop") + "\n---------\n"
+                            + message(TipsLabelKey)));
                 }
             }
 

@@ -108,7 +108,7 @@ public class BaseMacro {
         return null;
     }
 
-    // helped with deepseek
+    //  Assisted by DeepSeek
     public boolean parseString(String inScript) {
         try {
             script = inScript;

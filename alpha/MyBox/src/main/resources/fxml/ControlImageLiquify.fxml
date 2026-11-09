@@ -44,6 +44,7 @@ License:    Apache License Version 2.0
       <Separator layoutX="10.0" layoutY="266.0" prefWidth="200.0" />
       <VBox spacing="2.0">
          <children>
+            <Label minHeight="-Infinity" text="%LiquifyNotes" wrapText="true" />
             <Label minHeight="-Infinity" text="%StartPoint" wrapText="true" />
             <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
                <children>
@@ -90,36 +91,88 @@ License:    Apache License Version 2.0
          </children>
       </VBox>
       <Separator prefWidth="200.0" />
-      <VBox spacing="2.0">
+      <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
          <children>
-            <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <Label text="%FalloffAlgorithm" />
+            <ComboBox fx:id="fallOffSelector" prefWidth="150.0" />
+         </children>
+      </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+         <children>
+            <Label text="%SamplingAlgorithm" />
+            <ComboBox fx:id="samplerSelector" prefWidth="150.0" />
+         </children>
+      </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+         <children>
+            <Label text="%EdgeMode" />
+            <ComboBox fx:id="edgeSelector" prefWidth="150.0" />
+         </children>
+      </FlowPane>
+        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Label text="%BrushRadius" />
+                <ComboBox fx:id="radiusSelector" editable="true" prefWidth="100.0" />
+            </children>
+        </FlowPane>
+        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Label text="%Interval" />
+                <ComboBox fx:id="stepSelector" editable="true" prefWidth="100.0" />
+            </children>
+        </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+         <children>
+            <Label text="%DistortionStrength" />
+            <ComboBox fx:id="strengthSelector" editable="true" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+         <children>
+            <Label text="%StrengthThreshold" />
+            <ComboBox fx:id="strengthThresholdSelector" editable="true" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <VBox fx:id="setBox" spacing="2.0">
+         <children>
+            <FlowPane fx:id="expandShrinkPane" alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                <children>
-                  <Label text="%FalloffAlgorithm" />
-                  <ComboBox fx:id="fallOffSelector" prefWidth="150.0" />
+                  <Label text="%ExpandShrinkPower" />
+                  <ComboBox fx:id="expandShrinkPowerSelector" editable="true" prefWidth="100.0" />
                </children>
             </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <FlowPane fx:id="rotatePane" alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="35.0" prefWrapLength="0.0" vgap="5.0">
                <children>
-                  <Label text="%SamplingAlgorithm" />
-                  <ComboBox fx:id="samplerSelector" prefWidth="150.0" />
+                  <Label text="%RotatePower" />
+                  <ComboBox fx:id="rotatePowerSelector" editable="true" prefWidth="100.0" />
                </children>
             </FlowPane>
-              <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                  <children>
-                      <Label text="%BrushRadius" />
-                      <ComboBox fx:id="radiusSelector" editable="true" prefWidth="100.0" />
-                  </children>
-              </FlowPane>
-              <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                  <children>
-                      <Label text="%Interval" />
-                      <ComboBox fx:id="ySelector" editable="true" prefWidth="100.0" />
-                  </children>
-              </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+            <VBox fx:id="turbulenceBox" spacing="2.0">
                <children>
-                  <Label text="%Strength" />
-                  <ComboBox fx:id="ySelector1" editable="true" prefWidth="100.0" />
+                  <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                     <children>
+                        <Label text="%TurbulencePower" />
+                        <ComboBox fx:id="turbulencePowerSelector" editable="true" prefWidth="100.0" />
+                     </children>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                     <children>
+                        <Label text="%TurbulenceNoiseFrequency" />
+                        <ComboBox fx:id="noiseFrequencySelector" editable="true" prefWidth="100.0" />
+                     </children>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                     <children>
+                        <Label text="%TurbulenceLayers" />
+                        <ComboBox fx:id="turbulenceLayersSelector" editable="true" prefWidth="100.0" />
+                     </children>
+                  </FlowPane>
+               </children>
+            </VBox>
+            <FlowPane fx:id="hardnessPane" alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+               <children>
+                  <Label text="%Hardness" />
+                  <ComboBox fx:id="hardnessSelector" editable="true" prefWidth="100.0" />
                </children>
             </FlowPane>
          </children>
