@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            *{
+                box-sizing:border-box;
+            }
+            body {
+                font-family: "Microsoft YaHei", sans‑serif;
+                font-size:14px;
+                padding:12px;
+                margin:0;
+                line-height:1.7;
+                color:#222;
+                background:#ffffff;
+            }
+            h2{
+                font-size:16px;
+                margin:16px 0 8px 0;
+                color:#1f4e96;
+                border‑bottom:1px solid #dde3ec;
+                padding‑bottom:4px;
+            }
+            table{
+                width:100%;
+                border‑collapse:collapse;
+                margin:8px 0 14px 0;
+            }
+            th,td{
+                border:1px solid #cbd5e0;
+                padding:6px 10px;
+                text‑align:left;
+            }
+            th{
+                background‑color:#edf2fa;
+                font‑weight:bold;
+            }
+            .note{
+                background‑color:#f7f9fc;
+                border‑left:3px solid #5b8ccc;
+                padding:8px 10px;
+                margin:10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>图像液化工具 参数说明</h2>
+        <p>本工具为图像液化画笔，可对图像像素做扭曲变形。</p>
+
+        <h2>公共参数（所有工具都生效）</h2>
+        <table>
+            <tr>
+                <th>参数名称</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>画笔半径</td>
+                <td>画笔作用范围，单位像素。数值大于0，建议20‑200。半径越大作用范围越大，大半径适合整体调整，小半径用于细节修饰。</td>
+            </tr>
+            <tr>
+                <td>笔画采样步长</td>
+                <td>拖拽涂抹时笔画的采样间隔。数值≥1，建议5‑40。数值越小拖拽轨迹越顺滑，但运算速度变慢；数值越大速度越快，拖拽容易出现分段痕迹。</td>
+            </tr>
+            <tr>
+                <td>最大形变强度</td>
+                <td>全部液化工具共用的整体强度上限。0＜数值≤1，建议0.3‑0.8。数值越大像素扭曲位移越强烈。</td>
+            </tr>
+            <tr>
+                <td>强度阈值</td>
+                <td>过滤画笔外围微弱形变，权重低于该数值的像素不会参与运算，可以提升运行速度。取值0‑1，建议0.02‑0.08。设置为0代表保留全部微弱形变；阈值不要设置过高，否则画笔边缘会出现生硬截断。</td>
+            </tr>
+        </table>
+
+        <p><strong>衰减算法（控制画笔从中心到边缘的强度衰减）</strong></p>
+        <table>
+            <tr>
+                <th>算法</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>SMOOTH_QUADRATIC</td>
+                <td>二次平方衰减，圆心强度最高，向外平滑减弱</td>
+            </tr>
+            <tr>
+                <td>GAUSSIAN</td>
+                <td>高斯衰减，过渡柔和自然</td>
+            </tr>
+            <tr>
+                <td>SMOOTH_STEP</td>
+                <td>平滑阶跃衰减</td>
+            </tr>
+            <tr>
+                <td>SMOOTH_QUARTIC</td>
+                <td>四次方衰减，边缘强度下降更快</td>
+            </tr>
+            <tr>
+                <td>HARD_CIRCLE</td>
+                <td>硬圆形画笔，画笔范围内强度保持不变</td>
+            </tr>
+            <tr>
+                <td>PS_LIKE</td>
+                <td>PS风格画笔，选中后可调节画笔硬度</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <th>参数名称</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>画笔硬度</td>
+                <td>仅PS_LIKE衰减模式可用，控制画笔中心实心区域大小。取值0‑1，建议0.2‑0.7。0=完全羽化，从圆心开始平滑过渡；1=实心硬圆，仅有极窄过渡边缘。</td>
+            </tr>
+        </table>
+
+        <p><strong>采样算法（变形后像素插值方式）</strong></p>
+        <table>
+            <tr>
+                <th>算法</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>NearestNeighbor</td>
+                <td>最近邻采样，速度最快，锯齿明显，无平滑效果</td>
+            </tr>
+            <tr>
+                <td>BilinearInterpolation</td>
+                <td>双线性插值，运算快，适合实时预览</td>
+            </tr>
+            <tr>
+                <td>MITCHELL</td>
+                <td>米切尔采样，兼顾画面锐度与抑制波纹伪影，适合变形缩放</td>
+            </tr>
+            <tr>
+                <td>CATMULL_ROM</td>
+                <td>卡特莫尔‑罗姆采样，成像画面偏锐利</td>
+            </tr>
+            <tr>
+                <td>LANCZOS2</td>
+                <td>兰索斯2阶，画质优秀，计算开销中等</td>
+            </tr>
+            <tr>
+                <td>LANCZOS3</td>
+                <td>兰索斯3阶，画质最佳，抑制波纹效果更好，运算开销最大</td>
+            </tr>
+        </table>
+
+        <p><strong>边缘模式（读取图片边界以外像素时的处理规则）</strong></p>
+        <table>
+            <tr>
+                <th>模式</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>CLAMP</td>
+                <td>复制延伸图片边缘像素</td>
+            </tr>
+            <tr>
+                <td>WRAP</td>
+                <td>图片平铺重复</td>
+            </tr>
+            <tr>
+                <td>MIRROR</td>
+                <td>镜像反射</td>
+            </tr>
+            <tr>
+                <td>TRANSPARENT</td>
+                <td>超出图像范围视为透明黑色</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <th>参数名称</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>起点、终点坐标</td>
+                <td>画笔笔画的起止位置。单点涂抹时起点和终点填写相同坐标；拖拽涂抹对应笔画的两个端点，坐标必须在图片范围内。</td>
+            </tr>
+        </table>
+
+        <h2>各工具专属参数</h2>
+        <table>
+            <tr>
+                <th>工具</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>推移(PUSH)</td>
+                <td>顺着拖拽方向移动像素，无额外参数</td>
+            </tr>
+            <tr>
+                <td>膨胀 / 收缩</td>
+                <td>膨胀：像素从画笔中心向外推开；收缩：像素向画笔中心挤压。<br><b>位移倍率</b>：控制挤压推拉强弱，≥0，建议0.2‑0.6，数值越大变形越强。</td>
+            </tr>
+            <tr>
+                <td>顺时针/逆时针旋转</td>
+                <td>画笔圈内像素发生旋转扭曲。<br><b>旋转倍率</b>：控制旋转扭转程度，≥0，建议0.3‑0.7，数值越大旋转效果越明显。</td>
+            </tr>
+            <tr>
+                <td>褶皱/湍流</td>
+                <td>给图像增加细碎随机扰动，适合消除磨皮塑料感、增加布料纹理，每次使用生成不一样的随机纹理。
+                    <ul>
+                        <li>湍流强度：整体扰动幅度，0‑1，建议0.1‑0.35，过高会撕裂画面</li>
+                        <li>噪声频率：控制褶皱纹理疏密，>0，建议0.02‑0.1，数值越大褶皱越细碎</li>
+                        <li>噪声八度(湍流层数)：控制纹理丰富程度，≥1，建议2‑4；超过4层性能提升有限</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        <h2>使用提示</h2>
+        <div class="note">
+            1. 调试褶皱效果建议优先使用纯色或者渐变图片，人像处理请使用偏小的参数。<br>
+            2. 画笔硬度只在PS_LIKE衰减算法下生效，其他衰减模式不生效。<br>
+            3. 采样步长调小会提升拖拽顺滑度，但会降低处理速度，大尺寸图片可以适当调大步长。<br>
+            4. 最大形变强度是全部工具的总强度开关，膨胀、旋转、褶皱的倍率属于各个工具独立的手感调节。<br>
+            5. 强度阈值可以优化性能，但请勿设置过大，避免画笔外圈出现生硬的圆环痕迹。
+        </div>
+
+    </body>
+</html>

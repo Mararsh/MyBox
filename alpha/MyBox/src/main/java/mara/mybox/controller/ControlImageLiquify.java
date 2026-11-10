@@ -64,7 +64,7 @@ public class ControlImageLiquify extends BaseController {
         try {
             super.initControls();
 
-            tipsView.setUserData(message("ImageLiquifyCommentsHtml"));
+            tipsView.setUserData("mybox_about_image_liquify");
 
             operationGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

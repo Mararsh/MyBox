@@ -33,6 +33,7 @@ import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
@@ -283,8 +284,13 @@ public abstract class BaseController_Attributes {
             return;
         }
         if (view.getUserData() != null) {
-            HtmlPopController.showHtml(null, (String) view.getUserData());
-            return;
+            String lang = Languages.isChinese() ? "zh" : "en";
+            String fname = (String) view.getUserData() + "_" + lang + ".html";
+            File html = FxFileTools.getInternalFile("/doc/" + lang + "/" + fname, "doc", fname);
+            if (html != null && html.exists()) {
+                HtmlPopController.openFile(null, html);
+                return;
+            }
         }
         String tips = NodeStyleTools.getTips(view);
         if (tips != null && !tips.isBlank()) {

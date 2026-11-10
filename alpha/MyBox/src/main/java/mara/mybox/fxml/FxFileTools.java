@@ -60,6 +60,7 @@ public class FxFileTools {
     }
 
     public static File getInternalFile(String resourceFile) {
+        MyBoxLog.console(resourceFile);
         if (resourceFile == null) {
             return null;
         }
@@ -74,7 +75,7 @@ public class FxFileTools {
             file.deleteOnExit();
             return file;
         } catch (Exception e) {
-            //            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

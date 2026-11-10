@@ -1,15 +1,11 @@
 package mara.mybox.controller;
 
-import java.util.List;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.image.ImageDemos;
 import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -89,12 +85,6 @@ public class ImageLiquifyController extends BaseImageEditController {
         handledImage = liquifyController.liquify.render(srcImage(), currentTask);
         liquifyController.liquify = null;
     }
-
-    @Override
-    protected void makeDemoFiles(FxTask currentTask, List<String> files, Image demoImage) {
-        ImageDemos.shear(currentTask, files, SwingFXUtils.fromFXImage(demoImage, null), srcFile());
-    }
-
 
     /*
         static methods

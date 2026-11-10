@@ -1,7 +1,5 @@
 package mara.mybox.image.data;
 
-import mara.mybox.image.tools.ColorConvertTools;
-import mara.mybox.image.tools.AlphaTools;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -11,6 +9,8 @@ import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.tools.AlphaTools;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -43,6 +43,12 @@ public class ImageBinary extends PixelsOperation {
     public ImageBinary(Image image) {
         init();
         this.image = SwingFXUtils.fromFXImage(image, null);
+    }
+
+    public ImageBinary(BufferedImage image, ImageScope scope) {
+        init();
+        this.image = image;
+        this.scope = scope;
     }
 
     @Override

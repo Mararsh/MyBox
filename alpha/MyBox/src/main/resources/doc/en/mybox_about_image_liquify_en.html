@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;}
+body {
+    font-family: sans-serif;
+    font-size:14px;
+    padding:12px;
+    margin:0;
+    line-height:1.7;
+    color:#222;
+    background:#ffffff;
+}
+h2{
+    font-size:16px;
+    margin:16px 0 8px 0;
+    color:#1f4e96;
+    border-bottom:1px solid #dde3ec;
+    padding-bottom:4px;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin:8px 0 14px 0;
+}
+th,td{
+    border:1px solid #cbd5e0;
+    padding:6px 10px;
+    text-align:left;
+}
+th{
+    background-color:#edf2fa;
+    font-weight:bold;
+}
+.note{
+    background-color:#f7f9fc;
+    border-left:3px solid #5b8ccc;
+    padding:8px 10px;
+    margin:10px 0;
+}
+</style>
+</head>
+<body>
+<h2>Image Liquify Tool Parameter Reference</h2>
+<p>This tool distorts image pixels with liquify brush strokes.</p>
+
+<h2>Common Parameters (All Tools)</h2>
+<table>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Brush Radius</td>
+<td>Brush working range in pixels. Value &gt;0, recommended 20‑200. Larger radius affects wider area, small radius for fine retouching.</td>
+</tr>
+<tr>
+<td>Stroke Step</td>
+<td>Sample interval for dragging strokes. Value ≥1, recommended 5‑40. Smaller value produces smoother dragging but slower computation. Larger value runs faster but may create segmented traces.</td>
+</tr>
+<tr>
+<td>Max Distortion Strength</td>
+<td>Global upper strength limit shared by all liquify operations. 0＜value≤1, recommended 0.3‑0.8. Larger value creates stronger pixel displacement.</td>
+</tr>
+<tr>
+<td>Strength Threshold</td>
+<td>Skip pixels with weight below threshold to improve performance. Range 0‑1, recommended 0.02‑0.08. Setting to 0 keeps all faint deformations. Avoid high values which cause harsh cutoff at brush edge.</td>
+</tr>
+</table>
+
+<p><strong>Falloff Algorithm (intensity decay from center outward)</strong></p>
+<table>
+<tr>
+<th>Algorithm</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>SMOOTH_QUADRATIC</td>
+<td>Quadratic decay, strongest at brush center, fades smoothly outward</td>
+</tr>
+<tr>
+<td>GAUSSIAN</td>
+<td>Gaussian decay with soft natural transition</td>
+</tr>
+<tr>
+<td>SMOOTH_STEP</td>
+<td>Smooth step decay</td>
+</tr>
+<tr>
+<td>SMOOTH_QUARTIC</td>
+<td>Quartic decay, intensity drops faster near edge</td>
+</tr>
+<tr>
+<td>HARD_CIRCLE</td>
+<td>Solid hard‑edged brush, constant strength across whole brush area</td>
+</tr>
+<tr>
+<td>PS_LIKE</td>
+<td>Photoshop‑style brush, enables Brush Hardness setting</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Brush Hardness</td>
+<td>Only effective for PS_LIKE falloff. Controls solid‑core size of brush. Range 0‑1, recommended 0.2‑0.7. 0 = fully feathered soft edge; 1 = solid hard circle with tiny transition rim.</td>
+</tr>
+</table>
+
+<p><strong>Sampling Algorithm (pixel interpolation after deformation)</strong></p>
+<table>
+<tr>
+<th>Algorithm</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>NearestNeighbor</td>
+<td>Fastest, noticeable jagged aliasing, no smoothing</td>
+</tr>
+<tr>
+<td>BilinearInterpolation</td>
+<td>Fast computation, suitable for real‑time preview</td>
+</tr>
+<tr>
+<td>MITCHELL</td>
+<td>Balances sharpness and ringing suppression, good for warp and scaling</td>
+</tr>
+<tr>
+<td>CATMULL_ROM</td>
+<td>Produces relatively sharp image output</td>
+</tr>
+<tr>
+<td>LANCZOS2</td>
+<td>Good image quality with moderate computing cost</td>
+</tr>
+<tr>
+<td>LANCZOS3</td>
+<td>Best quality, good ringing suppression, higher computational overhead</td>
+</tr>
+</table>
+
+<p><strong>Edge Mode (handling pixels outside image boundaries)</strong></p>
+<table>
+<tr>
+<th>Mode</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>CLAMP</td>
+<td>Extend and copy image border pixels</td>
+</tr>
+<tr>
+<td>WRAP</td>
+<td>Repeat image by tiling</td>
+</tr>
+<tr>
+<td>MIRROR</td>
+<td>Mirror‑reflect image content</td>
+</tr>
+<tr>
+<td>TRANSPARENT</td>
+<td>Treat out‑of‑bound area as transparent black</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Start / End Coordinates</td>
+<td>Start‑end positions of brush stroke. Use identical coordinates for single‑point paint. Coordinates must lie within image bounds.</td>
+</tr>
+</table>
+
+<h2>Tool‑Specific Parameters</h2>
+<table>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Push(PUSH)</td>
+<td>Shift pixels along drag direction, no extra parameters</td>
+</tr>
+<tr>
+<td>Expand / Shrink</td>
+<td>Expand pushes pixels outward from center; Shrink squeezes pixels toward center.<br><b>Displacement Power</b>: Controls push/squeeze intensity, ≥0, recommended 0.2‑0.6. Larger value strengthens effect.</td>
+</tr>
+<tr>
+<td>Rotate Clockwise / Counter‑Clockwise</td>
+<td>Twist pixels within brush region.<br><b>Rotate Power</b>: Controls twist magnitude, ≥0, recommended 0.3‑0.7. Larger value intensifies rotation.</td>
+</tr>
+<tr>
+<td>Turbulence</td>
+<td>Add fine random perturbations to image. Useful to reduce artificial smoothness on skin or add fabric texture. Noise pattern differs every run.
+<ul>
+<li>Turbulence Power: Overall perturbation amplitude, 0‑1, recommended 0.1‑0.35; high values may tear image</li>
+<li>Noise Frequency: Controls texture density, &gt;0, recommended 0.02‑0.1; higher value yields finer wrinkles</li>
+<li>Octaves: Controls detail richness, ≥1, recommended 2‑4; minimal improvement beyond 4 layers</li>
+</ul>
+</td>
+</tr>
+</table>
+
+<h2>Usage Tips</h2>
+<div class="note">
+1. Test turbulence with solid‑color or gradient images; use conservative values for portrait editing.<br>
+2. Brush Hardness only takes effect under PS_LIKE falloff mode.<br>
+3. Smaller Stroke Step yields smoother dragging but reduces performance; increase step for large‑size images.<br>
+4. Max Distortion Strength is global master strength. Displacement / Rotate Power are per‑tool sensitivity adjustments.<br>
+5. Strength threshold optimizes performance; avoid large threshold values which produce hard circular artifacts around brush perimeter.
+</div>
+
+</body>
+</html>

@@ -101,7 +101,9 @@ public class HtmlPopController extends BaseWebViewController {
 
     public void openAddress(String baseName, String address) {
         try {
-            this.baseName = baseName;
+            if (baseName != null) {
+                this.baseName = baseName;
+            }
 
             refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
@@ -209,11 +211,11 @@ public class HtmlPopController extends BaseWebViewController {
 
     public static HtmlPopController openAddress(BaseController parent, String address) {
         try {
-            if (parent == null || address == null) {
+            if (address == null) {
                 return null;
             }
             HtmlPopController controller = open(parent);
-            controller.openAddress(parent.baseName, address);
+            controller.openAddress(parent != null ? parent.baseName : null, address);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -223,7 +225,7 @@ public class HtmlPopController extends BaseWebViewController {
 
     public static HtmlPopController openFile(BaseController parent, File file) {
         try {
-            if (parent == null || file == null || !file.exists()) {
+            if (file == null || !file.exists()) {
                 return null;
             }
             return openAddress(parent, file.getAbsolutePath());

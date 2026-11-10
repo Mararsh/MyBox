@@ -44,39 +44,31 @@ License:    Apache License Version 2.0
       <Separator layoutX="10.0" layoutY="266.0" prefWidth="200.0" />
       <VBox spacing="2.0">
          <children>
-            <Label minHeight="-Infinity" text="%LiquifyNotes" wrapText="true" />
-            <Label minHeight="-Infinity" text="%StartPoint" wrapText="true" />
+            <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%LiquifyNotes" />
             <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
                <children>
+                  <Label minHeight="-Infinity" text="%StartPoint" wrapText="true" />
                   <Label text="x1">
                      <FlowPane.margin>
                         <Insets />
                      </FlowPane.margin>
                   </Label>
-                  <TextField prefWidth="100.0" fx:id="x1Input" />
-               </children>
-            </FlowPane>
-            <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
-               <children>
+                  <TextField prefWidth="60.0" fx:id="x1Input" />
                   <Label text="y1" />
-                  <TextField fx:id="y1Input" prefWidth="100.0" />
+                  <TextField fx:id="y1Input" prefWidth="60.0" />
                </children>
             </FlowPane>
-            <Label minHeight="-Infinity" text="%EndPoint" wrapText="true" />
             <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
                <children>
+                  <Label minHeight="-Infinity" text="%EndPoint" wrapText="true" />
                   <Label text="x2">
                      <FlowPane.margin>
                         <Insets />
                      </FlowPane.margin>
                   </Label>
-                  <TextField prefWidth="100.0" fx:id="x2Input" />
-               </children>
-            </FlowPane>
-            <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
-               <children>
+                  <TextField prefWidth="60.0" fx:id="x2Input" />
                   <Label text="y2" />
-                  <TextField fx:id="y2Input" prefWidth="100.0" />
+                  <TextField fx:id="y2Input" prefWidth="60.0" />
                </children>
             </FlowPane>
             <Button fx:id="goPointButton" mnemonicParsing="false" onAction="#goPointAction">

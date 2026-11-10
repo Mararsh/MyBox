@@ -177,8 +177,8 @@ public class NodeStyleTools {
             tooltip.setShowDelay(Duration.millis(10));
             tooltip.setShowDuration(Duration.millis(360000));
             tooltip.setHideDelay(Duration.millis(10));
-            tooltip.setWrapText(true);
-            tooltip.setMaxWidth(600);
+//            tooltip.setWrapText(true);
+//            tooltip.setMaxWidth(600);
             Tooltip.install(node, tooltip);
         } catch (Exception e) {
             MyBoxLog.debug(e);

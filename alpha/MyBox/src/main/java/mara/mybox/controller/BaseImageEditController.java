@@ -201,7 +201,7 @@ public class BaseImageEditController extends BaseShapeController {
 
     protected void passHandled(Image passImage) {
         imageController.updateImage(operation, opInfo, scope, passImage);
-        if (closeAfterCheck.isSelected()) {
+        if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
             imageController.popSuccessful();
             close();
         } else {

@@ -85,9 +85,13 @@ public class ImageConvolution extends PixelsOperation {
         }
         BufferedImage target = super.operateImage();
         if (kernel.isGrey()) {
-            target = ImageGray.byteGray(task, target);
+            ImageGray imageGray = new ImageGray(target, scope);
+            imageGray.setTask(task);
+            target = imageGray.start();
         } else if (kernel.isBW()) {
-            target = ImageBinary.byteBinary(task, target);
+            ImageBinary imageBinary = new ImageBinary(target, scope);
+            imageBinary.setTask(task);
+            target = imageBinary.start();
         }
         return target;
     }
