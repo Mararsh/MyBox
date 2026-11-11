@@ -63,13 +63,13 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageItemCell;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.converter.IntegerStringFromatConverter;
+import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -1051,6 +1051,9 @@ public class GameEliminationController extends BaseController {
                 int index = imagesListview.getItems().get(i).getIndex();
                 ImageItem item = getImageItem(index);
                 Node node = item.makeNode(50, false);
+                if (node == null) {
+                    continue;
+                }
                 CheckBox cbox = new CheckBox();
                 cbox.setGraphic(node);
                 cbox.setUserData(index);
@@ -1754,6 +1757,9 @@ public class GameEliminationController extends BaseController {
     protected void setImageNode(int i, int j, ImageItem item) {
         try {
             Node node = item.makeNode(chessWidth, false);
+            if (node == null) {
+                return;
+            }
             VBox vbox = getBox(i, j);
             vbox.getChildren().clear();
             vbox.getChildren().add(node);

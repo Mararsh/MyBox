@@ -23,6 +23,7 @@ public class ImageItem {
     protected String name, address, comments;
     protected int index, width;
     protected SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
+    protected final String defaultImage = "img/jade.png";
 
     public ImageItem() {
         init();
@@ -60,7 +61,7 @@ public class ImageItem {
     }
 
     public boolean isFile() {
-        return address != null && new File(address).exists();
+        return address != null && !isInternal() && !isColor();
     }
 
     public Image readImage() {
@@ -71,7 +72,7 @@ public class ImageItem {
             }
             if (isInternal()) {
                 image = new Image(address);
-            } else if (isFile()) {
+            } else {
                 File file = new File(address);
                 if (file.exists()) {
                     BufferedImage bf = ImageIO.read(file);
@@ -80,9 +81,11 @@ public class ImageItem {
             }
         } catch (Exception e) {
         }
-        if (image != null) {
-            width = (int) image.getWidth();
+        if (image == null) {
+            address = defaultImage;
+            image = new Image(address);
         }
+        width = (int) image.getWidth();
         return image;
     }
 
@@ -98,9 +101,6 @@ public class ImageItem {
                 return rect;
             } else {
                 Image image = readImage();
-                if (image == null) {
-                    return null;
-                }
                 int w = size;
                 if (checkSize && w > image.getWidth()) {
                     w = (int) image.getWidth();
@@ -125,6 +125,11 @@ public class ImageItem {
                         name != null ? name : FileNameTools.name(address, "/"));
             } else if (isFile()) {
                 file = new File(address);
+                if (!file.exists()) {
+                    address = defaultImage;
+                    file = FxFileTools.getInternalFile("/" + address, "image",
+                            name != null ? name : FileNameTools.name(address, "/"));
+                }
             }
             if (file != null && file.exists()) {
                 return file;

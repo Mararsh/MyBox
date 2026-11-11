@@ -477,12 +477,6 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Liquify"), StyleTools.getIconImageView("iconLiquify.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageLiquifyController.open(this);
-            });
-            items.add(menu);
-
             menu = new MenuItem(message("Round"), StyleTools.getIconImageView("iconRound.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageRoundController.open(this);
@@ -589,7 +583,14 @@ public class ImageEditorController extends BaseImageController {
     public void showPixelsMenu(Event fevent) {
         try {
             List<MenuItem> items = MenuTools.initMenu(message("Pixels"));
-            MenuItem menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
+
+            MenuItem menu = new MenuItem(message("Liquify"), StyleTools.getIconImageView("iconLiquify.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageLiquifyController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Mosaic"), StyleTools.getIconImageView("iconMosaic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageMosaicController.open(this);
             });
