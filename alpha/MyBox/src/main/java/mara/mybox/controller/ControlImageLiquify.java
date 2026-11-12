@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,11 +15,13 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.image.data.ImageLiquify;
 import mara.mybox.image.data.ImageLiquify.FalloffAlgorithm;
 import mara.mybox.image.data.ImageLiquify.LiquifyOperation;
 import mara.mybox.image.data.PixelSampler.EdgeMode;
 import mara.mybox.image.data.PixelSampler.SamplingAlgorithm;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -152,6 +155,15 @@ public class ControlImageLiquify extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    @Override
+    public void popTips() {
+        String lang = Languages.isChinese() ? "zh" : "en";
+        String fname = "mybox_about_image_liquify_" + lang + ".html";
+        File html = FxFileTools.getInternalFile("/doc/" + lang + "/" + fname, "doc", fname);
+        HtmlPopController.openFile(null, html);
     }
 
     protected void setImage(ImageLiquifyController c) {
