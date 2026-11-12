@@ -275,7 +275,9 @@ public class GameEliminationController extends BaseController {
                                 }
                             }
                             if (!predefined) {
-                                items.add(new ImageItem(address));
+                                if (new File(address).exists()) {
+                                    items.add(new ImageItem(address));
+                                }
                             }
                         }
                     }
@@ -854,6 +856,9 @@ public class GameEliminationController extends BaseController {
     }
 
     public void selectSoundFile(File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
         recordFileOpened(file);
         String suffix = FileNameTools.ext(file.getName());
         if (suffix == null
@@ -1052,7 +1057,8 @@ public class GameEliminationController extends BaseController {
                 ImageItem item = getImageItem(index);
                 Node node = item.makeNode(50, false);
                 if (node == null) {
-                    continue;
+                    chessIsDamaged();
+                    return;
                 }
                 CheckBox cbox = new CheckBox();
                 cbox.setGraphic(node);
@@ -1078,7 +1084,9 @@ public class GameEliminationController extends BaseController {
             }
             for (int i = 1; i <= boardSize; ++i) {
                 for (int j = 1; j <= boardSize; ++j) {
-                    setRandomImage(i, j);
+                    if (!setRandomImage(i, j)) {
+                        return;
+                    }
                 }
             }
             if (reset) {
@@ -1326,15 +1334,23 @@ public class GameEliminationController extends BaseController {
         }
         try {
             Node node = getImageNode(adjacent.starti, adjacent.startj);
+            if (node == null) {
+                return;
+            }
             int len = adjacent.getLength();
             for (int row = adjacent.starti - 1; row > 0; row--) {
                 node = getImageNode(row, adjacent.startj);
+                if (node == null) {
+                    return;
+                }
                 VBox vbox = chessBoard.get((row + len) + "-" + adjacent.startj);
                 vbox.getChildren().clear();
                 vbox.getChildren().add(node);
             }
             for (int row = 1; row <= len; row++) {
-                setRandomImage(row, adjacent.startj);
+                if (!setRandomImage(row, adjacent.startj)) {
+                    return;
+                }
             }
             lastElimination = adjacent;
             lastRandom = new Adjacent(1, adjacent.startj, len, adjacent.startj);
@@ -1376,16 +1392,24 @@ public class GameEliminationController extends BaseController {
         }
         try {
             Node node = getImageNode(adjacent.starti, adjacent.startj);
+            if (node == null) {
+                return;
+            }
             for (int row = adjacent.starti; row > 1; row--) {
                 for (int col = adjacent.startj; col <= adjacent.endj; col++) {
                     node = getImageNode(row - 1, col);
+                    if (node == null) {
+                        return;
+                    }
                     VBox vbox = chessBoard.get(row + "-" + col);
                     vbox.getChildren().clear();
                     vbox.getChildren().add(node);
                 }
             }
             for (int col = adjacent.startj; col <= adjacent.endj; col++) {
-                setRandomImage(1, col);
+                if (!setRandomImage(1, col)) {
+                    return;
+                }
             }
             lastElimination = adjacent;
             lastRandom = new Adjacent(1, adjacent.startj, 1, adjacent.endj);
@@ -1604,9 +1628,11 @@ public class GameEliminationController extends BaseController {
                 }
             }
             ImageItem item = getImageItem(imagei, imagej);
-            setImageNode(seti1, setj1, item);
-            setImageNode(seti2, setj2, item);
-            findAdjacentAndEliminate();
+            if (item != null
+                    && setImageNode(seti1, setj1, item)
+                    && setImageNode(seti2, setj2, item)) {
+                findAdjacentAndEliminate();
+            }
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -1639,6 +1665,17 @@ public class GameEliminationController extends BaseController {
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
+        }
+    }
+
+    protected void chessIsDamaged() {
+        try {
+            autoPlaying = false;
+            chessBoard.clear();
+            chessboardPane.getChildren().clear();
+            loadChesses(true);
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
         }
     }
 
@@ -1745,27 +1782,35 @@ public class GameEliminationController extends BaseController {
         }
     }
 
-    protected void setRandomImage(int i, int j) {
+    protected boolean setRandomImage(int i, int j) {
         try {
             ImageItem item = imagesListview.getItems().get(random.nextInt(boardSize));
-            setImageNode(i, j, item);
+            return setImageNode(i, j, item);
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
+            return false;
         }
     }
 
-    protected void setImageNode(int i, int j, ImageItem item) {
+    protected boolean setImageNode(int i, int j, ImageItem item) {
         try {
+            if (item == null) {
+                chessIsDamaged();
+                return false;
+            }
             Node node = item.makeNode(chessWidth, false);
             if (node == null) {
-                return;
+                chessIsDamaged();
+                return false;
             }
             VBox vbox = getBox(i, j);
             vbox.getChildren().clear();
             vbox.getChildren().add(node);
             vbox.setStyle(currentStyle);
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return false;
         }
     }
 
