@@ -562,6 +562,12 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Gradient"), StyleTools.getIconImageView("iconHue.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageGradientController.open(this);
+            });
+            items.add(menu);
+
             items.add(new SeparatorMenuItem());
 
             items.add(MenuTools.popCheckMenu(baseName + "Colors"));

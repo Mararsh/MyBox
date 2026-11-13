@@ -43,7 +43,8 @@ public class ImageOptionsController extends BaseChildController {
     @FXML
     protected FlowPane stepPane;
     @FXML
-    protected ControlColorSet alphaColorSetController, rulerColorController, gridColorController;
+    protected ControlColorSet alphaColorSetController, rulerColorController,
+            grid9ColorController, grid4ColorController, gridColorController;
     @FXML
     protected ComboBox<String> zoomStepSelector, decimalSelector,
             gridWidthSelector, gridIntervalSelector, gridOpacitySelector;
@@ -136,6 +137,28 @@ public class ImageOptionsController extends BaseChildController {
                         return;
                     }
                     BaseImageController.updateMaskRulerXY();
+                }
+            });
+
+            grid9ColorController.init(this, "Grid9Color", Color.BLUE);
+            grid9ColorController.setNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    BaseImageController.updateMaskGrid9();
+                }
+            });
+
+            grid4ColorController.init(this, "Grid4Color", Color.GREEN);
+            grid4ColorController.setNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    BaseImageController.updateMaskGrid4();
                 }
             });
 

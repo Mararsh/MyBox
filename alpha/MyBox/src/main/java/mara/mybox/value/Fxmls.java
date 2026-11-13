@@ -132,6 +132,7 @@ public class Fxmls {
     public static final String ImageBlackWhiteFxml = "/fxml/ImageBlackWhite.fxml";
     public static final String ImageGreyFxml = "/fxml/ImageGrey.fxml";
     public static final String ImageSepiaFxml = "/fxml/ImageSepia.fxml";
+    public static final String ImageGradientFxml = "/fxml/ImageGradient.fxml";
     public static final String ImageMosaicFxml = "/fxml/ImageMosaic.fxml";
     public static final String ImageGlassFxml = "/fxml/ImageGlass.fxml";
     public static final String ImageReduceColorsFxml = "/fxml/ImageReduceColors.fxml";

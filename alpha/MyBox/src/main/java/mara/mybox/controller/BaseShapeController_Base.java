@@ -259,7 +259,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
     public void clearMaskShapes() {
         try {
-            drawMaskRulers();
+            drawMaskRulersGrids();
             clearMaskRectangle();
             clearMaskCircle();
             clearMaskEllipse();

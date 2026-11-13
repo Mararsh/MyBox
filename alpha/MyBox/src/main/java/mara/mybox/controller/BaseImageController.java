@@ -270,7 +270,7 @@ public class BaseImageController extends BaseImageController_Actions {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean("ImageRulerXY", rulerXCheck.isSelected());
-                        drawMaskRulers();
+                        drawMaskRulersGrids();
                     }
                 });
             }
@@ -281,6 +281,26 @@ public class BaseImageController extends BaseImageController_Actions {
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean("ImageGridLines", gridCheck.isSelected());
                         drawMaskGrid();
+                    }
+                });
+            }
+            if (grid9Check != null) {
+                grid9Check.setSelected(UserConfig.getBoolean("ImageGrid9", false));
+                grid9Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImageGrid9", grid9Check.isSelected());
+                        drawMaskGrid9();
+                    }
+                });
+            }
+            if (grid4Check != null) {
+                grid4Check.setSelected(UserConfig.getBoolean("ImageGrid4", false));
+                grid4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("ImageGrid4", grid4Check.isSelected());
+                        drawMaskGrid4();
                     }
                 });
             }
@@ -708,7 +728,7 @@ public class BaseImageController extends BaseImageController_Actions {
                         rulerXCheck.setSelected(!rulerXCheck.isSelected());
                     } else {
                         UserConfig.setBoolean("ImageRulerXY", reulersItem.isSelected());
-                        drawMaskRulers();
+                        drawMaskRulersGrids();
                     }
                 }
             });
@@ -729,6 +749,36 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(gridItem);
 
+            CheckMenuItem grid9Item = new CheckMenuItem(message("Grid3x3"), StyleTools.getIconImageView("iconGrid9.png"));
+            grid9Item.setSelected(UserConfig.getBoolean("ImageGrid9", false));
+            grid9Item.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    if (grid9Check != null) {
+                        grid9Check.setSelected(!grid9Check.isSelected());
+                    } else {
+                        UserConfig.setBoolean("ImageGrid9", grid9Item.isSelected());
+                        drawMaskGrid9();
+                    }
+                }
+            });
+            items.add(grid9Item);
+
+            CheckMenuItem grid4Item = new CheckMenuItem(message("Grid2x2"), StyleTools.getIconImageView("iconGrid4.png"));
+            grid4Item.setSelected(UserConfig.getBoolean("ImageGrid4", false));
+            grid4Item.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent cevent) {
+                    if (grid4Check != null) {
+                        grid4Check.setSelected(!grid4Check.isSelected());
+                    } else {
+                        UserConfig.setBoolean("ImageGrid4", grid4Item.isSelected());
+                        drawMaskGrid4();
+                    }
+                }
+            });
+            items.add(grid4Item);
+
             CheckMenuItem coordItem = new CheckMenuItem(message("Coordinate"), StyleTools.getIconImageView("iconLocation.png"));
             coordItem.setSelected(UserConfig.getBoolean("ImagePopCooridnate", false));
             coordItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -738,7 +788,6 @@ public class BaseImageController extends BaseImageController_Actions {
                         coordinateCheck.setSelected(!coordinateCheck.isSelected());
                     } else {
                         UserConfig.setBoolean("ImagePopCooridnate", coordItem.isSelected());
-                        drawMaskGrid();
                     }
                 }
             });

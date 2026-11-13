@@ -288,7 +288,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
             fitView();
 
-            drawMaskRulers();
+            drawMaskRulersGrids();
             if (xyText != null) {
                 xyText.setText("");
             }
@@ -330,7 +330,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
     public void updateImage(Image newImage) {
         try {
             imageView.setImage(newImage);
-            refinePane();
             setImageChanged(true);
             notifyLoad();
         } catch (Exception e) {

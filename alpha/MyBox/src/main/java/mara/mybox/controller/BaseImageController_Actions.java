@@ -337,7 +337,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             @Override
             protected void whenSucceeded() {
                 imageView.setImage(newImage);
-                refinePane();
                 setImageChanged(true);
             }
 
