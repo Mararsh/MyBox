@@ -52,7 +52,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
     @FXML
     protected Button loadButton, imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, selectPixelsButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, grid9Check, grid4Check, coordinateCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, grid9Check, GridMiziCheck, coordinateCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
 

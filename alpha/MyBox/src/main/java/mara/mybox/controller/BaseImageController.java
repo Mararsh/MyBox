@@ -294,13 +294,13 @@ public class BaseImageController extends BaseImageController_Actions {
                     }
                 });
             }
-            if (grid4Check != null) {
-                grid4Check.setSelected(UserConfig.getBoolean("ImageGrid4", false));
-                grid4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (GridMiziCheck != null) {
+                GridMiziCheck.setSelected(UserConfig.getBoolean("ImageGridMizi", false));
+                GridMiziCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean("ImageGrid4", grid4Check.isSelected());
-                        drawMaskGrid4();
+                        UserConfig.setBoolean("ImageGridMizi", GridMiziCheck.isSelected());
+                        drawMaskGridMizi();
                     }
                 });
             }
@@ -764,20 +764,20 @@ public class BaseImageController extends BaseImageController_Actions {
             });
             items.add(grid9Item);
 
-            CheckMenuItem grid4Item = new CheckMenuItem(message("Grid2x2"), StyleTools.getIconImageView("iconGrid4.png"));
-            grid4Item.setSelected(UserConfig.getBoolean("ImageGrid4", false));
-            grid4Item.setOnAction(new EventHandler<ActionEvent>() {
+            CheckMenuItem GridMiziItem = new CheckMenuItem(message("GridMizi"), StyleTools.getIconImageView("iconGridMizi.png"));
+            GridMiziItem.setSelected(UserConfig.getBoolean("ImageGridMizi", false));
+            GridMiziItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent cevent) {
-                    if (grid4Check != null) {
-                        grid4Check.setSelected(!grid4Check.isSelected());
+                    if (GridMiziCheck != null) {
+                        GridMiziCheck.setSelected(!GridMiziCheck.isSelected());
                     } else {
-                        UserConfig.setBoolean("ImageGrid4", grid4Item.isSelected());
-                        drawMaskGrid4();
+                        UserConfig.setBoolean("ImageGridMizi", GridMiziItem.isSelected());
+                        drawMaskGridMizi();
                     }
                 }
             });
-            items.add(grid4Item);
+            items.add(GridMiziItem);
 
             CheckMenuItem coordItem = new CheckMenuItem(message("Coordinate"), StyleTools.getIconImageView("iconLocation.png"));
             coordItem.setSelected(UserConfig.getBoolean("ImagePopCooridnate", false));

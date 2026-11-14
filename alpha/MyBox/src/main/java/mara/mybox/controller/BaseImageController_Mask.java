@@ -464,7 +464,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
     public void drawMaskRulersGrids() {
         drawMaskGrid();
         drawMaskGrid9();
-        drawMaskGrid4();
+        drawMaskGridMizi();
         drawMaskRulerX();
         drawMaskRulerY();
     }
@@ -741,53 +741,59 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
         }
     }
 
-    public void drawMaskGrid4() {
-        drawMaskGrid4X();
-        drawMaskGrid4Y();
-    }
-
-    private void drawMaskGrid4X() {
+    public void drawMaskGridMizi() {
         if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
-        clearMaskNodes("Grid4X");
-        if (UserConfig.getBoolean("ImageGrid4", false)) {
-            Color lineColor = grid4Color();
-            int lineWidth = 1;
-            double width = viewWidth();
-            float opacity = 0.5f;
-            double y = viewHeight() / 2d;
-            Line line = new Line(0, y, width, y);
-            line.setId("Grid4X");
-            line.setStroke(lineColor);
-            line.setStrokeWidth(lineWidth);
-            line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
-            line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
-            line.setOpacity(opacity);
-            maskPane.getChildren().add(line);
-        }
-    }
-
-    private void drawMaskGrid4Y() {
-        if (maskPane == null || imageView == null || imageView.getImage() == null) {
+        clearMaskNodes("GridMizi");
+        if (!UserConfig.getBoolean("ImageGridMizi", false)) {
             return;
         }
-        clearMaskNodes("Grid4Y");
-        if (UserConfig.getBoolean("ImageGrid4", false)) {
-            Color color = grid4Color();
-            int lineWidth = 1;
-            double height = viewHeight();
-            float opacity = 0.5f;
-            double x = viewWidth() / 2d;
-            Line line = new Line(x, 0, x, height);
-            line.setId("Grid4Y");
-            line.setStroke(color);
-            line.setStrokeWidth(lineWidth);
-            line.setLayoutX(imageView.getLayoutX() + line.getLayoutX());
-            line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
-            line.setOpacity(opacity);
-            maskPane.getChildren().add(line);
-        }
+        Color lineColor = GridMiziColor();
+        int lineWidth = 1;
+        double width = viewWidth();
+        double height = viewHeight();
+        float opacity = 0.5f;
+
+        double y = height / 2d;
+        Line linex = new Line(0, y, width, y);
+        linex.setId("GridMiziX");
+        linex.setStroke(lineColor);
+        linex.setStrokeWidth(lineWidth);
+        linex.setLayoutX(imageView.getLayoutX() + linex.getLayoutX());
+        linex.setLayoutY(imageView.getLayoutY() + linex.getLayoutY());
+        linex.setOpacity(opacity);
+        maskPane.getChildren().add(linex);
+        Color color = GridMiziColor();
+
+        double x = width / 2d;
+        Line liney = new Line(x, 0, x, height);
+        liney.setId("GridMiziY");
+        liney.setStroke(color);
+        liney.setStrokeWidth(lineWidth);
+        liney.setLayoutX(imageView.getLayoutX() + liney.getLayoutX());
+        liney.setLayoutY(imageView.getLayoutY() + liney.getLayoutY());
+        liney.setOpacity(opacity);
+        maskPane.getChildren().add(liney);
+
+        Line lines1 = new Line(0, 0, width, height);
+        lines1.setId("GridMiziS1");
+        lines1.setStroke(color);
+        lines1.setStrokeWidth(lineWidth);
+        lines1.setLayoutX(imageView.getLayoutX() + lines1.getLayoutX());
+        lines1.setLayoutY(imageView.getLayoutY() + lines1.getLayoutY());
+        lines1.setOpacity(opacity);
+        maskPane.getChildren().add(lines1);
+
+        Line lines2 = new Line(width, 0, 0, height);
+        lines2.setId("GridMiziS2");
+        lines2.setStroke(color);
+        lines2.setStrokeWidth(lineWidth);
+        lines2.setLayoutX(imageView.getLayoutX() + lines2.getLayoutX());
+        lines2.setLayoutY(imageView.getLayoutY() + lines2.getLayoutY());
+        lines2.setOpacity(opacity);
+        maskPane.getChildren().add(lines2);
+
     }
 
     protected Color rulerColor() {
@@ -802,8 +808,8 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
         return Color.web(UserConfig.getString("Grid9Color", Color.BLUE.toString()));
     }
 
-    protected Color grid4Color() {
-        return Color.web(UserConfig.getString("Grid4Color", Color.GREEN.toString()));
+    protected Color GridMiziColor() {
+        return Color.web(UserConfig.getString("GridMiziColor", Color.GREEN.toString()));
     }
 
     /*
@@ -854,7 +860,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
         }
     }
 
-    public static void updateMaskGrid4() {
+    public static void updateMaskGridMizi() {
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
@@ -862,7 +868,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Base 
             if (object != null && object instanceof BaseImageController) {
                 try {
                     BaseImageController controller = (BaseImageController) object;
-                    controller.drawMaskGrid4();
+                    controller.drawMaskGridMizi();
                 } catch (Exception e) {
                 }
             }

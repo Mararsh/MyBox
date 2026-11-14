@@ -58,8 +58,8 @@ License:    Apache License Version 2.0
                                     <fx:include fx:id="rulerColor" source="ControlColorSet.fxml" />
                                     <Label text="%Grid3x3Color" />
                                     <fx:include fx:id="grid9Color" source="ControlColorSet.fxml" />
-                                    <Label text="%Grid2x2Color" />
-                                    <fx:include fx:id="grid4Color" source="ControlColorSet.fxml" />
+                                    <Label text="%GridMiziColor" />
+                                    <fx:include fx:id="GridMiziColor" source="ControlColorSet.fxml" />
                                  </children>
                               </FlowPane>
                               <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

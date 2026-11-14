@@ -29,7 +29,7 @@ public class MenuImageBaseController extends MenuController {
 
     protected BaseImageController imageController;
     protected ChangeListener<Boolean> colorListener, coordinateListener,
-            rulersListener, gridListener, grid9Listener, grid4Listener, loadListener;
+            rulersListener, gridListener, grid9Listener, GridMiziListener, loadListener;
     protected ChangeListener<String> widthListener, zoomListener;
 
     @FXML
@@ -37,7 +37,7 @@ public class MenuImageBaseController extends MenuController {
             rotateLeftButton, rotateRightButton, turnOverButton, systemMethodButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck,
-            gridCheck, grid9Check, grid4Check, coordinateCheck;
+            gridCheck, grid9Check, GridMiziCheck, coordinateCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
 
@@ -246,39 +246,39 @@ public class MenuImageBaseController extends MenuController {
                 }
             }
 
-            if (grid4Check != null) {
-                if (imageController.grid4Check != null) {
-                    grid4Check.setSelected(imageController.grid4Check.isSelected());
-                    grid4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            if (GridMiziCheck != null) {
+                if (imageController.GridMiziCheck != null) {
+                    GridMiziCheck.setSelected(imageController.GridMiziCheck.isSelected());
+                    GridMiziCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                             if (isSettingValues) {
                                 return;
                             }
                             isSettingValues = true;
-                            imageController.grid4Check.setSelected(newValue);
+                            imageController.GridMiziCheck.setSelected(newValue);
                             isSettingValues = false;
                         }
                     });
-                    grid4Listener = new ChangeListener<Boolean>() {
+                    GridMiziListener = new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                             if (isSettingValues) {
                                 return;
                             }
                             isSettingValues = true;
-                            grid4Check.setSelected(newValue);
+                            GridMiziCheck.setSelected(newValue);
                             isSettingValues = false;
                         }
                     };
-                    imageController.grid4Check.selectedProperty().addListener(grid4Listener);
+                    imageController.GridMiziCheck.selectedProperty().addListener(GridMiziListener);
                 } else {
-                    grid4Check.setSelected(UserConfig.getBoolean("ImageGrid4", false));
-                    grid4Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    GridMiziCheck.setSelected(UserConfig.getBoolean("ImageGridMizi", false));
+                    GridMiziCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            UserConfig.setBoolean("ImageGrid4", newValue);
-                            imageController.drawMaskGrid4();
+                            UserConfig.setBoolean("ImageGridMizi", newValue);
+                            imageController.drawMaskGridMizi();
                         }
                     });
                 }

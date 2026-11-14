@@ -143,11 +143,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </CheckBox>
-                  <CheckBox fx:id="grid4Check" mnemonicParsing="false">
+                  <CheckBox fx:id="GridMiziCheck" mnemonicParsing="false">
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconGrid4.png" />
+                              <Image url="@../buttons/Red/iconGridMizi.png" />
                            </image>
                         </ImageView>
                      </graphic>

@@ -41,8 +41,8 @@ public class StyleCheckBox {
                 return new StyleData(id, message("GridLines"), "", "iconGrid.png");
             case "grid9Check":
                 return new StyleData(id, message("Grid3x3"), "", "iconGrid9.png");
-            case "grid4Check":
-                return new StyleData(id, message("Grid2x2"), "", "iconGrid4.png");
+            case "GridMiziCheck":
+                return new StyleData(id, message("GridMizi"), "", "iconGridMizi.png");
             case "statisticCheck":
                 return new StyleData("statisticCheck", "", message("Statistic"), "", "iconStatistic.png");
             case "transparentBackgroundCheck":
