@@ -149,9 +149,31 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             case ESCAPE:
                 return keyESC();
 
-        }
+            case LEFT:
+                return keyLeft();
 
-        return inputFilter(event);
+            case RIGHT:
+                return keyRight();
+
+            case DOWN:
+                return keyDown();
+
+            case UP:
+                return keyUp();
+
+            case SPACE:
+                return keySpace();
+
+        }
+        if (otherKeys(event)) {
+            return true;
+        } else {
+            return inputFilter(event);
+        }
+    }
+
+    public boolean otherKeys(KeyEvent event) {
+        return false;
     }
 
     public boolean inputFilter(KeyEvent event) {
@@ -819,6 +841,26 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         WindowTools.closeAllPopup();
         MenuController.closeAll();
         return true;
+    }
+
+    public boolean keyLeft() {
+        return false;
+    }
+
+    public boolean keyRight() {
+        return false;
+    }
+
+    public boolean keyUp() {
+        return false;
+    }
+
+    public boolean keyDown() {
+        return false;
+    }
+
+    public boolean keySpace() {
+        return false;
     }
 
 }

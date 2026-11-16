@@ -532,6 +532,12 @@ public class ImageEditorController extends BaseImageController {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("Gradient"), StyleTools.getIconImageView("iconHue.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageGradientController.open(this);
+            });
+            items.add(menu);
+
             menu = new MenuItem(message("BlackOrWhite"), StyleTools.getIconImageView("iconBlackWhite.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageBlackWhiteController.open(this);
@@ -559,12 +565,6 @@ public class ImageEditorController extends BaseImageController {
             menu = new MenuItem(message("Thresholding"), StyleTools.getIconImageView("iconThresholding.png"));
             menu.setOnAction((ActionEvent event) -> {
                 ImageThresholdingController.open(this);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Gradient"), StyleTools.getIconImageView("iconHue.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageGradientController.open(this);
             });
             items.add(menu);
 

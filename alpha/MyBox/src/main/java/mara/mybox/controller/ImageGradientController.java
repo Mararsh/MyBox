@@ -8,10 +8,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.image.ColorDemos;
+import mara.mybox.image.data.ImageGradient;
 import mara.mybox.image.data.ImageScope;
 import mara.mybox.image.data.PixelsBlend;
-import mara.mybox.image.data.PixelsOperation;
-import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -38,38 +37,31 @@ public class ImageGradientController extends BasePixelsController {
         try {
             super.initMore();
 
-            operation = message("BlendColor");
+            operation = message("Gradient");
 
-            colorController.init(this, baseName + "Color");
-
-            blendController.setParameters(this);
+//            colorController.init(this, baseName + "Color");
+//
+//            blendController.setParameters(this);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public boolean checkOptions() {
-        if (!super.checkOptions()) {
-            close();
-            return false;
-        }
-        blend = blendController.pickValues(-1f);
-        opInfo = colorController.css();
-        return blend != null;
-    }
-
+//    @Override
+//    public boolean checkOptions() {
+//        if (!super.checkOptions()) {
+//            close();
+//            return false;
+//        }
+//        blend = blendController.pickValues(-1f);
+//        opInfo = colorController.css();
+//        return blend != null;
+//    }
     @Override
     protected Image handleImage(FxTask currentTask, Image inImage, ImageScope inScope) {
         try {
-            PixelsOperation pixelsOperation = PixelsOperationFactory.createFX(
-                    inImage, inScope, PixelsOperation.OperationType.Blend)
-                    .setColorPara1(colorController.awtColor())
-                    .setExcludeScope(excludeScope())
-                    .setSkipTransparent(skipTransparent())
-                    .setTask(currentTask);
-            ((PixelsOperationFactory.BlendColor) pixelsOperation).setBlender(blend);
-            return pixelsOperation.startFx();
+            ImageGradient gradient = new ImageGradient();
+            return gradient.render(inImage, currentTask);
         } catch (Exception e) {
             displayError(e.toString());
             return null;
