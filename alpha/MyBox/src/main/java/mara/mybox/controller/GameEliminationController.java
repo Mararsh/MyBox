@@ -21,7 +21,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -52,30 +51,22 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.Path;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageItemCell;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.converter.IntegerStringFromatConverter;
-import mara.mybox.fxml.menu.MenuTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.InternalImages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -85,7 +76,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-12-30
  * @License Apache License Version 2.0
  */
-public class GameEliminationController extends BaseController {
+public class GameEliminationController extends BaseGameController {
 
     protected int boardSize, chessWidth, minimumAdjacent, totalScore, autoSpeed,
             flushDuration, eliminateDelay, flushTimes;
@@ -93,21 +84,19 @@ public class GameEliminationController extends BaseController {
     protected List<Integer> countedChesses;
     protected IntPoint firstClick;
     protected boolean countScore, isEliminating, autoPlaying, stopped;
-    protected Random random;
     protected ObservableList<ScoreRuler> scoreRulersData;
     protected Map<Integer, Integer> scoreRulers;
     protected Map<Integer, Integer> scoreRecord;
-    protected Date startTime;
+
     protected Adjacent lastElimination, lastRandom;
     protected String currentStyle, focusStyle, defaultStyle, arcStyle, shadowStyle;
-    protected File soundFile;
 
     @FXML
-    protected Tab playTab, chessesTab, rulersTab, settingsTab;
+    protected Tab playTab, chessesTab, rulersTab;
     @FXML
     protected VBox chessboardPane;
     @FXML
-    protected Label chessesLabel, scoreLabel, autoLabel, soundFileLabel;
+    protected Label chessesLabel, scoreLabel, autoLabel;
     @FXML
     protected ListView<ImageItem> imagesListview;
     @FXML
@@ -121,12 +110,9 @@ public class GameEliminationController extends BaseController {
     @FXML
     protected TableColumn<ScoreRuler, Integer> numberColumn, scoreColumn;
     @FXML
-    protected RadioButton guaiRadio, benRadio, guaiBenRadio, muteRadio, customizedSoundRadio,
-            deadRenewRadio, deadChanceRadio, deadPromptRadio,
+    protected RadioButton deadRenewRadio, deadChanceRadio, deadPromptRadio,
             speed1Radio, speed2Radio, speed3Radio, speed5Radio,
             flush0Radio, flush1Radio, flush2Radio, flush3Radio;
-    @FXML
-    protected HBox selectSoundBox;
     @FXML
     protected Button helpMeButton;
     @FXML
@@ -379,86 +365,9 @@ public class GameEliminationController extends BaseController {
 
     protected void initSettingsTab() {
         try {
-            isSettingValues = true;
+            initSound();
 
-            guaiRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString("GameEliminationSound", "Guai");
-                    }
-                }
-            });
-            benRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString("GameEliminationSound", "Ben");
-                    }
-                }
-            });
-            guaiBenRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString("GameEliminationSound", "GuaiBen");
-                    }
-                }
-            });
-            muteRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString("GameEliminationSound", "Mute");
-                    }
-                }
-            });
-            customizedSoundRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString("GameEliminationSound", "Customized");
-                    }
-                }
-            });
-            String sound = UserConfig.getString("GameEliminationSound", "Guai");
-            switch (sound) {
-                case "Ben":
-                    benRadio.setSelected(true);
-                    break;
-                case "GuaiBen":
-                    guaiBenRadio.setSelected(true);
-                    break;
-                case "Mute":
-                    muteRadio.setSelected(true);
-                    break;
-                case "Customized":
-                    customizedSoundRadio.setSelected(true);
-                    break;
-                default:
-                    guaiRadio.setSelected(true);
-                    break;
-            }
+            isSettingValues = true;
 
             deadRenewRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -604,27 +513,6 @@ public class GameEliminationController extends BaseController {
                 default:
                     flush2Radio.setSelected(true);
                     break;
-            }
-
-            scoreCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    UserConfig.setBoolean("GameEliminationPopScores", scoreCheck.isSelected());
-                }
-            });
-            scoreCheck.setSelected(UserConfig.getBoolean("GameEliminationPopScores", true));
-
-            selectSoundBox.disableProperty().bind(customizedSoundRadio.selectedProperty().not());
-
-            String sfile = UserConfig.getString("GameEliminationSoundFile", null);
-            if (sfile != null) {
-                soundFile = new File(sfile);
-                if (soundFile.exists()) {
-                    soundFileLabel.setText(soundFile.getAbsolutePath());
-                } else {
-                    soundFile = null;
-                }
             }
 
             isSettingValues = false;
@@ -836,89 +724,6 @@ public class GameEliminationController extends BaseController {
 
     protected void setAutoplay() {
         catButton.setSelected(!catButton.isSelected());
-    }
-
-    @FXML
-    public void selectSoundFile() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            File file = mara.mybox.fxml.FxFileTools.selectFile(this, UserConfig.getPath("MusicPath"),
-                    FileFilters.Mp3WavExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            selectSoundFile(file);
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
-        }
-    }
-
-    public void selectSoundFile(File file) {
-        if (file == null || !file.exists()) {
-            return;
-        }
-        recordFileOpened(file);
-        String suffix = FileNameTools.ext(file.getName());
-        if (suffix == null
-                || (!"mp3".equals(suffix.toLowerCase()) && !"wav".equals(suffix.toLowerCase()))) {
-            alertError(message("OnlySupportMp3Wav"));
-            return;
-        }
-        soundFile = file;
-        UserConfig.setString("MusicPath", file.getParent());
-        UserConfig.setString("GameEliminationSoundFile", file.getAbsolutePath());
-        soundFileLabel.setText(file.getAbsolutePath());
-        SoundTools.mp3(soundFile);
-    }
-
-    @FXML
-    public void showSoundFileMenu(Event event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        RecentVisitMenu menu = new RecentVisitMenu(this, event, false) {
-
-            @Override
-            public void handleSelect() {
-                selectSoundFile();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    selectSoundFile();
-                    return;
-                }
-                selectSoundFile(file);
-            }
-
-        };
-        menu.setSourceFileType(VisitHistory.FileType.Media)
-                .setSourcePathType(VisitHistory.FileType.Media)
-                .setSourceExtensionFilter(FileFilters.Mp3WavExtensionFilter);
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            menu.setDefaultPath("C:\\Windows\\media");
-        }
-        menu.pop();
-    }
-
-    @FXML
-    public void pickSoundFile(Event event) {
-        if (MenuTools.isPopMenu("RecentVisit") || AppVariables.fileRecentNumber <= 0) {
-            selectSoundFile();
-        } else {
-            showSoundFileMenu(event);
-        }
-    }
-
-    @FXML
-    public void popSoundFile(Event event) {
-        if (MenuTools.isPopMenu("RecentVisit")) {
-            showSoundFileMenu(event);
-        }
     }
 
     protected void makeChesses() {
@@ -1472,48 +1277,9 @@ public class GameEliminationController extends BaseController {
             long cost = new Date().getTime() - startTime.getTime();
             scoreLabel.setText(message("Score") + ": " + totalScore + "  " + message("Cost") + ": "
                     + DateTools.timeDuration(cost));
-
+            popScore(scoreLabel, add);
             if (add > 0) {
-                if (scoreCheck.isSelected()) {
-                    Label popupLabel = new Label("+" + add);
-                    popupLabel.setStyle("-fx-background-color:black;"
-                            + " -fx-text-fill: gold;"
-                            + " -fx-font-size: 3em;"
-                            + " -fx-padding: 10px;"
-                            + " -fx-background-radius: 10;");
-                    final Popup scorePopup = new Popup();
-                    scorePopup.setAutoFix(true);
-                    scorePopup.setAutoHide(true);
-                    scorePopup.getContent().add(popupLabel);
-                    LocateTools.locateUp(scoreLabel, scorePopup);
-
-                    Timer stimer = new Timer();
-                    stimer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    scorePopup.hide();
-                                }
-                            });
-                        }
-                    }, 1000);
-
-                }
-                if (guaiRadio.isSelected()) {
-                    SoundTools.GuaiAO();
-                } else if (benRadio.isSelected()) {
-                    SoundTools.BenWu();
-                } else if (guaiBenRadio.isSelected()) {
-                    if (size == 3) {
-                        SoundTools.BenWu();
-                    } else {
-                        SoundTools.GuaiAO();
-                    }
-                } else if (customizedSoundRadio.isSelected() && soundFile != null && soundFile.exists()) {
-                    SoundTools.mp3(soundFile);
-                }
+                playSound(size == 3);
             }
         } catch (Exception e) {
 
