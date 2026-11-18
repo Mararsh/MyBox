@@ -92,17 +92,17 @@ public class GameEliminationController extends BaseGameController {
     protected String currentStyle, focusStyle, defaultStyle, arcStyle, shadowStyle;
 
     @FXML
-    protected Tab playTab, chessesTab, rulersTab;
+    protected Tab chessesTab, rulersTab;
     @FXML
     protected VBox chessboardPane;
     @FXML
-    protected Label chessesLabel, scoreLabel, autoLabel;
+    protected Label chessesLabel, autoLabel;
     @FXML
     protected ListView<ImageItem> imagesListview;
     @FXML
     protected FlowPane countedImagesPane;
     @FXML
-    protected CheckBox shadowCheck, arcCheck, scoreCheck;
+    protected CheckBox shadowCheck, arcCheck;
     @FXML
     protected ComboBox<String> chessSizeSelector;
     @FXML
@@ -365,8 +365,6 @@ public class GameEliminationController extends BaseGameController {
 
     protected void initSettingsTab() {
         try {
-            initSound();
-
             isSettingValues = true;
 
             deadRenewRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {

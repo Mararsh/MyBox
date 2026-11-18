@@ -20,6 +20,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -195,7 +196,6 @@ public class GameTetrisController extends BaseGameController {
                         if (iv > 0) {
                             rowsNumber = iv;
                             UserConfig.setInt(baseName + "RowsNumber", rowsNumber);
-                            startGame();
                         }
                     } catch (Exception e) {
                     }
@@ -218,7 +218,6 @@ public class GameTetrisController extends BaseGameController {
                         if (iv > 0) {
                             columnsNumber = iv;
                             UserConfig.setInt(baseName + "ColumnsNumber", columnsNumber);
-                            startGame();
                         }
                     } catch (Exception e) {
                     }
@@ -241,7 +240,6 @@ public class GameTetrisController extends BaseGameController {
                         if (iv > 0) {
                             blockSize = iv;
                             UserConfig.setInt(baseName + "BlockSize", blockSize);
-                            startGame();
                         }
                     } catch (Exception e) {
                     }
@@ -259,8 +257,7 @@ public class GameTetrisController extends BaseGameController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            StyleTools.setNameIcon(recoverButton, message("Restart") + "  R", "iconRecover.png");
-            recoverButton.applyCss();
+            NodeStyleTools.setTooltip(createButton, message("NewGame") + "\nn / Ctrl+n");
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -294,7 +291,9 @@ public class GameTetrisController extends BaseGameController {
             score = 0;
             level = 1;
             totalLines = 0;
-            dropInterval = LEVEL_DELAY[0];
+            if (dropInterval < 80) {
+                dropInterval = LEVEL_DELAY[0];
+            }
             bag.clear();
             board = new boolean[rowsNumber][columnsNumber];
             boardColor = new Color[rowsNumber][columnsNumber];
@@ -325,8 +324,6 @@ public class GameTetrisController extends BaseGameController {
             canvas.setFocusTraversable(true);
             calcGhost();
             render();
-            renderPreview();
-            renderHold();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -344,7 +341,7 @@ public class GameTetrisController extends BaseGameController {
     }
 
     public void pauseGame() {
-        StyleTools.setNameIcon(startButton, message("Resume"), "iconStart.png");
+        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
         startButton.applyCss();
         if (timer != null) {
             timer.cancel();
@@ -366,6 +363,7 @@ public class GameTetrisController extends BaseGameController {
         if (timer != null) {
             timer.cancel();
         }
+        tabPane.getSelectionModel().select(playTab);
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -377,8 +375,6 @@ public class GameTetrisController extends BaseGameController {
                     moveDown();
                     calcGhost();
                     render();
-                    renderPreview();
-                    renderHold();
                 });
             }
         }, dropInterval, dropInterval);
@@ -491,53 +487,68 @@ public class GameTetrisController extends BaseGameController {
 
     @Override
     public boolean keyLeft() {
-        if (gameOver) {
-            return true;
+        if (gameOver || paused) {
+            return false;
         }
         moveLeft();
         calcGhost();
+        render();
+        renderPreview();
+        renderHold();
         return true;
     }
 
     @Override
     public boolean keyRight() {
-        if (gameOver) {
-            return true;
+        if (gameOver || paused) {
+            return false;
         }
         moveRight();
         calcGhost();
+        render();
+        renderPreview();
+        renderHold();
         return true;
     }
 
     @Override
     public boolean keyUp() {
-        if (gameOver) {
-            return true;
+        if (gameOver || paused) {
+            return false;
         }
         rotateSRS();
         calcGhost();
+        render();
+        renderPreview();
+        renderHold();
         return true;
     }
 
     @Override
     public boolean keyDown() {
-        if (gameOver) {
-            return true;
+        if (gameOver || paused) {
+            return false;
         }
         if (moveDown()) {
             score += softScore * level;
         }
         calcGhost();
+        render();
+        renderPreview();
+        renderHold();
         return true;
     }
 
     @Override
     public boolean keySpace() {
-        if (gameOver) {
-            return true;
+        if (gameOver || paused) {
+            return false;
         }
         hardDrop();
         calcGhost();
+        render();
+        renderPreview();
+        renderHold();
         return true;
     }
 
@@ -579,8 +590,17 @@ public class GameTetrisController extends BaseGameController {
     }
 
     @Override
-    public void recoverAction() {
+    public void createAction() {
         startGame();
+    }
+
+    @Override
+    public boolean controlAltN() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        createAction();
+        return true;
     }
 
     private boolean checkCollision(int dx, int dy, boolean[][] shape) {
@@ -650,12 +670,11 @@ public class GameTetrisController extends BaseGameController {
             writeScore();
             return;
         }
-
+        int added = getLineScoreExp(linesCleared);
         if (quickerCheck.isSelected()) {
-            score += getLineScoreExp(linesCleared) * level;
-        } else {
-            score += getLineScoreExp(linesCleared);
+            added = added * level;
         }
+        score += added;
         totalLines += linesCleared;
         if (linesPerLevel > 0) {
             int newLevel = totalLines / linesPerLevel + 1;
@@ -669,13 +688,16 @@ public class GameTetrisController extends BaseGameController {
             }
         }
         writeScore();
-        popScore(scoreLabel, linesCleared);
+        popError("+ " + added);
+//        popScore(scoreLabel, linesCleared);
         playSound(linesCleared > 1);
 
     }
 
     private void writeScore() {
-        scoreLabel.setText(message("Score") + ": " + score + "  Level:" + level + "  Lines:" + totalLines);
+        scoreLabel.setText(message("Score") + ": " + score + "\n"
+                + message("Level") + ": " + level + "\n"
+                + message("Lines") + ": " + totalLines);
     }
 
     private boolean[][] rotateMatrix(boolean[][] src) {

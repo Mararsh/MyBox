@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,15 +33,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-12-30
  * @License Apache License Version 2.0
  */
-public class BaseGameController extends BaseController {
+public class BaseGameController extends BaseWebViewController {
 
     protected Random random;
-    protected Date startTime;
 
     protected File soundFile;
 
     @FXML
-    protected Tab settingsTab;
+    protected Tab playTab, settingsTab;
     @FXML
     protected Label scoreLabel, soundFileLabel;
     @FXML
@@ -81,66 +79,6 @@ public class BaseGameController extends BaseController {
             }
             isSettingValues = true;
 
-            guaiRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString(baseName + "Sound", "Guai");
-                    }
-                }
-            });
-            benRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString(baseName + "Sound", "Ben");
-                    }
-                }
-            });
-            guaiBenRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString(baseName + "Sound", "GuaiBen");
-                    }
-                }
-            });
-            muteRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString(baseName + "Sound", "Mute");
-                    }
-                }
-            });
-            customizedSoundRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (newVal) {
-                        UserConfig.setString(baseName + "Sound", "Customized");
-                    }
-                }
-            });
             String sound = UserConfig.getString(baseName + "Sound", "Guai");
             switch (sound) {
                 case "Ben":
@@ -153,26 +91,70 @@ public class BaseGameController extends BaseController {
                     muteRadio.setSelected(true);
                     break;
                 case "Customized":
-                    customizedSoundRadio.setSelected(true);
+                    String sfile = UserConfig.getString("GameEliminationSoundFile", null);
+                    if (sfile != null) {
+                        soundFile = new File(sfile);
+                        if (soundFile.exists()) {
+                            soundFileLabel.setText(soundFile.getAbsolutePath());
+                            customizedSoundRadio.setSelected(true);
+                        } else {
+                            soundFile = null;
+                            guaiRadio.setSelected(true);
+                            soundFileLabel.setText(null);
+                        }
+                    }
                     break;
                 default:
                     guaiRadio.setSelected(true);
                     break;
             }
 
-            selectSoundBox.disableProperty().bind(customizedSoundRadio.selectedProperty().not());
-
-            String sfile = UserConfig.getString("GameEliminationSoundFile", null);
-            if (sfile != null) {
-                soundFile = new File(sfile);
-                if (soundFile.exists()) {
-                    soundFileLabel.setText(soundFile.getAbsolutePath());
-                } else {
-                    soundFile = null;
-                    benRadio.setSelected(true);
-                    soundFileLabel.setText(null);
+            guaiRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (!isSettingValues && newVal) {
+                        UserConfig.setString(baseName + "Sound", "Guai");
+                    }
                 }
-            }
+            });
+            benRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (!isSettingValues && newVal) {
+                        UserConfig.setString(baseName + "Sound", "Ben");
+                    }
+                }
+            });
+            guaiBenRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (!isSettingValues && newVal) {
+                        UserConfig.setString(baseName + "Sound", "GuaiBen");
+                    }
+                }
+            });
+            muteRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (!isSettingValues && newVal) {
+                        UserConfig.setString(baseName + "Sound", "Mute");
+                    }
+                }
+            });
+            customizedSoundRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (!isSettingValues && newVal) {
+                        UserConfig.setString(baseName + "Sound", "Customized");
+                    }
+                }
+            });
+
+            selectSoundBox.disableProperty().bind(customizedSoundRadio.selectedProperty().not());
 
             isSettingValues = false;
 

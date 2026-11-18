@@ -97,7 +97,7 @@ public class ControlImage extends BaseController {
                             defaultAddress = StyleTools.getIconFile("iconAdd.png").toString();
                         }
                         inAddress = defaultAddress;
-                        inImage = new Image(currentAddress);
+                        inImage = new Image(inAddress);
                     } else {
                         inAddress = item.getAddress();
                     }
