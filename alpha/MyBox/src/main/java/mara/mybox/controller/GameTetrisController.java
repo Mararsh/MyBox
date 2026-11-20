@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,18 +11,28 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -30,7 +41,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2026-11-16
  * @License Apache License Version 2.0
  *
- * Assisted by Doubao SRS 可选7Bag + Hold锁 + X键Discard丢弃方块（消耗积分）
+ * Assisted by Doubao
  */
 public class GameTetrisController extends BaseGameController {
 
@@ -42,10 +53,6 @@ public class GameTetrisController extends BaseGameController {
         {{true, true, false}, {false, true, true}, {false, false, false}}, // Z 4
         {{true, true}, {true, true}}, // O 5
         {{false, false, false, false}, {true, true, true, true}, {false, false, false, false}} // I 6
-    };
-    private static final Color[] COLORS = {
-        Color.PURPLE, Color.ORANGE, Color.BLUE,
-        Color.GREEN, Color.RED, Color.YELLOW, Color.CYAN
     };
 
     private enum RotState {
@@ -75,7 +82,9 @@ public class GameTetrisController extends BaseGameController {
         1000, 793, 618, 473, 355,
         262, 193, 144, 106, 77, 50
     };
-    private static final int DISCARD_COST = 50; // X丢弃方块消耗分数
+    private static final int DISCARD_COST = 50;
+
+    private Color[] shapeColors;
 
     private boolean[][] board;
     private Color[][] boardColor;
@@ -94,9 +103,10 @@ public class GameTetrisController extends BaseGameController {
 
     private Canvas canvas, previewCanvas, holdCanvas;
     private GraphicsContext gc, previewGc, holdGc;
+    private Rectangle pickedColor;
 
     @FXML
-    protected VBox shapesBox, previewBox, holdBox;
+    protected VBox shapesBox, previewBox, holdBox, colorsBox;
     @FXML
     protected CheckBox quickerCheck, ghostCheck, gridCheck, bordersCheck;
     @FXML
@@ -115,6 +125,17 @@ public class GameTetrisController extends BaseGameController {
             gameOver = true;
             paused = false;
             use7Bag = true;
+            shapeColors = new Color[]{
+                Color.PURPLE, Color.ORANGE, Color.BLUE,
+                Color.GREEN, Color.RED, Color.YELLOW, Color.CYAN
+            };
+
+            try (Connection conn = DerbyBase.getConnection()) {
+                for (int i = 0; i < shapeColors.length; i++) {
+                    shapeColors[i] = Color.web(UserConfig.getString(conn, baseName + "Color" + i, (shapeColors[i]).toString()));
+                }
+            } catch (Exception e) {
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -193,7 +214,7 @@ public class GameTetrisController extends BaseGameController {
                 public void changed(ObservableValue<? extends String> v, String o, String n) {
                     try {
                         int iv = (int) Double.parseDouble(n);
-                        if (iv > 0) {
+                        if (iv >= 10) {
                             rowsNumber = iv;
                             UserConfig.setInt(baseName + "RowsNumber", rowsNumber);
                         }
@@ -215,7 +236,7 @@ public class GameTetrisController extends BaseGameController {
                 public void changed(ObservableValue<? extends String> v, String o, String n) {
                     try {
                         int iv = (int) Double.parseDouble(n);
-                        if (iv > 0) {
+                        if (iv >= 6) {
                             columnsNumber = iv;
                             UserConfig.setInt(baseName + "ColumnsNumber", columnsNumber);
                         }
@@ -248,6 +269,72 @@ public class GameTetrisController extends BaseGameController {
 
             initSound();
 
+            colorsBox.getChildren().clear();
+            for (int index = 0; index < SHAPES.length; index++) {
+                setColor(index);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private void setColor(int index) {
+        try {
+            int previewBlockSize = 20;
+            boolean[][] shape = SHAPES[index];
+            int rows = shape.length;
+            int cols = shape[0].length;
+            Canvas colorCanvas = new Canvas(cols * previewBlockSize, rows * previewBlockSize);
+            GraphicsContext cgc = colorCanvas.getGraphicsContext2D();
+            cgc.clearRect(0, 0, colorCanvas.getWidth(), colorCanvas.getHeight());
+            cgc.setFill(shapeColors[index]);
+            for (int r = 0; r < shape.length; r++) {
+                for (int c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        cgc.fillRect(
+                                c * previewBlockSize,
+                                r * previewBlockSize,
+                                previewBlockSize - 1,
+                                previewBlockSize - 1
+                        );
+                    }
+                }
+            }
+            colorCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    try {
+                        pickedColor = new Rectangle();
+                        FXMLLoader fxmlLoader = new FXMLLoader(
+                                WindowTools.class.getResource(Fxmls.ColorPalettePopupFxml), AppVariables.CurrentBundle);
+                        Pane pane = fxmlLoader.load();
+                        ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
+                        controller.load(myController, pickedColor);
+                        controller.setNotify.addListener(new ChangeListener<Boolean>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                                shapeColors[index] = (Color) pickedColor.getFill();
+                                setColor(index);
+                            }
+                        });
+
+                        popup = makePopup();
+                        popup.getContent().add(pane);
+                        LocateTools.locateCenter(colorCanvas, popup);
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e);
+                    }
+                }
+            });
+
+            if (index > colorsBox.getChildren().size() - 1) {
+                colorsBox.getChildren().add(colorCanvas);
+            } else {
+                colorsBox.getChildren().set(index, colorCanvas);
+            }
+
+            UserConfig.setString(baseName + "Color" + index, (shapeColors[index]).toString());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -363,7 +450,6 @@ public class GameTetrisController extends BaseGameController {
         if (timer != null) {
             timer.cancel();
         }
-        tabPane.getSelectionModel().select(playTab);
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -411,7 +497,7 @@ public class GameTetrisController extends BaseGameController {
         }
         nextShapeIndex = idx;
         nextShape = SHAPES[nextShapeIndex];
-        nextColor = COLORS[nextShapeIndex];
+        nextColor = shapeColors[nextShapeIndex];
     }
 
     private void spawnNewShape() {
@@ -426,7 +512,7 @@ public class GameTetrisController extends BaseGameController {
         canHold = true;
         if (checkCollision(0, 0)) {
             stopGame();
-            Platform.runLater(() -> popError(message("GameOver") + "\n" + "Press R to restart"));
+            Platform.runLater(() -> popError(message("GameOver")));
         } else {
             calcGhost();
         }
@@ -682,7 +768,7 @@ public class GameTetrisController extends BaseGameController {
                 level = newLevel;
                 if (quickerCheck.isSelected()) {
                     int idx = Math.min(level - 1, LEVEL_DELAY.length - 1);
-                    dropInterval = LEVEL_DELAY[idx];
+                    dropInterval = LEVEL_DELAY[idx] * dropInterval / 1000;
                     restartTimer();
                 }
             }
