@@ -92,13 +92,18 @@ public class MediaToolsMenu {
             controller.openScene(Fxmls.GameTetrisFxml);
         });
 
+        MenuItem GameSnake = new MenuItem(Languages.message("GameSnake"));
+        GameSnake.setOnAction((ActionEvent event) -> {
+            controller.openScene(Fxmls.GameSnakeFxml);
+        });
+
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(mediaPlayer, mediaLists, new SeparatorMenuItem(),
                 screenRecorder,
                 FFmpegConversionMenu, FFmpegMergeMenu,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
                 //                alarmClock, new SeparatorMenuItem(),
-                GameElimniation, GameMine, GameTetris));
+                GameElimniation, GameMine, GameTetris, GameSnake));
 
         return items;
     }

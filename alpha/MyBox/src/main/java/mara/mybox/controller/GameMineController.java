@@ -355,7 +355,7 @@ public class GameMineController extends BaseWebViewController {
             }
             popInformation(message("Congratulations"));
             if (miaowCheck.isSelected()) {
-                SoundTools.miao3();
+                SoundTools.miao5();
             }
             TableStringValues.add("GameMineHistory", vNumber + "-" + hNumber + "-" + minesNumber + "-" + cost);
             loadRecords();

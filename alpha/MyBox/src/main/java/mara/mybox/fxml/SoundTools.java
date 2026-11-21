@@ -26,20 +26,24 @@ public class SoundTools {
         MyBoxLog.debug(Arrays.asList(formats).toString());
     }
 
-    public static void miao6() {
-        playClip("/sound/guaiMiao6.mp3", "guaiMiao6.mp3");
+    public static void GuaiAO() {  // pride
+        playClip("/sound/GuaiAO.mp3", "GuaiAO.mp3");
     }
 
-    public static void GuaiAO() {
-        playClip("/sound/GuaiAO.mp3", "GuaiAO.mp3");
+    public static void BenWu() {  // pride
+        playClip("/sound/BenWu.mp3", "BenWu.mp3");
+    }
+
+    public static void miao5() {  // inform
+        playClip("/sound/guaiMiao5.mp3", "guaiMiao5.mp3");
+    }
+
+    public static void miao6() {  // sad
+        playClip("/sound/guaiMiao6.mp3", "guaiMiao6.mp3");
     }
 
     public static void mp3(File file) {
         playClip(file);
-    }
-
-    public static void miao5() {
-        playClip("/sound/guaiMiao5.mp3", "guaiMiao5.mp3");
     }
 
     public static void miao3() {
@@ -52,10 +56,6 @@ public class SoundTools {
 
     public static void miao7() {
         playClip("/sound/guaiMiao7.mp3", "guaiMiao7.mp3");
-    }
-
-    public static void BenWu() {
-        playClip("/sound/BenWu.mp3", "BenWu.mp3");
     }
 
     public static void BenWu2() {

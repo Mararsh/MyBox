@@ -537,7 +537,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
         }
 
         if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
+            SoundTools.miao5();
         }
         if (openCheck.isSelected()) {
             openTarget();

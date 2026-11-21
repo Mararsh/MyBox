@@ -10,11 +10,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -22,6 +27,8 @@ import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.menu.MenuTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -35,12 +42,17 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseGameController extends BaseWebViewController {
 
+    protected boolean gameOver, paused;
     protected Random random;
-
     protected File soundFile;
+    protected GraphicsContext gameContext;
+    protected int score;
+    protected Color bgColor, gridColor;
 
     @FXML
     protected Tab playTab, settingsTab;
+    @FXML
+    protected VBox gameBox;
     @FXML
     protected Label scoreLabel, soundFileLabel;
     @FXML
@@ -49,26 +61,35 @@ public class BaseGameController extends BaseWebViewController {
     protected HBox selectSoundBox;
     @FXML
     protected CheckBox scoreCheck;
+    @FXML
+    protected ControlColorSet bgColorController, gridColorController;
 
     @Override
-    public void initControls() {
+    public void setControlsStyle() {
         try {
-            super.initControls();
+            super.setControlsStyle();
+            if (createButton != null) {
+                NodeStyleTools.setTooltip(createButton, message("NewGame") + "\nn / Ctrl+n");
+            }
 
-            random = new Random();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
 
+    protected void initShow() {
+        try {
             if (scoreCheck != null) {
+                scoreCheck.setSelected(UserConfig.getBoolean(baseName + "PopScores", true));
                 scoreCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
                         UserConfig.setBoolean(baseName + "PopScores", scoreCheck.isSelected());
                     }
                 });
-                scoreCheck.setSelected(UserConfig.getBoolean(baseName + "PopScores", true));
             }
-
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -161,6 +182,119 @@ public class BaseGameController extends BaseWebViewController {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    protected void initColors() {
+        try {
+            if (bgColorController != null) {
+                bgColorController.init(this, baseName + "BackgroundColor", Color.BLACK);
+                bgColorController.setNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        bgColor = bgColorController.color();
+                    }
+                });
+                bgColor = bgColorController.color();
+            }
+
+            if (gridColorController != null) {
+                gridColorController.init(this, baseName + "GridColor", Color.GRAY);
+                gridColorController.setNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        gridColor = gridColorController.color();
+                    }
+                });
+                gridColor = gridColorController.color();
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void startAction() {
+        if (gameOver) {
+            startGame();
+        } else if (paused) {
+            resumeGame();
+        } else {
+            pauseGame();
+        }
+    }
+
+    public void startGame() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        StyleTools.setNameIcon(startButton, message("Pause"), "iconPause.png");
+        startButton.applyCss();
+        gameOver = false;
+        paused = false;
+    }
+
+    public void pauseGame() {
+        if (gameOver) {
+            return;
+        }
+        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
+        startButton.applyCss();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        paused = true;
+        Platform.runLater(() -> {
+            gameContext.setFill(Color.ORANGE);
+            gameContext.fillText(message("Paused"), gameBox.getWidth() / 2.0 - 70, gameBox.getHeight() / 2.0);
+        });
+    }
+
+    public void resumeGame() {
+        if (gameOver) {
+            return;
+        }
+        StyleTools.setNameIcon(startButton, message("Pause"), "iconPause.png");
+        startButton.applyCss();
+        paused = false;
+        restartTimer();
+    }
+
+    public void stopGame() {
+        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
+        startButton.applyCss();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        gameOver = true;
+        paused = false;
+        Platform.runLater(() -> {
+            gameContext.setFill(Color.ORANGE);
+            gameContext.fillText(message("GameOver"), gameBox.getWidth() / 2.0 - 70, gameBox.getHeight() / 2.0);
+            if (!muteRadio.isSelected()) {
+                SoundTools.miao6();
+            }
+        });
+    }
+
+    protected void restartTimer() {
+
+    }
+
+    @Override
+    public void createAction() {
+        startGame();
+    }
+
+    @Override
+    public boolean controlAltN() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        createAction();
+        return true;
     }
 
     public void playSound(boolean good) {
@@ -300,6 +434,31 @@ public class BaseGameController extends BaseWebViewController {
                 });
             }
         }, 1000);
+    }
+
+    @Override
+    public boolean otherKeys(KeyEvent event) {
+        if (event == null || gameOver) {
+            return false;
+        }
+        KeyCode code = event.getCode();
+        if (code == null) {
+            return false;
+        }
+        switch (code) {
+            case KeyCode.A:
+                return keyLeft();
+            case KeyCode.W:
+                return keyUp();
+            case KeyCode.S:
+                return keyDown();
+            case KeyCode.D:
+                return keyRight();
+            case KeyCode.R:
+                startGame();
+                return true;
+        }
+        return false;
     }
 
 }

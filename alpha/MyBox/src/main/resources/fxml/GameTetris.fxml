@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                      <items>
                             <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0">
                            <content>
-                                    <VBox fx:id="shapesBox" alignment="CENTER" spacing="5.0">
+                                    <VBox fx:id="gameBox" alignment="CENTER" spacing="5.0">
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                  </padding>
@@ -91,18 +91,6 @@ License:    Apache License Version 2.0
                                           </VBox>
                                       </content>
                                     </TitledPane>
-                                    <TitledPane animated="false" expanded="false" text="%Show">
-                                      <content>
-                                          <VBox spacing="5.0">
-                                             <children>
-                                                <CheckBox fx:id="scoreCheck" mnemonicParsing="false" selected="true" text="%PopScores" />
-                                                <CheckBox fx:id="ghostCheck" mnemonicParsing="false" selected="true" text="%ShowGhost" />
-                                                <CheckBox fx:id="gridCheck" mnemonicParsing="false" selected="true" text="%ShowGrid" />
-                                                <CheckBox fx:id="bordersCheck" mnemonicParsing="false" selected="true" text="%ShowBorders" />
-                                             </children>
-                                          </VBox>
-                                      </content>
-                                    </TitledPane>
                                     <TitledPane animated="false" expanded="false" text="%Speed">
                                       <content>
                                           <VBox spacing="5.0">
@@ -115,6 +103,18 @@ License:    Apache License Version 2.0
                                                    </children>
                                                 </FlowPane>
                                                 <CheckBox fx:id="quickerCheck" mnemonicParsing="false" text="%QuickerWhenLevelHigher" />
+                                             </children>
+                                          </VBox>
+                                      </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" expanded="false" text="%Show">
+                                      <content>
+                                          <VBox spacing="5.0">
+                                             <children>
+                                                <CheckBox fx:id="scoreCheck" mnemonicParsing="false" selected="true" text="%PopScores" />
+                                                <CheckBox fx:id="ghostCheck" mnemonicParsing="false" selected="true" text="%ShowGhost" />
+                                                <CheckBox fx:id="gridCheck" mnemonicParsing="false" selected="true" text="%ShowGrid" />
+                                                <CheckBox fx:id="bordersCheck" mnemonicParsing="false" selected="true" text="%ShowBorders" />
                                              </children>
                                           </VBox>
                                       </content>
@@ -184,10 +184,43 @@ License:    Apache License Version 2.0
                                           </VBox>
                                       </content>
                                     </TitledPane>
+                                    <TitledPane animated="false" expanded="false" text="%Score">
+                                       <content>
+                                          <VBox spacing="5.0">
+                                             <children>
+                                                <Label text="%TakeEffectNextTime" wrapText="true" />
+                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                   <children>
+                                                      <Label text="%LinesPerLevel" />
+                                                      <ComboBox fx:id="scoreSelector" editable="true" prefWidth="100.0" />
+                                                   </children>
+                                                </FlowPane>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
                                     <TitledPane animated="false" expanded="false" text="%Color">
                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                              <children>
+                                                <FlowPane fx:id="colorPane" hgap="2.0" prefWrapLength="80.0" vgap="2.0">
+                                                   <children>
+                                                      <Label minHeight="-Infinity" text="%Background" wrapText="true" />
+                                                      <fx:include fx:id="bgColor" source="ControlColorSet.fxml" />
+                                                   </children>
+                                                </FlowPane>
+                                                <FlowPane fx:id="colorPane1" hgap="2.0" prefWrapLength="80.0" vgap="2.0">
+                                                   <children>
+                                                      <Label minHeight="-Infinity" text="%Borders" wrapText="true" />
+                                                      <fx:include fx:id="bordersColor" source="ControlColorSet.fxml" />
+                                                   </children>
+                                                </FlowPane>
+                                                <FlowPane fx:id="colorPane11" hgap="2.0" prefWrapLength="80.0" vgap="2.0">
+                                                   <children>
+                                                      <Label minHeight="-Infinity" text="%Grid" wrapText="true" />
+                                                      <fx:include fx:id="gridColor" source="ControlColorSet.fxml" />
+                                                   </children>
+                                                </FlowPane>
                                                 <Label minHeight="-Infinity" text="%ClickBlockToSetColor" wrapText="true" />
                                                 <VBox fx:id="colorsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                              </children>

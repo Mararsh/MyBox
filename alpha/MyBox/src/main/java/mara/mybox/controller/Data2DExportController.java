@@ -182,7 +182,7 @@ public class Data2DExportController extends BaseData2DTaskController {
     @Override
     public void afterSuccess() {
         try {
-            SoundTools.miao3();
+            SoundTools.miao5();
             if (openCheck.isSelected()) {
                 export.openResults();
             }

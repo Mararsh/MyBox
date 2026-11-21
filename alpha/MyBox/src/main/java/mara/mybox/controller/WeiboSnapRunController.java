@@ -714,7 +714,7 @@ public class WeiboSnapRunController extends BaseFileController {
 
     protected void missionCompleted() {
         if (parameters.isMiao()) {
-            SoundTools.miao3();
+            SoundTools.miao5();
         }
         if (parent != null) {
             parent.popInformation(Languages.message("MissionCompleted"));
@@ -1178,7 +1178,7 @@ public class WeiboSnapRunController extends BaseFileController {
                 return;
             }
             if (parameters.isMiao()) {
-                SoundTools.miao3();
+                SoundTools.miao5();
             }
             if (controller != null) {
                 controller.showError(errorString);

@@ -120,7 +120,7 @@ public class Data2DTableCreateController extends BaseChildController {
     @Override
     public void afterSuccess() {
         try {
-            SoundTools.miao3();
+            SoundTools.miao5();
             if (editor != null) {
                 editor.popInformation(message("Saved"));
                 editor.setData(attributesController.dataTable);

@@ -207,6 +207,9 @@ public class GameEliminationController extends BaseGameController {
 
             imageInfoController.setParent(this);
 
+            initRulersTab();
+            initSettingsTab();
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -296,8 +299,7 @@ public class GameEliminationController extends BaseGameController {
                 imagesListview.getItems().setAll(items);
                 if (resetGame) {
                     okChessesAction();
-                    initRulersTab();
-                    initSettingsTab();
+
                 }
             }
 
@@ -365,38 +367,11 @@ public class GameEliminationController extends BaseGameController {
 
     protected void initSettingsTab() {
         try {
+            initShow();
+            initSound();
+
             isSettingValues = true;
 
-            deadRenewRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setString("GameEliminationDead", "Renew");
-                }
-            });
-            deadChanceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setString("GameEliminationDead", "Chance");
-                }
-            });
-            deadPromptRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    UserConfig.setString("GameEliminationDead", "Prompt");
-                }
-            });
             String dead = UserConfig.getString("GameEliminationDead", "Renew");
             switch (dead) {
                 case "Chance":
@@ -409,39 +384,34 @@ public class GameEliminationController extends BaseGameController {
                     deadRenewRadio.setSelected(true);
                     break;
             }
+            deadRenewRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setString("GameEliminationDead", "Renew");
+                }
+            });
+            deadChanceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setString("GameEliminationDead", "Chance");
+                }
+            });
+            deadPromptRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    UserConfig.setString("GameEliminationDead", "Prompt");
+                }
+            });
 
-            speed1Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    autoSpeed = 1000;
-                    UserConfig.setString("GameEliminationAutoSpeed", "1");
-                }
-            });
-            speed2Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    autoSpeed = 2000;
-                    UserConfig.setString("GameEliminationAutoSpeed", "2");
-                }
-            });
-            speed3Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    autoSpeed = 3000;
-                    UserConfig.setString("GameEliminationAutoSpeed", "3");
-                }
-            });
-            speed5Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal,
-                        Boolean newVal) {
-                    autoSpeed = 5000;
-                    UserConfig.setString("GameEliminationAutoSpeed", "5");
-                }
-            });
             autoSpeed = 2000;
             String speed = UserConfig.getString("GameEliminationAutoSpeed", "2");
             switch (speed) {
@@ -459,6 +429,53 @@ public class GameEliminationController extends BaseGameController {
                     break;
             }
 
+            speed1Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    autoSpeed = 1000;
+                    UserConfig.setString("GameEliminationAutoSpeed", "1");
+                }
+            });
+            speed2Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    autoSpeed = 2000;
+                    UserConfig.setString("GameEliminationAutoSpeed", "2");
+                }
+            });
+            speed3Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    autoSpeed = 3000;
+                    UserConfig.setString("GameEliminationAutoSpeed", "3");
+                }
+            });
+            speed5Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    autoSpeed = 5000;
+                    UserConfig.setString("GameEliminationAutoSpeed", "5");
+                }
+            });
+
+            flushTimes = 2;
+            eliminateDelay = flushDuration * (2 * flushTimes + 1);
+            String flush = UserConfig.getString("GameEliminationFlushTime", "2");
+            switch (flush) {
+                case "1":
+                    flush1Radio.setSelected(true);
+                    break;
+                case "3":
+                    flush3Radio.setSelected(true);
+                    break;
+                case "0":
+                    flush0Radio.setSelected(true);
+                    break;
+                default:
+                    flush2Radio.setSelected(true);
+                    break;
+            }
             flush0Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldVal,
@@ -495,23 +512,6 @@ public class GameEliminationController extends BaseGameController {
                     UserConfig.setString("GameEliminationFlushTime", "3");
                 }
             });
-            flushTimes = 2;
-            eliminateDelay = flushDuration * (2 * flushTimes + 1);
-            String flush = UserConfig.getString("GameEliminationFlushTime", "2");
-            switch (flush) {
-                case "1":
-                    flush1Radio.setSelected(true);
-                    break;
-                case "3":
-                    flush3Radio.setSelected(true);
-                    break;
-                case "0":
-                    flush0Radio.setSelected(true);
-                    break;
-                default:
-                    flush2Radio.setSelected(true);
-                    break;
-            }
 
             isSettingValues = false;
 

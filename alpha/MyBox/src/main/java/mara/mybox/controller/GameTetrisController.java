@@ -30,7 +30,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -90,27 +89,27 @@ public class GameTetrisController extends BaseGameController {
     private Color[][] boardColor;
     private boolean[][] currentShape, nextShape, holdShape;
 
-    private Color currentColor, nextColor, holdColor,
-            backgroundColor = Color.BLACK, borderColor = Color.WHITE;
-    private Color gridColor = Color.GRAY.deriveColor(0, 1, 1, 0.25);
-    private int linesPerLevel = 10, blockSize, columnsNumber, rowsNumber;
+    private Color currentColor, nextColor, holdColor, bordersColor;
+    private int linesPerLevel, blockSize, columnsNumber, rowsNumber;
     private int shapeIndex, x, y, ghostY, holdShapeIndex = -1, nextShapeIndex;
     private int dropInterval, score = 0, level = 1, totalLines = 0, softScore = 1, hardScore = 2;
-    private boolean gameOver, paused, use7Bag, canHold;
+    private boolean use7Bag, canHold;
     private float ghostAlpha = 0.2f;
     private final List<Integer> bag = new ArrayList<>();
     private RotState rotState;
 
     private Canvas canvas, previewCanvas, holdCanvas;
-    private GraphicsContext gc, previewGc, holdGc;
+    private GraphicsContext previewGc, holdGc;
     private Rectangle pickedColor;
 
     @FXML
-    protected VBox shapesBox, previewBox, holdBox, colorsBox;
+    protected VBox previewBox, holdBox, colorsBox;
     @FXML
     protected CheckBox quickerCheck, ghostCheck, gridCheck, bordersCheck;
     @FXML
-    protected ComboBox<String> intervalSelector, blockSelector, rowsSelector, columnsSelector;
+    protected ComboBox<String> intervalSelector, blockSelector, rowsSelector, columnsSelector, scoreSelector;
+    @FXML
+    protected ControlColorSet bgColorController, gridColorController, bordersColorController;
 
     public GameTetrisController() {
         baseTitle = message("GameTetris");
@@ -125,17 +124,6 @@ public class GameTetrisController extends BaseGameController {
             gameOver = true;
             paused = false;
             use7Bag = true;
-            shapeColors = new Color[]{
-                Color.PURPLE, Color.ORANGE, Color.BLUE,
-                Color.GREEN, Color.RED, Color.YELLOW, Color.CYAN
-            };
-
-            try (Connection conn = DerbyBase.getConnection()) {
-                for (int i = 0; i < shapeColors.length; i++) {
-                    shapeColors[i] = Color.web(UserConfig.getString(conn, baseName + "Color" + i, (shapeColors[i]).toString()));
-                }
-            } catch (Exception e) {
-            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -146,61 +134,20 @@ public class GameTetrisController extends BaseGameController {
         try {
             super.initControls();
 
-            quickerCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "QuickerWhenLevelHigher", quickerCheck.isSelected());
-                }
-            });
-            quickerCheck.setSelected(UserConfig.getBoolean(baseName + "QuickerWhenLevelHigher", false));
+            initSize();
+            initSpeed();
+            initShow();
+            initSound();
+            initColors();
+            initScore();
 
-            ghostCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "ShowGhost", ghostCheck.isSelected());
-                }
-            });
-            ghostCheck.setSelected(UserConfig.getBoolean(baseName + "ShowGhost", true));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
-            gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "ShowGrid", gridCheck.isSelected());
-                }
-            });
-            gridCheck.setSelected(UserConfig.getBoolean(baseName + "ShowGrid", true));
-
-            bordersCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "ShowBorders", bordersCheck.isSelected());
-                }
-            });
-            bordersCheck.setSelected(UserConfig.getBoolean(baseName + "ShowBorders", true));
-
-            dropInterval = UserConfig.getInt(baseName + "Interval", 1000);
-            if (dropInterval < 80) {
-                dropInterval = 1000;
-            }
-            intervalSelector.getItems().addAll(Arrays.asList(
-                    "1000", "500", "1500", "200", "2000", "800", "600", "100", "50", "80")
-            );
-            intervalSelector.setValue(dropInterval + "");
-            intervalSelector.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> v, String o, String n) {
-                    try {
-                        int iv = (int) Double.parseDouble(n);
-                        if (iv >= 80) {
-                            dropInterval = iv;
-                            UserConfig.setInt(baseName + "Interval", dropInterval);
-                            restartTimer();
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-            });
-
+    protected void initSize() {
+        try {
             rowsNumber = UserConfig.getInt(baseName + "RowsNumber", 20);
             if (rowsNumber < 10) {
                 rowsNumber = 20;
@@ -267,19 +214,148 @@ public class GameTetrisController extends BaseGameController {
                 }
             });
 
-            initSound();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
-            colorsBox.getChildren().clear();
-            for (int index = 0; index < SHAPES.length; index++) {
-                setColor(index);
+    protected void initSpeed() {
+        try {
+            quickerCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "QuickerWhenLevelHigher", quickerCheck.isSelected());
+                }
+            });
+            quickerCheck.setSelected(UserConfig.getBoolean(baseName + "QuickerWhenLevelHigher", false));
+
+            dropInterval = UserConfig.getInt(baseName + "Interval", 1000);
+            if (dropInterval < 80) {
+                dropInterval = 1000;
             }
+            intervalSelector.getItems().addAll(Arrays.asList(
+                    "1000", "500", "1500", "200", "2000", "800", "600", "100", "50", "80")
+            );
+            intervalSelector.setValue(dropInterval + "");
+            intervalSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String o, String n) {
+                    try {
+                        int iv = (int) Double.parseDouble(n);
+                        if (iv >= 80) {
+                            dropInterval = iv;
+                            UserConfig.setInt(baseName + "Interval", dropInterval);
+                            restartTimer();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    private void setColor(int index) {
+    protected void initScore() {
+        try {
+            linesPerLevel = UserConfig.getInt(baseName + "LinesPerLevel", 10);
+            if (linesPerLevel < 1) {
+                linesPerLevel = 10;
+            }
+            scoreSelector.getItems().addAll(Arrays.asList(
+                    "10", "50", "100", "20", "300", "1000", "500", "200", "150", "5")
+            );
+            scoreSelector.setValue(linesPerLevel + "");
+            scoreSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String o, String n) {
+                    try {
+                        int iv = (int) Double.parseDouble(n);
+                        if (iv > 0) {
+                            linesPerLevel = iv;
+                            UserConfig.setInt(baseName + "LinesPerLevel", linesPerLevel);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    protected void initShow() {
+        try {
+            super.initShow();
+
+            ghostCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "ShowGhost", ghostCheck.isSelected());
+                }
+            });
+            ghostCheck.setSelected(UserConfig.getBoolean(baseName + "ShowGhost", true));
+
+            gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "ShowGrid", gridCheck.isSelected());
+                }
+            });
+            gridCheck.setSelected(UserConfig.getBoolean(baseName + "ShowGrid", true));
+
+            bordersCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "ShowBorders", bordersCheck.isSelected());
+                }
+            });
+            bordersCheck.setSelected(UserConfig.getBoolean(baseName + "ShowBorders", true));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    protected void initColors() {
+        try {
+            super.initColors();
+
+            bordersColorController.init(this, baseName + "BordersColor", Color.WHITE);
+            bordersColorController.setNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    bordersColor = bordersColorController.color();
+                }
+            });
+            bordersColor = bordersColorController.color();
+
+            shapeColors = new Color[]{
+                Color.PURPLE, Color.ORANGE, Color.BLUE,
+                Color.GREEN, Color.RED, Color.YELLOW, Color.CYAN
+            };
+
+            try (Connection conn = DerbyBase.getConnection()) {
+                for (int i = 0; i < shapeColors.length; i++) {
+                    shapeColors[i]
+                            = Color.web(UserConfig.getString(conn, baseName + "Color" + i, (shapeColors[i]).toString()));
+                }
+            } catch (Exception e) {
+            }
+            colorsBox.getChildren().clear();
+            for (int index = 0; index < SHAPES.length; index++) {
+                setBlockColor(index);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    private void setBlockColor(int index) {
         try {
             int previewBlockSize = 20;
             boolean[][] shape = SHAPES[index];
@@ -315,7 +391,7 @@ public class GameTetrisController extends BaseGameController {
                             @Override
                             public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                                 shapeColors[index] = (Color) pickedColor.getFill();
-                                setColor(index);
+                                setBlockColor(index);
                             }
                         });
 
@@ -352,29 +428,14 @@ public class GameTetrisController extends BaseGameController {
     }
 
     @Override
-    public void startAction() {
-        if (gameOver) {
-            startGame();
-        } else if (paused) {
-            resumeGame();
-        } else {
-            pauseGame();
-        }
-    }
-
     public void startGame() {
         try {
             if (blockSize < 1 || columnsNumber <= 0 || rowsNumber < 5) {
                 popError(message("InvalidParameters"));
                 return;
             }
-            if (timer != null) {
-                timer.cancel();
-            }
-            StyleTools.setNameIcon(startButton, message("Pause"), "iconPause.png");
-            startButton.applyCss();
-            gameOver = false;
-            paused = false;
+            super.startGame();
+
             score = 0;
             level = 1;
             totalLines = 0;
@@ -390,9 +451,10 @@ public class GameTetrisController extends BaseGameController {
             canHold = true;
 
             canvas = new Canvas(columnsNumber * blockSize, rowsNumber * blockSize);
-            gc = canvas.getGraphicsContext2D();
-            shapesBox.getChildren().clear();
-            shapesBox.getChildren().add(canvas);
+            gameContext = canvas.getGraphicsContext2D();
+            gameBox.getChildren().clear();
+            gameBox.getChildren().add(canvas);
+            gameBox.requestFocus();
 
             int previewSize = 5 * blockSize;
             previewCanvas = new Canvas(previewSize, previewSize);
@@ -411,42 +473,14 @@ public class GameTetrisController extends BaseGameController {
             canvas.setFocusTraversable(true);
             calcGhost();
             render();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void stopGame() {
-        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-        startButton.applyCss();
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        gameOver = true;
-        paused = false;
-    }
-
-    public void pauseGame() {
-        StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-        startButton.applyCss();
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        if (!gameOver) {
-            paused = true;
-        }
-    }
-
-    public void resumeGame() {
-        StyleTools.setNameIcon(startButton, message("Pause"), "iconPause.png");
-        startButton.applyCss();
-        paused = false;
-        restartTimer();
-    }
-
-    private void restartTimer() {
+    @Override
+    protected void restartTimer() {
         if (timer != null) {
             timer.cancel();
         }
@@ -512,7 +546,6 @@ public class GameTetrisController extends BaseGameController {
         canHold = true;
         if (checkCollision(0, 0)) {
             stopGame();
-            Platform.runLater(() -> popError(message("GameOver")));
         } else {
             calcGhost();
         }
@@ -675,20 +708,6 @@ public class GameTetrisController extends BaseGameController {
         return false;
     }
 
-    @Override
-    public void createAction() {
-        startGame();
-    }
-
-    @Override
-    public boolean controlAltN() {
-        if (targetIsTextInput()) {
-            return false;
-        }
-        createAction();
-        return true;
-    }
-
     private boolean checkCollision(int dx, int dy, boolean[][] shape) {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
@@ -775,7 +794,6 @@ public class GameTetrisController extends BaseGameController {
         }
         writeScore();
         popError("+ " + added);
-//        popScore(scoreLabel, linesCleared);
         playSound(linesCleared > 1);
 
     }
@@ -856,22 +874,24 @@ public class GameTetrisController extends BaseGameController {
     }
 
     private void render() {
-        gc.setFill(backgroundColor);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gameContext.setFill(bgColor);
+        gameContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         if (gridCheck.isSelected()) {
-            gc.setStroke(gridColor);
-            gc.setLineWidth(0.5);
+            gameContext.setGlobalAlpha(0.25f);
+            gameContext.setStroke(gridColor);
+            gameContext.setLineWidth(0.5);
             for (int c = 0; c <= columnsNumber; c++) {
                 double xPos = c * blockSize;
-                gc.strokeLine(xPos, 0, xPos, canvas.getHeight());
+                gameContext.strokeLine(xPos, 0, xPos, canvas.getHeight());
             }
             for (int r = 0; r <= rowsNumber; r++) {
                 double yPos = r * blockSize;
-                gc.strokeLine(0, yPos, canvas.getWidth(), yPos);
+                gameContext.strokeLine(0, yPos, canvas.getWidth(), yPos);
             }
         }
 
+        gameContext.setGlobalAlpha(1.0f);
         for (int r = 0; r < rowsNumber; r++) {
             for (int c = 0; c < columnsNumber; c++) {
                 if (board[r][c]) {
@@ -880,7 +900,7 @@ public class GameTetrisController extends BaseGameController {
             }
         }
         if (ghostCheck.isSelected()) {
-            gc.setGlobalAlpha(ghostAlpha);
+            gameContext.setGlobalAlpha(ghostAlpha);
             for (int row = 0; row < currentShape.length; row++) {
                 for (int col = 0; col < currentShape[row].length; col++) {
                     if (currentShape[row][col]) {
@@ -891,7 +911,7 @@ public class GameTetrisController extends BaseGameController {
                     }
                 }
             }
-            gc.setGlobalAlpha(1.0);
+            gameContext.setGlobalAlpha(1.0);
         }
 
         for (int row = 0; row < currentShape.length; row++) {
@@ -909,17 +929,17 @@ public class GameTetrisController extends BaseGameController {
     }
 
     private void drawBlock(int c, int r, Color color) {
-        gc.setFill(color);
-        gc.fillRect(c * blockSize, r * blockSize, blockSize - 1, blockSize - 1);
+        gameContext.setFill(color);
+        gameContext.fillRect(c * blockSize, r * blockSize, blockSize - 1, blockSize - 1);
         if (bordersCheck.isSelected()) {
-            gc.setStroke(borderColor);
-            gc.setLineWidth(1);
-            gc.strokeRect(c * blockSize, r * blockSize, blockSize - 1, blockSize - 1);
+            gameContext.setStroke(bordersColor);
+            gameContext.setLineWidth(1);
+            gameContext.strokeRect(c * blockSize, r * blockSize, blockSize - 1, blockSize - 1);
         }
     }
 
     private void renderPreview() {
-        previewGc.setFill(backgroundColor);
+        previewGc.setFill(bgColor);
         previewGc.fillRect(0, 0, previewCanvas.getWidth(), previewCanvas.getHeight());
         if (gameOver) {
             return;
@@ -933,7 +953,7 @@ public class GameTetrisController extends BaseGameController {
                     previewGc.fillRect(offsetX + col * blockSize, offsetY + row * blockSize,
                             blockSize - 1, blockSize - 1);
                     if (bordersCheck.isSelected()) {
-                        previewGc.setStroke(borderColor);
+                        previewGc.setStroke(bordersColor);
                         previewGc.setLineWidth(1);
                         previewGc.strokeRect(offsetX + col * blockSize, offsetY + row * blockSize,
                                 blockSize - 1, blockSize - 1);
@@ -944,7 +964,7 @@ public class GameTetrisController extends BaseGameController {
     }
 
     private void renderHold() {
-        holdGc.setFill(backgroundColor);
+        holdGc.setFill(bgColor);
         holdGc.fillRect(0, 0, holdCanvas.getWidth(), holdCanvas.getHeight());
         if (gameOver || holdShapeIndex == -1) {
             return;
@@ -958,7 +978,7 @@ public class GameTetrisController extends BaseGameController {
                     holdGc.fillRect(offsetX + col * blockSize, offsetY + row * blockSize,
                             blockSize - 1, blockSize - 1);
                     if (bordersCheck.isSelected()) {
-                        holdGc.setStroke(borderColor);
+                        holdGc.setStroke(bordersColor);
                         holdGc.setLineWidth(1);
                         holdGc.strokeRect(offsetX + col * blockSize, offsetY + row * blockSize,
                                 blockSize - 1, blockSize - 1);

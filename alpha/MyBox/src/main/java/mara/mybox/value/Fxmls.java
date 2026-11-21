@@ -451,6 +451,7 @@ public class Fxmls {
     public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
     public static final String GameMineFxml = "/fxml/GameMine.fxml";
     public static final String GameTetrisFxml = "/fxml/GameTetris.fxml";
+    public static final String GameSnakeFxml = "/fxml/GameSnake.fxml";
 
     /*
         network
